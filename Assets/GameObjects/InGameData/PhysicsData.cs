@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PhysicObject : Object
+public class PhysicsData
 {
-    int mass;
+    public int Mass { get; set; }
 }

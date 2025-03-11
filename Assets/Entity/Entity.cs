@@ -6,8 +6,7 @@ using UnityEngine.UIElements;
 
 public class Entity : MonoBehaviour
 {
-    public EntityContainer entity;
-    public HullContainer hull;
+    public EntityContainer entity = new EntityContainer();
     public Transform HullLayers;
 
     public float maxSpeed = 5f;
@@ -34,7 +33,6 @@ public class Entity : MonoBehaviour
     {
         get => minSpeedLevel;
     }
-
     void Start()
     {
         SetColliderSize();
@@ -78,4 +76,6 @@ public class Entity : MonoBehaviour
 
         transform.Translate(Vector3.up * currentSpeed * Time.deltaTime, Space.Self);
     }
+
+
 }

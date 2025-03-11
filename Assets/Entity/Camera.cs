@@ -22,9 +22,8 @@ public class CameraController : MonoBehaviour
     {
         if (Input.GetAxis("Mouse ScrollWheel") != 0)
         {
-            targetZoom -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;  // Изменяем целевой зум
-            targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);  // Ограничиваем целевой зум
-           
+            targetZoom -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
+            targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
         }
         currentZoom = Mathf.Lerp(currentZoom, targetZoom, smoothSpeed * Time.deltaTime);
         virtualCamera.m_Lens.OrthographicSize = currentZoom;

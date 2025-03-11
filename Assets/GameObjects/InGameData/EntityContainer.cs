@@ -4,7 +4,5 @@ using UnityEngine;
 
 public class EntityContainer
 {
-    private int health;
-    public int Health { get; set; }
-    public float speedPower;
+    public HullContainer hull = new HullContainer();
 }

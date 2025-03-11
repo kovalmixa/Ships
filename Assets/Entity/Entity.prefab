@@ -49,7 +49,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a58ab4466f19de4d83f54e45908e85a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isPlayer: 0
   HullLayers: {fileID: 4662671464860693575}
   maxSpeed: 5
   acceleration: 3
@@ -66,6 +65,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16d133dfdd92274798d883044fb39be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  assetObjectPath: Assets/GameObjects
+  isPlayer: 0
+  type: ship
+  hullId: 
+  weaponIds: []
 --- !u!212 &737152833255069964
 SpriteRenderer:
   m_ObjectHideFlags: 0

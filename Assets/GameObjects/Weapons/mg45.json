@@ -1,0 +1,27 @@
+{
+    "General": {
+      "name": "mg45",
+      "size_type": "s",
+      "mass": 5
+    },
+    "Graphics": {
+      "offset_x": 0,
+      "offset_y": -5,
+      "icon": "mg45_icon.png",
+      "texture": "mg45.png"
+    },
+    "rotation": {
+      "rotation_speed": 10
+    },
+    "weapon_0": {
+      "x": 0,
+      "y": 50,
+      "projectile": "projectile_0"
+    },
+    "projectile_0": {
+      "texture": "bullet.png",
+      "life_time": 5,
+      "speed": 300
+    }
+  }
+  
