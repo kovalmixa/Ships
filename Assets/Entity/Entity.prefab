@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2939312566082401126}
   - component: {fileID: 737152833255069964}
   - component: {fileID: 4515895251028235511}
+  - component: {fileID: 5362787103929818154}
   m_Layer: 0
   m_Name: Entity
   m_TagString: Untagged
@@ -53,7 +54,6 @@ MonoBehaviour:
   maxSpeed: 5
   acceleration: 3
   rotationSpeed: 60
-  bounceForce: 5
 --- !u!114 &2939312566082401126
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,8 +161,35 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.0001, y: 0.0001}
+  m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!50 &5362787103929818154
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1043631210884575351}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 1
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0.2
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 1
+  m_Constraints: 4
 --- !u!1 &3581992323576170590
 GameObject:
   m_ObjectHideFlags: 0

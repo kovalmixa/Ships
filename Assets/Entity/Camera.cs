@@ -8,7 +8,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera virtualCamera;
     float cameraDistance;
     [SerializeField] float sensetivity;
-
     void Zoom()
     {
         if (Input.GetAxis("Mouse ScrollWheel") != 0)
