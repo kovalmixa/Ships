@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Runtime.Serialization;
+using UnityEngine;
 
 public class HullContainer
 {
@@ -14,23 +15,6 @@ public class HullContainer
     [JsonProperty("physics")]
     public PhysicsData Physics { get; set; }
 
-    [JsonIgnore]
-    public List<HullWeaponProperties> Weapons { get; set; } = new List<HullWeaponProperties>();
-
-    [JsonExtensionData]
-    private IDictionary<string, JToken> _extraData;
-
-    [OnDeserialized]
-    private void OnDeserialized(StreamingContext context)
-    {
-        foreach (var kvp in _extraData)
-        {
-            if (kvp.Key.StartsWith("weapon_"))
-            {
-                var weapon = kvp.Value.ToObject<HullWeaponProperties>();
-                if (weapon != null)
-                    Weapons.Add(weapon);
-            }
-        }
-    }
+    [JsonProperty("weapons")]
+    public List<HullWeaponProperties> Weapons { get; set; } = new();
 }

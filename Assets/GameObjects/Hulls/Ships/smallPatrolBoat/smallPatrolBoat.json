@@ -1,0 +1,39 @@
+{
+    "general": {
+      "name": "small patrol boat",
+      "slot_height": 2
+    },
+    "graphics": {
+      "icon": "small_patrol_boat.png"
+    },
+    "physics": {
+      "mass": 10
+    },
+    "weapons": [
+      {
+        "type": "turret",
+        "slot": 0,
+        "size": "s",
+        "x": -10,
+        "y": 10,
+        "rotation_sector": "-150,25"
+      },
+      {
+        "type": "turret",
+        "slot": 0,
+        "size": "s",
+        "x": 10,
+        "y": 10,
+        "rotation_sector": "-25,150"
+      },
+      {
+        "type": "torpedo",
+        "slot": 0,
+        "size": "XXXL",
+        "x": 0,
+        "y": 0,
+        "rotation_sector": "-90,90"
+      }
+    ]
+  }
+  

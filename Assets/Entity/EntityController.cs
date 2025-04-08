@@ -13,7 +13,7 @@ public class EntityController : MonoBehaviour
     public string type = "ship";
     public string hullId;
     [SerializeField] public List<string> weaponIds;
-    Entity entity;
+    private Entity entity;
 
     private void Start()
     {
@@ -37,7 +37,6 @@ public class EntityController : MonoBehaviour
                 }
         }
     }
-
     private void LoadHull()
     {
         string path = DataHandler.GetPathById(hullId, assetObjectPath);
