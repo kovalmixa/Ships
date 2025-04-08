@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class EntityContainer
 {
-    public HullContainer hull = new HullContainer();
+    public HullContainer hullData = new HullContainer();
 }

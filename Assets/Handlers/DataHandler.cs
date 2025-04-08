@@ -47,6 +47,7 @@ public static class DataHandler
         path += '/';
         return path += objectTypePath[objectTypePath.Length - 1];
     }
+
     private static void SwitchObjectTypePath(string[] objectTypePath, ref string path)
     {
         switch (objectTypePath[0])
@@ -69,6 +70,7 @@ public static class DataHandler
                 }
         }
     }
+
     private static void SwitchHullTypePath(string[] objectTypePath, ref string path)
     {
         switch (objectTypePath[1])

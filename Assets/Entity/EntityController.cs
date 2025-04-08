@@ -50,7 +50,7 @@ public class EntityController : MonoBehaviour
             return;
         }
         HullContainer hullData = DataHandler.LoadFromJson<HullContainer>(JSONFilePath);
-        entity.entity.hull = hullData;
+        entity.entityData.hullData = hullData;
     }
     private void Movement()
     {

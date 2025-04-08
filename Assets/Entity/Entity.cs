@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 public class Entity : MonoBehaviour
 {
-    public EntityContainer entity = new EntityContainer();
+    public EntityContainer entityData = new EntityContainer();
     public Transform HullLayers;
 
     public float maxSpeed = 5f;

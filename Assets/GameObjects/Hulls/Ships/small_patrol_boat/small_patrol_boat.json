@@ -1,11 +1,13 @@
 {
     "general": {
       "name": "small patrol boat",
-      "slot_height": 2,
-      "mass": 10
+      "slot_height": 2
     },
     "graphics": {
       "icon": "small_patrol_boat.png"
+    },
+    "physics": {
+      "mass": 10
     },
     "weapon_0": {
       "type": "turret",
