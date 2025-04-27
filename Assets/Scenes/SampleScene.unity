@@ -529,6 +529,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: hullId
+      value: h_sh_smallPatrolBoat
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: isPlayer
       value: 1
       objectReference: {fileID: 0}

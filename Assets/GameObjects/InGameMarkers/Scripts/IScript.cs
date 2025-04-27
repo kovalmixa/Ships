@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AI : IAI
+public interface IScript
 {
-    private string name;
+    bool Execute(Entity entity);
 }

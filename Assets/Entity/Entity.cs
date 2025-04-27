@@ -76,6 +76,4 @@ public class Entity : MonoBehaviour
 
         transform.Translate(Vector3.up * currentSpeed * Time.deltaTime, Space.Self);
     }
-
-
 }

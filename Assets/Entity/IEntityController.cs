@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AI : IAI
+public interface IEntityController
 {
-    private string name;
+    public void UpdateControl(Entity entity);
 }
