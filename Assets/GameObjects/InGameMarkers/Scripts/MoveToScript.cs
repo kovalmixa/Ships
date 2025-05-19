@@ -1,3 +1,4 @@
+using Assets.Entity;
 using UnityEngine;
 
 public class MoveToScript : MonoBehaviour, IScript

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.Entity;
 using UnityEngine;
 
 public class AreaScript : MonoBehaviour, IScript

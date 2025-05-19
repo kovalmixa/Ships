@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class WeaponContainer
+namespace Assets.Entity.DataContainers
 {
-    General general;
-    Graphics graphics;
-    PhysicsData PhysicsData;
+    public class WeaponContainer
+    {
+        General _general;
+        Graphics _graphics;
+        PhysicsData _physicsData;
+    }
 }

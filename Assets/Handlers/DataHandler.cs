@@ -1,7 +1,8 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using Newtonsoft.Json;
-using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public static class DataHandler
 {
@@ -43,14 +44,19 @@ public static class DataHandler
     {
         string path = assetPath;
         string[] objectTypePath = id.Split('_');
-        SwitchObjectTypePath(objectTypePath, ref path);
+        GetObjectPath(objectTypePath, ref path);
         path += '/';
         return path += objectTypePath[objectTypePath.Length - 1];
     }
 
+    private static void GetObjectPath(string[] objectTypePath, ref string path)
+    {
+        path += '/' + objectTypePath[0];
+        SwitchObjectTypePath(objectTypePath, ref path);
+    }
     private static void SwitchObjectTypePath(string[] objectTypePath, ref string path)
     {
-        switch (objectTypePath[0])
+        switch (objectTypePath[1])
         {
             case "h":
                 {
@@ -73,7 +79,7 @@ public static class DataHandler
 
     private static void SwitchHullTypePath(string[] objectTypePath, ref string path)
     {
-        switch (objectTypePath[1])
+        switch (objectTypePath[2])
         {
             case "sh":
                 {

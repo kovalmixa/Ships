@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class ProjectileContainer
+namespace Assets.Entity.DataContainers
 {
+    public class ProjectileContainer
+    {
+    }
 }

@@ -1,36 +1,37 @@
-using System.Drawing;
 using Cinemachine;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+namespace Assets.Entity
 {
-    [SerializeField] CinemachineVirtualCamera virtualCamera;
-    float cameraDistance;
-    [SerializeField] float sensitivity;
-    public float minZoom;
-    public float maxZoom;
-    public float smoothSpeed = 5f;
-    float targetZoom;
-    float currentZoom;
-    private void Start()
+    public class CameraController : MonoBehaviour
     {
-        currentZoom = virtualCamera.m_Lens.OrthographicSize;
-        targetZoom = currentZoom;
-    }
-    void Zoom()
-    {
-        if (Input.GetAxis("Mouse ScrollWheel") != 0)
+        [SerializeField] CinemachineVirtualCamera _virtualCamera;
+        float _cameraDistance;
+        [SerializeField] float _sensitivity;
+        public float MinZoom;
+        public float MaxZoom;
+        public float SmoothSpeed = 5f;
+        float _targetZoom;
+        float _currentZoom;
+        private void Start()
         {
-            targetZoom -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
-            targetZoom = Mathf.Clamp(targetZoom, minZoom, maxZoom);
+            _currentZoom = _virtualCamera.m_Lens.OrthographicSize;
+            _targetZoom = _currentZoom;
         }
-        currentZoom = Mathf.Lerp(currentZoom, targetZoom, smoothSpeed * Time.deltaTime);
-        virtualCamera.m_Lens.OrthographicSize = currentZoom;
-    }
+        void Zoom()
+        {
+            if (Input.GetAxis("Mouse ScrollWheel") != 0)
+            {
+                _targetZoom -= Input.GetAxis("Mouse ScrollWheel") * _sensitivity;
+                _targetZoom = Mathf.Clamp(_targetZoom, MinZoom, MaxZoom);
+            }
+            _currentZoom = Mathf.Lerp(_currentZoom, _targetZoom, SmoothSpeed * Time.deltaTime);
+            _virtualCamera.m_Lens.OrthographicSize = _currentZoom;
+        }
 
-    void Update()
-    {
-        Zoom();
+        void Update()
+        {
+            Zoom();
+        }
     }
 }

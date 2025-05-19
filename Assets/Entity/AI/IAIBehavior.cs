@@ -1,4 +1,7 @@
-﻿public interface IAIBehavior
+﻿namespace Assets.Entity.AI
 {
-    void UpdateBehavior(Entity entity);
+    public interface IAiBehavior
+    {
+        void UpdateBehavior(Entity entity);
+    }
 }

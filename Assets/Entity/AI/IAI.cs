@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-interface IAI
+namespace Assets.Entity.AI
 {
+    interface IAi
+    {
+    }
 }

@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class EntityContainer
+namespace Assets.Entity.DataContainers
 {
-    public HullContainer hullData = new HullContainer();
+    public class EntityContainer
+    {
+        public HullContainer HullData = new HullContainer();
+    }
 }

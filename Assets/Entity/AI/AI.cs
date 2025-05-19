@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class AI : IAI
+namespace Assets.Entity.AI
 {
-    private string name;
+    public class Ai : IAi
+    {
+        private string _name;
+    }
 }

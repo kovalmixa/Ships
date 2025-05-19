@@ -1,19 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using UnityEngine;
 
-public class Graphics
+namespace Assets.Entity.DataContainers
 {
-    private string texture;
-
-    [JsonProperty("offset_x")] public int OffsetX { get; set; }
-    [JsonProperty("offset_y")] public int OffsetY { get; set; }
-    [JsonProperty("icon")] public string Icon { get; set; }
-    [JsonProperty("texture")] public string Texture
+    public class Graphics
     {
-        get => texture ?? Icon;
-        set { texture = value; }
-    }
+        private string _texture;
+
+        [JsonProperty("offset_x")] public int OffsetX { get; set; }
+        [JsonProperty("offset_y")] public int OffsetY { get; set; }
+        [JsonProperty("icon")] public string Icon { get; set; }
+        [JsonProperty("texture")] public string Texture
+        {
+            get => _texture ?? Icon;
+            set { _texture = value; }
+        }
     
+    }
 }
