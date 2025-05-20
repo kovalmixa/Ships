@@ -6,6 +6,7 @@ namespace Assets.Entity.Player
     {
         public void UpdateControl(Entity entity)
         {
+            if(!entity) return;
             MoveControl(entity);
             RotateControl(entity);
             AttackControl(entity);

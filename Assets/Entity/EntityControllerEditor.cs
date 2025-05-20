@@ -13,7 +13,6 @@ namespace Assets.Entity
             EntityController controller = (EntityController)target;
 
             controller.AssetObjectPath = EditorGUILayout.TextField("Asset Object Path", controller.AssetObjectPath);
-            controller.IsPlayer = EditorGUILayout.Toggle("Is Player", controller.IsPlayer);
 
             if (!controller.IsPlayer)
             {

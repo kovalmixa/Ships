@@ -64,7 +64,7 @@ namespace Assets.Entity
             // Передаем часть импульса другому объекту
             otherRb.AddForce(-pushDirection * (impulse * (rb.mass / totalMass)), ForceMode2D.Impulse);
 
-            // Игрок теряет скорость пропорционально массе другого объекта
+            //Теряет скорость пропорционально массе другого объекта
             _currentSpeed *= otherRb.mass / totalMass;
         }
         public void Movement(float rotationDirection)

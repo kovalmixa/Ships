@@ -3,6 +3,7 @@ using System.IO;
 using Assets.Entity.AI;
 using Assets.Entity.DataContainers;
 using Assets.Entity.Player;
+using Assets.Handlers;
 using UnityEngine;
 
 namespace Assets.Entity
@@ -27,7 +28,6 @@ namespace Assets.Entity
             if (IsPlayer)
             {
                 _controller = gameObject.AddComponent<PlayerController>();
-                SetHull();
             }
             else
             {
@@ -35,20 +35,21 @@ namespace Assets.Entity
                 AiController aiController = _controller as AiController;
                 if (aiController != null) aiController.SetupRouteScripts(RouteScriptsList);
             }
+            SetHull();
+
         }
 
         public void SetHull(string hullId = "")
         {
             HullId = hullId;
             _entity = GetComponent<Entity>();
-            if (HullId == "")
-                GetDefaultHull();
-            LoadHull();
+            //if (HullId == "")
+            //    GetDefaultHull();
+            //LoadHull();
         }
         private void Update()
         {
-            if (_controller != null)
-                _controller.UpdateControl(_entity);
+            _controller?.UpdateControl(_entity);
         }
         private void GetDefaultHull()
         {

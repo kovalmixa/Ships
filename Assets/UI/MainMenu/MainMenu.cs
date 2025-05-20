@@ -1,19 +1,28 @@
-using System.Collections;
-using System.Collections.Generic;
-using JetBrains.Annotations;
+using Assets.Handlers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
+namespace Assets.UI.MainMenu
 {
-    public void PlayLastGame()
+    public class MainMenu : MonoBehaviour
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-    }
+        [SerializeField] public string[] GameObjectsFolderPath;
+        [SerializeField] public string[] ExcludedFolders;
+        public void PlayLastGame()
+        {
+            LoadGame();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
 
-    public void ExitGame()
-    {
-        Debug.Log("Quit");
-        Application.Quit();
+        private void LoadGame()
+        {
+            //ObjectPoolHandler.SetupObjectPool(GameObjectsFolderPath, ExcludedFolders);
+        }
+
+        public void ExitGame()
+        {
+            Debug.Log("Quit");
+            Application.Quit();
+        }
     }
 }
