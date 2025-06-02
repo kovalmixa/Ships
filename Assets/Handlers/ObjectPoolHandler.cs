@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Assets.Entity.DataContainers;
 using UnityEngine;
 
 namespace Assets.Handlers
 {
     public static class ObjectPoolHandler{
 
-        public static Dictionary<string, object> Objects;
+        public static Dictionary<string, IObject> Objects = new();
 
         public static void SetupObjectPool(string[] gameObjectsFolderPaths, string[] excludedFolders)
         {
@@ -31,9 +32,21 @@ namespace Assets.Handlers
 
         private static void BuildObjects(string[] allFiles)
         {
-            foreach (string file in allFiles.Where(file => file.EndsWith(".json")))
+            foreach (string filePath in allFiles.Where(file => file.EndsWith(".json")))
             {
-                //Debug.Log(file);
+                IObject JSONObject = null;
+                if (filePath.Contains("Hull"))
+                {
+                    JSONObject = DataHandler.LoadFromJson<HullContainer>(filePath);
+                }
+                else if (filePath.Contains("Weapon"))
+                {
+                    JSONObject = DataHandler.LoadFromJson<WeaponContainer>(filePath);
+                }
+
+                if (JSONObject == null) continue;
+                string id = DataHandler.GetIdByPath(filePath);
+                Objects.Add(id, JSONObject);
             }
         }
 

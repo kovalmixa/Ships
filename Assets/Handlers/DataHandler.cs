@@ -40,7 +40,7 @@ namespace Assets.Handlers
                 return default;
             }
         }
-
+        //get path by id
         public static string GetPathById(string id, string assetPath)
         {
             string path = assetPath;
@@ -49,7 +49,6 @@ namespace Assets.Handlers
             path += '/';
             return path += objectTypePath[objectTypePath.Length - 1];
         }
-
         private static void GetObjectPath(string[] objectTypePath, ref string path)
         {
             path += '/' + objectTypePath[0];
@@ -61,33 +60,59 @@ namespace Assets.Handlers
             {
                 case "h":
                 {
-                    path += "/Hulls";
+                    path += "\\Hulls";
                     SwitchHullTypePath(objectTypePath, ref path);
                     break;
                 }
                 case "w":
                 {
-                    path += "/Weapons";
+                    path += "\\Weapons";
                     break;
                 }
                 case "p":
                 {
-                    path += "/Projectiles";
+                    path += "\\Projectiles";
                     break;
                 }
             }
         }
-
         private static void SwitchHullTypePath(string[] objectTypePath, ref string path)
         {
             switch (objectTypePath[2])
             {
-                case "sh":
+                case "n":
                 {
-                    path += "/Ships";
+                    path += "/Naval";
+                    break;
+                }
+                case "l":
+                {
+                    path += "/Land";
+                    break;
+                }
+                case "a":
+                {
+                    path += "/Air";
                     break;
                 }
             }
+        }
+        //get id by path
+        public static string GetIdByPath(string path)
+        {
+            string[] tokens = path.Split("\\");
+            string id = tokens[1];
+            id += '_' + tokens[2][0].ToString().ToLower();
+            if (path.Contains("Hull"))
+            {
+                id += '_' + tokens[3][0].ToString().ToLower();
+                id += '_' + tokens[4];
+            }
+            else if (path.Contains("Weapon"))
+            {
+                id += '_' + tokens[3];
+            }
+            return id;
         }
     }
 }

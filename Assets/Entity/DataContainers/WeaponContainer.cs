@@ -1,9 +1,11 @@
+using Newtonsoft.Json;
+
 namespace Assets.Entity.DataContainers
 {
-    public class WeaponContainer
+    public class WeaponContainer : IObject
     {
-        General _general;
-        Graphics _graphics;
-        PhysicsData _physicsData;
+        [JsonProperty("general")] public General General { get; set; }
+        [JsonProperty("graphics")] public Graphics Graphics { get; set; }
+        [JsonProperty("physics")] public Physics Physics{ get; set; }
     }
 }

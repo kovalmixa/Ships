@@ -16,7 +16,7 @@ namespace Assets.UI.MainMenu
 
         private void LoadGame()
         {
-            //ObjectPoolHandler.SetupObjectPool(GameObjectsFolderPath, ExcludedFolders);
+            ObjectPoolHandler.SetupObjectPool(GameObjectsFolderPath, ExcludedFolders);
         }
 
         public void ExitGame()

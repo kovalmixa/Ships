@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Assets.Entity;
 using UnityEngine;
@@ -20,15 +21,18 @@ namespace Assets.GameObjects.InGameMarkers.Scripts
 
         private void Start()
         {
-            GameObject player = FindRootObjectByName("Player");
-            if (player = null)
+            try
             {
-                Debug.LogWarning("Игрок не найден среди корневых объектов сцены.");
+                GameObject player = FindRootObjectByName("Player");
+                if (player == null) throw (new Exception("Player is not found among root of scene"));
+                GameObject entityPool = FindRootObjectByName("Entities");
+                if (entityPool == null) throw (new Exception("Entity pull is not found in root of scene"));
             }
-            GameObject entityPool = FindRootObjectByName("Entities");
+            catch (Exception exception)
             {
-                Debug.LogWarning("Пулл не найден");
+                Debug.LogWarning(exception.Message);
             }
+
         }
         GameObject FindRootObjectByName(string name)
         {

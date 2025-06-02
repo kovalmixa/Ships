@@ -1,6 +1,6 @@
 namespace Assets.Entity.DataContainers
 {
-    public class ProjectileContainer
+    public class ProjectileContainer : IObject
     {
     }
 }

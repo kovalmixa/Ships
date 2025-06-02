@@ -43,9 +43,9 @@ namespace Assets.Entity
         {
             HullId = hullId;
             _entity = GetComponent<Entity>();
-            //if (HullId == "")
-            //    GetDefaultHull();
-            //LoadHull();
+            if (HullId == "")
+                GetDefaultHull();
+            LoadHull();
         }
         private void Update()
         {
@@ -56,25 +56,19 @@ namespace Assets.Entity
             switch (Type)
             {
                 case "ship":
-                    HullId = "NONE_h_sh_boat";
+                    HullId = "NONE_h_n_boat";
                     break;
             }
         }
         private void LoadHull()
         {
-            string path = DataHandler.GetPathById(HullId, AssetObjectPath);
-            int index = HullId.LastIndexOf('_');
-            string name = HullId.Substring(index + 1);
-            string jsonFilePath = path + '/' + name + ".json";
-
-            if (!File.Exists(jsonFilePath))
+            HullContainer hull = _entity.EntityData.HullData;
+            hull = ObjectPoolHandler.Objects[HullId] as HullContainer;
+            Debug.Log(hull.Graphics.Icon);
+            foreach (var VARIABLE in hull.Weapons)
             {
-                Debug.LogError($"File not found: {jsonFilePath}");
-                return;
+                Debug.Log(VARIABLE.FireSector);
             }
-
-            HullContainer hullData = DataHandler.LoadFromJson<HullContainer>(jsonFilePath);
-            _entity.EntityData.HullData = hullData;
         }
     }
 }

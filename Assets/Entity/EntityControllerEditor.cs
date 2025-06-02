@@ -13,11 +13,11 @@ namespace Assets.Entity
             EntityController controller = (EntityController)target;
 
             controller.AssetObjectPath = EditorGUILayout.TextField("Asset Object Path", controller.AssetObjectPath);
+            controller.HullId = EditorGUILayout.TextField("Hull ID", controller.HullId);
 
             if (!controller.IsPlayer)
             {
                 controller.Type = EditorGUILayout.TextField("Type", controller.Type);
-                controller.HullId = EditorGUILayout.TextField("Hull ID", controller.HullId);
 
                 SerializedProperty routeScripts = serializedObject.FindProperty("RouteScriptsList");
                 EditorGUILayout.PropertyField(routeScripts, new GUIContent("Route Scripts List"), true);

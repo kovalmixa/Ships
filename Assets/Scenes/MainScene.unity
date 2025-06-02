@@ -142,6 +142,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 1193459487}
+    - target: {fileID: 5160813711134722321, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
+      propertyPath: pointReachThreshold
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6326538263517037327, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: m_LocalPosition.x
       value: 8.53
@@ -528,6 +532,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 702182522}
+    - target: {fileID: 5160813711134722321, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
+      propertyPath: pointReachThreshold
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6326538263517037327, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.32
@@ -2216,6 +2224,10 @@ PrefabInstance:
       propertyPath: target
       value: 
       objectReference: {fileID: 194693061}
+    - target: {fileID: 5160813711134722321, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
+      propertyPath: pointReachThreshold
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6326538263517037327, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: m_LocalPosition.x
       value: 21.86

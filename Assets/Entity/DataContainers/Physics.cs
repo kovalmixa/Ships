@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 namespace Assets.Entity.DataContainers
 {
-    public class PhysicsData
+    public class Physics
     {
         [JsonProperty("mass")]
         public int Mass { get; set; }
