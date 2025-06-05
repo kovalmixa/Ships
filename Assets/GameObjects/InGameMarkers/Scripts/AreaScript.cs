@@ -1,38 +1,47 @@
 using System.Collections.Generic;
-using Assets.Entity;
 using UnityEngine;
 
-public class AreaScript : MonoBehaviour, IScript
+namespace Assets.GameObjects.InGameMarkers.Scripts
 {
-    [SerializeField] public List<MonoBehaviour> Scripts;
-    private List<IScript> _scripts = new();
-
-    public List<IScript> GetScripts() => _scripts;
-    public Vector2 Position => transform.position;
-    public float Radius = 0.5f;
-
-    private void Awake()
+    public class AreaScript : ScriptBase
     {
-        foreach (MonoBehaviour script in Scripts)
+        [SerializeField] public List<MonoBehaviour> Scripts;
+        [SerializeField] public CircleCollider2D Collider;
+        private List<IScript> _scripts = new();
+        private bool _isExecuted;
+
+        public List<IScript> GetScripts() => _scripts;
+        private void Awake()
         {
-            if (script is IScript s)
-                _scripts.Add(s);
-            else
-                Debug.LogWarning("Assigned scriptBehaviour does not implement IScript!");
+            foreach (MonoBehaviour script in Scripts)
+            {
+                if (script is IScript s)
+                    _scripts.Add(s);
+                else
+                    Debug.LogWarning("Assigned scriptBehaviour does not implement IScript!");
+            }
         }
-    }
-    public bool Execute(Entity entity)
-    {
-        if (_scripts.Count == 0)
+
+        private void OnTriggerEnter(Collider other)
         {
-            Debug.LogWarning("Script list is empty!");
-            return false;
+            Entity.Entity entity = other.GetComponent<Entity.Entity>();
+            if (entity) Execute(entity);
         }
-        foreach (IScript _script in _scripts)
+        public override bool Execute(Entity.Entity entity)
         {
-            if (!_script.Execute(entity))
+            if (_scripts.Count == 0)
+            {
+                Debug.LogWarning("Script list is empty!");
                 return false;
+            }
+            foreach (IScript _script in _scripts)
+            {
+                _script.Execute(entity);
+            }
+            _isExecuted = true;
+            return true;
         }
-        return true;
+        public override bool IsFinished(Entity.Entity entity) => true;
+        public override bool IsExecuted(Entity.Entity entity) => _isExecuted;
     }
 }

@@ -27,5 +27,9 @@ namespace Assets.Entity.Player
         private void RotateControl(Entity entity)
         {
         }
+
+        public void SetMovementPoint(Transform target) { }
+
+        public void SetTargetPoint(Transform target) { }
     }
 }

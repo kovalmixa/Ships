@@ -37,15 +37,15 @@ namespace Assets.Handlers
                 IObject JSONObject = null;
                 if (filePath.Contains("Hull"))
                 {
-                    JSONObject = DataHandler.LoadFromJson<HullContainer>(filePath);
+                    JSONObject = DataFileHandler.LoadFromJson<HullContainer>(filePath);
                 }
                 else if (filePath.Contains("Weapon"))
                 {
-                    JSONObject = DataHandler.LoadFromJson<WeaponContainer>(filePath);
+                    JSONObject = DataFileHandler.LoadFromJson<WeaponContainer>(filePath);
                 }
 
                 if (JSONObject == null) continue;
-                string id = DataHandler.GetIdByPath(filePath);
+                string id = DataFileHandler.GetIdByPath(filePath);
                 Objects.Add(id, JSONObject);
             }
         }

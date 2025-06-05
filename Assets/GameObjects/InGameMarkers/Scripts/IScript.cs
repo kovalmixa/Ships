@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using Assets.Entity;
-using UnityEngine;
-
-public interface IScript
+namespace Assets.GameObjects.InGameMarkers.Scripts
 {
-    bool Execute(Entity entity);
+    public interface IScript
+    {
+        bool IsExecuted(Entity.Entity entity);
+        bool Execute(Entity.Entity entity);
+        bool IsFinished(Entity.Entity entity);
+    }
 }

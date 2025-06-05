@@ -5,12 +5,12 @@ namespace Assets.Entity.DataContainers
 {
     public class HullContainer : IObject
     {
-        [JsonProperty("general")] public General General { get; set; }
+        public General General { get; set; }
 
-        [JsonProperty("graphics")] public Graphics Graphics { get; set; }
+        public Graphics Graphics { get; set; }
 
-        [JsonProperty("physics")] public Physics Physics { get; set; }
+        public Physics Physics { get; set; }
 
-        [JsonProperty("weapons")] public List<HullWeaponProperties> Weapons { get; set; } = new();
+        public List<HullWeaponProperties> Weapons { get; set; } = new();
     }
 }

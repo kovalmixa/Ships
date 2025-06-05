@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using Assets.Entity.AI;
 using Assets.Entity.DataContainers;
 using Assets.Entity.Player;
+using Assets.GameObjects.InGameMarkers.Scripts;
 using Assets.Handlers;
 using UnityEngine;
 
@@ -12,40 +14,48 @@ namespace Assets.Entity
     {
         public string AssetObjectPath;
         public bool IsPlayer = false;
-        public string Nation { get; set; }
+        public string Nation { get; set; } //move to Entity as Nation buffs can be added to hull
         public string AiName { get; set; }
         public string Type = "ship";
         public string HullId;
-        [SerializeField] public List<GameObject> RouteScriptsList;
-        [SerializeField] public List<GameObject> ScriptAreaList;
-        [SerializeField] public List<GameObject> ScriptList; //реализовать как скрипты
+        [SerializeField] public List<ScriptBase> ScriptList = new();
         [SerializeField] public List<string> WeaponIds = new();
         private Entity _entity;
         private IEntityController _controller;
         private void Start()
         {
-
+            SetHull();
+            _entity.EntityController = this;
             if (IsPlayer)
             {
                 _controller = gameObject.AddComponent<PlayerController>();
             }
             else
             {
-                _controller = gameObject.AddComponent<AiController>();
-                AiController aiController = _controller as AiController;
-                if (aiController != null) aiController.SetupRouteScripts(RouteScriptsList);
+                SetupScripts();
+                ScriptList.Clear();
             }
-            SetHull();
+        }
+        public void SetupScripts()
+        {
+            _controller = gameObject.AddComponent<AiController>();
+            AiController aiController = _controller as AiController;
+            aiController.Size = _entity.Size;
+            Queue<IScript> scripts = new();
+            foreach (IScript scriptObj in ScriptList)
+            {
+                scripts.Enqueue(scriptObj);
+            }
+            aiController.ScriptList = scripts;
 
         }
-
         public void SetHull(string hullId = "")
         {
             HullId = hullId;
             _entity = GetComponent<Entity>();
             if (HullId == "")
                 GetDefaultHull();
-            LoadHull();
+            //LoadHull();
         }
         private void Update()
         {
@@ -64,11 +74,8 @@ namespace Assets.Entity
         {
             HullContainer hull = _entity.EntityData.HullData;
             hull = ObjectPoolHandler.Objects[HullId] as HullContainer;
-            Debug.Log(hull.Graphics.Icon);
-            foreach (var VARIABLE in hull.Weapons)
-            {
-                Debug.Log(VARIABLE.FireSector);
-            }
         }
+        public void SetPointToMove(Transform target) => _controller.SetMovementPoint(target);
+        public void SetTarget(Transform target) => _controller.SetTargetPoint(target);
     }
 }

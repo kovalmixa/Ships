@@ -1,13 +1,27 @@
 using System;
 using Assets.Entity.DataContainers;
+using Assets.GameObjects.InGameMarkers.Scripts;
 using UnityEngine;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 namespace Assets.Entity
 {
     public class Entity : MonoBehaviour
     {
+        public EntityController EntityController;
         public EntityContainer EntityData = new EntityContainer();
         public Transform HullLayers;
+        public Vector2 Size
+        {
+            get => GetComponent<BoxCollider2D>().size;
+            set
+            {
+                SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+                BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
+                Vector2 spriteSize = spriteRenderer.sprite.bounds.size;
+                boxCollider.size = spriteSize / transform.localScale * value;
+            }
+        }
 
         public float MaxSpeed = 5f;
         public float Acceleration = 3f;
@@ -35,16 +49,15 @@ namespace Assets.Entity
         }
         void Start()
         {
-            SetColliderSize();
+            Size = new Vector2(1.2f,1.2f);
         }
-        private void SetColliderSize()
+
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-            BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
-            Vector2 spriteSize = spriteRenderer.sprite.bounds.size;
-            boxCollider.size = spriteSize / transform.localScale * 1.2f;
+            IScript script = other.GetComponent<IScript>();
+            script.Execute(this);
         }
-        public void OnCollisionEnter2D(Collision2D collision)
+        private void OnCollisionEnter2D(Collision2D collision)
         {
             Rigidbody2D otherRb = collision.rigidbody;
             if (otherRb == null)

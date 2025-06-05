@@ -6,13 +6,13 @@ namespace Assets.Entity.DataContainers
     {
         private string _texture;
 
-        [JsonProperty("offset_x")] public int OffsetX { get; set; }
-        [JsonProperty("offset_y")] public int OffsetY { get; set; }
-        [JsonProperty("icon")] public string Icon { get; set; }
-        [JsonProperty("texture")] public string Texture
+        public int OffsetX { get; set; }
+        public int OffsetY { get; set; }
+        public string Icon { get; set; }
+        public string Texture
         {
             get => _texture ?? Icon;
-            set { _texture = value; }
+            set => _texture = value;
         }
     
     }

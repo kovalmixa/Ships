@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Assets.Entity.DataContainers
 {
     public class HullWeaponProperties
@@ -8,6 +10,10 @@ namespace Assets.Entity.DataContainers
         public float X { get; set; }
         public float Y { get; set; }
         public string RotationSector { get; set; }
-        public string FireSector { get; set; }
+        private string _fireSector;
+        public string FireSector {
+            get => _fireSector ?? RotationSector;
+            set => _fireSector = value;
+        }
     }
 }

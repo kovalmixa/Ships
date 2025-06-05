@@ -19,11 +19,6 @@ namespace Assets.Entity
             {
                 controller.Type = EditorGUILayout.TextField("Type", controller.Type);
 
-                SerializedProperty routeScripts = serializedObject.FindProperty("RouteScriptsList");
-                EditorGUILayout.PropertyField(routeScripts, new GUIContent("Route Scripts List"), true);
-
-                SerializedProperty scriptAreas = serializedObject.FindProperty("ScriptAreaList");
-                EditorGUILayout.PropertyField(scriptAreas, new GUIContent("Script Area List"), true);
 
                 SerializedProperty scripts = serializedObject.FindProperty("ScriptList");
                 EditorGUILayout.PropertyField(scripts, new GUIContent("Script List"), true);

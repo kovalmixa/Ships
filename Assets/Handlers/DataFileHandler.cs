@@ -5,7 +5,7 @@ using Debug = UnityEngine.Debug;
 
 namespace Assets.Handlers
 {
-    public static class DataHandler
+    public static class DataFileHandler
     {
         public static void SaveToJson<T>(T data, string filePath)
         {

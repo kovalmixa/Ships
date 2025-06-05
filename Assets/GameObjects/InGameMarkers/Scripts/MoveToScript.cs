@@ -1,23 +1,38 @@
-using Assets.Entity;
 using UnityEngine;
 
-public class MoveToScript : MonoBehaviour, IScript
+namespace Assets.GameObjects.InGameMarkers.Scripts
 {
-    [SerializeField] public Transform Target;
-    [SerializeField] private float pointReachThreshold = 0.5f;
-
-    public bool Execute(Entity entity)
+    public class MoveToScript : ScriptBase
     {
-        if (Target == null) return true;
-        Vector2 directionToPoint = (Vector2)(Target.position - entity.transform.position);
-        if (directionToPoint.magnitude < pointReachThreshold)
+        [SerializeField] public Transform Target;
+        private bool _isExecuted;
+        public override bool Execute(Entity.Entity entity)
         {
+            if (entity.EntityController.IsPlayer) return false;
+            if (Target == null) return false;
+            entity.EntityController.SetPointToMove(Target);
+            _isExecuted = true;
             return true;
         }
-        float angleToTarget = Vector2.SignedAngle(entity.transform.up, directionToPoint.normalized);
-        float rotationDirection = Mathf.Clamp(angleToTarget / 45f, -1f, 1f);
-        entity.SpeedLevel = Mathf.Clamp(entity.SpeedLevel + 1, entity.MinSpeedLevel, entity.MaxSpeedLevel);
-        entity.Movement(rotationDirection);
-        return false;
+
+        public override bool IsExecuted(Entity.Entity entity) => _isExecuted;
+        public override bool IsFinished(Entity.Entity entity)
+        {
+            float threshold = entity.Size.y + 0.5f;
+            CircleCollider2D area = Target.GetComponent<CircleCollider2D>();
+            if (area) return Vector3.Distance(entity.transform.position, Target.position) < area.radius + threshold;
+            return Vector3.Distance(entity.transform.position, Target.position) < threshold;
+        }
+        #if UNITY_EDITOR
+                private void OnDrawGizmos()
+                {
+                    if (Target != null)
+                    {
+                        Gizmos.color = Color.cyan;
+                        Gizmos.DrawLine(transform.position, Target.position);
+                        Gizmos.DrawSphere(Target.position, 0.1f);
+                    }
+                }
+        #endif
     }
 }
