@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Assets.Entity.DataContainers;
 using Assets.GameObjects.InGameMarkers.Scripts;
 using UnityEngine;
@@ -9,7 +10,7 @@ namespace Assets.Entity
     public class Entity : MonoBehaviour
     {
         public EntityController EntityController;
-        public EntityContainer EntityData = new EntityContainer();
+        public EntityContainer EntityData = new();
         public Transform HullLayers;
         public Vector2 Size
         {
@@ -51,11 +52,10 @@ namespace Assets.Entity
         {
             Size = new Vector2(1.2f,1.2f);
         }
-
         private void OnTriggerEnter2D(Collider2D other)
         {
             IScript script = other.GetComponent<IScript>();
-            script.Execute(this);
+            script?.Execute(this);
         }
         private void OnCollisionEnter2D(Collision2D collision)
         {
@@ -79,6 +79,22 @@ namespace Assets.Entity
 
             //Теряет скорость пропорционально массе другого объекта
             _currentSpeed *= otherRb.mass / totalMass;
+        }
+        public void SetupHullLayers(HullContainer hull)
+        {
+            EntityData.HullData = hull;
+            string[] texturePaths = hull.Graphics.Textures;
+            for (int i = 0; i < texturePaths.Length; i++)
+            {
+                GameObject spriteObj = new GameObject($"textureLayer{i}");
+                SpriteRenderer renderer = spriteObj.AddComponent<SpriteRenderer>();
+                Sprite sprite = Resources.Load<Sprite>(texturePaths[i]);
+                renderer.sprite = sprite;
+                Debug.Log(sprite);
+                spriteObj.transform.SetParent(HullLayers, worldPositionStays: false);
+                spriteObj.transform.localPosition = Vector3.zero;
+            }
+            GetComponent<SpriteRenderer>().forceRenderingOff = true;
         }
         public void Movement(float rotationDirection)
         {

@@ -11,6 +11,7 @@ namespace Assets.Entity.DataContainers
 
         public Physics Physics { get; set; }
 
-        public List<HullWeaponProperties> Weapons { get; set; } = new();
+        public HullWeaponProperties[] Weapons { get; set; }
+        public Graphics GetGraphics() => Graphics;
     }
 }

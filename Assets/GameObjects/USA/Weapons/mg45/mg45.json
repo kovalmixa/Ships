@@ -8,7 +8,9 @@
         "offsetX": 0,
         "offsetY": -5,
         "icon": "mg45Icon.png",
-        "texture": "mg45.png"
+        "textures": [
+            "mg45.png"
+        ]
     },
     "rotation": {
         "rotationSpeed": 10

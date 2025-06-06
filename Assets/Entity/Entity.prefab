@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a58ab4466f19de4d83f54e45908e85a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EntityController: {fileID: 0}
+  EntityController: {fileID: 2939312566082401126}
   HullLayers: {fileID: 4662671464860693575}
   MaxSpeed: 5
   Acceleration: 3

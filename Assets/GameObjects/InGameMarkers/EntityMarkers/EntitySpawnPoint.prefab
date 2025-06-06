@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2155248591020735349}
   - component: {fileID: 7488462941460160214}
   - component: {fileID: 686719151939722024}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EntitySpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,8 +133,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52cf7eaa0b742324994931c5d6211a6e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnDistance: 50
   Nation: 
   Level: 0
-  Quantity: 0
+  Quantity: 1
+  EntityPrefab: {fileID: 1043631210884575351, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
   ScriptList: []

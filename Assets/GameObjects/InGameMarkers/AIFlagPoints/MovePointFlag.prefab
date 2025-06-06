@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6792391005146554435}
   - component: {fileID: 665848483657915059}
   - component: {fileID: 1595710537326669728}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MovePointFlag
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -36,7 +36,7 @@ namespace Assets.Handlers
             }
             catch (Exception ex)
             {
-                Debug.LogError($"Error loading JSON: {ex.Message}");
+                Debug.LogError($"Error loading JSON on {filePath}: {ex.Message}");
                 return default;
             }
         }

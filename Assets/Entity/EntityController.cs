@@ -24,11 +24,10 @@ namespace Assets.Entity
         private IEntityController _controller;
         private void Start()
         {
-            SetHull();
-            _entity.EntityController = this;
             if (IsPlayer)
             {
                 _controller = gameObject.AddComponent<PlayerController>();
+                SetHull();
             }
             else
             {
@@ -55,7 +54,7 @@ namespace Assets.Entity
             _entity = GetComponent<Entity>();
             if (HullId == "")
                 GetDefaultHull();
-            //LoadHull();
+            LoadHull();
         }
         private void Update()
         {
@@ -72,8 +71,9 @@ namespace Assets.Entity
         }
         private void LoadHull()
         {
-            HullContainer hull = _entity.EntityData.HullData;
-            hull = ObjectPoolHandler.Objects[HullId] as HullContainer;
+            if (ObjectPoolHandler.Objects.Count == 0) return;
+            HullContainer hull = ObjectPoolHandler.Objects[HullId] as HullContainer;
+            _entity.SetupHullLayers(hull);
         }
         public void SetPointToMove(Transform target) => _controller.SetMovementPoint(target);
         public void SetTarget(Transform target) => _controller.SetTargetPoint(target);

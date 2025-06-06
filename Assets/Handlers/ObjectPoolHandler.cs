@@ -4,19 +4,17 @@ using System.IO;
 using System.Linq;
 using Assets.Entity.DataContainers;
 using UnityEngine;
+using Graphics = Assets.Entity.DataContainers.Graphics;
 
 namespace Assets.Handlers
 {
     public static class ObjectPoolHandler{
-
         public static Dictionary<string, IObject> Objects = new();
-
         public static void SetupObjectPool(string[] gameObjectsFolderPaths, string[] excludedFolders)
         {
             string[] allFiles = GetFilePaths(gameObjectsFolderPaths, excludedFolders);
             BuildObjects(allFiles);
         }
-
         private static string[] GetFilePaths(string[] gameObjectsFolderPaths, string[] excludedFolders)
         {
             List<string> allFiles = new();
@@ -29,24 +27,36 @@ namespace Assets.Handlers
             }
             return allFiles.ToArray();
         }
-
         private static void BuildObjects(string[] allFiles)
         {
             foreach (string filePath in allFiles.Where(file => file.EndsWith(".json")))
             {
-                IObject JSONObject = null;
+                IObject jsonObject = null;
                 if (filePath.Contains("Hull"))
                 {
-                    JSONObject = DataFileHandler.LoadFromJson<HullContainer>(filePath);
+                    jsonObject = DataFileHandler.LoadFromJson<HullContainer>(filePath);
                 }
                 else if (filePath.Contains("Weapon"))
                 {
-                    JSONObject = DataFileHandler.LoadFromJson<WeaponContainer>(filePath);
+                    jsonObject = DataFileHandler.LoadFromJson<WeaponContainer>(filePath);
                 }
-
-                if (JSONObject == null) continue;
+                if (jsonObject == null) continue;
+                SetObjectPath(filePath, jsonObject);
                 string id = DataFileHandler.GetIdByPath(filePath);
-                Objects.Add(id, JSONObject);
+                Objects.Add(id, jsonObject);
+            }
+        }
+
+        private static void SetObjectPath(string filePath, IObject jsonObject)
+        {
+            Graphics graphics = jsonObject.GetGraphics();
+            if (graphics == null) return;
+            int index = filePath.LastIndexOf('\\');
+            filePath = filePath.Substring(0, index) + '\\';
+            graphics.Icon = filePath + graphics.Icon;
+            for (int i = 0; i < graphics.Textures.Length; i++)
+            {
+                graphics.Textures[i] = filePath + graphics.Textures[i];
             }
         }
 

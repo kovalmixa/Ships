@@ -8,5 +8,6 @@ namespace Assets.Entity.DataContainers
 {
     public interface IObject
     {
+        public Graphics GetGraphics();
     }
 }

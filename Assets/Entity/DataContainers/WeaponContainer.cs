@@ -7,5 +7,7 @@ namespace Assets.Entity.DataContainers
         public General General { get; set; }
         public Graphics Graphics { get; set; }
         public Physics Physics{ get; set; }
+        public Graphics GetGraphics() => Graphics;
+
     }
 }
