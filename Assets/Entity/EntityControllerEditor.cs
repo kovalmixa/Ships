@@ -10,14 +10,16 @@ namespace Assets.Entity
         {
             serializedObject.Update();
             EntityController controller = (EntityController)target;
-            controller.HullId = EditorGUILayout.TextField("Hull ID", controller.HullId);
+            SerializedProperty hullId = serializedObject.FindProperty("HullId");
+            EditorGUILayout.PropertyField(hullId, new GUIContent("Hull ID"));
+            SerializedProperty weaponIds = serializedObject.FindProperty("WeaponIds");
+            EditorGUILayout.PropertyField(weaponIds, new GUIContent("Weapon IDs"), true);
             if (!controller.IsPlayer)
             {
-                controller.Type = EditorGUILayout.TextField("Type", controller.Type);
+                SerializedProperty type = serializedObject.FindProperty("Type");
+                EditorGUILayout.PropertyField(type, new GUIContent("Type"));
                 SerializedProperty scripts = serializedObject.FindProperty("ScriptList");
                 EditorGUILayout.PropertyField(scripts, new GUIContent("Script List"), true);
-                SerializedProperty weaponIds = serializedObject.FindProperty("WeaponIds");
-                EditorGUILayout.PropertyField(weaponIds, new GUIContent("Weapon IDs"), true);
             }
             serializedObject.ApplyModifiedProperties();
         }

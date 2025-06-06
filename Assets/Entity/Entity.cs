@@ -46,10 +46,6 @@ namespace Assets.Entity
         {
             get => _minSpeedLevel;
         }
-        void Start()
-        {
-            Size = new Vector2(1.2f,1.2f);
-        }
         private void OnTriggerEnter2D(Collider2D other)
         {
             IScript script = other.GetComponent<IScript>();
@@ -96,11 +92,8 @@ namespace Assets.Entity
                 maxSize.x = Mathf.Max(maxSize.x, worldSize.x);
                 maxSize.y = Mathf.Max(maxSize.y, worldSize.y);
             }
-
-            Size = maxSize * 1.2f;
-            Debug.Log($"Collider size set to: {Size}");
+            Size = maxSize / 10;
         }
-
         private IEnumerator SetupLayersCoroutine(string[] texturePaths)
         {
             for (int i = 0; i < texturePaths.Length; i++)

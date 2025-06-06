@@ -9,7 +9,7 @@ using Vector2 = UnityEngine.Vector2;
 
 namespace Assets.InGameMarkers.EntityMarkers
 {
-    public class SpawnerScript : MonoBehaviour
+    public class Spawner : MonoBehaviour
     {
         public string Nation;
         public uint Level;

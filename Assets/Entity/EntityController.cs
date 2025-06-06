@@ -22,6 +22,10 @@ namespace Assets.Entity
         [SerializeField] public List<string> WeaponIds = new();
         private Entity _entity;
         private IEntityController _controller;
+        private void Awake()
+        {
+            _entity = GetComponent<Entity>();
+        }
         private void Start()
         {
             if (IsPlayer)
@@ -50,8 +54,8 @@ namespace Assets.Entity
         }
         public void SetHull(string hullId = "")
         {
-            HullId = hullId;
-            _entity = GetComponent<Entity>();
+            if (_entity == null) return;
+            HullId = HullId == "" ? hullId : HullId;
             if (HullId == "")
                 GetDefaultHull();
             LoadHull();
