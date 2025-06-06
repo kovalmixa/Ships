@@ -1,14 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using Assets.Entity;
+using Assets.InGameMarkers.Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.Experimental.GraphView.GraphView;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 
-namespace Assets.GameObjects.InGameMarkers.Scripts
+namespace Assets.InGameMarkers.EntityMarkers
 {
     public class SpawnerScript : MonoBehaviour
     {

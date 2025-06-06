@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Assets.GameObjects.InGameMarkers.Scripts;
+using Assets.InGameMarkers.Scripts;
+using Assets.InGameMarkers.Scripts;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
 

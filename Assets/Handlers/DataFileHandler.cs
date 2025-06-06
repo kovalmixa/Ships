@@ -101,16 +101,16 @@ namespace Assets.Handlers
         public static string GetIdByPath(string path)
         {
             string[] tokens = path.Split("\\");
-            string id = tokens[1];
-            id += '_' + tokens[2][0].ToString().ToLower();
+            string id = tokens[2];
+            id += '_' + tokens[3][0].ToString().ToLower();
             if (path.Contains("Hull"))
             {
-                id += '_' + tokens[3][0].ToString().ToLower();
-                id += '_' + tokens[4];
+                id += '_' + tokens[4][0].ToString().ToLower();
+                id += '_' + tokens[5];
             }
             else if (path.Contains("Weapon"))
             {
-                id += '_' + tokens[3];
+                id += '_' + tokens[4];
             }
             return id;
         }

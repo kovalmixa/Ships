@@ -1,3 +1,4 @@
+using System.IO;
 using Assets.Handlers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,8 +7,6 @@ namespace Assets.UI.MainMenu
 {
     public class MainMenu : MonoBehaviour
     {
-        [SerializeField] public string[] GameObjectsFolderPath;
-        [SerializeField] public string[] ExcludedFolders;
         public void PlayLastGame()
         {
             LoadGame();
@@ -16,7 +15,7 @@ namespace Assets.UI.MainMenu
 
         private void LoadGame()
         {
-            ObjectPoolHandler.SetupObjectPool(GameObjectsFolderPath, ExcludedFolders);
+            //code for loading data from save files
         }
 
         public void ExitGame()

@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Assets.Entity.DataContainers;
-using Assets.GameObjects.InGameMarkers.Scripts;
+using Assets.InGameMarkers.Scripts;
+using Unity.VisualScripting;
 using UnityEngine;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
@@ -12,16 +15,11 @@ namespace Assets.Entity
         public EntityController EntityController;
         public EntityContainer EntityData = new();
         public Transform HullLayers;
+        private List<Sprite> _hullSprites = new();
         public Vector2 Size
         {
             get => GetComponent<BoxCollider2D>().size;
-            set
-            {
-                SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
-                BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
-                Vector2 spriteSize = spriteRenderer.sprite.bounds.size;
-                boxCollider.size = spriteSize / transform.localScale * value;
-            }
+            set => GetComponent<BoxCollider2D>().size = value;
         }
 
         public float MaxSpeed = 5f;
@@ -84,17 +82,50 @@ namespace Assets.Entity
         {
             EntityData.HullData = hull;
             string[] texturePaths = hull.Graphics.Textures;
+            StartCoroutine(SetupLayersCoroutine(texturePaths));
+        }
+        private void SetColliderSize()
+        {
+            Vector2 maxSize = new();
+            foreach (Sprite sprite in _hullSprites)
+            {
+                Vector2 textureSize = new(sprite.texture.width, sprite.texture.height);
+                float ppu = sprite.pixelsPerUnit;
+                Vector2 worldSize = textureSize / ppu;
+
+                maxSize.x = Mathf.Max(maxSize.x, worldSize.x);
+                maxSize.y = Mathf.Max(maxSize.y, worldSize.y);
+            }
+
+            Size = maxSize * 1.2f;
+            Debug.Log($"Collider size set to: {Size}");
+        }
+
+        private IEnumerator SetupLayersCoroutine(string[] texturePaths)
+        {
             for (int i = 0; i < texturePaths.Length; i++)
             {
-                GameObject spriteObj = new GameObject($"textureLayer{i}");
-                SpriteRenderer renderer = spriteObj.AddComponent<SpriteRenderer>();
-                Sprite sprite = Resources.Load<Sprite>(texturePaths[i]);
-                renderer.sprite = sprite;
-                Debug.Log(sprite);
-                spriteObj.transform.SetParent(HullLayers, worldPositionStays: false);
-                spriteObj.transform.localPosition = Vector3.zero;
+                GameObject layerGo = new GameObject($"textureLayer{i}");
+                SpriteRenderer rend = layerGo.AddComponent<SpriteRenderer>();
+                bool done = false;
+                Sprite loaded = null;
+                yield return StreamingSpriteLoader.LoadSprite(texturePaths[i], s => {
+                    loaded = s;
+                    done = true;
+                });
+                if (!done || loaded == null)
+                {
+                    Destroy(layerGo);
+                    continue;
+                }
+                rend.sprite = loaded;
+                _hullSprites.Add(rend.sprite);
+                layerGo.transform.SetParent(HullLayers, false);
+                layerGo.transform.localPosition = Vector3.zero;
             }
-            GetComponent<SpriteRenderer>().forceRenderingOff = true;
+            var baseRenderer = GetComponent<SpriteRenderer>();
+            if (baseRenderer) baseRenderer.forceRenderingOff = true;
+            SetColliderSize();
         }
         public void Movement(float rotationDirection)
         {

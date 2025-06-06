@@ -1,4 +1,4 @@
-namespace Assets.GameObjects.InGameMarkers.Scripts
+namespace Assets.InGameMarkers.Scripts
 {
     public interface IScript
     {

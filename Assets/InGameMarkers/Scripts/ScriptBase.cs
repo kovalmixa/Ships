@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.GameObjects.InGameMarkers.Scripts
+namespace Assets.InGameMarkers.Scripts
 {
     public abstract class ScriptBase : MonoBehaviour, IScript
     {

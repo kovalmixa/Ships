@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 897635606252877277}
   - component: {fileID: 2155248591020735349}
   - component: {fileID: 7488462941460160214}
-  - component: {fileID: 686719151939722024}
+  - component: {fileID: 6934366918790761403}
   m_Layer: 6
   m_Name: EntitySpawnPoint
   m_TagString: Untagged
@@ -121,7 +121,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 5
---- !u!114 &686719151939722024
+--- !u!114 &6934366918790761403
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

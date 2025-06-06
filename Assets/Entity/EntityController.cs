@@ -4,15 +4,15 @@ using System.IO;
 using Assets.Entity.AI;
 using Assets.Entity.DataContainers;
 using Assets.Entity.Player;
-using Assets.GameObjects.InGameMarkers.Scripts;
+using Assets.InGameMarkers.Scripts;
 using Assets.Handlers;
+using Assets.InGameMarkers.Scripts;
 using UnityEngine;
 
 namespace Assets.Entity
 {
     public class EntityController : MonoBehaviour
     {
-        public string AssetObjectPath;
         public bool IsPlayer = false;
         public string Nation { get; set; } //move to Entity as Nation buffs can be added to hull
         public string AiName { get; set; }

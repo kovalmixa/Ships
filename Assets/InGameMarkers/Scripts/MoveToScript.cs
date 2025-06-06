@@ -1,6 +1,7 @@
+using Assets.InGameMarkers.Scripts;
 using UnityEngine;
 
-namespace Assets.GameObjects.InGameMarkers.Scripts
+namespace Assets.InGameMarkers.Scripts
 {
     public class MoveToScript : ScriptBase
     {
