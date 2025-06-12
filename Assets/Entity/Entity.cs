@@ -39,7 +39,7 @@ namespace Assets.Entity
         }
         private IEnumerator SetupHullLayers(string[] texturePaths)
         {
-            yield return StartCoroutine(base.SetupLayersCoroutine(texturePaths));
+            yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
             SetupWeapons();
         }
         private void SetupWeapons()
@@ -52,14 +52,13 @@ namespace Assets.Entity
                 HullWeaponProperties[] innerArray = weaponProperties[i];
                 for (int j = 0; j < innerArray.Length; j++)
                 {
-                    GameObject weaponGo = new GameObject($"Weapon_{i}");
+                    GameObject weaponGo = new GameObject($"Weapon_{j}");
                     HullWeaponProperties weapon = weaponProperties[i][j];
                     weaponGo.transform.SetParent(layer.transform, false);
                     weaponGo.transform.localPosition = weapon.Position;
                 }
             }
         }
-
         public void Movement(float rotationDirection)
         {
             switch (Type)

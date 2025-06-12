@@ -58,7 +58,11 @@ namespace Assets.Entity
             foreach (GameObject layer in Layers)
             {
                 Sprite sprite = layer.GetComponent<SpriteRenderer>().sprite;
-                if (sprite == null) textureSize = new(0, 0);
+                if (sprite == null)
+                {
+                    layer.AddComponent<BoxCollider2D>().size = new(0, 0);
+                    continue;
+                }
                 Vector2 textureSize = GetTextureSizeFromSprite(sprite);
                 layer.AddComponent<BoxCollider2D>().size = textureSize;
             }

@@ -14,7 +14,7 @@ namespace Assets.Entity.DataContainers
         {
             get
             {
-                if (Icon == null)
+                if (_icon == null)
                     return Textures[0];
                 return _icon;
             }

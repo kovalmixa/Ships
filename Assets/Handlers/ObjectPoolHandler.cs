@@ -56,6 +56,7 @@ namespace Assets.Handlers
             graphics.Icon = filePath + graphics.Icon;
             for (int i = 0; i < graphics.Textures.Length; i++)
             {
+                if (graphics.Textures[i] == "") continue;
                 graphics.Textures[i] = filePath + graphics.Textures[i];
             }
         }
