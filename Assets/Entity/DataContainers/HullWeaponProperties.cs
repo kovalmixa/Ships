@@ -9,6 +9,7 @@ namespace Assets.Entity.DataContainers
         public string Size { get; set; }
         public float X { get; set; }
         public float Y { get; set; }
+        public Vector2 Position => new (X, Y);
         public string RotationSector { get; set; }
         private string _fireSector;
         public string FireSector {

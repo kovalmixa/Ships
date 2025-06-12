@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.IO;
 using Assets.Entity.AI;
 using Assets.Entity.DataContainers;
 using Assets.Entity.Player;
 using Assets.InGameMarkers.Scripts;
 using Assets.Handlers;
-using Assets.InGameMarkers.Scripts;
+using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
 
 namespace Assets.Entity
@@ -16,7 +14,7 @@ namespace Assets.Entity
         public bool IsPlayer = false;
         public string Nation { get; set; } //move to Entity as Nation buffs can be added to hull
         public string AiName { get; set; }
-        public string Type = "ship";
+        public string Type = "Sea";
         public string HullId;
         [SerializeField] public List<ScriptBase> ScriptList = new();
         [SerializeField] public List<string> WeaponIds = new();
@@ -25,7 +23,9 @@ namespace Assets.Entity
         private void Awake()
         {
             _entity = GetComponent<Entity>();
+            SetBodyType(Type);
         }
+        private void SetBodyType(string type) => _entity.Type = type;
         private void Start()
         {
             if (IsPlayer)
@@ -68,7 +68,7 @@ namespace Assets.Entity
         {
             switch (Type)
             {
-                case "ship":
+                case "Sea":
                     HullId = "NONE_h_n_boat";
                     break;
             }

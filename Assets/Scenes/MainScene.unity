@@ -691,6 +691,18 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4813537967953498274, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: m_DrawMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8954999742390597031, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8954999742390597031, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 29.999998
+      objectReference: {fileID: 0}
     - target: {fileID: 8954999742390597031, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: m_LocalPosition.x
       value: 11.26

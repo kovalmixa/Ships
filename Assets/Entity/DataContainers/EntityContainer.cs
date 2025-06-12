@@ -1,3 +1,5 @@
+using System;
+
 namespace Assets.Entity.DataContainers
 {
     public class EntityContainer

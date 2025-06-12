@@ -9,22 +9,24 @@
       "icon": "boat.png"
     },
     "weapons": [
-      {
-        "type": "turret",
-        "slot": 0,
-        "size": "s",
-        "x": 0,
-        "y": 5,
-        "rotationSector": "-90,90"
-      },
-      {
-        "type": "cannon",
-        "slot": 1,
-        "size": "m",
-        "x": 10,
-        "y": -5,
-        "rotationSector": "-45,45"
-      }
+        [
+            {
+                "type": "turret",
+                "slot": 0,
+                "size": "s",
+                "x": 0,
+                "y": 5,
+                "rotationSector": "-90,90"
+            },
+            {
+                "type": "cannon",
+                "slot": 1,
+                "size": "m",
+                "x": 10,
+                "y": -5,
+                "rotationSector": "-45,45"
+            }
+        ]
     ]
   }
   

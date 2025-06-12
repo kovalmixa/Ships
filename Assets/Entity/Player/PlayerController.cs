@@ -13,13 +13,16 @@ namespace Assets.Entity.Player
         }
         private void MoveControl(Entity entity)
         {
-            if (Input.GetKeyDown(KeyCode.W) && entity.SpeedLevel < entity.MaxSpeedLevel)
-                entity.SpeedLevel++;
-            else if (Input.GetKeyDown(KeyCode.S) && entity.SpeedLevel > entity.MinSpeedLevel)
-                entity.SpeedLevel--;
+            if (entity.Type == "Sea")
+            {
+                if (Input.GetKeyDown(KeyCode.W) && entity.SpeedLevel < entity.MaxSpeedLevel)
+                    entity.SpeedLevel++;
+                else if (Input.GetKeyDown(KeyCode.S) && entity.SpeedLevel > entity.MinSpeedLevel)
+                    entity.SpeedLevel--;
 
-            float rotationInput = Input.GetAxis("Horizontal");
-            entity.Movement(rotationInput);
+                float rotationInput = Input.GetAxis("Horizontal");
+                entity.Movement(rotationInput);
+            }
         }
         private void AttackControl(Entity entity)
         {

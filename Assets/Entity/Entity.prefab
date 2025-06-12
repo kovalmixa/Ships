@@ -49,8 +49,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a58ab4466f19de4d83f54e45908e85a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LayersAnchor: {fileID: 4662671464860693575}
   EntityController: {fileID: 2939312566082401126}
-  HullLayers: {fileID: 4662671464860693575}
   MaxSpeed: 5
   Acceleration: 3
   RotationSpeed: 60
@@ -67,7 +67,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsPlayer: 0
-  Type: ship
+  Type: Sea
   HullId: 
   ScriptList: []
   WeaponIds: []
@@ -107,7 +107,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.16, y: 0.16}
+    oldSize: {x: 0.04, y: 0.04}
     newSize: {x: 0.03, y: 0.05}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -205,7 +205,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4662671464860693575}
   m_Layer: 0
-  m_Name: HullLayers
+  m_Name: Layers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

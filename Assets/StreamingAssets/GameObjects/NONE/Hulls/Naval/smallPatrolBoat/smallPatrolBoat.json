@@ -4,36 +4,45 @@
       "slotHeight": 2
     },
     "graphics": {
-      "icon": "smallPatrolBoat.png"
+        "icon": "smallPatrolBoat.png",
+        "textures": [
+            "",
+            "smallPatrolBoat.png"
+        ]
     },
     "physics": {
       "mass": 10
     },
     "weapons": [
-      {
-        "type": "turret",
-        "slot": 0,
-        "size": "s",
-        "x": -10,
-        "y": 10,
-        "rotationSector": "-150,25"
-      },
-      {
-        "type": "turret",
-        "slot": 0,
-        "size": "s",
-        "x": 10,
-        "y": 10,
-        "rotationSector": "-25,150"
-      },
-      {
-        "type": "torpedo",
-        "slot": 0,
-        "size": "XXXL",
-        "x": 0,
-        "y": 0,
-        "rotationSector": "-90,90"
-      }
+        [
+            {
+                "type": "turret",
+                "slot": 0,
+                "size": "s",
+                "x": -10,
+                "y": 10,
+                "rotationSector": "-150,25"
+            },
+            {
+                "type": "turret",
+                "slot": 0,
+                "size": "s",
+                "x": 10,
+                "y": 10,
+                "rotationSector": "-25,150"
+            }
+        ],
+        [
+
+            {
+                "type": "torpedo",
+                "slot": 0,
+                "size": "XXXL",
+                "x": 0,
+                "y": 0,
+                "rotationSector": "-90,90"
+            }
+        ]
     ]
   }
   

@@ -1,16 +1,26 @@
-using System.Collections.Generic;
-using System.Linq;
-using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Assets.Entity.DataContainers
 {
     public class Graphics
     {
+        private string _icon;
         private string[] _textures;
+        public int X { get; set; }
+        public int Y { get; set; }
+        public Vector2 Position => new(X, Y);
 
-        public int OffsetX { get; set; }
-        public int OffsetY { get; set; }
-        public string Icon { get; set; }
+        public string Icon
+        {
+            get
+            {
+                if (Icon == null)
+                    return Textures[0];
+                return _icon;
+            }
+            set => _icon = value;
+        }
+
         public string[] Textures
         {
             get

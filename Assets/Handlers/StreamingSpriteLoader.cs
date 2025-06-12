@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public static class StreamingSpriteLoader
 {
-    public static IEnumerator LoadSprite(string relativePath, System.Action<Sprite> onLoaded)
+    public static IEnumerator LoadSprite(string relativePath, bool isPixel, System.Action<Sprite> onLoaded)
     {
         string fullPath = Path.Combine(Application.streamingAssetsPath, relativePath);
 
@@ -33,7 +33,7 @@ public static class StreamingSpriteLoader
             Debug.LogError($"[SpriteLoader] LoadImage failed: {fullPath}");
             yield break;
         }
-
+        tex.filterMode = isPixel ? FilterMode.Point : FilterMode.Bilinear;
         Sprite sprite = Sprite.Create(
             tex,
             new Rect(0, 0, tex.width, tex.height),
