@@ -5,7 +5,9 @@ using Assets.Entity.Player;
 using Assets.InGameMarkers.Scripts;
 using Assets.Handlers;
 using Unity.Collections.LowLevel.Unsafe;
+using Unity.Mathematics;
 using UnityEngine;
+using System.Collections;
 
 namespace Assets.Entity
 {
@@ -17,7 +19,8 @@ namespace Assets.Entity
         public string Type = "Sea";
         public string HullId;
         [SerializeField] public List<ScriptBase> ScriptList = new();
-        [SerializeField] public List<string> WeaponIds = new();
+        //USA_e_mg45
+        [SerializeField] public List<string> EquipmentIds = new();
         private Entity _entity;
         private IEntityController _controller;
         private void Awake()
@@ -31,7 +34,7 @@ namespace Assets.Entity
             if (IsPlayer)
             {
                 _controller = gameObject.AddComponent<PlayerController>();
-                SetHull();
+                StartCoroutine(SetHull());
             }
             else
             {
@@ -52,14 +55,30 @@ namespace Assets.Entity
             aiController.ScriptList = scripts;
 
         }
-        public void SetHull(string hullId = "")
+        public IEnumerator SetHull(string hullId = "")
         {
-            if (_entity == null) return;
-            HullId = HullId == "" ? hullId : HullId;
-            if (HullId == "")
+            if (_entity == null) yield break;
+
+            HullId = string.IsNullOrEmpty(HullId) ? hullId : HullId;
+            if (string.IsNullOrEmpty(HullId))
                 GetDefaultHull();
-            LoadHull();
+
+            yield return StartCoroutine(LoadHullCoroutine());
+            LoadEquipment();
         }
+
+        private bool[] LoadEquipment()
+        {
+            bool[] installedEquips = new bool[EquipmentIds.Count];
+            if (ObjectPoolHandler.Objects.Count == 0) return installedEquips;
+            for (int i = 0; i < EquipmentIds.Count; i++)
+            {
+                EquipmentContainer equipment = ObjectPoolHandler.Objects[EquipmentIds[i]] as EquipmentContainer;
+                installedEquips[i] = _entity.SetupEquipment(equipment, i);
+            }
+            return installedEquips;
+        }
+
         private void Update()
         {
             _controller?.UpdateControl(_entity);
@@ -73,12 +92,13 @@ namespace Assets.Entity
                     break;
             }
         }
-        private void LoadHull()
+        private IEnumerator LoadHullCoroutine()
         {
-            if (ObjectPoolHandler.Objects.Count == 0) return;
+            if (ObjectPoolHandler.Objects.Count == 0) yield break;
             HullContainer hull = ObjectPoolHandler.Objects[HullId] as HullContainer;
-            _entity.SetupHullLayers(hull);
+            yield return StartCoroutine(_entity.StartSetupHullLayers(hull));
         }
+
         public void SetPointToMove(Transform target) => _controller.SetMovementPoint(target);
         public void SetTarget(Transform target) => _controller.SetTargetPoint(target);
     }

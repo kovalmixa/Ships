@@ -51,6 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LayersAnchor: {fileID: 4662671464860693575}
   EntityController: {fileID: 2939312566082401126}
+  EquipmentPrefab: {fileID: 8296754573792745974, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
   MaxSpeed: 5
   Acceleration: 3
   RotationSpeed: 60

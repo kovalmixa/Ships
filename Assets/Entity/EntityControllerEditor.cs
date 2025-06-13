@@ -12,7 +12,7 @@ namespace Assets.Entity
             EntityController controller = (EntityController)target;
             SerializedProperty hullId = serializedObject.FindProperty("HullId");
             EditorGUILayout.PropertyField(hullId, new GUIContent("Hull ID"));
-            SerializedProperty weaponIds = serializedObject.FindProperty("WeaponIds");
+            SerializedProperty weaponIds = serializedObject.FindProperty("EquipmentIds");
             EditorGUILayout.PropertyField(weaponIds, new GUIContent("Weapon IDs"), true);
             if (!controller.IsPlayer)
             {

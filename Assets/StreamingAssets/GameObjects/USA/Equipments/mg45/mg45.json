@@ -1,8 +1,7 @@
 {
     "general": {
         "name": "mg45",
-        "sizeType": "s",
-        "mass": 5
+        "sizeType": "s"
     },
     "graphics": {
         "x": 0,
@@ -12,21 +11,22 @@
             "mg45.png"
         ]
     },
-    "rotation": {
-        "rotationSpeed": 10
+    "physics": {
+        "rotationSpeed": 10,
+        "mass": 5
     },
-    "weapons": [
-        {
-            "x": 0,
-            "y": 50,
-            "projectile": 0
-        }
-    ],
     "projectiles": [
         {
             "texture": "NONE_p_bullet.png",
             "lifeTime": 5,
             "speed": 300
+        }
+    ],
+    "activate": [
+        {
+            "offsetX": 0,
+            "offsetY": 50,
+            "projectile": 0
         }
     ]
 }

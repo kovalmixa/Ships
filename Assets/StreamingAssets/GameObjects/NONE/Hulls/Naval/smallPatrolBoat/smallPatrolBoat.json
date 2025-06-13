@@ -13,7 +13,18 @@
     "physics": {
       "mass": 10
     },
-    "weapons": [
+    "equipments": [
+        [
+
+            {
+                "type": "torpedo",
+                "slot": 0,
+                "size": "XXXL",
+                "x": 0,
+                "y": 0,
+                "rotationSector": "-90,90"
+            }
+        ],
         [
             {
                 "type": "turret",
@@ -30,17 +41,6 @@
                 "x": 10,
                 "y": 10,
                 "rotationSector": "-25,150"
-            }
-        ],
-        [
-
-            {
-                "type": "torpedo",
-                "slot": 0,
-                "size": "XXXL",
-                "x": 0,
-                "y": 0,
-                "rotationSector": "-90,90"
             }
         ]
     ]

@@ -19,6 +19,7 @@ namespace Assets.InGameMarkers.EntityMarkers
         private GameObject _entityObj;
         public GameObject EntityPrefab;
         [SerializeField] public List<ScriptBase> ScriptList;
+
         private void Start()
         {
             try
@@ -36,6 +37,7 @@ namespace Assets.InGameMarkers.EntityMarkers
             }
 
         }
+
         GameObject FindRootObjectByName(string name)
         {
             Scene scene = SceneManager.GetActiveScene();
@@ -49,10 +51,13 @@ namespace Assets.InGameMarkers.EntityMarkers
 
             return null;
         }
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (Quantity == 0) return;
-            if (!other.GetComponent<Entity.Entity>().EntityController.IsPlayer) return;
+            Entity.Entity entity = other.GetComponent<Entity.Entity>();
+            if (entity == null) return;
+            if (!entity.EntityController.IsPlayer) return;
             if (!_entityObj) Spawn();
         }
         void Update() => CheckTheDistanceToDeSpawn();
@@ -84,7 +89,7 @@ namespace Assets.InGameMarkers.EntityMarkers
         }
         private void SetupEntity(EntityController entityController)
         {
-            entityController.SetHull();
+            StartCoroutine(entityController.SetHull());
         }
     }
 }

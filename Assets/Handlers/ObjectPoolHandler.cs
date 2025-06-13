@@ -36,14 +36,15 @@ namespace Assets.Handlers
                 {
                     jsonObject = DataFileHandler.LoadFromJson<HullContainer>(filePath);
                 }
-                else if (filePath.Contains("Weapon"))
+                else if (filePath.Contains("Equipments"))
                 {
-                    jsonObject = DataFileHandler.LoadFromJson<WeaponContainer>(filePath);
+                    jsonObject = DataFileHandler.LoadFromJson<EquipmentContainer>(filePath);
                 }
                 if (jsonObject == null) continue;
                 SetObjectPath(filePath, jsonObject);
                 string id = DataFileHandler.GetIdByPath(filePath);
                 Objects.Add(id, jsonObject);
+                //Debug.Log(id);
             }
         }
 
@@ -58,6 +59,7 @@ namespace Assets.Handlers
             {
                 if (graphics.Textures[i] == "") continue;
                 graphics.Textures[i] = filePath + graphics.Textures[i];
+                //Debug.Log(graphics.Textures[i]);
             }
         }
 

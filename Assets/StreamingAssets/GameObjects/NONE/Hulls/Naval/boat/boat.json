@@ -1,14 +1,14 @@
 {
     "general": {
-      "name": "boat"
+        "name": "boat"
     },
     "physics": {
-      "mass": 4
+        "mass": 4
     },
     "graphics": {
-      "icon": "boat.png"
+        "icon": "boat.png"
     },
-    "weapons": [
+    "equipments": [
         [
             {
                 "type": "turret",
@@ -28,5 +28,5 @@
             }
         ]
     ]
-  }
+}
   

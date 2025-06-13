@@ -5,5 +5,6 @@ namespace Assets.Entity.DataContainers
     public class Physics
     {
         public int Mass { get; set; }
+        public int Rotation { get; set; }
     }
 }

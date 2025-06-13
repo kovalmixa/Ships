@@ -66,7 +66,7 @@ namespace Assets.Handlers
                 }
                 case "w":
                 {
-                    path += "\\Weapons";
+                    path += "\\Equipments";
                     break;
                 }
                 case "p":
@@ -108,7 +108,7 @@ namespace Assets.Handlers
                 id += '_' + tokens[4][0].ToString().ToLower();
                 id += '_' + tokens[5];
             }
-            else if (path.Contains("Weapon"))
+            else if (path.Contains("Equipments"))
             {
                 id += '_' + tokens[4];
             }

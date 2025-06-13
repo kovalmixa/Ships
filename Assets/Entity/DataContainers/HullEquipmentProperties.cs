@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Assets.Entity.DataContainers
 {
-    public class HullWeaponProperties
+    public class HullEquipmentProperties
     {
         public string Type { get; set; }
         public int Slot { get; set; }

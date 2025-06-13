@@ -35,9 +35,22 @@ namespace Assets.Entity
         protected bool IsComplexCollision = false;
         public Vector2 Size
         {
-            get => GetComponent<BoxCollider2D>().size;
-            set => GetComponent<BoxCollider2D>().size = value;
+            get
+            {
+                var collider = GetComponent<BoxCollider2D>();
+                if (collider == null)
+                    collider = gameObject.AddComponent<BoxCollider2D>();
+                return collider.size;
+            }
+            set
+            {
+                var collider = GetComponent<BoxCollider2D>();
+                if (collider == null)
+                    collider = gameObject.AddComponent<BoxCollider2D>();
+                collider.size = value;
+            }
         }
+
         protected List<GameObject> Layers = new();
         protected void SetColliderSize()
         {

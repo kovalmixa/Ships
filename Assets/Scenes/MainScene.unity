@@ -667,6 +667,30 @@ PrefabInstance:
       propertyPath: isPlayer
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: WeaponIds.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: EquipmentIds.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: WeaponIds.Array.data[0]
+      value: USA_e_mg45
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: EquipmentIds.Array.data[0]
+      value: USA_e_mg45
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: EquipmentIds.Array.data[1]
+      value: USA_e_mg45
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: EquipmentIds.Array.data[2]
+      value: USA_e_mg45
+      objectReference: {fileID: 0}
     - target: {fileID: 3581992323576170590, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: m_Layer
       value: 0

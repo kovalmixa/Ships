@@ -40,6 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8661486173044409718}
+  - component: {fileID: 8207239071823199310}
   m_Layer: 0
   m_Name: Equipment
   m_TagString: Untagged
@@ -63,3 +64,16 @@ Transform:
   - {fileID: 8510910815243192028}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8207239071823199310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8296754573792745974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0267dd645a67f7146b446c099529af0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LayersAnchor: {fileID: 8510910815243192028}
