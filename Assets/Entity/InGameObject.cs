@@ -108,6 +108,7 @@ namespace Assets.Entity
                     }
                 }
                 rend.sprite = loaded;
+                rend.sortingOrder = i;
                 layerGo.transform.SetParent(LayersAnchor, false);
                 layerGo.transform.localPosition = Vector3.zero;
                 if (layerGo) Layers.Add(layerGo);

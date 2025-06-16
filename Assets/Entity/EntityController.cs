@@ -74,7 +74,7 @@ namespace Assets.Entity
             for (int i = 0; i < EquipmentIds.Count; i++)
             {
                 EquipmentContainer equipment = ObjectPoolHandler.Objects[EquipmentIds[i]] as EquipmentContainer;
-                installedEquips[i] = _entity.SetupEquipment(equipment, i);
+                installedEquips[i] = _entity.SetEquipment(equipment, i);
             }
             return installedEquips;
         }

@@ -14,7 +14,7 @@ namespace Assets.Entity
         public EntityContainer EntityData = new();
         public GameObject EquipmentPrefab;
         private List<GameObject> _equipments = new();
-
+        private const int InLayerComponentsLimit = 10;
         public float MaxSpeed = 5f;
         public float Acceleration = 3f;
         public float RotationSpeed = 60f;
@@ -40,41 +40,40 @@ namespace Assets.Entity
             string[] texturePaths = hull.Graphics.Textures;
             yield return StartCoroutine(SetupHullLayers(texturePaths));
         }
-
         private IEnumerator SetupHullLayers(string[] texturePaths)
         {
-
             yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
             SetupEquipmentsFrames();
         }
-
         private void SetupEquipmentsFrames()
         {
+            if (EquipmentPrefab == null)
+            {
+                Debug.LogError("EquipmentPrefab не назначен!");
+                return;
+            }
             HullEquipmentProperties[][] weaponProperties = EntityData.HullData.Equipments;
             if (weaponProperties == null || weaponProperties.Length == 0) return;
             for (int i = 0; i < weaponProperties.Length; i++)
             {
-
                 GameObject layer = Layers[i];
+                if (layer == null) continue;
                 HullEquipmentProperties[] innerArray = weaponProperties[i];
                 for (int j = 0; j < innerArray.Length; j++)
                 {
                     HullEquipmentProperties equipment = weaponProperties[i][j];
-
-                    if (EquipmentPrefab == null)
-                    {
-                        Debug.LogError("EquipmentPrefab не назначен!");
-                        return;
-                    } 
                     GameObject layerGo = Instantiate(EquipmentPrefab, layer.transform);
                     layerGo.name = $"Equipment_{j}";
-                    layerGo.transform.localPosition = Vector3.zero + (Vector3)equipment.Position / 100;
+                    float ppu = layer.GetComponent<Sprite>() == null ? 100 : layer.GetComponent<Sprite>().pixelsPerUnit;
+                    layerGo.transform.localPosition = Vector3.zero + (Vector3)equipment.Position / ppu;
+                    SpriteRenderer layerRenderer = layer.GetComponent<SpriteRenderer>();
+                    if (layerRenderer != null) layerRenderer.sortingOrder = i * InLayerComponentsLimit;
+                    layerGo.GetComponent<Equipment.Equipment>().LayerIndex = i * InLayerComponentsLimit;
                     _equipments.Add(layerGo);
                 }
             }
         }
-
-        public bool SetupEquipment(EquipmentContainer equipmentContainer, int index)
+        public bool SetEquipment(EquipmentContainer equipmentContainer, int index)
         {
             Equipment.Equipment equipment = _equipments[index].GetComponent<Equipment.Equipment>();
             //if (equipment.Type == equipmentContainer.)
@@ -82,8 +81,7 @@ namespace Assets.Entity
             equipment.EquipmentContainer = equipmentContainer;
             return false;
         }
-
-    public void Movement(float rotationDirection)
+        public void Movement(float rotationDirection)
         {
             switch (Type)
             {
@@ -95,6 +93,14 @@ namespace Assets.Entity
                     transform.Translate(Vector3.up * CurrentSpeed * Time.deltaTime, Space.Self);
                     break;
                 }
+            }
+        }
+
+        public void RotateEquipment(float angle)
+        {
+            foreach (var eq in _equipments)
+            {
+                eq.GetComponent<Equipment.Equipment>().Rotate(angle);
             }
         }
     }

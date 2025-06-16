@@ -12,7 +12,7 @@
         ]
     },
     "physics": {
-        "rotationSpeed": 10,
+        "rotationSpeed": 200,
         "mass": 5
     },
     "projectiles": [
