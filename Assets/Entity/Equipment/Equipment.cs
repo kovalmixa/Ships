@@ -9,6 +9,7 @@ namespace Assets.Entity.Equipment
 {
     public class Equipment : InGameObject
     {
+        public HullEquipmentProperties HullEquipmentProperties { set; get; }
         private EquipmentContainer _equipmentContainer;
         public EquipmentContainer EquipmentContainer
         {
@@ -21,9 +22,7 @@ namespace Assets.Entity.Equipment
                 
             }
         }
-
         public int LayerIndex;
-
         private IEnumerator SetupTextureLayers(string[] texturePaths)
         {
             yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
@@ -34,24 +33,38 @@ namespace Assets.Entity.Equipment
                     renderer.sortingOrder += LayerIndex;
             }
         }
-
         private void Awake()
         {
             IsComplexCollision = true;
         }
-        public new string Type { get; set; }
-
+        public new string Type
+        {
+            get => EquipmentContainer.General.SizeType;
+            set => EquipmentContainer.General.SizeType = value;
+        }
         public void Rotate(float angle)
         {
-            angle -= 90f;
-            Quaternion targetRotation = Quaternion.Euler(0, 0, angle);
-            transform.rotation = Quaternion.RotateTowards(
+            if (!CanRotate()) return;
+            Quaternion targetRotation = Quaternion.Euler(0, 0, angle -= 90f);
+            Quaternion rotationAngle = Quaternion.RotateTowards(
                 transform.rotation,
                 targetRotation,
                 _equipmentContainer.Physics.RotationSpeed * Time.deltaTime
             );
+            float targetAngle = rotationAngle.eulerAngles.z;
+            targetAngle = targetAngle > 180 ? targetAngle - 360 : targetAngle;
+            Vector2 rotationSector = HullEquipmentProperties.RotationSector;
+            if (targetAngle >= rotationSector.x && targetAngle <= rotationSector.y)
+            {
+                transform.rotation = rotationAngle;
+            }
         }
 
+        public bool CanRotate()
+        {
+            if (HullEquipmentProperties == null) return false;
+            return HullEquipmentProperties.RotationSector != null;
+        }
         public void Activate()
         {
             //code for activation

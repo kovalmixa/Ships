@@ -18,15 +18,12 @@ namespace Assets.Entity
         public float MaxSpeed = 5f;
         public float Acceleration = 3f;
         public float RotationSpeed = 60f;
-
         private float _targetSpeed;
-
         public float SpeedLevel
         {
             get => Speed;
             set => Speed = value;
         }
-
         private int _maxSpeedLevel = 3;
         public int MaxSpeedLevel => _maxSpeedLevel;
         private int _minSpeedLevel = -1;
@@ -61,14 +58,16 @@ namespace Assets.Entity
                 HullEquipmentProperties[] innerArray = weaponProperties[i];
                 for (int j = 0; j < innerArray.Length; j++)
                 {
-                    HullEquipmentProperties equipment = weaponProperties[i][j];
+                    HullEquipmentProperties hullEquipmentProperties = weaponProperties[i][j];
                     GameObject layerGo = Instantiate(EquipmentPrefab, layer.transform);
                     layerGo.name = $"Equipment_{j}";
                     float ppu = layer.GetComponent<Sprite>() == null ? 100 : layer.GetComponent<Sprite>().pixelsPerUnit;
-                    layerGo.transform.localPosition = Vector3.zero + (Vector3)equipment.Position / ppu;
+                    layerGo.transform.localPosition = Vector3.zero + (Vector3)hullEquipmentProperties.Position / ppu;
                     SpriteRenderer layerRenderer = layer.GetComponent<SpriteRenderer>();
                     if (layerRenderer != null) layerRenderer.sortingOrder = i * InLayerComponentsLimit;
-                    layerGo.GetComponent<Equipment.Equipment>().LayerIndex = i * InLayerComponentsLimit;
+                    Equipment.Equipment equipment = layerGo.GetComponent<Equipment.Equipment>();
+                    equipment.HullEquipmentProperties = hullEquipmentProperties;
+                    equipment.LayerIndex = i * InLayerComponentsLimit;
                     _equipments.Add(layerGo);
                 }
             }
@@ -95,7 +94,6 @@ namespace Assets.Entity
                 }
             }
         }
-
         public void RotateEquipment(float angle)
         {
             foreach (var eq in _equipments)

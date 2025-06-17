@@ -19,7 +19,7 @@ namespace Assets.Entity
         public string Type = "Sea";
         public string HullId;
         [SerializeField] public List<ScriptBase> ScriptList = new();
-        //USA_e_mg45
+        //GER_e_mg45
         [SerializeField] public List<string> EquipmentIds = new();
         private Entity _entity;
         private IEntityController _controller;
