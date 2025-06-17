@@ -68,6 +68,7 @@ namespace Assets.Entity
                     Equipment.Equipment equipment = layerGo.GetComponent<Equipment.Equipment>();
                     equipment.HullEquipmentProperties = hullEquipmentProperties;
                     equipment.LayerIndex = i * InLayerComponentsLimit;
+                    equipment.Entity = this;
                     _equipments.Add(layerGo);
                 }
             }

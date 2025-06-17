@@ -27,7 +27,6 @@ namespace Assets.Entity.Player
             Debug.LogWarning("Камера не найдена!");
             return null;
         }
-
         public void UpdateControl(Entity entity)
         {
             if(!entity) return;

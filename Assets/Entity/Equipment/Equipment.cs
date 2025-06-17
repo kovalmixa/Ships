@@ -9,6 +9,8 @@ namespace Assets.Entity.Equipment
 {
     public class Equipment : InGameObject
     {
+        public Entity Entity { get; set; }
+
         public HullEquipmentProperties HullEquipmentProperties { set; get; }
         private EquipmentContainer _equipmentContainer;
         public EquipmentContainer EquipmentContainer
@@ -30,8 +32,11 @@ namespace Assets.Entity.Equipment
             {
                 SpriteRenderer renderer = child.GetComponent<SpriteRenderer>();
                 if (renderer != null)
-                    renderer.sortingOrder += LayerIndex;
+                    renderer.sortingOrder += LayerIndex + 1;
             }
+            Quaternion rotation = transform.rotation;
+            rotation.z = HullEquipmentProperties.Rotation;
+            transform.rotation = rotation;
         }
         private void Awake()
         {
@@ -45,21 +50,33 @@ namespace Assets.Entity.Equipment
         public void Rotate(float angle)
         {
             if (!CanRotate()) return;
-            Quaternion targetRotation = Quaternion.Euler(0, 0, angle -= 90f);
-            Quaternion rotationAngle = Quaternion.RotateTowards(
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
+            Quaternion rotationStep = Quaternion.RotateTowards(
                 transform.rotation,
                 targetRotation,
                 _equipmentContainer.Physics.RotationSpeed * Time.deltaTime
             );
-            float targetAngle = rotationAngle.eulerAngles.z;
-            targetAngle = targetAngle > 180 ? targetAngle - 360 : targetAngle;
-            Vector2 rotationSector = HullEquipmentProperties.RotationSector;
-            if (targetAngle >= rotationSector.x && targetAngle <= rotationSector.y)
+            float resultWorldAngle = NormalizeAngle(rotationStep.eulerAngles.z);
+            float hullRotation = NormalizeAngle(Entity.transform.eulerAngles.z);
+            float baseRotation = NormalizeAngle(HullEquipmentProperties.Rotation);
+            float resultLocalAngle = NormalizeAngle(resultWorldAngle - hullRotation - baseRotation);
+            Vector2 sector = HullEquipmentProperties.RotationSector;
+            float minSector = NormalizeAngle(sector.x);
+            float maxSector = NormalizeAngle(sector.y);
+            if (IsAngleWithinSector(resultLocalAngle, minSector, maxSector))
             {
-                transform.rotation = rotationAngle;
+                transform.rotation = rotationStep;
             }
         }
 
+        private float NormalizeAngle(float angle)
+        {
+            angle %= 360f;
+            if (angle > 180f) angle -= 360f;
+            if (angle < -180f) angle += 360f;
+            return angle;
+        }
+        private bool IsAngleWithinSector(float angle, float min, float max) => angle >= min && angle <= max;
         public bool CanRotate()
         {
             if (HullEquipmentProperties == null) return false;
