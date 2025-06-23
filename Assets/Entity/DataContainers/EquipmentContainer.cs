@@ -8,7 +8,6 @@ namespace Assets.Entity.DataContainers
         public Graphics Graphics { get; set; }
         public Graphics GetGraphics() => Graphics;
         public Physics Physics{ get; set; }
-        public Projectile[] Projectiles { get; set; }
-        public EquipmentActivationContainer[] Activate;
+        public ActivationContainer[] OnActivate;
     }
 }

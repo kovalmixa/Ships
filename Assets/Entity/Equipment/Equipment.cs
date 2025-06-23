@@ -1,16 +1,13 @@
 using System.Collections;
 using Assets.Entity.DataContainers;
-using Unity.VisualScripting;
+using Assets.InGameMarkers.Actions;
 using UnityEngine;
-using UnityEngine.UIElements;
-using static UnityEngine.EventSystems.EventTrigger;
 
 namespace Assets.Entity.Equipment
 {
     public class Equipment : InGameObject
     {
         public Entity Entity { get; set; }
-
         public HullEquipmentProperties HullEquipmentProperties { set; get; }
         private EquipmentContainer _equipmentContainer;
         public EquipmentContainer EquipmentContainer
@@ -68,7 +65,6 @@ namespace Assets.Entity.Equipment
                 transform.rotation = rotationStep;
             }
         }
-
         private float NormalizeAngle(float angle)
         {
             angle %= 360f;
@@ -76,15 +72,36 @@ namespace Assets.Entity.Equipment
             if (angle < -180f) angle += 360f;
             return angle;
         }
-        private bool IsAngleWithinSector(float angle, float min, float max) => angle >= min && angle <= max;
+        private bool IsAngleWithinSector(float angle, float min, float max) => min <= angle && angle <= max;
         public bool CanRotate()
         {
             if (HullEquipmentProperties == null) return false;
             return HullEquipmentProperties.RotationSector != null;
         }
-        public void Activate()
+        public void Activate(Transform target)
         {
-            //code for activation
+            if (!IsActivationWithinSector()) return;
+            Debug.Log("activated");
+            foreach (var activation in EquipmentContainer.OnActivate)
+            {
+                ActionContext actionContext = FormActionContext(activation, target.position);
+                ActionHandler.Execute(activation.Type, actionContext);
+            }
+        }
+        private bool IsActivationWithinSector()
+        {
+            Vector2 fireSector = HullEquipmentProperties.FireSector;
+            float angle = NormalizeAngle(transform.rotation.z);
+            return fireSector.x <= angle && angle <= fireSector.y;
+        }
+        private ActionContext FormActionContext(ActivationContainer activation, Vector3 position)
+        {
+            ActionContext actionContext = new();
+            actionContext.ObjectId = activation.Projectile;
+            actionContext.Source = GetComponent<GameObject>();
+            actionContext.TargetPosition = position;
+            //actionContext.AmountValue = ?? // для добавления значения к абилкам или хп, мп и так далее
+            return actionContext;
         }
         private void OnCollisionEnter2D(Collision2D collision)
         {

@@ -1,0 +1,7 @@
+{
+    "graphics": {
+        "icon": "bullet.png"
+    },
+    "speed": 50,
+    "lifeTime":  5
+}

@@ -108,7 +108,7 @@ namespace Assets.Handlers
                 id += '_' + tokens[4][0].ToString().ToLower();
                 id += '_' + tokens[5];
             }
-            else if (path.Contains("Equipments"))
+            else if (path.Contains("Equipments") || path.Contains("Projectiles"))
             {
                 id += '_' + tokens[4];
             }

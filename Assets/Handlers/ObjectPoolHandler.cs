@@ -10,6 +10,12 @@ namespace Assets.Handlers
 {
     public static class ObjectPoolHandler{
         public static Dictionary<string, IObject> Objects = new();
+        private static readonly Dictionary<string, Func<string, IObject>> Loaders = new()
+        {
+            ["Hull"] = path => DataFileHandler.LoadFromJson<HullContainer>(path),
+            ["Equipments"] = path => DataFileHandler.LoadFromJson<EquipmentContainer>(path),
+            ["Projectiles"] = path => DataFileHandler.LoadFromJson<ProjectileContainer>(path)
+        };
         public static void SetupObjectPool(string[] gameObjectsFolderPaths, string[] excludedFolders)
         {
             string[] allFiles = GetFilePaths(gameObjectsFolderPaths, excludedFolders);
@@ -32,22 +38,21 @@ namespace Assets.Handlers
             foreach (string filePath in allFiles.Where(file => file.EndsWith(".json")))
             {
                 IObject jsonObject = null;
-                if (filePath.Contains("Hull"))
+                foreach (var (key, loader) in Loaders)
                 {
-                    jsonObject = DataFileHandler.LoadFromJson<HullContainer>(filePath);
-                }
-                else if (filePath.Contains("Equipments"))
-                {
-                    jsonObject = DataFileHandler.LoadFromJson<EquipmentContainer>(filePath);
+                    if (filePath.Contains(key))
+                    {
+                        jsonObject = loader(filePath);
+                        break;
+                    }
                 }
                 if (jsonObject == null) continue;
                 SetObjectPath(filePath, jsonObject);
                 string id = DataFileHandler.GetIdByPath(filePath);
                 Objects.Add(id, jsonObject);
-                //Debug.Log(id);
+                Debug.Log(id);
             }
         }
-
         private static void SetObjectPath(string filePath, IObject jsonObject)
         {
             Graphics graphics = jsonObject.GetGraphics();
@@ -62,7 +67,6 @@ namespace Assets.Handlers
                 //Debug.Log(graphics.Textures[i]);
             }
         }
-
         private static bool IsValidPath(string gameObjectsFolderPath)
         {
             try
