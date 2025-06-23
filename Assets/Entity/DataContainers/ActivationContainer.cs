@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.InGameMarkers.Scripts;
+using JetBrains.Annotations;
 
 namespace Assets.Entity.DataContainers
 {
@@ -19,7 +20,7 @@ namespace Assets.Entity.DataContainers
         public string EffectType { get; set; }
         public string[] LightColor { get; set; }
         public string[] Effects { get; set; }
-        public string Projectile { get; set; }
+        [CanBeNull] public string Projectile { get; set; }
         public float Delay { get; set; }
     }
 }

@@ -15,9 +15,9 @@ public class ProjectileAttackAction : IGameAction
             return;
         }
 
-        Vector3 position = context.Target.transform.position;
+        Vector3 position = context.Source.transform.position;
         Vector3 direction = (context.TargetPosition.Value - position).normalized;
-
+        Debug.Log(context.ObjectId);
         // «десь ты подставл€ешь свой способ спауна снар€да:
         //ProjectileManager.Instance.SpawnProjectile(
         //    context.ObjectId,

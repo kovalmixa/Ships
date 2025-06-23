@@ -33,7 +33,9 @@ namespace Assets.Entity
         {
             if (IsPlayer)
             {
-                _controller = gameObject.AddComponent<PlayerController>();
+                PlayerController playerController = gameObject.AddComponent<PlayerController>();
+                playerController.SetupKeyCodeDictionary();
+                _controller = playerController;
                 StartCoroutine(SetHull());
             }
             else

@@ -1,6 +1,7 @@
 {
     "general": {
         "name": "mg45",
+        "type": "machine gun",
         "sizeType": "s"
     },
     "graphics": {

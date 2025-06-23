@@ -1,6 +1,7 @@
 {
     "general": {
-        "name": "boat"
+        "name": "boat",
+        "type": "boat"
     },
     "physics": {
         "mass": 4

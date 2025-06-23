@@ -1,7 +1,8 @@
 {
     "general": {
-      "name": "small patrol boat",
-      "slotHeight": 2
+        "name": "small patrol boat",
+        "type":  "boat",
+        "slotHeight": 2
     },
     "graphics": {
         "icon": "smallPatrolBoat.png",

@@ -18,9 +18,6 @@ public static class ActionHandler
         {
             action.Execute(context);
         }
-        else
-        {
-            Debug.LogWarning($"Action '{actionName}' not found.");
-        }
+        else Debug.LogWarning($"Action '{actionName}' not found.");
     }
 }

@@ -50,7 +50,7 @@ namespace Assets.Handlers
                 SetObjectPath(filePath, jsonObject);
                 string id = DataFileHandler.GetIdByPath(filePath);
                 Objects.Add(id, jsonObject);
-                Debug.Log(id);
+                //Debug.Log(id);
             }
         }
         private static void SetObjectPath(string filePath, IObject jsonObject)

@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Assets.Entity.DataContainers;
+using Assets.Handlers;
 using Assets.InGameMarkers.Scripts;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace Assets.Entity
@@ -19,15 +21,18 @@ namespace Assets.Entity
         public float Acceleration = 3f;
         public float RotationSpeed = 60f;
         private float _targetSpeed;
+
         public float SpeedLevel
         {
             get => Speed;
             set => Speed = value;
         }
+
         private int _maxSpeedLevel = 3;
         public int MaxSpeedLevel => _maxSpeedLevel;
         private int _minSpeedLevel = -1;
         public int MinSpeedLevel => _minSpeedLevel;
+
         public IEnumerator StartSetupHullLayers(HullContainer hull)
         {
             foreach (Transform child in LayersAnchor)
@@ -37,11 +42,13 @@ namespace Assets.Entity
             string[] texturePaths = hull.Graphics.Textures;
             yield return StartCoroutine(SetupHullLayers(texturePaths));
         }
+
         private IEnumerator SetupHullLayers(string[] texturePaths)
         {
             yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
             SetupEquipmentsFrames();
         }
+
         private void SetupEquipmentsFrames()
         {
             if (EquipmentPrefab == null)
@@ -49,6 +56,7 @@ namespace Assets.Entity
                 Debug.LogError("EquipmentPrefab не назначен!");
                 return;
             }
+
             HullEquipmentProperties[][] weaponProperties = EntityData.HullData.Equipments;
             if (weaponProperties == null || weaponProperties.Length == 0) return;
             for (int i = 0; i < weaponProperties.Length; i++)
@@ -73,6 +81,7 @@ namespace Assets.Entity
                 }
             }
         }
+
         public bool SetEquipment(EquipmentContainer equipmentContainer, int index)
         {
             Equipment.Equipment equipment = _equipments[index].GetComponent<Equipment.Equipment>();
@@ -81,6 +90,7 @@ namespace Assets.Entity
             equipment.EquipmentContainer = equipmentContainer;
             return false;
         }
+
         public void Movement(float rotationDirection)
         {
             switch (Type)
@@ -95,12 +105,41 @@ namespace Assets.Entity
                 }
             }
         }
+
         public void RotateEquipment(float angle)
         {
             foreach (var eq in _equipments)
             {
                 eq.GetComponent<Equipment.Equipment>().Rotate(angle);
             }
+        }
+
+        public void ActivateEquipment(Vector3 position, string activationCommand)
+        {
+            if (activationCommand == "") return;
+            //заменить эту дебильную атаку на атаку снарядами, авиацией и торпеды/ракеты
+            if (TypeListHandler.IsWeapon(activationCommand) || activationCommand == "Attack")
+            {
+                if (IsAttackActionForbidden(position)) return;
+            }
+            foreach (var equipmentGameObject in _equipments)
+            {
+                Equipment.Equipment equipment = equipmentGameObject.GetComponent<Equipment.Equipment>();
+                string type = equipment.EquipmentContainer.General.Type;
+                //заменить эту дебильную атаку на атаку снарядами, авиацией и торпеды/ракеты
+                if (activationCommand == "Attack")
+                {
+                    if (TypeListHandler.IsWeapon(type)) equipment.Activate(position);
+                    continue;
+                }
+                if (equipment.EquipmentContainer.General.Type == activationCommand) equipment.Activate(position);
+            }
+        }
+
+        private bool IsAttackActionForbidden(Vector3 position)
+        {
+            Collider2D col = GetComponent<Collider2D>();
+            return col != null && col.OverlapPoint(position);
         }
     }
 }

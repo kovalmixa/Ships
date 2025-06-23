@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Assets.Entity.DataContainers;
 using Assets.InGameMarkers.Actions;
@@ -22,6 +23,7 @@ namespace Assets.Entity.Equipment
             }
         }
         public int LayerIndex;
+        private float LastActivationTime = -Mathf.Infinity;
         private IEnumerator SetupTextureLayers(string[] texturePaths)
         {
             yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
@@ -58,9 +60,7 @@ namespace Assets.Entity.Equipment
             float baseRotation = NormalizeAngle(HullEquipmentProperties.Rotation);
             float resultLocalAngle = NormalizeAngle(resultWorldAngle - hullRotation - baseRotation);
             Vector2 sector = HullEquipmentProperties.RotationSector;
-            float minSector = NormalizeAngle(sector.x);
-            float maxSector = NormalizeAngle(sector.y);
-            if (IsAngleWithinSector(resultLocalAngle, minSector, maxSector))
+            if (IsAngleWithinSector(resultLocalAngle, sector.x, sector.y))
             {
                 transform.rotation = rotationStep;
             }
@@ -78,14 +78,18 @@ namespace Assets.Entity.Equipment
             if (HullEquipmentProperties == null) return false;
             return HullEquipmentProperties.RotationSector != null;
         }
-        public void Activate(Transform target)
+        public void Activate(Vector3 position)
         {
             if (!IsActivationWithinSector()) return;
-            Debug.Log("activated");
+            float time = Time.time;
             foreach (var activation in EquipmentContainer.OnActivate)
             {
-                ActionContext actionContext = FormActionContext(activation, target.position);
-                ActionHandler.Execute(activation.Type, actionContext);
+                if (time - LastActivationTime >= activation.Delay)
+                {
+                    ActionContext actionContext = FormActionContext(activation, position);
+                    ActionHandler.Execute(activation.Type, actionContext);
+                    LastActivationTime = time;
+                }
             }
         }
         private bool IsActivationWithinSector()
@@ -98,7 +102,7 @@ namespace Assets.Entity.Equipment
         {
             ActionContext actionContext = new();
             actionContext.ObjectId = activation.Projectile;
-            actionContext.Source = GetComponent<GameObject>();
+            actionContext.Source = gameObject;
             actionContext.TargetPosition = position;
             //actionContext.AmountValue = ?? // для добавления значения к абилкам или хп, мп и так далее
             return actionContext;
