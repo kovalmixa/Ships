@@ -4,6 +4,7 @@ using Cinemachine;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Assets.Entity.Projectile
 {
@@ -17,6 +18,7 @@ namespace Assets.Entity.Projectile
             {
                 _projectileContainer = value;
                 string[] texturePaths = _projectileContainer.Graphics.Textures;
+                IsTrigger = true;
                 StartCoroutine(SetupLayersCoroutine(texturePaths));
             }
         }

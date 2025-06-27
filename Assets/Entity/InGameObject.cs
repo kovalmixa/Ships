@@ -57,7 +57,7 @@ namespace Assets.Entity
             }
         }
         protected List<GameObject> Layers = new();
-        protected void SetColliderSize()
+        protected void GenerateCollision()
         {
             Vector2 maxSize = new(0,0);
             foreach (GameObject layer in Layers)
@@ -69,9 +69,10 @@ namespace Assets.Entity
                 maxSize.y = Mathf.Max(maxSize.y, textureSize.y);
             }
             CollisionSize = maxSize / 10;
-            if (IsComplexCollision) SetAllColliders();
+            var collider = GetComponent<BoxCollider2D>();
+            collider.isTrigger = IsTrigger;
         }
-        private void SetAllColliders()
+        private void GenerateComplexCollision()
         {
             foreach (GameObject layer in Layers)
             {
@@ -82,7 +83,10 @@ namespace Assets.Entity
                     continue;
                 }
                 Vector2 textureSize = GetTextureSizeFromSprite(sprite);
-                layer.AddComponent<BoxCollider2D>().size = textureSize;
+                layer.AddComponent<BoxCollider2D>();
+                var collider = GetComponent<BoxCollider2D>();
+                collider.size = textureSize;
+                collider.isTrigger = IsTrigger;
             }
         }
         private Vector2 GetTextureSizeFromSprite(Sprite sprite)
@@ -92,7 +96,7 @@ namespace Assets.Entity
             textureSize = textureSize / ppu;
             return textureSize;
         }
-        protected IEnumerator SetupLayersCoroutine(string[] texturePaths)
+        protected IEnumerator SetupLayersCoroutine(string[] texturePaths, bool generateCollision = true)
         {
             for (int i = 0; i < texturePaths.Length; i++)
             {
@@ -120,7 +124,12 @@ namespace Assets.Entity
             }
             var baseRenderer = GetComponent<SpriteRenderer>();
             if (baseRenderer) baseRenderer.forceRenderingOff = true;
-            SetColliderSize();
+            if (generateCollision)
+            {
+                if (IsComplexCollision) GenerateComplexCollision();
+                else GenerateCollision();
+            }
+            
         }
         private void OnCollisionEnter2D(Collision2D collision)
         {

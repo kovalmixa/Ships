@@ -29,6 +29,7 @@ namespace Assets.Entity.Equipment
         private float[] lastActtivationTimes;
         private IEnumerator SetupTextureLayers(string[] texturePaths)
         {
+            IsComplexCollision = true;
             yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
             foreach (Transform child in LayersAnchor.GetComponentsInChildren<Transform>())
             {

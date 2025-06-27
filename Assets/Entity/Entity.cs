@@ -12,7 +12,6 @@ namespace Assets.Entity
 {
     public class Entity : InGameObject
     {
-        public uint SizeMultiplier = 30;
         public EntityController EntityController;
         public EntityContainer EntityData = new();
         public GameObject EquipmentPrefab;
@@ -46,7 +45,6 @@ namespace Assets.Entity
 
         private IEnumerator SetupHullLayers(string[] texturePaths)
         {
-            Size = EntityData.HullData.Graphics.Size * SizeMultiplier;
             yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
             SetupEquipmentsFrames();
         }
