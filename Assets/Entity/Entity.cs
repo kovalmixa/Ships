@@ -12,6 +12,7 @@ namespace Assets.Entity
 {
     public class Entity : InGameObject
     {
+        public uint SizeMultiplier = 30;
         public EntityController EntityController;
         public EntityContainer EntityData = new();
         public GameObject EquipmentPrefab;
@@ -45,6 +46,7 @@ namespace Assets.Entity
 
         private IEnumerator SetupHullLayers(string[] texturePaths)
         {
+            Size = EntityData.HullData.Graphics.Size * SizeMultiplier;
             yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
             SetupEquipmentsFrames();
         }
@@ -125,6 +127,7 @@ namespace Assets.Entity
             foreach (var equipmentGameObject in _equipments)
             {
                 Equipment.Equipment equipment = equipmentGameObject.GetComponent<Equipment.Equipment>();
+                if (equipment.EquipmentContainer == null) continue;
                 string type = equipment.EquipmentContainer.General.Type;
                 //заменить эту дебильную атаку на атаку снарядами, авиацией и торпеды/ракеты
                 if (activationCommand == "Attack")

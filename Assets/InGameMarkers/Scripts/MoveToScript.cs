@@ -19,7 +19,7 @@ namespace Assets.InGameMarkers.Scripts
         public override bool IsExecuted(Entity.Entity entity) => _isExecuted;
         public override bool IsFinished(Entity.Entity entity)
         {
-            float threshold = entity.Size.y + 0.5f;
+            float threshold = entity.CollisionSize.y + 0.5f;
             CircleCollider2D area = Target.GetComponent<CircleCollider2D>();
             if (area) return Vector3.Distance(entity.transform.position, Target.position) < area.radius + threshold;
             return Vector3.Distance(entity.transform.position, Target.position) < threshold;

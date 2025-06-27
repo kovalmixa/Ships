@@ -1,7 +1,8 @@
 {
     "graphics": {
-        "icon": "bullet.png"
+        "icon": "Backack.png"
     },
     "speed": 50,
-    "lifeTime":  5
+    "lifeTime": 3,
+    "isBallistic": false
 }

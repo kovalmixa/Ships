@@ -27,19 +27,25 @@ namespace Assets.Entity
                 }
             }
         }
+
         public Transform LayersAnchor;
         protected float Speed { get; set; }
         protected float CurrentSpeed { get; set; }
 
         protected bool IsTrigger = false;
         protected bool IsComplexCollision = false;
-        public Vector2 Size
+
+        public Vector3 Size
+        {
+            get => transform.localScale;
+            set => transform.localScale = value;
+        }
+        public Vector3 CollisionSize
         {
             get
             {
                 var collider = GetComponent<BoxCollider2D>();
-                if (collider == null)
-                    collider = gameObject.AddComponent<BoxCollider2D>();
+                if (collider == null) return Vector3.zero;
                 return collider.size;
             }
             set
@@ -50,7 +56,6 @@ namespace Assets.Entity
                 collider.size = value;
             }
         }
-
         protected List<GameObject> Layers = new();
         protected void SetColliderSize()
         {
@@ -63,7 +68,7 @@ namespace Assets.Entity
                 maxSize.x = Mathf.Max(maxSize.x, textureSize.x);
                 maxSize.y = Mathf.Max(maxSize.y, textureSize.y);
             }
-            Size = maxSize / 10;
+            CollisionSize = maxSize / 10;
             if (IsComplexCollision) SetAllColliders();
         }
         private void SetAllColliders()

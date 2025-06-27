@@ -5,8 +5,10 @@
         "sizeType": "s"
     },
     "graphics": {
-        "x": 0,
-        "y": -5,
+        "position": {
+            "x": 0,
+            "y": -5
+        },
         "icon": "mg45Icon.png",
         "textures": [
             "mg45.png"
@@ -18,11 +20,19 @@
     },
     "onActivate": [
         {
-            "offsetX": 0,
-            "offsetY": 50,
+            "graphics": {
+                "position": {
+                    "x": 0,
+                    "y": -5
+                }
+            },
+            "position": {
+                "x": 0,
+                "y": -5
+            },
             "projectile": "NONE_p_bullet",
             "type": "projectileAttack",
-            "delay":  0.1
+            "delay": 0.5
         }
     ]
 }

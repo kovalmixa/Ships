@@ -48,7 +48,7 @@ namespace Assets.Entity
         {
             _controller = gameObject.AddComponent<AiController>();
             AiController aiController = _controller as AiController;
-            aiController.Size = _entity.Size;
+            aiController.Size = _entity.CollisionSize;
             Queue<IScript> scripts = new();
             foreach (IScript scriptObj in ScriptList)
             {
@@ -75,7 +75,8 @@ namespace Assets.Entity
             if (ObjectPoolHandler.Objects.Count == 0) return installedEquips;
             for (int i = 0; i < EquipmentIds.Count; i++)
             {
-                EquipmentContainer equipment = ObjectPoolHandler.Objects[EquipmentIds[i]] as EquipmentContainer;
+                if (!ObjectPoolHandler.Objects.ContainsKey(EquipmentIds[i])) continue;
+            EquipmentContainer equipment = ObjectPoolHandler.Objects[EquipmentIds[i]] as EquipmentContainer;
                 installedEquips[i] = _entity.SetEquipment(equipment, i);
             }
             return installedEquips;

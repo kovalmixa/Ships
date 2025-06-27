@@ -6,5 +6,7 @@ namespace Assets.Entity.DataContainers
         public Graphics GetGraphics() => Graphics;
         public int LifeTime { get; set; }
         public int Speed { get; set; }
+        public bool IsHoming { get; set; }
+        public bool IsBallistic { get; set; }
     }
 }

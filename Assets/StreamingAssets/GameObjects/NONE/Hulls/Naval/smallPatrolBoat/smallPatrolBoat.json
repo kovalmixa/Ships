@@ -12,7 +12,9 @@
         ]
     },
     "physics": {
-      "mass": 10
+        "mass": 10,
+        "collissionType": "box",
+        "hasCollision":  true
     },
     "equipments": [
         [

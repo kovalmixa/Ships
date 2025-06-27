@@ -6,9 +6,8 @@ namespace Assets.Entity.DataContainers
     {
         private string _icon;
         private string[] _textures;
-        public int X { get; set; }
-        public int Y { get; set; }
-        public Vector2 Position => new(X, Y);
+
+        public Vector2 Position { get; set; }
 
         public string Icon
         {
@@ -20,7 +19,7 @@ namespace Assets.Entity.DataContainers
             }
             set => _icon = value;
         }
-
+        
         public string[] Textures
         {
             get
@@ -30,6 +29,21 @@ namespace Assets.Entity.DataContainers
                 return _textures;
             }
             set => _textures = value;
+        }
+
+        private Vector2 size;
+        public Vector2 Size
+        {
+            get
+            {
+                if (size == Vector2.zero) size = Vector2.one;
+                return size;
+            }
+            set
+            {
+                if (size == Vector2.zero) return;
+                size = value;
+            } 
         }
     }
 }

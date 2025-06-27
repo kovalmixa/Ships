@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Assets.InGameMarkers.Scripts;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Assets.Entity.DataContainers
 {
@@ -12,8 +13,7 @@ namespace Assets.Entity.DataContainers
     {
         public Graphics Graphics { get; set; }
         public Graphics GetGraphics() => Graphics;
-        public int OffsetX { get; set; }
-        public int OffsetY { get; set; }
+        public Vector2 Position { get; set; }
         public string Type { get; set; }
         public string[] Sounds { get; set; }
         public string[] Textures { get; set; }
