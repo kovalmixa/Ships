@@ -2200,7 +2200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 1795083864419907268, guid: 902ac850bc821c440b2d97c6c432d8dc, type: 3}
-  initialSize: 20
+  initialSize: 100
 --- !u!1 &1146350173
 GameObject:
   m_ObjectHideFlags: 0

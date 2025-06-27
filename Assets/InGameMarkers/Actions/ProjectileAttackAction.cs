@@ -26,16 +26,27 @@ public class ProjectileAttackAction : IGameAction
     }
 
     protected void SetupProjectile(ProjectilePoolHandler projectilePool, ProjectileContainer projectileContainer, ActionContext context)
-    { 
+    {
         GameObject projectileObj = projectilePool.Get();
         if (projectileObj == null) return;
-        Vector3 position = context.Source.transform.position + (Vector3)context.Position;
-        Vector3 direction = (context.TargetPosition.Value - position).normalized;
-        Vector3 startPosition = context.Source.transform.position + direction * 0.5f;
-        projectileObj.transform.position = startPosition;
-        projectileObj.transform.rotation = context.Source.transform.rotation;
-        projectileObj.GetComponent<Projectile>().ProjectileContainer = projectileContainer;
-        projectileObj.GetComponent<Projectile>().Launch(direction);
+
+        Transform source = context.Source.transform;
+        Vector3 fireOffset = context.Position / 10; // локальное смещение вверх от центра
+        Vector3 firePoint = source.TransformPoint(fireOffset); // учитываем поворот и позицию
+
+        Vector3 targetPos = context.TargetPosition ?? source.position;
+        Vector3 direction = (targetPos - firePoint).normalized;
+
+        // Устанавливаем позицию снаряда с учётом параллакса
+        projectileObj.transform.position = firePoint;
+
+        // Поворот по направлению
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        projectileObj.transform.rotation = Quaternion.Euler(0, 0, angle + 90f); // +90f — если спрайт вверх
+
+        var projectile = projectileObj.GetComponent<Projectile>();
+        projectile.ProjectileContainer = projectileContainer;
+        projectile.Launch(direction, null, targetPos, context.Source);
     }
 
     protected ProjectilePoolHandler FindProjectilePool()

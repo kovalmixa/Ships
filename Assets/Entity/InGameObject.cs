@@ -76,15 +76,18 @@ namespace Assets.Entity
         {
             foreach (GameObject layer in Layers)
             {
-                Sprite sprite = layer.GetComponent<SpriteRenderer>().sprite;
+                SpriteRenderer renderer = layer.GetComponent<SpriteRenderer>();
+                Sprite sprite = renderer != null ? renderer.sprite : null;
+
+                BoxCollider2D collider = layer.AddComponent<BoxCollider2D>();
+
                 if (sprite == null)
                 {
-                    layer.AddComponent<BoxCollider2D>().size = new(0, 0);
+                    collider.size = Vector2.zero;
                     continue;
                 }
+
                 Vector2 textureSize = GetTextureSizeFromSprite(sprite);
-                layer.AddComponent<BoxCollider2D>();
-                var collider = GetComponent<BoxCollider2D>();
                 collider.size = textureSize;
                 collider.isTrigger = IsTrigger;
             }

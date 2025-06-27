@@ -2,7 +2,7 @@
     "graphics": {
         "icon": "bullet.png"
     },
-    "speed": 5,
-    "lifeTime": 3,
+    "speed": 1,
+    "lifeTime": 10,
     "isBallistic": false
 }

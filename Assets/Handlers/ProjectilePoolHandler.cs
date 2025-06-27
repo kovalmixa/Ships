@@ -6,7 +6,7 @@ namespace Assets.Handlers
     public class ProjectilePoolHandler : MonoBehaviour
     {
         public GameObject prefab;
-        public int initialSize = 20;
+        public int initialSize = 100;
         private Queue<GameObject> pool = new();
 
         void Start()
