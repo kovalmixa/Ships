@@ -1,11 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Assets.Entity.DataContainers;
-using System.Drawing;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 using Assets.InGameMarkers.Scripts;
+using Cinemachine;
 
 namespace Assets.Entity
 {
@@ -56,7 +53,9 @@ namespace Assets.Entity
                 collider.size = value;
             }
         }
+
         protected List<GameObject> Layers = new();
+
         protected void GenerateCollision()
         {
             Vector2 maxSize = new(0,0);
@@ -72,6 +71,7 @@ namespace Assets.Entity
             var collider = GetComponent<BoxCollider2D>();
             collider.isTrigger = IsTrigger;
         }
+
         private void GenerateComplexCollision()
         {
             foreach (GameObject layer in Layers)
@@ -92,6 +92,7 @@ namespace Assets.Entity
                 collider.isTrigger = IsTrigger;
             }
         }
+
         private Vector2 GetTextureSizeFromSprite(Sprite sprite)
         {
             Vector2 textureSize = new(sprite.texture.width, sprite.texture.height);
@@ -99,6 +100,7 @@ namespace Assets.Entity
             textureSize = textureSize / ppu;
             return textureSize;
         }
+
         protected IEnumerator SetupLayersCoroutine(string[] texturePaths, bool generateCollision = true)
         {
             for (int i = 0; i < texturePaths.Length; i++)
@@ -134,18 +136,21 @@ namespace Assets.Entity
             }
             
         }
+
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if (IsComplexCollision) return;
             Bounce(collision);
         }
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (IsComplexCollision) return;
-            if (this is not Entity) return; 
+            if (this is not EntityBody) return; 
             IScript script = other.GetComponent<IScript>();
-            script?.Execute(this as Entity);
+            script?.Execute(this as EntityBody);
         }
+
         private void Bounce(Collision2D collision)
         {
             Rigidbody2D otherRb = collision.rigidbody;

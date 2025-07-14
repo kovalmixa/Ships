@@ -12,33 +12,33 @@ namespace Assets.Entity.AI
         public Queue<IScript> ScriptList = new();
         private IAi _ai;
         public void SetAiType(string name) { }
-        public void UpdateControl(Entity entity)
+        public void UpdateControl(EntityBody entityBody)
         {
-            if (!entity) return;
-            ActivateScripts(entity);
-            MoveControl(entity);
-            RotateControl(entity);
-            AttackControl(entity);
+            if (!entityBody) return;
+            ActivateScripts(entityBody);
+            MoveControl(entityBody);
+            RotateControl(entityBody);
+            AttackControl(entityBody);
         }
-        private void AttackControl(Entity entity)
-        {
-        }
-        private void RotateControl(Entity entity)
+        private void AttackControl(EntityBody entityBody)
         {
         }
-        private void MoveControl(Entity entity)
+        private void RotateControl(EntityBody entityBody)
         {
-            PointMovement(entity);
         }
-        private void PointMovement(Entity entity)
+        private void MoveControl(EntityBody entityBody)
+        {
+            PointMovement(entityBody);
+        }
+        private void PointMovement(EntityBody entityBody)
         {
             if (_movePoint == null) return;
-            Vector2 directionToPoint = _movePoint.transform.position - entity.transform.position;
+            Vector2 directionToPoint = _movePoint.transform.position - entityBody.transform.position;
             if (directionToPoint.magnitude < Size.y) return; 
-            float angleToTarget = Vector2.SignedAngle(entity.transform.up, directionToPoint.normalized);
+            float angleToTarget = Vector2.SignedAngle(entityBody.transform.up, directionToPoint.normalized);
             float rotationDirection = -Mathf.Clamp(angleToTarget / 45f, -1f, 1f);
-            entity.SpeedLevel = Mathf.Clamp(entity.SpeedLevel + 1, entity.MinSpeedLevel, entity.MaxSpeedLevel);
-            entity.Movement(rotationDirection);
+            entityBody.SpeedLevel = Mathf.Clamp(entityBody.SpeedLevel + 1, entityBody.MinSpeedLevel, entityBody.MaxSpeedLevel);
+            entityBody.Movement(rotationDirection);
         }
         public void SetupAreaScripts(GameObject[] scriptAreaSets)
         {
@@ -50,21 +50,21 @@ namespace Assets.Entity.AI
         }
         public void SetMovementPoint(Transform target) => _movePoint = target;
         public void SetTargetPoint(Transform target) => _targetPoint = target;
-        private void ActivateScripts(Entity entity)
+        private void ActivateScripts(EntityBody entityBody)
         {
             if (ScriptList.Count == 0) return;
-            if (!IsExecuted(entity))
+            if (!IsExecuted(entityBody))
             {
-                ScriptList.Peek().Execute(entity);
+                ScriptList.Peek().Execute(entityBody);
                 return;
             }
-            if (IsScriptActive(entity)) return;
+            if (IsScriptActive(entityBody)) return;
             ScriptList.Dequeue();
             if (ScriptList.Count == 0) return;
-            ScriptList.Peek().Execute(entity);
+            ScriptList.Peek().Execute(entityBody);
         }
 
-        private bool IsScriptActive(Entity entity) => !ScriptList.Peek().IsFinished(entity);
-        private bool IsExecuted(Entity entity) => ScriptList.Peek().IsExecuted(entity);
+        private bool IsScriptActive(EntityBody entityBody) => !ScriptList.Peek().IsFinished(entityBody);
+        private bool IsExecuted(EntityBody entityBody) => ScriptList.Peek().IsExecuted(entityBody);
     }
 }

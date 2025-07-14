@@ -43,41 +43,41 @@ namespace Assets.Entity.Player
             Debug.LogWarning("Камера не найдена!");
             return null;
         }
-        public void UpdateControl(Entity entity)
+        public void UpdateControl(EntityBody entityBody)
         {
-            if(!entity) return;
-            MoveControl(entity);
-            RotateControl(entity);
-            AttackControl(entity);
+            if(!entityBody) return;
+            MoveControl(entityBody);
+            RotateControl(entityBody);
+            AttackControl(entityBody);
         }
-        private void MoveControl(Entity entity)
+        private void MoveControl(EntityBody entityBody)
         {
-            if (entity.Type == "Sea")
+            if (entityBody.Type == "Sea")
             {
-                if (Input.GetKeyDown(KeyCode.W) && entity.SpeedLevel < entity.MaxSpeedLevel)
-                    entity.SpeedLevel++;
-                else if (Input.GetKeyDown(KeyCode.S) && entity.SpeedLevel > entity.MinSpeedLevel)
-                    entity.SpeedLevel--;
+                if (Input.GetKeyDown(KeyCode.W) && entityBody.SpeedLevel < entityBody.MaxSpeedLevel)
+                    entityBody.SpeedLevel++;
+                else if (Input.GetKeyDown(KeyCode.S) && entityBody.SpeedLevel > entityBody.MinSpeedLevel)
+                    entityBody.SpeedLevel--;
 
                 float rotationInput = Input.GetAxis("Horizontal");
-                entity.Movement(rotationInput);
+                entityBody.Movement(rotationInput);
             }
         }
-        private void AttackControl(Entity entity)
+        private void AttackControl(EntityBody entityBody)
         {
             Vector3 mouseWorldPos = Camera.ScreenToWorldPoint(Input.mousePosition);
-            KeyWordControls(entity, mouseWorldPos);
+            KeyWordControls(entityBody, mouseWorldPos);
         }
-        private void RotateControl(Entity entity)
+        private void RotateControl(EntityBody entityBody)
         {
             Vector3 mouseWorldPos = Camera.ScreenToWorldPoint(Input.mousePosition);
             Vector2 direction = mouseWorldPos - transform.position;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            entity.RotateEquipment(angle);
+            entityBody.RotateEquipment(angle);
         }
         public void SetMovementPoint(Transform target) { }
         public void SetTargetPoint(Transform target) { }
-        private void KeyWordControls(Entity entity, Vector3 position)
+        private void KeyWordControls(EntityBody entityBody, Vector3 position)
         {
 
             foreach (var entry in keyCodeActivations)
@@ -88,14 +88,21 @@ namespace Assets.Entity.Player
                         entry.Key == KeyCode.Mouse1 ? 1 : -1;
                     if (mouseButton != -1 && Input.GetMouseButton(mouseButton))
                     {
-                        entity.ActivateEquipment(position, entry.Value);
+                        if (ActionIsForbidden(entityBody, position, entry.Value)) return;
+                        entityBody.ActivateCommand(position, entry.Value);
                     }
                 }
                 else if (Input.GetKey(entry.Key))
                 {
-                    entity.ActivateEquipment(position, entry.Value);
+                    entityBody.ActivateCommand(position, entry.Value);
                 }
             }
+        }
+
+        private bool ActionIsForbidden(EntityBody entityBody, Vector3 position, string type)
+        {
+            //инвентарь панельки управления и тд. проверять пассивность/активнотсь абилки ActionHandler.IsPassive(type);
+            return false;
         }
     }
 }

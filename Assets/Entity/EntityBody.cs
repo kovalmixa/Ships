@@ -4,18 +4,25 @@ using System.Collections.Generic;
 using Assets.Entity.DataContainers;
 using Assets.Handlers;
 using Assets.InGameMarkers.Scripts;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace Assets.Entity
 {
-    public class Entity : InGameObject
+    public class EntityBody : InGameObject, IActivation
     {
+        private Activator _activator;
         public EntityController EntityController;
         public EntityContainer EntityData = new();
         public GameObject EquipmentPrefab;
         private List<GameObject> _equipments = new();
+        public ActivationContainer[] Activations
+        {
+            get => EntityData.HullData.OnActivate; 
+            set => EntityData.HullData.OnActivate = value;
+        }
         private const int InLayerComponentsLimit = 10;
         public float MaxSpeed = 5f;
         public float Acceleration = 3f;
@@ -33,13 +40,19 @@ namespace Assets.Entity
         private int _minSpeedLevel = -1;
         public int MinSpeedLevel => _minSpeedLevel;
 
+        private void Awake()
+        {
+            _activator = gameObject.AddComponent<Activator>();
+        }
         public IEnumerator StartSetupHullLayers(HullContainer hull)
         {
             foreach (Transform child in LayersAnchor)
                 Destroy(child.gameObject);
 
             EntityData.HullData = hull;
+            _activator.SetActivations(hull.OnActivate);
             string[] texturePaths = hull.Graphics.Textures;
+            Activations = hull.OnActivate;
             yield return StartCoroutine(SetupHullLayers(texturePaths));
         }
 
@@ -76,7 +89,7 @@ namespace Assets.Entity
                     Equipment.Equipment equipment = layerGo.GetComponent<Equipment.Equipment>();
                     equipment.HullEquipmentProperties = hullEquipmentProperties;
                     equipment.LayerIndex = i * InLayerComponentsLimit;
-                    equipment.Entity = this;
+                    equipment.EntityBody = this;
                     _equipments.Add(layerGo);
                 }
             }
@@ -114,13 +127,18 @@ namespace Assets.Entity
             }
         }
 
-        public void ActivateEquipment(Vector3 position, string activationCommand)
+        public void ActivateCommand(Vector3 position, string activationCommand)
         {
             if (activationCommand == "") return;
             //заменить эту дебильную атаку на атаку снарядами, авиацией и торпеды/ракеты
-            if (TypeListHandler.IsWeapon(activationCommand) || activationCommand == "Attack")
-            {
+            if (!ActionHandler.IsPassive(activationCommand))
                 if (IsAttackActionForbidden(position)) return;
+            if (Activations != null && Activations.Length > 0)
+            {
+                foreach (var activation in Activations)
+                {
+                    if (activation.Type == activationCommand) Activate(position, activationCommand);
+                }
             }
             foreach (var equipmentGameObject in _equipments)
             {
@@ -133,14 +151,23 @@ namespace Assets.Entity
                     if (TypeListHandler.IsWeapon(type)) equipment.Activate(position);
                     continue;
                 }
-                if (equipment.EquipmentContainer.General.Type == activationCommand) equipment.Activate(position);
+                if (equipment.EquipmentContainer.General.Type == activationCommand ||
+                    equipment.EquipmentContainer.Id == activationCommand) equipment.Activate(position);
             }
         }
+
+        public void Activate(Vector3 position, string type = null) => _activator.TryActivate(position, type);
 
         private bool IsAttackActionForbidden(Vector3 position)
         {
             Collider2D col = GetComponent<Collider2D>();
-            return col != null && col.OverlapPoint(position);
+            if (col != null && col.OverlapPoint(position)) return true;
+            foreach (var equipment in _equipments)
+            {
+                col = equipment.GetComponent<Collider2D>();
+                if (col != null && col.OverlapPoint(position)) return true;
+            }
+            return false;
         }
     }
 }

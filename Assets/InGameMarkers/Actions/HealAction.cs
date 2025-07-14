@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class HealAction : IGameAction
 {
+    public bool IsPassive { get; set; } = true;
+
     public void Execute(ActionContext context)
     {
         if (!context.AmountValue.HasValue)

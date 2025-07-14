@@ -12,18 +12,18 @@ namespace Assets.InGameMarkers.Scripts
             this.waitTime = waitTime;
         }
 
-        public override bool Execute(Entity.Entity entity)
+        public override bool Execute(Entity.EntityBody entityBody)
         {
             timer += Time.deltaTime;
             return timer >= waitTime;
         }
 
-        public override bool IsExecuted(Entity.Entity entity)
+        public override bool IsExecuted(Entity.EntityBody entityBody)
         {
             throw new System.NotImplementedException();
         }
 
-        public override bool IsFinished(Entity.Entity entity)
+        public override bool IsFinished(Entity.EntityBody entityBody)
         {
             throw new System.NotImplementedException();
         }

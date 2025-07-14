@@ -25,10 +25,10 @@ namespace Assets.InGameMarkers.Scripts
 
         private void OnTriggerEnter(Collider other)
         {
-            Entity.Entity entity = other.GetComponent<Entity.Entity>();
-            if (entity) Execute(entity);
+            Entity.EntityBody entityBody = other.GetComponent<Entity.EntityBody>();
+            if (entityBody) Execute(entityBody);
         }
-        public override bool Execute(Entity.Entity entity)
+        public override bool Execute(Entity.EntityBody entityBody)
         {
             if (_scripts.Count == 0)
             {
@@ -37,12 +37,12 @@ namespace Assets.InGameMarkers.Scripts
             }
             foreach (IScript _script in _scripts)
             {
-                _script.Execute(entity);
+                _script.Execute(entityBody);
             }
             _isExecuted = true;
             return true;
         }
-        public override bool IsFinished(Entity.Entity entity) => true;
-        public override bool IsExecuted(Entity.Entity entity) => _isExecuted;
+        public override bool IsFinished(Entity.EntityBody entityBody) => true;
+        public override bool IsExecuted(Entity.EntityBody entityBody) => _isExecuted;
     }
 }

@@ -15,7 +15,7 @@ public class GameInitializer : MonoBehaviour
 
         string[] excludedFolders = { "IgnoreThisFolder", "Temp" };
 
-        ObjectPoolHandler.SetupObjectPool(searchRoots, excludedFolders);
+        GameObjectsHandler.SetupObjectPool(searchRoots, excludedFolders);
 
         //Debug.Log($"Loaded {ObjectPoolHandler.Objects.Count} objects.");
     }

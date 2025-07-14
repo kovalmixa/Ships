@@ -7,22 +7,22 @@ namespace Assets.InGameMarkers.Scripts
     {
         [SerializeField] public Transform Target;
         private bool _isExecuted;
-        public override bool Execute(Entity.Entity entity)
+        public override bool Execute(Entity.EntityBody entityBody)
         {
-            if (entity.EntityController.IsPlayer) return false;
+            if (entityBody.EntityController.IsPlayer) return false;
             if (Target == null) return false;
-            entity.EntityController.SetPointToMove(Target);
+            entityBody.EntityController.SetPointToMove(Target);
             _isExecuted = true;
             return true;
         }
 
-        public override bool IsExecuted(Entity.Entity entity) => _isExecuted;
-        public override bool IsFinished(Entity.Entity entity)
+        public override bool IsExecuted(Entity.EntityBody entityBody) => _isExecuted;
+        public override bool IsFinished(Entity.EntityBody entityBody)
         {
-            float threshold = entity.CollisionSize.y + 0.5f;
+            float threshold = entityBody.CollisionSize.y + 0.5f;
             CircleCollider2D area = Target.GetComponent<CircleCollider2D>();
-            if (area) return Vector3.Distance(entity.transform.position, Target.position) < area.radius + threshold;
-            return Vector3.Distance(entity.transform.position, Target.position) < threshold;
+            if (area) return Vector3.Distance(entityBody.transform.position, Target.position) < area.radius + threshold;
+            return Vector3.Distance(entityBody.transform.position, Target.position) < threshold;
         }
         #if UNITY_EDITOR
                 private void OnDrawGizmos()

@@ -8,7 +8,7 @@ using Graphics = Assets.Entity.DataContainers.Graphics;
 
 namespace Assets.Handlers
 {
-    public static class ObjectPoolHandler{
+    public static class GameObjectsHandler{
         public static Dictionary<string, IObject> Objects = new();
         private static readonly Dictionary<string, Func<string, IObject>> Loaders = new()
         {
@@ -49,6 +49,7 @@ namespace Assets.Handlers
                 if (jsonObject == null) continue;
                 SetObjectPath(filePath, jsonObject);
                 string id = DataFileHandler.GetIdByPath(filePath);
+                jsonObject.Id = id;
                 Objects.Add(id, jsonObject);
                 //Debug.Log(id);
             }

@@ -2,8 +2,8 @@ namespace Assets.InGameMarkers.Scripts
 {
     public interface IScript
     {
-        bool IsExecuted(Entity.Entity entity);
-        bool Execute(Entity.Entity entity);
-        bool IsFinished(Entity.Entity entity);
+        bool IsExecuted(Entity.EntityBody entityBody);
+        bool Execute(Entity.EntityBody entityBody);
+        bool IsFinished(Entity.EntityBody entityBody);
     }
 }

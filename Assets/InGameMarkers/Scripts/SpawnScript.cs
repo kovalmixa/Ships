@@ -6,13 +6,13 @@ namespace Assets.InGameMarkers.Scripts
     {
         public Vector3 Position;
         private bool _isExecuted;
-        public Entity.Entity EntityToSpawn;
+        public Entity.EntityBody EntityBodyToSpawn;
         //add code for spawning/ it will be like that with point moving
-        public override bool Execute(Entity.Entity entity)
+        public override bool Execute(Entity.EntityBody entityBody)
         {
             return true;
         }
-        public override bool IsFinished(Entity.Entity entity) => true;
-        public override bool IsExecuted(Entity.Entity entity) => _isExecuted;
+        public override bool IsFinished(Entity.EntityBody entityBody) => true;
+        public override bool IsExecuted(Entity.EntityBody entityBody) => _isExecuted;
     }
 }

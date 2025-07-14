@@ -6,6 +6,7 @@ namespace Assets.Entity.DataContainers
     {
         public General General { get; set; }
         public Graphics Graphics { get; set; }
+        public string Id { get; set; }
         public Graphics GetGraphics() => Graphics;
         public Physics Physics{ get; set; }
         public ActivationContainer[] OnActivate;

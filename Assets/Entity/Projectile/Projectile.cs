@@ -1,4 +1,5 @@
-﻿using Assets.Entity.DataContainers;
+﻿using System;
+using Assets.Entity.DataContainers;
 using Assets.Handlers;
 using Cinemachine;
 using TMPro;
@@ -8,7 +9,7 @@ using UnityEngine.UIElements;
 
 namespace Assets.Entity.Projectile
 {
-    public class Projectile : InGameObject
+    public class Projectile : InGameObject, IActivation
     {
         private ProjectileContainer _projectileContainer;
         public ProjectileContainer ProjectileContainer
@@ -21,6 +22,11 @@ namespace Assets.Entity.Projectile
                 IsTrigger = true;
                 StartCoroutine(SetupLayersCoroutine(texturePaths));
             }
+        }
+        public ActivationContainer[] Activations
+        {
+            get => ProjectileContainer.OnActivate;
+            set => ProjectileContainer.OnActivate = value;
         }
 
         private Transform target;
@@ -93,6 +99,7 @@ namespace Assets.Entity.Projectile
 
         private void Explode()
         {
+            Activate(transform.position);
             Deactivate();
         }
 
@@ -115,8 +122,14 @@ namespace Assets.Entity.Projectile
             }
         }
 
+        public void Activate(Vector3 position, string type = null)
+        {
+
+        }
+
         private void OnTriggerEnter2D(Collider2D other)
         {
+            //если торпеда или абилки с жирными снарядами
             //if (other.gameObject == shooter)
             //{
             //    return;

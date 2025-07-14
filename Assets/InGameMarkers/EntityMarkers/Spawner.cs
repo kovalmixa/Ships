@@ -42,9 +42,9 @@ namespace Assets.InGameMarkers.EntityMarkers
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (Quantity == 0) return;
-            Entity.Entity entity = other.GetComponent<Entity.Entity>();
-            if (entity == null) return;
-            if (!entity.EntityController.IsPlayer) return;
+            Entity.EntityBody entityBody = other.GetComponent<Entity.EntityBody>();
+            if (entityBody == null) return;
+            if (!entityBody.EntityController.IsPlayer) return;
             if (!_entityObj) Spawn();
         }
 

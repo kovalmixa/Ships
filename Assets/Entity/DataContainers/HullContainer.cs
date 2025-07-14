@@ -12,6 +12,9 @@ namespace Assets.Entity.DataContainers
         public Physics Physics { get; set; }
 
         public HullEquipmentProperties[][] Equipments { get; set; }
+        public string Id { get; set; }
         public Graphics GetGraphics() => Graphics;
+
+        public ActivationContainer[] OnActivate;
     }
 }

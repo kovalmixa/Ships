@@ -10,6 +10,7 @@ using UnityEngine;
 
 public class ProjectileAttackAction : IGameAction
 {
+    public bool IsPassive { get; set; } = false;
     public void Execute(ActionContext context)
     {
         if (context.TargetPosition == null || string.IsNullOrEmpty(context.ObjectId))
@@ -19,8 +20,8 @@ public class ProjectileAttackAction : IGameAction
         }
         ProjectilePoolHandler projectilePool = FindProjectilePool();
         if (projectilePool == null) return;
-        if (!ObjectPoolHandler.Objects.ContainsKey(context.ObjectId)) return;
-        ProjectileContainer projectileContainer = ObjectPoolHandler.Objects[context.ObjectId] as ProjectileContainer;
+        if (!GameObjectsHandler.Objects.ContainsKey(context.ObjectId)) return;
+        ProjectileContainer projectileContainer = GameObjectsHandler.Objects[context.ObjectId] as ProjectileContainer;
         SetupProjectile(projectilePool, projectileContainer, context);
 
     }
