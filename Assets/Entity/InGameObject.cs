@@ -67,7 +67,7 @@ namespace Assets.Entity
                 maxSize.x = Mathf.Max(maxSize.x, textureSize.x);
                 maxSize.y = Mathf.Max(maxSize.y, textureSize.y);
             }
-            CollisionSize = maxSize / 10;
+            CollisionSize = maxSize;
             var collider = GetComponent<BoxCollider2D>();
             collider.isTrigger = IsTrigger;
         }

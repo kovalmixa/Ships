@@ -131,7 +131,7 @@ namespace Assets.Entity
         {
             if (activationCommand == "") return;
             //заменить эту дебильную атаку на атаку снарядами, авиацией и торпеды/ракеты
-            if (!ActionHandler.IsPassive(activationCommand))
+            if (!ActivationHandler.IsPassive(activationCommand))
                 if (IsAttackActionForbidden(position)) return;
             if (Activations != null && Activations.Length > 0)
             {

@@ -41,7 +41,7 @@ namespace Assets.Entity
                 if (time - _lastActivationTimes[i] >= activation.Delay)
                 {
                     ActionContext context = new ActionContext(activation, position, gameObject);
-                    ActionHandler.Execute(activation.Type, context);
+                    ActivationHandler.Execute(activation.Type, context);
                     _lastActivationTimes[i] = time;
                 }
             }

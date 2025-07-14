@@ -11,7 +11,7 @@ namespace Assets.InGameMarkers.Actions
         public GameObject Source;
         public Vector3? TargetPosition;
         public string ObjectId { get; set; }
-        public int? AmountValue { get; set; }
+        public float? AmountValue { get; set; }
 
         public ActionContext(ActivationContainer activation, Vector3 position, GameObject gameObject)
         {
@@ -19,7 +19,7 @@ namespace Assets.InGameMarkers.Actions
             Source = gameObject;
             TargetPosition = position;
             Position = activation.Position;
-            //actionContext.AmountValue = ?? // для добавления значения к абилкам или хп, мп и так далее
+            AmountValue = activation.Amount;
         }
     }
 }

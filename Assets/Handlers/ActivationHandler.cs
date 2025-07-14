@@ -7,7 +7,7 @@ using Assets.InGameMarkers.Actions;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public static class ActionHandler
+public static class ActivationHandler
 {
     private static readonly Dictionary<string, IGameAction> _actions = new()
     {

@@ -28,6 +28,7 @@ namespace Assets.Entity.DataContainers
         public float DeadRange { get; set; }
         public bool IsPassive { get; set; } = false;
         public float Amount { get; set; }
+
         private Vector2[] _fireSectors;
         public Vector2[] FireSectors
         {
@@ -49,8 +50,10 @@ namespace Assets.Entity.DataContainers
         }
         public bool CanActivate(float distance = 0)
         {
-            if (distance == 0) return true;
-            return distance >= DeadRange && distance <= Range;
+            if (distance <= 0f) return true;
+            bool withinRange = Range <= 0f || distance <= Range;
+            bool beyondDeadRange = distance >= DeadRange;
+            return withinRange && beyondDeadRange;
         } 
     }
 }

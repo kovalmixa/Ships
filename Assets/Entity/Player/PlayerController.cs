@@ -18,6 +18,7 @@ namespace Assets.Entity.Player
             }
             set => camera = value;
         }
+
         private Dictionary<KeyCode, string> keyCodeActivations = new()
         {
             { KeyCode.Mouse0, "Attack" },
@@ -29,9 +30,11 @@ namespace Assets.Entity.Player
             for (int i = 0; i <= 9; i++)
             {
                 KeyCode key = (KeyCode)((int)KeyCode.Alpha0 + i);
-                keyCodeActivations.Add(key, "");
+                if (i == 1) keyCodeActivations.Add(key, "heal");
+                else keyCodeActivations.Add(key, "");
             }
         }
+
         private Camera FindMainCamera()
         {
             Camera[] cameras = GameObject.FindObjectsOfType<Camera>();
@@ -43,6 +46,7 @@ namespace Assets.Entity.Player
             Debug.LogWarning("Камера не найдена!");
             return null;
         }
+
         public void UpdateControl(EntityBody entityBody)
         {
             if(!entityBody) return;
@@ -50,6 +54,7 @@ namespace Assets.Entity.Player
             RotateControl(entityBody);
             AttackControl(entityBody);
         }
+
         private void MoveControl(EntityBody entityBody)
         {
             if (entityBody.Type == "Sea")
@@ -63,11 +68,13 @@ namespace Assets.Entity.Player
                 entityBody.Movement(rotationInput);
             }
         }
+
         private void AttackControl(EntityBody entityBody)
         {
             Vector3 mouseWorldPos = Camera.ScreenToWorldPoint(Input.mousePosition);
             KeyWordControls(entityBody, mouseWorldPos);
         }
+
         private void RotateControl(EntityBody entityBody)
         {
             Vector3 mouseWorldPos = Camera.ScreenToWorldPoint(Input.mousePosition);
@@ -75,8 +82,11 @@ namespace Assets.Entity.Player
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             entityBody.RotateEquipment(angle);
         }
+
         public void SetMovementPoint(Transform target) { }
+
         public void SetTargetPoint(Transform target) { }
+
         private void KeyWordControls(EntityBody entityBody, Vector3 position)
         {
 
@@ -101,7 +111,7 @@ namespace Assets.Entity.Player
 
         private bool ActionIsForbidden(EntityBody entityBody, Vector3 position, string type)
         {
-            //инвентарь панельки управления и тд. проверять пассивность/активнотсь абилки ActionHandler.IsPassive(type);
+            //инвентарь панельки управления и тд. проверять пассивность/активнотсь абилки ActivationHandler.IsPassive(type);
             return false;
         }
     }
