@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Transactions;
 using Assets.Entity.DataContainers;
 using Assets.Handlers;
 using Assets.InGameMarkers.Actions;
@@ -10,10 +11,12 @@ namespace Assets.Entity
     {
         public ActivationContainer[] Activations;
         private float[] _lastActivationTimes;
+        private GameObject _host;
         public Vector2[] HostFireSectors { get; set; }
 
-        public void SetActivations(ActivationContainer[] activations)
+        public void SetActivations(ActivationContainer[] activations, GameObject host)
         {
+            _host = host;
             Activations = activations;
             if (activations != null)
             {
@@ -37,6 +40,7 @@ namespace Assets.Entity
                 float distance = Vector2.Distance(myPosition, position);
                 if (!activation.CanActivate(distance)) continue;
                 if (!IsActivationWithinSector(position, activation)) continue;
+                //if (HostFireSectors != null) Debug.Log(HostFireSectors[0]);
 
                 if (time - _lastActivationTimes[i] >= activation.Delay)
                 {
@@ -52,22 +56,21 @@ namespace Assets.Entity
             if (activation.IsPassive) return true;
 
             Vector2 direction = (Vector2)position - (Vector2)transform.position;
-            float targetLocalAngle = Vector2.SignedAngle(transform.up, direction);
-            float absAngle = Mathf.Abs(targetLocalAngle);
-
+            float targetLocalAngle = FunctionHandler.NormalizeAngle(Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90);
+            ;
+            float currentAngle = FunctionHandler.NormalizeAngle(_host.transform.rotation.eulerAngles.z);
             // Проверка на прицельность (точность зависит от задержки)
-            if (absAngle >= 12.5f / activation.Delay) return false;
-
-            // Если задержка малая, разрешаем активацию
-            if (activation.Delay <= 1f) return true;
+            if (Mathf.Abs(targetLocalAngle - currentAngle) % 180 >= 12.5f / activation.Delay) return false;
 
             // Проверка всех секторов способности
-            bool inActivationSector = activation.FireSectors != null &&
-                                      activation.FireSectors.Any(sector => FunctionHandler.IsAngleWithinSector(targetLocalAngle, sector.x, sector.y));
-
+            bool inActivationSector = activation.FireSectors == null || activation.FireSectors.Length == 0 ||
+                                      activation.FireSectors.Any(sector => FunctionHandler.IsAngleWithinSector(targetLocalAngle, sector.x + currentAngle, sector.y + currentAngle));
             // Проверка всех секторов носителя (например, HullEquipmentProperties.FireSector)
+            float hullRotation = 0;
+            if (_host.TryGetComponent<Equipment.Equipment>(out Equipment.Equipment equipment))
+                hullRotation = FunctionHandler.NormalizeAngle(equipment.EntityBody.transform.rotation.eulerAngles.z);
             bool inHostSector = HostFireSectors == null || HostFireSectors.Length == 0 ||
-                                HostFireSectors.Any(sector => FunctionHandler.IsAngleWithinSector(targetLocalAngle, sector.x, sector.y));
+                                HostFireSectors.Any(sector => FunctionHandler.IsAngleWithinSector(targetLocalAngle, sector.x + hullRotation, sector.y + hullRotation));
 
             return inActivationSector && inHostSector;
         }

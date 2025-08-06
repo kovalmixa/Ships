@@ -31,7 +31,7 @@
                 "y": 1
             },
             "range": 10,
-            "deadRange":  1,
+            "deadRange": 1,
             "projectile": "NONE_p_bullet",
             "type": "projectileAttack",
             "delay": 0.5

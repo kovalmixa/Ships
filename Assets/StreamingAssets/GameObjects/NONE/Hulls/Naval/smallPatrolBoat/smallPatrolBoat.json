@@ -73,7 +73,13 @@
                 "x": 0,
                 "y": 1
             },
-            "isPassive": true,
+            "fireSectors": [
+                {
+                    "x": 25,
+                    "y": -25
+                }
+            ],
+            //"isPassive": true,
             "amount": 42,
             "projectile": "NONE_p_bullet",
             "type": "heal",

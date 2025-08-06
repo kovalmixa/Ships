@@ -20,7 +20,7 @@ namespace Assets.Entity.Equipment
             set
             {
                 _equipmentContainer = value;
-                _activator.SetActivations(_equipmentContainer.OnActivate);
+                _activator.SetActivations(_equipmentContainer.OnActivate, gameObject);
                 _activator.HostFireSectors = HullEquipmentProperties.FireSectors;
                 string[] texturePaths = _equipmentContainer.Graphics.Textures;
                 StartCoroutine(SetupTextureLayers(texturePaths));

@@ -50,7 +50,7 @@ namespace Assets.Entity
                 Destroy(child.gameObject);
 
             EntityData.HullData = hull;
-            _activator.SetActivations(hull.OnActivate);
+            _activator.SetActivations(hull.OnActivate, gameObject);
             string[] texturePaths = hull.Graphics.Textures;
             Activations = hull.OnActivate;
             yield return StartCoroutine(SetupHullLayers(texturePaths));
