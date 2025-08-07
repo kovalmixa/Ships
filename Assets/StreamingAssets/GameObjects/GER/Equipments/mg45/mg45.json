@@ -1,7 +1,7 @@
 {
     "general": {
         "name": "mg45",
-        "type": "machine gun",
+        "class": "machine gun",
         "sizeType": "s"
     },
     "graphics": {
@@ -32,9 +32,10 @@
             },
             "range": 10,
             "deadRange": 1,
-            "projectile": "NONE_p_bullet",
+            "objectID": "NONE_pr_bullet",
             "type": "projectileAttack",
-            "delay": 0.5
+            "delay": 0.5,
+            "value": 1
         }
     ]
 }

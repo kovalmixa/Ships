@@ -22,12 +22,12 @@ namespace Assets.Entity.DataContainers
         public string EffectType { get; set; }
         public string[] LightColor { get; set; }
         public string[] Effects { get; set; }
-        [CanBeNull] public string Projectile { get; set; }
+        [CanBeNull] public string ObjectID { get; set; }
         public float Delay { get; set; }
         public float Range { get; set; }
         public float DeadRange { get; set; }
         public bool IsPassive { get; set; } = false;
-        public float Amount { get; set; }
+        public float Value { get; set; }
 
         private Vector2[] _fireSectors;
         public Vector2[] FireSectors

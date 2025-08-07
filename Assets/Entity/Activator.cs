@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Transactions;
 using Assets.Entity.DataContainers;
 using Assets.Handlers;
@@ -11,12 +12,10 @@ namespace Assets.Entity
     {
         public ActivationContainer[] Activations;
         private float[] _lastActivationTimes;
-        private GameObject _host;
         public Vector2[] HostFireSectors { get; set; }
 
-        public void SetActivations(ActivationContainer[] activations, GameObject host)
+        public void SetActivations(ActivationContainer[] activations)
         {
-            _host = host;
             Activations = activations;
             if (activations != null)
             {
@@ -40,35 +39,43 @@ namespace Assets.Entity
                 float distance = Vector2.Distance(myPosition, position);
                 if (!activation.CanActivate(distance)) continue;
                 if (!IsActivationWithinSector(position, activation)) continue;
-                //if (HostFireSectors != null) Debug.Log(HostFireSectors[0]);
-
                 if (time - _lastActivationTimes[i] >= activation.Delay)
                 {
-                    ActionContext context = new ActionContext(activation, position, gameObject);
+                    Vector3 angularPosition = position;
+                    if (TryGetComponent(out Equipment.Equipment equipment))
+                        if (!activation.IsPassive) 
+                            angularPosition = GetAngularPosition(position, transform.rotation.eulerAngles.z - 90);
+                    angularPosition.x += activation.Position.x;
+                    ActionContext context = new ActionContext(activation, angularPosition, gameObject);
                     ActivationHandler.Execute(activation.Type, context);
                     _lastActivationTimes[i] = time;
                 }
             }
         }
 
+        private Vector3 GetAngularPosition(Vector3 position, float eulerAnglesZ)
+        {
+            float radians = eulerAnglesZ * Mathf.Deg2Rad + MathF.PI;
+            float distance = Vector2.Distance(position, transform.position);
+            float x = transform.position.x + distance * MathF.Cos(radians);
+            float y = transform.position.y + distance * MathF.Sin(radians);
+            return new Vector3(x, y, 0);
+        }
+
         private bool IsActivationWithinSector(Vector3 position, ActivationContainer activation)
         {
             if (activation.IsPassive) return true;
-
             Vector2 direction = (Vector2)position - (Vector2)transform.position;
-            float targetLocalAngle = FunctionHandler.NormalizeAngle(Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90);
-            ;
-            float currentAngle = FunctionHandler.NormalizeAngle(_host.transform.rotation.eulerAngles.z);
-            // Проверка на прицельность (точность зависит от задержки)
+            float targetLocalAngle = FunctionHandler.NormalizeAngle(Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90); ;
+            float currentAngle = FunctionHandler.NormalizeAngle(transform.rotation.eulerAngles.z);
+            float hullRotation = 0;
+            if (TryGetComponent(out Equipment.Equipment equipment))
+                hullRotation = FunctionHandler.NormalizeAngle(equipment.EntityBody.transform.rotation.eulerAngles.z);
             if (Mathf.Abs(targetLocalAngle - currentAngle) % 180 >= 12.5f / activation.Delay) return false;
 
-            // Проверка всех секторов способности
             bool inActivationSector = activation.FireSectors == null || activation.FireSectors.Length == 0 ||
                                       activation.FireSectors.Any(sector => FunctionHandler.IsAngleWithinSector(targetLocalAngle, sector.x + currentAngle, sector.y + currentAngle));
-            // Проверка всех секторов носителя (например, HullEquipmentProperties.FireSector)
-            float hullRotation = 0;
-            if (_host.TryGetComponent<Equipment.Equipment>(out Equipment.Equipment equipment))
-                hullRotation = FunctionHandler.NormalizeAngle(equipment.EntityBody.transform.rotation.eulerAngles.z);
+            
             bool inHostSector = HostFireSectors == null || HostFireSectors.Length == 0 ||
                                 HostFireSectors.Any(sector => FunctionHandler.IsAngleWithinSector(targetLocalAngle, sector.x + hullRotation, sector.y + hullRotation));
 

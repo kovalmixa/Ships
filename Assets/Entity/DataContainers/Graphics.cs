@@ -13,7 +13,7 @@ namespace Assets.Entity.DataContainers
         {
             get
             {
-                if (_icon == null)
+                if (_icon == null && _textures != null)
                     return Textures[0];
                 return _icon;
             }
@@ -24,12 +24,14 @@ namespace Assets.Entity.DataContainers
         {
             get
             {
-                if (_textures == null || _textures.Length == 0)
+                if ((_textures == null || _textures.Length == 0) && _icon != null)
                     return new[] { Icon };
                 return _textures;
             }
             set => _textures = value;
         }
+
+        public string[] Animations { get; set; }
 
         //private Vector2 size;
         //public Vector2 Size

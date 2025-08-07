@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Assets.Entity.DataContainers;
 using Assets.Handlers;
+using Assets.InGameMarkers.Actions;
 using Assets.InGameMarkers.Scripts;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
@@ -11,8 +12,17 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace Assets.Entity
 {
-    public class EntityBody : InGameObject, IActivation
+    public class EntityBody : InGameObject, IActivation, IDamageable
     {
+        public string Type
+        {
+            get
+            {
+                if (EntityData.HullData.General == null) return "Sea";
+                return EntityData.HullData.General.Layer;
+            }
+            set{}
+        }
         private Activator _activator;
         public EntityController EntityController;
         public EntityContainer EntityData = new();
@@ -50,7 +60,7 @@ namespace Assets.Entity
                 Destroy(child.gameObject);
 
             EntityData.HullData = hull;
-            _activator.SetActivations(hull.OnActivate, gameObject);
+            _activator.SetActivations(hull.OnActivate);
             string[] texturePaths = hull.Graphics.Textures;
             Activations = hull.OnActivate;
             yield return StartCoroutine(SetupHullLayers(texturePaths));
@@ -119,11 +129,11 @@ namespace Assets.Entity
             }
         }
 
-        public void RotateEquipment(float angle)
+        public void RotateEquipment(Vector3 target)
         {
             foreach (var eq in _equipments)
             {
-                eq.GetComponent<Equipment.Equipment>().Rotate(angle);
+                eq.GetComponent<Equipment.Equipment>().Rotate(target);
             }
         }
 
@@ -144,19 +154,19 @@ namespace Assets.Entity
             {
                 Equipment.Equipment equipment = equipmentGameObject.GetComponent<Equipment.Equipment>();
                 if (equipment.EquipmentContainer == null) continue;
-                string type = equipment.EquipmentContainer.General.Type;
+                string type = equipment.EquipmentContainer.General.Class;
                 //заменить эту дебильную атаку на атаку снарядами, авиацией и торпеды/ракеты
                 if (activationCommand == "Attack")
                 {
                     if (TypeListHandler.IsWeapon(type)) equipment.Activate(position);
                     continue;
                 }
-                if (equipment.EquipmentContainer.General.Type == activationCommand ||
+                if (equipment.EquipmentContainer.General.Class == activationCommand ||
                     equipment.EquipmentContainer.Id == activationCommand) equipment.Activate(position);
             }
         }
 
-        public void Activate(Vector3 position, string type = null) => _activator.TryActivate(position, type);
+        public void Activate(Vector3 targetPosition, string type = null) => _activator.TryActivate(targetPosition,  type);
 
         private bool IsAttackActionForbidden(Vector3 position)
         {
@@ -168,6 +178,11 @@ namespace Assets.Entity
                 if (col != null && col.OverlapPoint(position)) return true;
             }
             return false;
+        }
+
+        public void TakeDamage(float damage)
+        {
+            throw new NotImplementedException();
         }
     }
 }

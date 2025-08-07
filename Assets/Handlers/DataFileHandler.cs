@@ -102,16 +102,13 @@ namespace Assets.Handlers
         {
             string[] tokens = path.Split("\\");
             string id = tokens[2];
-            id += '_' + tokens[3][0].ToString().ToLower();
+            id += '_' + tokens[3].Substring(0, 2).ToLower();
             if (path.Contains("Hull"))
             {
                 id += '_' + tokens[4][0].ToString().ToLower();
                 id += '_' + tokens[5];
             }
-            else if (path.Contains("Equipments") || path.Contains("Projectiles"))
-            {
-                id += '_' + tokens[4];
-            }
+            else id += '_' + tokens[4];
             return id;
         }
     }

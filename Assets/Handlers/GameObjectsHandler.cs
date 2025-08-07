@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Assets.Entity.DataContainers;
+using Unity.VisualScripting;
 using UnityEngine;
 using Graphics = Assets.Entity.DataContainers.Graphics;
 
@@ -14,7 +15,8 @@ namespace Assets.Handlers
         {
             ["Hull"] = path => DataFileHandler.LoadFromJson<HullContainer>(path),
             ["Equipments"] = path => DataFileHandler.LoadFromJson<EquipmentContainer>(path),
-            ["Projectiles"] = path => DataFileHandler.LoadFromJson<ProjectileContainer>(path)
+            ["Projectiles"] = path => DataFileHandler.LoadFromJson<ProjectileContainer>(path),
+            ["Effects"] = path => DataFileHandler.LoadFromJson<EffectContainer>(path)
         };
         public static void SetupObjectPool(string[] gameObjectsFolderPaths, string[] excludedFolders)
         {
@@ -92,5 +94,6 @@ namespace Assets.Handlers
             }
             return false;
         }
+
     }
 }

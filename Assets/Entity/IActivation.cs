@@ -7,6 +7,6 @@ namespace Assets.Entity
     public interface IActivation
     {
         public ActivationContainer[] Activations { get; set; }
-        public void Activate(Vector3 position, string type = null);
+        public void Activate(Vector3 targetPosition, string type = null);
     }
 }

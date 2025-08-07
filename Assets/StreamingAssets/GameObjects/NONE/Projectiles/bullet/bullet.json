@@ -4,5 +4,12 @@
     },
     "speed": 1,
     "lifeTime": 10,
-    "isBallistic": false
+    "isBallistic": false,
+    "onActivate": [
+        {
+            "objectID": "NONE_ef_bulletExplosion",
+            "type": "explosion",
+            "value": 1
+        }
+    ],
 }

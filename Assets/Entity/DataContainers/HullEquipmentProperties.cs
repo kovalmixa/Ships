@@ -22,25 +22,6 @@ namespace Assets.Entity.DataContainers
                 else _rotationSector = value;
             }
         }
-        private Vector2[] _fireSectors;
-        public Vector2[] FireSectors {
-            get => _fireSectors ??  new [] { RotationSector };
-            set
-            {
-                _fireSectors = new Vector2[value.Length];
-                for (int i = 0; i < value.Length; i++)
-                {
-                    if (value[i].x > value[i].y)
-                    {
-                        Vector2 temp;
-                        temp.x = value[i].y;
-                        temp.y = value[i].x;
-                        if (_fireSectors != null) _fireSectors[i] = temp;
-                    }
-                    else if (_fireSectors != null) _fireSectors[i] = value[i];
-                }
-                
-            }
-        }
+        public Vector2[] FireSectors { get; set; }
     }
 }

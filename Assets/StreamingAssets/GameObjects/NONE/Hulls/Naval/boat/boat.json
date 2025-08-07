@@ -1,7 +1,9 @@
 {
     "general": {
         "name": "boat",
-        "type": "boat"
+        "class": "boat",
+        "layer": "Sea"
+
     },
     "physics": {
         "mass": 4

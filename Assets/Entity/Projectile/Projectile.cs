@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Entity.DataContainers;
 using Assets.Handlers;
+using Assets.InGameMarkers.Actions;
 using Cinemachine;
 using TMPro;
 using Unity.VisualScripting;
@@ -11,6 +12,8 @@ namespace Assets.Entity.Projectile
 {
     public class Projectile : InGameObject, IActivation
     {
+        private Activator _activator;
+
         private ProjectileContainer _projectileContainer;
         public ProjectileContainer ProjectileContainer
         {
@@ -35,11 +38,12 @@ namespace Assets.Entity.Projectile
         public Vector3? targetPosition;
         private float timer;
 
-        private ProjectilePoolHandler projectilePool;
+        private ObjectPoolHandler _objectPool;
 
         private void Awake()
         {
             GetProjectilePool();
+            _activator = gameObject.AddComponent<Activator>();
         }
 
         private void GetProjectilePool()
@@ -49,7 +53,7 @@ namespace Assets.Entity.Projectile
             {
                 GameObject projectileObj = objectPool.transform.Find("ProjectilesPool")?.gameObject;
                 if (projectileObj != null)
-                    projectilePool = projectileObj.GetComponent<ProjectilePoolHandler>();
+                    _objectPool = projectileObj.GetComponent<ObjectPoolHandler>();
             }
         }
 
@@ -68,7 +72,7 @@ namespace Assets.Entity.Projectile
                 if (projectileCollider != null && shooterCollider != null)
                     Physics2D.IgnoreCollision(projectileCollider, shooterCollider, true);
             }
-
+            _activator.SetActivations(Activations);
             gameObject.SetActive(true);
         }
 
@@ -86,7 +90,7 @@ namespace Assets.Entity.Projectile
             if (targetPosition.HasValue)
             {
                 float distToTarget = Vector3.Distance(transform.position, targetPosition.Value);
-                if (distToTarget <= 0.1f) // порог можно подкорректировать
+                if (distToTarget <= 0.5f) // порог можно подкорректировать
                 {
                     Explode();
                     return;
@@ -105,9 +109,9 @@ namespace Assets.Entity.Projectile
 
         private void Deactivate()
         {
-            if (projectilePool != null)
+            if (_objectPool != null)
             {
-                projectilePool.Return(gameObject);
+                _objectPool.Return(gameObject);
             }
             else
             {
@@ -122,10 +126,7 @@ namespace Assets.Entity.Projectile
             }
         }
 
-        public void Activate(Vector3 position, string type = null)
-        {
-
-        }
+        public void Activate(Vector3 targetPosition, string type = null) => _activator.TryActivate(targetPosition, type);
 
         private void OnTriggerEnter2D(Collider2D other)
         {

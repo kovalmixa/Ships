@@ -11,15 +11,15 @@ namespace Assets.InGameMarkers.Actions
         public GameObject Source;
         public Vector3? TargetPosition;
         public string ObjectId { get; set; }
-        public float? AmountValue { get; set; }
+        public float? Value { get; set; }
 
         public ActionContext(ActivationContainer activation, Vector3 position, GameObject gameObject)
         {
-            ObjectId = activation.Projectile;
+            ObjectId = activation.ObjectID;
             Source = gameObject;
             TargetPosition = position;
             Position = activation.Position;
-            AmountValue = activation.Amount;
+            Value = activation.Value;
         }
     }
 }

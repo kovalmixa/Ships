@@ -20,7 +20,7 @@ namespace Assets.Entity.Equipment
             set
             {
                 _equipmentContainer = value;
-                _activator.SetActivations(_equipmentContainer.OnActivate, gameObject);
+                _activator.SetActivations(_equipmentContainer.OnActivate);
                 _activator.HostFireSectors = HullEquipmentProperties.FireSectors;
                 string[] texturePaths = _equipmentContainer.Graphics.Textures;
                 StartCoroutine(SetupTextureLayers(texturePaths));
@@ -30,6 +30,12 @@ namespace Assets.Entity.Equipment
         { 
             get => EquipmentContainer.OnActivate;
             set => EquipmentContainer.OnActivate = value;
+        }
+
+        public Vector3 Position
+        {
+            get => transform.position + EntityBody.transform.position;
+            set{}
         }
 
         public int LayerIndex;
@@ -52,15 +58,12 @@ namespace Assets.Entity.Equipment
             IsComplexCollision = true;
             _activator = gameObject.AddComponent<Activator>();
         }
-        public new string Type
-        {
-            get => EquipmentContainer.General.SizeType;
-            set => EquipmentContainer.General.SizeType = value;
-        }
-        public void Rotate(float angle)
+        public void Rotate(Vector3 target)
         {
             if (EquipmentContainer == null) return;
             if (!CanRotate()) return;
+            Vector2 direction = target - transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
             Quaternion rotationStep = Quaternion.RotateTowards(
                 transform.rotation,
@@ -76,6 +79,7 @@ namespace Assets.Entity.Equipment
             {
                 transform.rotation = rotationStep;
             }
+
         }
         private bool IsAngleWithinSector(float angle, float min, float max) => min <= angle && angle <= max;
         public bool CanRotate()
@@ -83,7 +87,7 @@ namespace Assets.Entity.Equipment
             if (HullEquipmentProperties == null) return false;
             return HullEquipmentProperties.RotationSector != null;
         }
-        public void Activate(Vector3 position, string type = null) =>_activator.TryActivate(position, type);
+        public void Activate(Vector3 targetPosition, string type = null) =>_activator.TryActivate(targetPosition, type);
         private void OnCollisionEnter2D(Collision2D collision)
         {
         }

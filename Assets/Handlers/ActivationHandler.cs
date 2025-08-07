@@ -12,7 +12,9 @@ public static class ActivationHandler
     private static readonly Dictionary<string, IGameAction> _actions = new()
     {
         ["projectileAttack"] = new ProjectileAttackAction(),
-        ["heal"] = new HealAction()
+        ["heal"] = new HealAction(),
+        ["explosion"] = new ExplosionAction(),
+        ["effect"] = new EffectAction()
     };
 
     public static void Execute(string actionName, ActionContext context)
@@ -37,7 +39,7 @@ public static class ActivationHandler
             }
             return true;
         }
-        else if (_actions.TryGetValue(type, out action))
+        if (_actions.TryGetValue(type, out action))
         {
             return action.IsPassive;
         }

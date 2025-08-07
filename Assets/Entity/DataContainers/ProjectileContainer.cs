@@ -11,5 +11,6 @@ namespace Assets.Entity.DataContainers
         public bool IsBallistic { get; set; }
 
         public ActivationContainer[] OnActivate;
+        public string Explosion { get; set; }
     }
 }

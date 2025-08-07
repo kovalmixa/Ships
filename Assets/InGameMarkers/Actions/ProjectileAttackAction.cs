@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Assets.Entity;
 using Assets.Entity.DataContainers;
 using Assets.Entity.Projectile;
 using Assets.Handlers;
@@ -18,17 +15,23 @@ public class ProjectileAttackAction : IGameAction
             Debug.LogWarning("Invalid projectile attack parameters.");
             return;
         }
-        ProjectilePoolHandler projectilePool = FindProjectilePool();
-        if (projectilePool == null) return;
+        
+        GameObject objectPool = GameObject.Find("ObjectPools");
+        ObjectPoolHandler projectileObj = objectPool.transform.Find("ProjectilesPool").gameObject.GetComponent<ObjectPoolHandler>();
+        if (projectileObj == null)
+        {
+            Debug.LogWarning("Pool not found"); 
+            return;
+        }
         if (!GameObjectsHandler.Objects.ContainsKey(context.ObjectId)) return;
-        ProjectileContainer projectileContainer = GameObjectsHandler.Objects[context.ObjectId] as ProjectileContainer;
-        SetupProjectile(projectilePool, projectileContainer, context);
+        SetupProjectile(projectileObj, context);
 
     }
 
-    protected void SetupProjectile(ProjectilePoolHandler projectilePool, ProjectileContainer projectileContainer, ActionContext context)
+    protected void SetupProjectile(ObjectPoolHandler objectPool, ActionContext context)
     {
-        GameObject projectileObj = projectilePool.Get();
+        ProjectileContainer projectileContainer = GameObjectsHandler.Objects[context.ObjectId] as ProjectileContainer;
+        GameObject projectileObj = objectPool.Get();
         if (projectileObj == null) return;
 
         Transform source = context.Source.transform;
@@ -49,22 +52,4 @@ public class ProjectileAttackAction : IGameAction
         projectile.ProjectileContainer = projectileContainer;
         projectile.Launch(direction, null, targetPos, context.Source);
     }
-
-    protected ProjectilePoolHandler FindProjectilePool()
-    {
-        try
-        {
-            GameObject objectPool = GameObject.Find("ObjectPools");
-            if(objectPool == null) throw (new Exception("Object pool not found"));
-            GameObject projectileObj = objectPool.transform.Find("ProjectilesPool").gameObject;
-            if(projectileObj == null) throw (new Exception("Projectile pool not found"));
-            return projectileObj.GetComponent<ProjectilePoolHandler>();
-        }
-        catch (Exception exception)
-        {
-            Debug.LogWarning(exception.Message);
-        }
-        return null;
-    }
-
 }

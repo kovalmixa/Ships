@@ -7,12 +7,12 @@ public class HealAction : IGameAction
 
     public void Execute(ActionContext context)
     {
-        if (!context.AmountValue.HasValue)
+        if (!context.Value.HasValue)
         {
             Debug.LogWarning("No heal amount provided.");
             return;
         }
-        Debug.Log($"Healed:{context.AmountValue}");
+        Debug.Log($"Healed:{context.Value}");
         //var stats = context.Target.GetComponent<CharacterStats>();
         //if (stats != null)
         //{

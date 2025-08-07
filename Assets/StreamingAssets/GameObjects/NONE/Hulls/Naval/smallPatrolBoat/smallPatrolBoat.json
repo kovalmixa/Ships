@@ -1,7 +1,8 @@
 {
     "general": {
         "name": "small patrol boat",
-        "type": "boat",
+        "class": "boat",
+        "layer": "Sea",
         "slotHeight": 2
     },
     "graphics": {
@@ -45,6 +46,12 @@
                     "x": 150,
                     "y": -25
                 }
+                //"fireSectors": [
+                //    {
+                //        "x": 25,
+                //        "y": -25
+                //    }
+                //]
             },
             {
                 "type": "turret",
@@ -58,6 +65,12 @@
                     "x": -150,
                     "y": 25
                 }
+                //"fireSectors": [
+                //    {
+                //        "x": 25,
+                //        "y": -25
+                //    }
+                //]
             }
         ]
     ],
@@ -80,7 +93,7 @@
                 }
             ],
             //"isPassive": true,
-            "amount": 42,
+            "value": 42,
             "projectile": "NONE_p_bullet",
             "type": "heal",
             "delay": 0.5

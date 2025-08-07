@@ -7,16 +7,16 @@ namespace Assets.Entity.Player
 {
     public class PlayerController : MonoBehaviour, IEntityController
     {
-        private Camera camera;
+        private Camera _camera;
         public Camera Camera
         {
             get
             {
-                if (camera != null) return camera;
-                camera = FindMainCamera();
-                return camera;
+                if (_camera != null) return _camera;
+                _camera = FindMainCamera();
+                return _camera;
             }
-            set => camera = value;
+            set => _camera = value;
         }
 
         private Dictionary<KeyCode, string> keyCodeActivations = new()
@@ -69,19 +69,9 @@ namespace Assets.Entity.Player
             }
         }
 
-        private void AttackControl(EntityBody entityBody)
-        {
-            Vector3 mouseWorldPos = Camera.ScreenToWorldPoint(Input.mousePosition);
-            KeyWordControls(entityBody, mouseWorldPos);
-        }
+        private void AttackControl(EntityBody entityBody) => KeyWordControls(entityBody, Camera.ScreenToWorldPoint(Input.mousePosition));
 
-        private void RotateControl(EntityBody entityBody)
-        {
-            Vector3 mouseWorldPos = Camera.ScreenToWorldPoint(Input.mousePosition);
-            Vector2 direction = mouseWorldPos - transform.position;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            entityBody.RotateEquipment(angle);
-        }
+        private void RotateControl(EntityBody entityBody) => entityBody.RotateEquipment(Camera.ScreenToWorldPoint(Input.mousePosition));
 
         public void SetMovementPoint(Transform target) { }
 

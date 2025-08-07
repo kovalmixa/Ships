@@ -16,8 +16,13 @@ namespace Assets.Entity
         public bool IsPlayer = false;
         public string Nation { get; set; } //move to EntityBody as Nation buffs can be added to hull
         public string AiName { get; set; }
-        public string Type = "Sea";
         public string HullId;
+        public Dictionary<string, string> DefaultHullIds = new() //перенести в другое место: боты не могут снимать корпус
+        {
+            { "Sea", "NONE_hu_n_boat" },
+            { "Land", "NONE_hu_l_car" },
+            { "Air", "NONE_hu_a_helicopter" }
+        };
         [SerializeField] public List<ScriptBase> ScriptList = new();
         //GER_e_mg45
         [SerializeField] public List<string> EquipmentIds = new();
@@ -26,9 +31,7 @@ namespace Assets.Entity
         private void Awake()
         {
             _entityBody = GetComponent<EntityBody>();
-            SetBodyType(Type);
         }
-        private void SetBodyType(string type) => _entityBody.Type = type;
         private void Start()
         {
             if (IsPlayer)
@@ -63,7 +66,7 @@ namespace Assets.Entity
 
             HullId = string.IsNullOrEmpty(HullId) ? hullId : HullId;
             if (string.IsNullOrEmpty(HullId))
-                GetDefaultHull();
+                HullId = DefaultHullIds[_entityBody.Type];
 
             yield return StartCoroutine(LoadHullCoroutine());
             LoadEquipment();
@@ -85,15 +88,6 @@ namespace Assets.Entity
         private void Update()
         {
             _controller?.UpdateControl(_entityBody);
-        }
-        private void GetDefaultHull()
-        {
-            switch (Type)
-            {
-                case "Sea":
-                    HullId = "NONE_h_n_boat";
-                    break;
-            }
         }
         private IEnumerator LoadHullCoroutine()
         {

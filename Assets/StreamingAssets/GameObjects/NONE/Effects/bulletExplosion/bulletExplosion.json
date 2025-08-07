@@ -1,0 +1,10 @@
+{
+    "graphics": {
+        "animations": [
+            "anim1.png"
+        ]
+    },
+    "sounds": [
+        "sound1.ogg"
+    ]
+}

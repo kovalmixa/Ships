@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Handlers
 {
-    public class ProjectilePoolHandler : MonoBehaviour
+    public class ObjectPoolHandler : MonoBehaviour
     {
         public GameObject prefab;
         public int initialSize = 100;
