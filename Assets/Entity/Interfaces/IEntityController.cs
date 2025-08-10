@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Entity
+namespace Assets.Entity.Interfaces
 {
     public interface IEntityController
     {

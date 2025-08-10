@@ -1,8 +1,7 @@
 ﻿using Assets.Entity.DataContainers;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 
-namespace Assets.Entity
+namespace Assets.Entity.Interfaces
 {
     public interface IActivation
     {

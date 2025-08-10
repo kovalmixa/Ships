@@ -8,6 +8,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
 using UnityEngine;
 using System.Collections;
+using Assets.Entity.Interfaces;
 
 namespace Assets.Entity
 {

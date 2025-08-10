@@ -1,6 +1,7 @@
 ﻿using Assets.Entity;
 using Assets.Entity.DataContainers;
 using Assets.Handlers;
+using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
 namespace Assets.InGameMarkers.Actions
@@ -10,7 +11,7 @@ namespace Assets.InGameMarkers.Actions
         public bool IsPassive { get; set; } = true;
         public void Execute(ActionContext actionContext)
         {
-            GameObject objectPool = GameObject.Find("ObjectPools");
+            GameObject objectPool = SceneNodesHandler.GetNode("ObjectPools");
             Transform node = objectPool.transform.Find("EffectsPool");
             if (node == null)
             {

@@ -33,5 +33,6 @@ namespace Assets.Entity
         {
             Zoom();
         }
+
     }
 }

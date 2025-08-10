@@ -7,7 +7,6 @@ namespace Assets.InGameMarkers.Scripts
     public class AreaScript : ScriptBase
     {
         [SerializeField] public List<MonoBehaviour> Scripts;
-        [SerializeField] public CircleCollider2D Collider;
         private List<IScript> _scripts = new();
         private bool _isExecuted;
 

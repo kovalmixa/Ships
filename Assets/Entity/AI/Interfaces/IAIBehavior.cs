@@ -1,4 +1,4 @@
-﻿namespace Assets.Entity.AI
+﻿namespace Assets.Entity.AI.Interfaces
 {
     public interface IAiBehavior
     {

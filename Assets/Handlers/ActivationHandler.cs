@@ -11,7 +11,7 @@ public static class ActivationHandler
 {
     private static readonly Dictionary<string, IGameAction> _actions = new()
     {
-        ["projectileAttack"] = new ProjectileAttackAction(),
+        ["projectileAttack"] = new FireProjectileAction(),
         ["heal"] = new HealAction(),
         ["explosion"] = new ExplosionAction(),
         ["effect"] = new EffectAction()

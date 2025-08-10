@@ -16,8 +16,6 @@ namespace Assets.Entity
             EditorGUILayout.PropertyField(weaponIds, new GUIContent("Weapon IDs"), true);
             if (!controller.IsPlayer)
             {
-                SerializedProperty type = serializedObject.FindProperty("Type");
-                EditorGUILayout.PropertyField(type, new GUIContent("Type"));
                 SerializedProperty scripts = serializedObject.FindProperty("ScriptList");
                 EditorGUILayout.PropertyField(scripts, new GUIContent("Script List"), true);
             }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assets.Entity;
+using Assets.Entity.Interfaces;
 using UnityEngine;
 
 namespace Assets.InGameMarkers.Actions

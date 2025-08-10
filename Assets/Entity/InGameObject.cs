@@ -107,6 +107,7 @@ namespace Assets.Entity
             {
                 GameObject layerGo = new GameObject($"textureLayer{i}");
                 SpriteRenderer rend = layerGo.AddComponent<SpriteRenderer>();
+                if (rend == null) continue;
                 bool done = false;
                 Sprite loaded = null;
                 if (texturePaths[i] != "")

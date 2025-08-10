@@ -7,15 +7,18 @@ namespace Assets.UI.MainMenu
 {
     public class MainMenu : MonoBehaviour
     {
-        public void PlayLastGame()
+
+        public void PlayGame(int index)
         {
-            LoadGame();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            string locationName = LoadGame(0);
+            SceneManager.LoadSceneAsync("LoadingScene");
+            SceneManager.LoadSceneAsync("MainScene"); // <-locationName
         }
 
-        private void LoadGame()
+        private string LoadGame(int index)
         {
             //code for loading data from save files
+            return "";
         }
 
         public void ExitGame()

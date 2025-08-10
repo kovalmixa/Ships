@@ -1,14 +1,10 @@
-using System;
 using System.Collections.Generic;
 using Assets.Entity;
+using Assets.Handlers.SceneHandlers;
 using Assets.InGameMarkers.Scripts;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using Quaternion = UnityEngine.Quaternion;
-using Vector2 = UnityEngine.Vector2;
 
-namespace Assets.InGameMarkers.EntityMarkers
+namespace Assets.InGameMarkers.EntityMarkers.Spawner
 {
     public class Spawner : MonoBehaviour
     {
@@ -17,35 +13,19 @@ namespace Assets.InGameMarkers.EntityMarkers
         public uint Quantity;
         private Transform _entityPool;
         private GameObject _entityObj;
-        public GameObject EntityPrefab;
         [SerializeField] public List<ScriptBase> ScriptList;
-
-        private void Start()
+        private void Awake()
         {
-            _entityPool = FindRootObjectByName("ObjectPools").transform.Find("EntityPool");
-        }
-
-        GameObject FindRootObjectByName(string name)
-        {
-            Scene scene = SceneManager.GetActiveScene();
-            GameObject[] rootObjects = scene.GetRootGameObjects();
-
-            foreach (GameObject obj in rootObjects)
-            {
-                if (obj.name == name)
-                    return obj;
-            }
-
-            return null;
+            _entityPool = SceneNodesHandler.GetNode("ObjectPools").transform.Find("EntityPool");
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (Quantity == 0) return;
-            Entity.EntityBody entityBody = other.GetComponent<Entity.EntityBody>();
+            EntityBody entityBody = other.GetComponent<EntityBody>();
             if (entityBody == null) return;
             if (!entityBody.EntityController.IsPlayer) return;
-            if (!_entityObj) Spawn();
+            if (!_entityObj || !_entityObj.activeSelf) Spawn();
         }
 
         //private void CheckTheDistanceToDeSpawn()
@@ -66,7 +46,8 @@ namespace Assets.InGameMarkers.EntityMarkers
         //}
         void Spawn()
         {
-            _entityObj = Instantiate(EntityPrefab, transform.position, Quaternion.identity, _entityPool);
+            _entityObj = _entityPool.GetComponent<ObjectPoolHandler>().Get();
+            _entityObj.transform.position = transform.position;
             EntityController entityController = _entityObj.GetComponent<EntityController>();
             if (entityController != null)
             {

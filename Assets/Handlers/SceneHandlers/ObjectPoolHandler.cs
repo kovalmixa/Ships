@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Handlers
+namespace Assets.Handlers.SceneHandlers
 {
     public class ObjectPoolHandler : MonoBehaviour
     {

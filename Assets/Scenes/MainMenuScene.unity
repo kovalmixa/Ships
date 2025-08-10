@@ -1227,7 +1227,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5539282408830279162, guid: 82d6664fb6d587b4997be2d919c7e17e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5539282408830279162, guid: 82d6664fb6d587b4997be2d919c7e17e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1239,11 +1239,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5539282408830279162, guid: 82d6664fb6d587b4997be2d919c7e17e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PlayLastGame
+      value: PlayGame
       objectReference: {fileID: 0}
     - target: {fileID: 5539282408830279162, guid: 82d6664fb6d587b4997be2d919c7e17e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: MainMenu, Assembly-CSharp
+      value: Assets.UI.MainMenu.MainMenu, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 5539282408830279162, guid: 82d6664fb6d587b4997be2d919c7e17e, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

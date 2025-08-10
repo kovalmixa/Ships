@@ -2,10 +2,11 @@ using System;
 using Assets.Entity.DataContainers;
 using Assets.Entity.Projectile;
 using Assets.Handlers;
+using Assets.Handlers.SceneHandlers;
 using Assets.InGameMarkers.Actions;
 using UnityEngine;
 
-public class ProjectileAttackAction : IGameAction
+public class FireProjectileAction : IGameAction
 {
     public bool IsPassive { get; set; } = false;
     public void Execute(ActionContext context)
@@ -16,7 +17,7 @@ public class ProjectileAttackAction : IGameAction
             return;
         }
         
-        GameObject objectPool = GameObject.Find("ObjectPools");
+        GameObject objectPool = SceneNodesHandler.GetNode("ObjectPools");
         ObjectPoolHandler projectileObj = objectPool.transform.Find("ProjectilesPool").gameObject.GetComponent<ObjectPoolHandler>();
         if (projectileObj == null)
         {
