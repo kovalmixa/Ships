@@ -1,0 +1,23 @@
+[
+		{
+			"filename": "mg45.png",
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 11,
+				"h": 19
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 11,
+				"h": 19
+			},
+			"sourceSize": {
+				"w": 11,
+				"h": 19
+			}
+		}
+	]

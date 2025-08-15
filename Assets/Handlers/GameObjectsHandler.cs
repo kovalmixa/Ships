@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Assets.Entity.DataContainers;
-using Unity.VisualScripting;
-using UnityEngine;
+using Assets.Handlers.FileHandlers;
 using Graphics = Assets.Entity.DataContainers.Graphics;
 
 namespace Assets.Handlers
 {
-    public static class GameObjectsHandler{
+    public static class GameObjectsHandler
+    {
         public static Dictionary<string, IObject> Objects = new();
         private static readonly Dictionary<string, Func<string, IObject>> Loaders = new()
         {
@@ -20,20 +19,8 @@ namespace Assets.Handlers
         };
         public static void SetupObjectPool(string[] gameObjectsFolderPaths, string[] excludedFolders)
         {
-            string[] allFiles = GetFilePaths(gameObjectsFolderPaths, excludedFolders);
+            string[] allFiles = FilesExtractor.GetFilesPaths(gameObjectsFolderPaths, excludedFolders);
             BuildObjects(allFiles);
-        }
-        private static string[] GetFilePaths(string[] gameObjectsFolderPaths, string[] excludedFolders)
-        {
-            List<string> allFiles = new();
-            foreach (string gameObjectsFolderPath in gameObjectsFolderPaths)
-            {
-                if (!IsValidPath(gameObjectsFolderPath)) continue;
-                IEnumerable<string> files = Directory.GetFiles(gameObjectsFolderPath, "*", SearchOption.AllDirectories)
-                    .Where(file => !file.Contains(".meta") && !IsInExcludedFolder(file, excludedFolders));
-                allFiles = allFiles.Concat(files).ToList();
-            }
-            return allFiles.ToArray();
         }
         private static void BuildObjects(string[] allFiles)
         {
@@ -42,11 +29,9 @@ namespace Assets.Handlers
                 IObject jsonObject = null;
                 foreach (var (key, loader) in Loaders)
                 {
-                    if (filePath.Contains(key))
-                    {
-                        jsonObject = loader(filePath);
-                        break;
-                    }
+                    if (!filePath.Contains(key)) continue;
+                    jsonObject = loader(filePath);
+                    break;
                 }
                 if (jsonObject == null) continue;
                 SetObjectPath(filePath, jsonObject);
@@ -70,30 +55,5 @@ namespace Assets.Handlers
                 //Debug.Log(graphics.Textures[i]);
             }
         }
-        private static bool IsValidPath(string gameObjectsFolderPath)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(gameObjectsFolderPath))
-                    throw new Exception("GameObjectsFolderPath is null or empty.");
-                if (!Directory.Exists(gameObjectsFolderPath))
-                    throw new Exception($"Path does not exist: {gameObjectsFolderPath}");
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e.Message);
-                return false;
-            }
-            return true;
-        }
-        private static bool IsInExcludedFolder(string filePath, string[] excludedFolders)
-        {
-            foreach (var folder in excludedFolders)
-            {
-                if (filePath.Contains(folder)) return true;
-            }
-            return false;
-        }
-
     }
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.InGameMarkers.Scripts;
-using Cinemachine;
+using Assets.Handlers.Sprite;
 
 namespace Assets.Entity
 {

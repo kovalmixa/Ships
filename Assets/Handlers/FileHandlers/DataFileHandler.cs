@@ -1,9 +1,8 @@
 using System;
-using System.IO;
 using Newtonsoft.Json;
 using Debug = UnityEngine.Debug;
 
-namespace Assets.Handlers
+namespace Assets.Handlers.FileHandlers
 {
     public static class DataFileHandler
     {
@@ -12,7 +11,7 @@ namespace Assets.Handlers
             try
             {
                 string json = JsonConvert.SerializeObject(data, Formatting.Indented);
-                File.WriteAllText(filePath, json);
+                System.IO.File.WriteAllText(filePath, json);
                 Debug.Log($"Data saved to {filePath}");
             }
             catch (Exception ex)
@@ -25,13 +24,13 @@ namespace Assets.Handlers
         {
             try
             {
-                if (!File.Exists(filePath))
+                if (!System.IO.File.Exists(filePath))
                 {
                     Debug.LogError($"File not found: {filePath}");
                     return default;
                 }
 
-                string json = File.ReadAllText(filePath);
+                string json = System.IO.File.ReadAllText(filePath);
                 return JsonConvert.DeserializeObject<T>(json);
             }
             catch (Exception ex)

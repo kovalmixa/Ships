@@ -1,0 +1,23 @@
+[
+		{
+			"filename": "mg45Icon.png",
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 384,
+				"h": 384
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 384,
+				"h": 384
+			},
+			"sourceSize": {
+				"w": 384,
+				"h": 384
+			}
+		}
+	]

@@ -1,0 +1,44 @@
+[
+	{
+		"filename": "bullet.png",
+		"frame": {
+			"x": 1,
+			"y": 1,
+			"w": 4,
+			"h": 4
+		},
+		"rotated": false,
+		"trimmed": false,
+		"spriteSourceSize": {
+			"x": 0,
+			"y": 0,
+			"w": 4,
+			"h": 4
+		},
+		"sourceSize": {
+			"w": 4,
+			"h": 4
+		}
+	},
+	{
+		"filename": "sTorpedo.png",
+		"frame": {
+			"x": 7,
+			"y": 1,
+			"w": 4,
+			"h": 29
+		},
+		"rotated": false,
+		"trimmed": false,
+		"spriteSourceSize": {
+			"x": 0,
+			"y": 0,
+			"w": 4,
+			"h": 29
+		},
+		"sourceSize": {
+			"w": 4,
+			"h": 29
+		}
+	}
+]
