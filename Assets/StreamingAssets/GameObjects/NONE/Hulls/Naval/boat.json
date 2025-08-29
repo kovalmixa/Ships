@@ -9,7 +9,7 @@
         "mass": 4
     },
     "graphics": {
-        "icon": "boat.png"
+        "icon": "NONE_boat"
     },
     "equipments": [
         [

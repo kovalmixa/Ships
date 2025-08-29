@@ -1,47 +1,45 @@
+using System;
 using System.Collections;
 using System.IO;
 using UnityEngine;
+using static TreeEditor.TextureAtlas;
 
 namespace Assets.Handlers.Sprite
 {
     public static class StreamingSpriteLoader
     {
-        public static IEnumerator LoadSprite(string relativePath, bool isPixel, System.Action<UnityEngine.Sprite> onLoaded)
+        public static IEnumerator LoadSprite(string textureName, bool isPixel, System.Action<UnityEngine.Sprite> onLoaded)
         {
-            string fullPath = Path.Combine(Application.streamingAssetsPath, relativePath);
-
-#if UNITY_ANDROID && !UNITY_EDITOR
-        // На Android StreamingAssets лежат внутри .apk, нужен UnityWebRequest
-        using UnityWebRequest www = UnityWebRequest.Get(fullPath);
-        yield return www.SendWebRequest();
-        if (www.result != UnityWebRequest.Result.Success)
-        {
-            Debug.LogError($"[SpriteLoader] Can't load texture: {fullPath}");
-            yield break;
-        }
-        byte[] data = www.downloadHandler.data;
-#else
-            if (!File.Exists(fullPath))
+            GraphicElement graphicElement = GraphicElementHandler.Objects[textureName];
+            if (graphicElement == null)
             {
-                Debug.LogError($"[SpriteLoader] File not found: {fullPath}");
+                Debug.LogError($"Graphic element not found: {textureName}");
                 yield break;
             }
-            byte[] data = File.ReadAllBytes(fullPath);
-#endif
-            Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
-            if (!tex.LoadImage(data))
+            byte[] data = File.ReadAllBytes(graphicElement.SpriteAtlasPath);
+            Texture2D atlasTex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            if (!atlasTex.LoadImage(data))
             {
-                Debug.LogError($"[SpriteLoader] LoadImage failed: {fullPath}");
+                Debug.LogError($"[SpriteLoader] Failed to load atlas: {graphicElement.SpriteAtlasPath}");
                 yield break;
             }
-            tex.filterMode = isPixel ? FilterMode.Point : FilterMode.Bilinear;
+            int x = graphicElement.Frame.X;
+            int y = graphicElement.Frame.Y;
+            int w = graphicElement.Frame.Width;
+            int h = graphicElement.Frame.Height;
+            Texture2D subTex = new Texture2D(w,  h, TextureFormat.RGBA32, false);
+            Color[] pixels = atlasTex.GetPixels(x, atlasTex.height - h - y, w, h);
+            subTex.SetPixels(pixels);
+            subTex.Apply();
+            subTex.filterMode = isPixel ? FilterMode.Point : FilterMode.Bilinear;
             UnityEngine.Sprite sprite = UnityEngine.Sprite.Create(
-                tex,
-                new Rect(0, 0, tex.width, tex.height),
+                subTex,
+                new Rect(0, 0, w, h),
                 new Vector2(0.5f, 0.5f),
-                100f);                                   // PPU
-
+                100f
+            );
             onLoaded?.Invoke(sprite);
         }
+
     }
 }

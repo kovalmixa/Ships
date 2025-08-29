@@ -1,3 +1,4 @@
+using System;
 using Assets.Entity.DataContainers;
 using System.Collections.Generic;
 using System.IO;
@@ -23,19 +24,22 @@ namespace Assets.Handlers.Sprite
         {
             foreach (string filePath in allFiles.Where(file => file.EndsWith(".json")))
             {
+                string atlasPath = filePath[..filePath.IndexOf(".json", StringComparison.Ordinal)]+".png";
                 GraphicElement[] jsonObject = DataFileHandler.LoadFromJson<GraphicElement[]>(filePath);
                 if (jsonObject == null) continue;
                 string tag = filePath.Split('\\')[^1];
                 tag = tag.Substring(0, tag.IndexOf('.'));
                 foreach (GraphicElement graphicElement in jsonObject)
                 {
-                    string key = $"{tag}_{graphicElement.Filename}";
-                    //Debug.Log(key);
+                    string fileName = graphicElement.Filename;
+                    string key = $"{tag}_{fileName[..fileName.IndexOf(".png", StringComparison.Ordinal)]}";
+                    graphicElement.SpriteAtlasPath = atlasPath;
                     Objects.Add(key, graphicElement);
+                    //Debug.Log(key);
                 }
             }
             //Debug.Log(Objects["USA_Duck.png"].Frame.Width);
-
         }
+
     }
 }

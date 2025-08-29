@@ -1,6 +1,6 @@
 {
     "graphics": {
-        "icon": "bullet.png"
+        "icon": "PRJT_bullet"
     },
     "speed": 1,
     "lifeTime": 10,

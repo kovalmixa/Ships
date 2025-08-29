@@ -61,7 +61,6 @@ namespace Assets.Entity
             float y = transform.position.y + distance * MathF.Sin(radians);
             return new Vector3(x, y, 0);
         }
-
         private bool IsActivationWithinSector(Vector3 position, ActivationContainer activation)
         {
             if (activation.IsPassive) return true;

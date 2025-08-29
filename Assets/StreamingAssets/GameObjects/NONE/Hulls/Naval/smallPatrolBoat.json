@@ -6,10 +6,9 @@
         "slotHeight": 2
     },
     "graphics": {
-        "icon": "smallPatrolBoat.png",
         "textures": [
             "",
-            "smallPatrolBoat.png"
+            "NONE_smallPatrolBoat"
         ]
     },
     "physics": {
@@ -94,7 +93,7 @@
             ],
             //"isPassive": true,
             "value": 42,
-            "projectile": "NONE_p_bullet",
+            "projectile": "PRJCT_bullet",
             "type": "heal",
             "delay": 0.5
         }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class GraphicElement
 {
+    public string SpriteAtlasPath { get; set; }
     public string Filename { get; set; }
     public Dimensions Frame { get; set; }
     public uint FPS { get; set; } = 0;

@@ -101,14 +101,14 @@ namespace Assets.Handlers.FileHandlers
         {
             string[] tokens = path.Split("\\");
             string id = tokens[2];
-            id += '_' + tokens[3].Substring(0, 2).ToLower();
+            id += '_' + tokens[3][..2].ToLower();
             if (path.Contains("Hull"))
             {
-                id += '_' + tokens[4][0].ToString().ToLower();
-                id += '_' + tokens[5];
+                id += '_' + tokens[^2][0].ToString().ToLower();
+                id += '_' + tokens[^1];
             }
-            else id += '_' + tokens[4];
-            return id;
+            else id += '_' + tokens[^1];
+            return id[..id.IndexOf(".json", StringComparison.Ordinal)];
         }
     }
 }

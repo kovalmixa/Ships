@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Entity.DataContainers;
 using Assets.Handlers.FileHandlers;
+using UnityEngine;
 using Graphics = Assets.Entity.DataContainers.Graphics;
 
 namespace Assets.Handlers
@@ -12,10 +13,10 @@ namespace Assets.Handlers
         public static Dictionary<string, IObject> Objects = new();
         private static readonly Dictionary<string, Func<string, IObject>> Loaders = new()
         {
-            ["Hull"] = path => DataFileHandler.LoadFromJson<HullContainer>(path),
-            ["Equipments"] = path => DataFileHandler.LoadFromJson<EquipmentContainer>(path),
-            ["Projectiles"] = path => DataFileHandler.LoadFromJson<ProjectileContainer>(path),
-            ["Effects"] = path => DataFileHandler.LoadFromJson<EffectContainer>(path)
+            ["Hull"] = DataFileHandler.LoadFromJson<HullContainer>,
+            ["Equipments"] = DataFileHandler.LoadFromJson<EquipmentContainer>,
+            ["Projectiles"] = DataFileHandler.LoadFromJson<ProjectileContainer>,
+            ["Effects"] = DataFileHandler.LoadFromJson<EffectContainer>
         };
         public static void SetupObjectPool(string[] gameObjectsFolderPaths, string[] excludedFolders)
         {
@@ -34,25 +35,10 @@ namespace Assets.Handlers
                     break;
                 }
                 if (jsonObject == null) continue;
-                SetObjectPath(filePath, jsonObject);
                 string id = DataFileHandler.GetIdByPath(filePath);
                 jsonObject.Id = id;
                 Objects.Add(id, jsonObject);
                 //Debug.Log(id);
-            }
-        }
-        private static void SetObjectPath(string filePath, IObject jsonObject)
-        {
-            Graphics graphics = jsonObject.GetGraphics();
-            if (graphics == null) return;
-            int index = filePath.LastIndexOf('\\');
-            filePath = filePath.Substring(0, index) + '\\';
-            graphics.Icon = filePath + graphics.Icon;
-            for (int i = 0; i < graphics.Textures.Length; i++)
-            {
-                if (graphics.Textures[i] == "") continue;
-                graphics.Textures[i] = filePath + graphics.Textures[i];
-                //Debug.Log(graphics.Textures[i]);
             }
         }
     }
