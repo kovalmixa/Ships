@@ -14,9 +14,10 @@ namespace Assets.Handlers.Sprite
     {
         public static Dictionary<string, GraphicElement> Objects = new();
 
-        public static void SetupObjectPool(string[] gameObjectsFolderPaths, string[] excludedFolders)
+        public static void SetupObjectPool(string[] gameObjectsFolderPaths, string[] excludedPaths)
         {
-            string[] allFiles = FilesExtractor.GetFilesPaths(gameObjectsFolderPaths, excludedFolders);
+            string[] allFiles = FilesExtractor.GetFilesPaths(gameObjectsFolderPaths, excludedPaths);
+            allFiles = allFiles.Where(file => excludedPaths.Any(path => !file.Contains(path))).ToArray();
             BuildObjects(allFiles);
         }
 
@@ -25,17 +26,18 @@ namespace Assets.Handlers.Sprite
             foreach (string filePath in allFiles.Where(file => file.EndsWith(".json")))
             {
                 string atlasPath = filePath[..filePath.IndexOf(".json", StringComparison.Ordinal)]+".png";
-                GraphicElement[] jsonObject = DataFileHandler.LoadFromJson<GraphicElement[]>(filePath);
-                if (jsonObject == null) continue;
+                GraphicElement[] graphicElements = DataFileHandler.LoadFromJson<GraphicElement[]>(filePath);
+                if (graphicElements == null || graphicElements.Length == 0) continue;
                 string tag = filePath.Split('\\')[^1];
                 tag = tag.Substring(0, tag.IndexOf('.'));
-                foreach (GraphicElement graphicElement in jsonObject)
+                foreach (GraphicElement graphicElement in graphicElements)
                 {
-                    string fileName = graphicElement.Filename;
-                    string key = $"{tag}_{fileName[..fileName.IndexOf(".png", StringComparison.Ordinal)]}";
+                    string name = graphicElement.Filename;
+                    string key = $"{tag}_{name[..name.IndexOf(".png", StringComparison.Ordinal)]}";
+                    graphicElement.Filename = key;
                     graphicElement.SpriteAtlasPath = atlasPath;
                     Objects.Add(key, graphicElement);
-                    //Debug.Log(key);
+                    Debug.Log(key);
                 }
             }
             //Debug.Log(Objects["USA_Duck.png"].Frame.Width);

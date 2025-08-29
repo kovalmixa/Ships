@@ -1,0 +1,191 @@
+[
+		{
+			"filename": "bulletExplosion1.png",
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 198,
+				"h": 66
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 198,
+				"h": 66
+			},
+			"sourceSize": {
+				"w": 198,
+				"h": 66
+			}
+		},
+		{
+			"filename": "bulletExplosion2.png",
+			"frame": {
+				"x": 201,
+				"y": 1,
+				"w": 198,
+				"h": 66
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 198,
+				"h": 66
+			},
+			"sourceSize": {
+				"w": 198,
+				"h": 66
+			}
+		},
+		{
+			"filename": "bulletExplosion3.png",
+			"frame": {
+				"x": 401,
+				"y": 1,
+				"w": 198,
+				"h": 66
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 198,
+				"h": 66
+			},
+			"sourceSize": {
+				"w": 198,
+				"h": 66
+			}
+		},
+		{
+			"filename": "lightExplosion1.png",
+			"frame": {
+				"x": 601,
+				"y": 1,
+				"w": 330,
+				"h": 66
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 330,
+				"h": 66
+			},
+			"sourceSize": {
+				"w": 330,
+				"h": 66
+			}
+		},
+		{
+			"filename": "lightExplosion2.png",
+			"frame": {
+				"x": 1,
+				"y": 69,
+				"w": 330,
+				"h": 66
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 330,
+				"h": 66
+			},
+			"sourceSize": {
+				"w": 330,
+				"h": 66
+			}
+		},
+		{
+			"filename": "lightExplosion3.png",
+			"frame": {
+				"x": 1,
+				"y": 137,
+				"w": 1122,
+				"h": 142
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 1122,
+				"h": 142
+			},
+			"sourceSize": {
+				"w": 1122,
+				"h": 142
+			}
+		},
+		{
+			"filename": "lightExplosion4.png",
+			"frame": {
+				"x": 1,
+				"y": 281,
+				"w": 714,
+				"h": 102
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 714,
+				"h": 102
+			},
+			"sourceSize": {
+				"w": 714,
+				"h": 102
+			}
+		},
+		{
+			"filename": "lightWaterSplash1.png",
+			"frame": {
+				"x": 333,
+				"y": 69,
+				"w": 726,
+				"h": 66
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 726,
+				"h": 66
+			},
+			"sourceSize": {
+				"w": 726,
+				"h": 66
+			}
+		},
+		{
+			"filename": "veryLightWaterSplash1.png",
+			"frame": {
+				"x": 717,
+				"y": 281,
+				"w": 198,
+				"h": 66
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 198,
+				"h": 66
+			},
+			"sourceSize": {
+				"w": 198,
+				"h": 66
+			}
+		}
+	]
