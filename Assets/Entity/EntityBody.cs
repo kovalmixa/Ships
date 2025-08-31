@@ -64,7 +64,7 @@ namespace Assets.Entity
 
         private IEnumerator SetupHullLayers(string[] texturePaths)
         {
-            yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
+            yield return StartCoroutine(SetupLayersCoroutine(texturePaths, true));
             SetupEquipmentsFrames();
         }
 

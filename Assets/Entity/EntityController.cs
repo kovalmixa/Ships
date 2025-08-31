@@ -61,6 +61,7 @@ namespace Assets.Entity
             aiController.ScriptList = scripts;
 
         }
+
         public IEnumerator SetHull(string hullId = "")
         {
             if (_entityBody == null) yield break;
@@ -86,10 +87,7 @@ namespace Assets.Entity
             return installedEquips;
         }
 
-        private void Update()
-        {
-            _controller?.UpdateControl(_entityBody);
-        }
+
         private IEnumerator LoadHullCoroutine()
         {
             if (GameObjectsHandler.Objects.Count == 0) yield break;
@@ -97,7 +95,14 @@ namespace Assets.Entity
             yield return StartCoroutine(_entityBody.StartSetupHullLayers(hull));
         }
 
+
         public void SetPointToMove(Transform target) => _controller.SetMovementPoint(target);
+
         public void SetTarget(Transform target) => _controller.SetTargetPoint(target);
+
+        private void Update()
+        {
+            _controller?.UpdateControl(_entityBody);
+        }
     }
 }

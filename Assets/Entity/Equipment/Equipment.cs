@@ -24,7 +24,7 @@ namespace Assets.Entity.Equipment
                 _activator.SetActivations(_equipmentContainer.OnActivate);
                 _activator.HostFireSectors = HullEquipmentProperties.FireSectors;
                 string[] texturePaths = _equipmentContainer.Graphics.Textures;
-                StartCoroutine(SetupTextureLayers(texturePaths));
+                StartCoroutine(SetupTextureLayersCoroutine(texturePaths));
             }
         }
         public ActivationContainer[] Activations 
@@ -40,10 +40,10 @@ namespace Assets.Entity.Equipment
         }
 
         public int LayerIndex;
-        private IEnumerator SetupTextureLayers(string[] texturePaths)
+        private IEnumerator SetupTextureLayersCoroutine(string[] texturePaths)
         {
             IsComplexCollision = true;
-            yield return StartCoroutine(SetupLayersCoroutine(texturePaths));
+            StartCoroutine(SetupLayersCoroutine(texturePaths, true));
             foreach (Transform child in LayersAnchor.GetComponentsInChildren<Transform>())
             {
                 SpriteRenderer renderer = child.GetComponent<SpriteRenderer>();
@@ -53,6 +53,7 @@ namespace Assets.Entity.Equipment
             Quaternion rotation = transform.rotation;
             rotation.z = HullEquipmentProperties.Rotation;
             transform.rotation = rotation;
+            yield return null;
         }
         private void Awake()
         {

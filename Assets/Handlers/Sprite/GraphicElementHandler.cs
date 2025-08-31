@@ -37,11 +37,10 @@ namespace Assets.Handlers.Sprite
                     graphicElement.Filename = key;
                     graphicElement.SpriteAtlasPath = atlasPath;
                     Objects.Add(key, graphicElement);
-                    Debug.Log(key);
+                    //Debug.Log(key);
                 }
             }
             //Debug.Log(Objects["USA_Duck.png"].Frame.Width);
         }
-
     }
 }

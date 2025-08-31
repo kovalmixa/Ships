@@ -28,22 +28,7 @@ namespace Assets.InGameMarkers.EntityMarkers.Spawner
             if (!_entityObj || !_entityObj.activeSelf) Spawn();
         }
 
-        //private void CheckTheDistanceToDeSpawn()
-        //{
-        //    if (_player == null || _entityObj == null) return;
-        //    Vector2 playerPosition = _player.position;
-        //    Vector2 entityPosition = _entityObj.transform.position;
-        //    Collider2D playerCollider = _player.GetComponent<Collider2D>();
-        //    float playerRadius = playerCollider != null ? playerCollider.bounds.extents.magnitude : 0f;
-        //    CircleCollider2D circle = GetComponent<CircleCollider2D>();
-        //    float spawnRadius = circle.radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y);
-        //    float dist = Vector2.Distance(playerPosition, entityPosition);
-        //    if (dist >= spawnRadius + playerRadius)
-        //    {
-        //        Destroy(_entityObj);
-        //        _entityObj = null;
-        //    }
-        //}
+
         void Spawn()
         {
             _entityObj = _entityPool.GetComponent<ObjectPoolHandler>().Get();

@@ -7,11 +7,17 @@ public class GraphicElement
     public string SpriteAtlasPath { get; set; }
     public string Filename { get; set; }
     public Dimensions Frame { get; set; }
-    public uint FPS { get; set; } = 12;
-    public uint Quantity { get; set; } = 1;
+    public int FPS { get; set; } = 12;
+    public int Quantity { get; set; } = 1;
+
     public float Time
     {
         get => (float)Quantity / FPS;
-        set{}
+        set { }
+    }
+    public float Delay
+    {
+        get => 1f / Time;
+        set { }
     }
 }

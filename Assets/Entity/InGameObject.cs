@@ -61,7 +61,9 @@ namespace Assets.Entity
             Vector2 maxSize = new(0,0);
             foreach (GameObject layer in Layers)
             {
-                Sprite sprite = layer.GetComponent<SpriteRenderer>().sprite;
+                SpriteRenderer spriteRenderer = layer.GetComponent<SpriteRenderer>();
+                if (spriteRenderer == null) continue;
+                Sprite sprite = spriteRenderer.sprite;
                 if (sprite == null) continue;
                 Vector2 textureSize = GetTextureSizeFromSprite(sprite);
                 maxSize.x = Mathf.Max(maxSize.x, textureSize.x);
@@ -101,29 +103,21 @@ namespace Assets.Entity
             return textureSize;
         }
 
-        protected IEnumerator SetupLayersCoroutine(string[] texturePaths, bool generateCollision = true)
+        protected IEnumerator SetupLayersCoroutine(string[] texturePaths, bool isLooped, bool generateCollision = true)
         {
+            foreach (Transform child in LayersAnchor)
+                Destroy(child.gameObject);
             for (int i = 0; i < texturePaths.Length; i++)
             {
                 GameObject layerGo = new GameObject($"textureLayer{i}");
-                SpriteRenderer rend = layerGo.AddComponent<SpriteRenderer>();
-                if (rend == null) continue;
-                bool done = false;
-                Sprite loaded = null;
                 if (texturePaths[i] != "")
                 {
-                    yield return StreamingSpriteLoader.LoadSprite(texturePaths[i], true, s => {
-                        loaded = s;
-                        done = true;
-                    });
-                    if (!done || loaded == null)
-                    {
-                        Destroy(layerGo);
-                        continue;
-                    }
+                    SpriteComponent spriteComponent = layerGo.AddComponent<SpriteComponent>();
+                    GraphicElement graphicElement = GraphicElementHandler.Objects[texturePaths[i]];
+                    yield return spriteComponent.SetGraphicElement(graphicElement);
+                    spriteComponent.IsLooped = isLooped;
+                    spriteComponent.GetComponent<SpriteRenderer>().sortingOrder = i;
                 }
-                rend.sprite = loaded;
-                rend.sortingOrder = i;
                 layerGo.transform.SetParent(LayersAnchor, false);
                 layerGo.transform.localPosition = Vector3.zero;
                 if (layerGo) Layers.Add(layerGo);
@@ -135,7 +129,6 @@ namespace Assets.Entity
                 if (IsComplexCollision) GenerateComplexCollision();
                 else GenerateCollision();
             }
-            
         }
 
         private void OnCollisionEnter2D(Collision2D collision)

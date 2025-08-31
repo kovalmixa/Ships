@@ -25,7 +25,7 @@ namespace Assets.Entity.Projectile
                 _projectileContainer = value;
                 string[] texturePaths = _projectileContainer.Graphics.Textures;
                 IsTrigger = true;
-                StartCoroutine(SetupLayersCoroutine(texturePaths));
+                StartCoroutine(SetupLayersCoroutine(texturePaths, true));
             }
         }
         public ActivationContainer[] Activations
