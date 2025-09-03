@@ -37,6 +37,7 @@ namespace Assets.Handlers.Sprite
             StopAllCoroutines();
             yield return StartCoroutine(SetSpriteByIndex(0));
         }
+
         private IEnumerator SetSpriteByIndex(int i)
         {
             if (_graphicElement == null) yield break;

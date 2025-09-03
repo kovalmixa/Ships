@@ -25,7 +25,7 @@ namespace Assets.InGameMarkers.Actions
         protected void SetupEffect(ObjectPoolHandler effectPool, ActionContext actionContext)
         {
             EffectContainer effectContainer = GameObjectsHandler.Objects[actionContext.ObjectId] as EffectContainer;
-            Debug.Log(effectContainer.Graphics.Animations[0]);
+            //Debug.Log(effectContainer.Graphics.Animations[0]);
         }
     }
 }

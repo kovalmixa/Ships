@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 using static TreeEditor.TextureAtlas;
 
@@ -10,6 +11,37 @@ namespace Assets.Handlers.Sprite
     public static class StreamingSpriteLoader
     {
         private static readonly Dictionary<string, Texture2D> Cache = new();
+        //private static readonly Dictionary<string, WeakReference<Texture2D>> _cache = new();
+
+        //private static Texture2D GetOrLoad(string path)
+        //{
+        //    if (_cache.TryGetValue(path, out var weakRef))
+        //    {
+        //        if (weakRef.TryGetTarget(out var tex) && tex != null)
+        //        {
+        //            return tex;
+        //        }
+        //    }
+        //    Texture2D loadedTex = LoadTexture(path);
+        //    _cache[path] = new WeakReference<Texture2D>(loadedTex);
+        //    return loadedTex;
+        //}
+
+        //private static void Cleanup()
+        //{
+        //    var keysToRemove = new List<string>();
+        //    foreach (var kvp in _cache)
+        //    {
+        //        if (!kvp.Value.TryGetTarget(out var tex) || tex == null)
+        //        {
+        //            keysToRemove.Add(kvp.Key);
+        //        }
+        //    }
+        //    foreach (var key in keysToRemove)
+        //    {
+        //        _cache.Remove(key);
+        //    }
+        //}
 
         public static IEnumerator LoadSprite(GraphicElement graphicElement, int index, bool isPixel, Action<UnityEngine.Sprite> onLoaded)
         {

@@ -30,22 +30,5 @@ namespace Assets.Entity.DataContainers
             }
             set => _textures = value;
         }
-
-        public string[] Animations { get; set; }
-
-        //private Vector2 size;
-        //public Vector2 Size
-        //{
-        //    get
-        //    {
-        //        if (size == Vector2.zero) size = Vector2.one;
-        //        return size;
-        //    }
-        //    set
-        //    {
-        //        if (size == Vector2.zero) return;
-        //        size = value;
-        //    } 
-        //}
     }
 }
