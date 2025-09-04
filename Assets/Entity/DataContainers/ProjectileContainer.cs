@@ -1,16 +1,16 @@
+using UnityEngine;
+
 namespace Assets.Entity.DataContainers
 {
-    public class ProjectileContainer : IObject
+    public class ProjectileContainer : MonoBehaviour, IObject
     {
-        public Graphics Graphics { get; set; }
         public string Id { get; set; }
-        public Graphics GetGraphics() => Graphics;
-        public int LifeTime { get; set; }
-        public int Speed { get; set; }
-        public bool IsHoming { get; set; }
-        public bool IsBallistic { get; set; }
+        public int LifeTime;
+        public int Speed;
+        public bool IsHoming;
+        public bool IsBallistic;
 
         public ActivationContainer[] OnActivate;
-        public string Explosion { get; set; }
+        public string Explosion;
     }
 }

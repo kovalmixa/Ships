@@ -28,21 +28,21 @@ public static class ActivationHandler
 
     public static bool IsPassive(string type)
     {
-        IObject obj;
-        IGameAction action;
-        if (GameObjectsHandler.Objects.TryGetValue(type, out obj))
-        {
-            EquipmentContainer equipment = obj as EquipmentContainer;
-            foreach (var activation in equipment.OnActivate)
-            {
-                if (!activation.IsPassive) return false;
-            }
-            return true;
-        }
-        if (_actions.TryGetValue(type, out action))
-        {
-            return action.IsPassive;
-        }
+        //IObject obj;
+        //IGameAction action;
+        //if (GameObjectsHandler.Objects.TryGetValue(type, out obj))
+        //{
+        //    EquipmentContainer equipment = obj as EquipmentContainer;
+        //    foreach (var activation in equipment.OnActivate)
+        //    {
+        //        if (!activation.IsPassive) return false;
+        //    }
+        //    return true;
+        //}
+        //if (_actions.TryGetValue(type, out action))
+        //{
+        //    return action.IsPassive;
+        //}
         return false;
     }
 }

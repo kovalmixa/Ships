@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Assets.InGameMarkers.Scripts;
-using Assets.Handlers.Sprite;
 
 namespace Assets.Entity
 {
@@ -54,82 +51,7 @@ namespace Assets.Entity
             }
         }
 
-        protected List<GameObject> Layers = new();
-
-        protected void GenerateCollision()
-        {
-            Vector2 maxSize = new(0,0);
-            foreach (GameObject layer in Layers)
-            {
-                SpriteRenderer spriteRenderer = layer.GetComponent<SpriteRenderer>();
-                if (spriteRenderer == null) continue;
-                Sprite sprite = spriteRenderer.sprite;
-                if (sprite == null) continue;
-                Vector2 textureSize = GetTextureSizeFromSprite(sprite);
-                maxSize.x = Mathf.Max(maxSize.x, textureSize.x);
-                maxSize.y = Mathf.Max(maxSize.y, textureSize.y);
-            }
-            CollisionSize = maxSize;
-            var collider = GetComponent<BoxCollider2D>();
-            collider.isTrigger = IsTrigger;
-        }
-
-        private void GenerateComplexCollision()
-        {
-            foreach (GameObject layer in Layers)
-            {
-                SpriteRenderer renderer = layer.GetComponent<SpriteRenderer>();
-                Sprite sprite = renderer != null ? renderer.sprite : null;
-
-                BoxCollider2D collider = layer.AddComponent<BoxCollider2D>();
-
-                if (sprite == null)
-                {
-                    collider.size = Vector2.zero;
-                    continue;
-                }
-
-                Vector2 textureSize = GetTextureSizeFromSprite(sprite);
-                collider.size = textureSize;
-                collider.isTrigger = IsTrigger;
-            }
-        }
-
-        private Vector2 GetTextureSizeFromSprite(Sprite sprite)
-        {
-            Vector2 textureSize = new(sprite.texture.width, sprite.texture.height);
-            float ppu = sprite.pixelsPerUnit;
-            textureSize = textureSize / ppu;
-            return textureSize;
-        }
-
-        protected IEnumerator SetupLayersCoroutine(string[] texturePaths, bool isLooped, bool generateCollision = true)
-        {
-            foreach (Transform child in LayersAnchor)
-                Destroy(child.gameObject);
-            for (int i = 0; i < texturePaths.Length; i++)
-            {
-                GameObject layerGo = new GameObject($"textureLayer{i}");
-                if (texturePaths[i] != "")
-                {
-                    SpriteComponent spriteComponent = layerGo.AddComponent<SpriteComponent>();
-                    GraphicElement graphicElement = GraphicElementHandler.Objects[texturePaths[i]];
-                    yield return spriteComponent.SetGraphicElement(graphicElement);
-                    spriteComponent.IsLooped = isLooped;
-                    spriteComponent.GetComponent<SpriteRenderer>().sortingOrder = i;
-                }
-                layerGo.transform.SetParent(LayersAnchor, false);
-                layerGo.transform.localPosition = Vector3.zero;
-                if (layerGo) Layers.Add(layerGo);
-            }
-            var baseRenderer = GetComponent<SpriteRenderer>();
-            if (baseRenderer) baseRenderer.forceRenderingOff = true;
-            if (generateCollision)
-            {
-                if (IsComplexCollision) GenerateComplexCollision();
-                else GenerateCollision();
-            }
-        }
+        protected GameObject Body;
 
         private void OnCollisionEnter2D(Collision2D collision)
         {

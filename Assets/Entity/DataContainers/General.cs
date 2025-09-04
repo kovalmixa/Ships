@@ -1,14 +1,17 @@
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Assets.Entity.DataContainers
 {
+    [System.Serializable]
     public class General
     {
-        public string Name { get; set; }
-        public string SizeType { get; set; }
-        public string Layer { get; set; }
-        public string Class { get; set; }
-        public int SlotHeight { get; set; } = 1;
-        public int SlotWidth { get; set; } = 1;
+        public string Name;
+        public int SizeType;
+        public int Layer;
+        public string Class;
+        public int SlotHeight = 1;
+        public int SlotWidth = 1;
+        public Texture Icon;
     }
 }

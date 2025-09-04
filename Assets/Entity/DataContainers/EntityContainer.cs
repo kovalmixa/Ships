@@ -2,8 +2,9 @@ using System;
 
 namespace Assets.Entity.DataContainers
 {
+    [System.Serializable]
     public class EntityContainer
     {
-        public HullContainer HullData = new();
+        public HullContainer HullContainer = new();
     }
 }

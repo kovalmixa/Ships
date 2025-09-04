@@ -1,14 +1,7 @@
-﻿using System;
-using Assets.Entity.DataContainers;
+﻿using Assets.Entity.DataContainers;
 using Assets.Entity.Interfaces;
-using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
-using Assets.InGameMarkers.Actions;
-using Cinemachine;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Assets.Entity.Projectile
 {
@@ -16,18 +9,7 @@ namespace Assets.Entity.Projectile
     {
         private Activator _activator;
 
-        private ProjectileContainer _projectileContainer;
-        public ProjectileContainer ProjectileContainer
-        {
-            get => _projectileContainer;
-            set
-            {
-                _projectileContainer = value;
-                string[] texturePaths = _projectileContainer.Graphics.Textures;
-                IsTrigger = true;
-                StartCoroutine(SetupLayersCoroutine(texturePaths, true));
-            }
-        }
+        public ProjectileContainer ProjectileContainer;
         public ActivationContainer[] Activations
         {
             get => ProjectileContainer.OnActivate;

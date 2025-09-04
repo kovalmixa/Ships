@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Entity.DataContainers;
+using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
 using UnityEngine;
@@ -10,26 +12,24 @@ namespace Assets.Entity
 {
     public class EntityBody : InGameObject, IActivation, IDamageable
     {
-        public string Type
+        public int Type
         {
             get
             {
-                if (EntityData.HullData.General == null) return "Sea";
-                return EntityData.HullData.General.Layer;
+                if (EntityContainer.HullContainer.General == null) return 0;
+                return 0;
             }
             set{}
         }
         private Activator _activator;
         public EntityController EntityController;
-        public EntityContainer EntityData = new();
-        public GameObject EquipmentPrefab;
+        public EntityContainer EntityContainer = new();
         private List<GameObject> _equipments = new();
         public ActivationContainer[] Activations
         {
-            get => EntityData.HullData.OnActivate; 
-            set => EntityData.HullData.OnActivate = value;
+            get => EntityContainer.HullContainer.OnActivate; 
+            set => EntityContainer.HullContainer.OnActivate = value;
         }
-        private const int InLayerComponentsLimit = 10;
         public float MaxSpeed = 5f;
         public float Acceleration = 3f;
         public float RotationSpeed = 60f;
@@ -50,63 +50,30 @@ namespace Assets.Entity
         {
             _activator = gameObject.AddComponent<Activator>();
         }
-        public IEnumerator StartSetupHullLayers(HullContainer hull)
-        {
-            foreach (Transform child in LayersAnchor)
-                Destroy(child.gameObject);
 
-            EntityData.HullData = hull;
-            _activator.SetActivations(hull.OnActivate);
-            string[] texturePaths = hull.Graphics.Textures;
-            Activations = hull.OnActivate;
-            yield return StartCoroutine(SetupHullLayers(texturePaths));
+        public void SetHull(string hullId)
+        {
+            GameObject newBody = GameObjectsHandler.Instance.InstantiatePrefab(hullId,transform.position, Quaternion.identity, transform);
+            if (newBody == null) return;
+            Destroy(Body);
+            Body = newBody;
+            EntityContainer.HullContainer = Body.GetComponent<Hull>().HullContainer;
+            _equipments.Clear();
         }
 
-        private IEnumerator SetupHullLayers(string[] texturePaths)
+        public bool SetEquipment(string equipmentId, int index)
         {
-            yield return StartCoroutine(SetupLayersCoroutine(texturePaths, true));
-            SetupEquipmentsFrames();
-        }
-
-        private void SetupEquipmentsFrames()
-        {
-            if (EquipmentPrefab == null)
+            if (equipmentId == "") return false;
+            var obj = GameObjectsHandler.Instance.InstantiatePrefab(equipmentId, Vector3.zero, Quaternion.identity);
+            if (obj == null) return false;
+            var equipment = obj.GetComponent<Equipment.Equipment>();
+            if (equipment == null) return false;
+            foreach (var equipmentAnchor in Body.GetComponent<Hull>().EquipmentAnchors.Where(go => go.transform.childCount == 0))
             {
-                Debug.LogError("EquipmentPrefab не назначен!");
-                return;
+                equipmentAnchor.SetTransform(equipment);
+                _equipments.Add(equipment.gameObject);
+                return true;
             }
-
-            HullEquipmentProperties[][] weaponProperties = EntityData.HullData.Equipments;
-            if (weaponProperties == null || weaponProperties.Length == 0) return;
-            for (int i = 0; i < weaponProperties.Length; i++)
-            {
-                GameObject layer = Layers[i];
-                if (layer == null) continue;
-                HullEquipmentProperties[] innerArray = weaponProperties[i];
-                for (int j = 0; j < innerArray.Length; j++)
-                {
-                    HullEquipmentProperties hullEquipmentProperties = weaponProperties[i][j];
-                    GameObject layerGo = Instantiate(EquipmentPrefab, layer.transform);
-                    layerGo.name = $"Equipment_{j}";
-                    float ppu = layer.GetComponent<Sprite>() == null ? 100 : layer.GetComponent<Sprite>().pixelsPerUnit;
-                    layerGo.transform.localPosition = Vector3.zero + (Vector3)hullEquipmentProperties.Position / ppu;
-                    SpriteRenderer layerRenderer = layer.GetComponent<SpriteRenderer>();
-                    if (layerRenderer != null) layerRenderer.sortingOrder = i * InLayerComponentsLimit;
-                    Equipment.Equipment equipment = layerGo.GetComponent<Equipment.Equipment>();
-                    equipment.HullEquipmentProperties = hullEquipmentProperties;
-                    equipment.LayerIndex = i * InLayerComponentsLimit;
-                    equipment.EntityBody = this;
-                    _equipments.Add(layerGo);
-                }
-            }
-        }
-
-        public bool SetEquipment(EquipmentContainer equipmentContainer, int index)
-        {
-            Equipment.Equipment equipment = _equipments[index].GetComponent<Equipment.Equipment>();
-            //if (equipment.Type == equipmentContainer.)
-            //логика соответствия слота с тем оружием, которое пихается туда
-            equipment.EquipmentContainer = equipmentContainer;
             return false;
         }
 
@@ -114,7 +81,7 @@ namespace Assets.Entity
         {
             switch (Type)
             {
-                case "Sea":
+                case 0:
                 {
                     _targetSpeed = SpeedLevel * (MaxSpeed / _maxSpeedLevel);
                     CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, _targetSpeed, Acceleration * Time.deltaTime);

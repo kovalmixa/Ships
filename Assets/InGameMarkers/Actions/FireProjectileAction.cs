@@ -24,33 +24,32 @@ public class FireProjectileAction : IGameAction
             Debug.LogWarning("Pool not found"); 
             return;
         }
-        if (!GameObjectsHandler.Objects.ContainsKey(context.ObjectId)) return;
-        SetupProjectile(projectileObj, context);
+        //SetupProjectile(projectileObj, context);
 
     }
 
-    protected void SetupProjectile(ObjectPoolHandler objectPool, ActionContext context)
-    {
-        ProjectileContainer projectileContainer = GameObjectsHandler.Objects[context.ObjectId] as ProjectileContainer;
-        GameObject projectileObj = objectPool.Get();
-        if (projectileObj == null) return;
+    //protected void SetupProjectile(ObjectPoolHandler objectPool, ActionContext context)
+    //{
+    //    ProjectileContainer projectileContainer = GameObjectsHandler.Objects[context.ObjectId] as ProjectileContainer;
+    //    GameObject projectileObj = objectPool.Get();
+    //    if (projectileObj == null) return;
 
-        Transform source = context.Source.transform;
-        Vector3 fireOffset = context.Position / 10; // локальное смещение вверх от центра
-        Vector3 firePoint = source.TransformPoint(fireOffset); // учитываем поворот и позицию
+    //    Transform source = context.Source.transform;
+    //    Vector3 fireOffset = context.Position / 10; // локальное смещение вверх от центра
+    //    Vector3 firePoint = source.TransformPoint(fireOffset); // учитываем поворот и позицию
 
-        Vector3 targetPos = context.TargetPosition ?? source.position;
-        Vector3 direction = (targetPos - firePoint).normalized;
+    //    Vector3 targetPos = context.TargetPosition ?? source.position;
+    //    Vector3 direction = (targetPos - firePoint).normalized;
 
-        // Устанавливаем позицию снаряда с учётом параллакса
-        projectileObj.transform.position = firePoint;
+    //    // Устанавливаем позицию снаряда с учётом параллакса
+    //    projectileObj.transform.position = firePoint;
 
-        // Поворот по направлению
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        projectileObj.transform.rotation = Quaternion.Euler(0, 0, angle + 90f); // +90f — если спрайт вверх
+    //    // Поворот по направлению
+    //    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+    //    projectileObj.transform.rotation = Quaternion.Euler(0, 0, angle + 90f); // +90f — если спрайт вверх
 
-        var projectile = projectileObj.GetComponent<Projectile>();
-        projectile.ProjectileContainer = projectileContainer;
-        projectile.Launch(direction, null, targetPos, context.Source);
-    }
+    //    var projectile = projectileObj.GetComponent<Projectile>();
+    //    projectile.ProjectileContainer = projectileContainer;
+    //    projectile.Launch(direction, null, targetPos, context.Source);
+    //}
 }

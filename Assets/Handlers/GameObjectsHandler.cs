@@ -1,45 +1,70 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Assets.Entity.DataContainers;
-using Assets.Handlers.FileHandlers;
 using UnityEngine;
-using Graphics = Assets.Entity.DataContainers.Graphics;
 
-namespace Assets.Handlers
+public class GameObjectsHandler : MonoBehaviour
 {
-    public static class GameObjectsHandler
+    public static GameObjectsHandler Instance { get; private set; }
+
+    [SerializeField] private string resourcesPath = "Prefabs/";
+    [SerializeField] private int cacheLimit = 20;
+
+    private Dictionary<string, GameObject> _cache = new();
+    private LinkedList<string> _lruOrder = new();
+
+    private void Awake()
     {
-        public static Dictionary<string, IObject> Objects = new();
-        private static readonly Dictionary<string, Func<string, IObject>> Loaders = new()
+        if (Instance == null)
+            Instance = this;
+        else
         {
-            ["Hull"] = DataFileHandler.LoadFromJson<HullContainer>,
-            ["Equipments"] = DataFileHandler.LoadFromJson<EquipmentContainer>,
-            ["Projectiles"] = DataFileHandler.LoadFromJson<ProjectileContainer>,
-            ["Effects"] = DataFileHandler.LoadFromJson<EffectContainer>
-        };
-        public static void SetupObjectPool(string[] gameObjectsFolderPaths, string[] excludedFolders)
-        {
-            string[] allFiles = FilesExtractor.GetFilesPaths(gameObjectsFolderPaths, excludedFolders);
-            BuildObjects(allFiles);
+            Destroy(gameObject);
+            return;
         }
-        private static void BuildObjects(string[] allFiles)
-        {
-            foreach (string filePath in allFiles.Where(file => file.EndsWith(".json")))
-            {
-                IObject jsonObject = null;
-                foreach (var (key, loader) in Loaders)
-                {
-                    if (!filePath.Contains(key)) continue;
-                    jsonObject = loader(filePath);
-                    break;
-                }
-                if (jsonObject == null) continue;
-                string id = DataFileHandler.GetIdByPath(filePath);
-                jsonObject.Id = id;
-                Objects.Add(id, jsonObject);
-                //Debug.Log(id);
-            }
-        }
+        DontDestroyOnLoad(gameObject);
     }
+
+    public GameObject GetPrefab(string id)
+    {
+        if (_cache.TryGetValue(id, out GameObject prefab))
+        {
+            TouchLRU(id);
+            return prefab;
+        }
+        prefab = Resources.Load<GameObject>(resourcesPath + id);
+        if (prefab == null)
+        {
+            Debug.LogError($"[PrefabManager] Prefab '{id}' not found in Resources/{resourcesPath}");
+            return null;
+        }
+        AddToCache(id, prefab);
+        return prefab;
+    }
+
+    public GameObject InstantiatePrefab(string id, Vector3 pos, Quaternion rot, Transform parent = null)
+    {
+        GameObject prefab = GetPrefab(id);
+        if (prefab == null) return null;
+        return Instantiate(prefab, pos, rot, parent);
+    }
+
+    private void AddToCache(string id, GameObject prefab)
+    {
+        if (_cache.Count >= cacheLimit)
+        {
+            string oldest = _lruOrder.Last.Value;
+            _lruOrder.RemoveLast();
+            _cache.Remove(oldest);
+            Debug.Log($"[PrefabManager] Removed from cache: {oldest}");
+        }
+
+        _cache[id] = prefab;
+        _lruOrder.AddFirst(id);
+    }
+
+    private void TouchLRU(string id)
+    {
+        _lruOrder.Remove(id);
+        _lruOrder.AddFirst(id);
+    }
+
 }

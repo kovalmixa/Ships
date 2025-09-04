@@ -8,5 +8,7 @@ namespace Assets.Entity.DataContainers
 {
     public class DamageElement
     {
+        public string Type;
+        public float Value;
     }
 }

@@ -19,7 +19,6 @@ namespace Assets.Handlers.FileHandlers
                 Debug.LogError($"Error saving JSON: {ex.Message}");
             }
         }
-
         public static T LoadFromJson<T>(string filePath)
         {
             try
@@ -38,77 +37,6 @@ namespace Assets.Handlers.FileHandlers
                 Debug.LogError($"Error loading JSON on {filePath}: {ex.Message}");
                 return default;
             }
-        }
-        //get path by id
-        public static string GetPathById(string id, string assetPath)
-        {
-            string path = assetPath;
-            string[] objectTypePath = id.Split('_');
-            GetObjectPath(objectTypePath, ref path);
-            path += '/';
-            return path += objectTypePath[objectTypePath.Length - 1];
-        }
-        private static void GetObjectPath(string[] objectTypePath, ref string path)
-        {
-            path += '/' + objectTypePath[0];
-            SwitchObjectTypePath(objectTypePath, ref path);
-        }
-        private static void SwitchObjectTypePath(string[] objectTypePath, ref string path)
-        {
-            switch (objectTypePath[1])
-            {
-                case "h":
-                {
-                    path += "\\Hulls";
-                    SwitchHullTypePath(objectTypePath, ref path);
-                    break;
-                }
-                case "w":
-                {
-                    path += "\\Equipments";
-                    break;
-                }
-                case "p":
-                {
-                    path += "\\Projectiles";
-                    break;
-                }
-            }
-        }
-        private static void SwitchHullTypePath(string[] objectTypePath, ref string path)
-        {
-            switch (objectTypePath[2])
-            {
-                case "n":
-                {
-                    path += "/Naval";
-                    break;
-                }
-                case "l":
-                {
-                    path += "/Land";
-                    break;
-                }
-                case "a":
-                {
-                    path += "/Air";
-                    break;
-                }
-            }
-        }
-        //get id by path
-        public static string GetIdByPath(string path)
-        {
-            string[] tokens = path.Split("\\");
-            string id = tokens[2];
-            id += '_' + tokens[3][..2].ToLower();
-            if (path.Contains("Hull"))
-            {
-                id += '_' + tokens[^2][0].ToString().ToLower();
-                id += '_' + tokens[^1];
-            }
-            else id += '_' + tokens[^1];
-            return id[..id.IndexOf(".json", StringComparison.Ordinal)];
         }
     }
 }

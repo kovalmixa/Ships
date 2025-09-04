@@ -58,15 +58,21 @@ namespace Assets.Entity.Player
 
         private void MoveControl(EntityBody entityBody)
         {
-            if (entityBody.Type == "Sea")
+            switch (entityBody.Type)
             {
-                if (Input.GetKeyDown(KeyCode.W) && entityBody.SpeedLevel < entityBody.MaxSpeedLevel)
-                    entityBody.SpeedLevel++;
-                else if (Input.GetKeyDown(KeyCode.S) && entityBody.SpeedLevel > entityBody.MinSpeedLevel)
-                    entityBody.SpeedLevel--;
+                case 0:
+                {
+                    {
+                        if (Input.GetKeyDown(KeyCode.W) && entityBody.SpeedLevel < entityBody.MaxSpeedLevel)
+                            entityBody.SpeedLevel++;
+                        else if (Input.GetKeyDown(KeyCode.S) && entityBody.SpeedLevel > entityBody.MinSpeedLevel)
+                            entityBody.SpeedLevel--;
 
-                float rotationInput = Input.GetAxis("Horizontal");
-                entityBody.Movement(rotationInput);
+                        float rotationInput = Input.GetAxis("Horizontal");
+                        entityBody.Movement(rotationInput);
+                    }
+                    break;
+                }
             }
         }
 

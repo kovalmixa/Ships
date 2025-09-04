@@ -42,7 +42,7 @@ namespace Assets.InGameMarkers.EntityMarkers.Spawner
         }
         private void SetupEntity(EntityController entityController)
         {
-            StartCoroutine(entityController.SetHull());
+            entityController.SetHull();
         }
     }
 }

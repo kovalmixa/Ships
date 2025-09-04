@@ -1,19 +1,13 @@
-using System.Collections.Generic;
-using Newtonsoft.Json;
+
+using UnityEngine;
 
 namespace Assets.Entity.DataContainers
 {
-    public class HullContainer : IObject
+    public class HullContainer : MonoBehaviour, IObject
     {
-        public General General { get; set; }
+        public General General;
 
-        public Graphics Graphics { get; set; }
-
-        public Physics Physics { get; set; }
-
-        public HullEquipmentProperties[][] Equipments { get; set; }
         public string Id { get; set; }
-        public Graphics GetGraphics() => Graphics;
 
         public ActivationContainer[] OnActivate;
     }
