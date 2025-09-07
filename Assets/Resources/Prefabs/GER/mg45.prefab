@@ -139,9 +139,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 124669368259897105}
-  - component: {fileID: 5888668427879922858}
-  - component: {fileID: 508184833516364186}
   - component: {fileID: 3143376459598222572}
+  - component: {fileID: 736988907336248827}
+  - component: {fileID: 1531360328655141274}
   m_Layer: 0
   m_Name: mg45
   m_TagString: Untagged
@@ -165,41 +165,6 @@ Transform:
   - {fileID: 1328403097879313759}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5888668427879922858
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a92cd5c67eaea9847b91ce58f2ca506f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HullContainer: {fileID: 508184833516364186}
-  EquipmentAnchors: []
---- !u!114 &508184833516364186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c63eb5b245dd93f4caf4478d85f1fb32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  General:
-    Name: mg45
-    SizeType: 0
-    Layer: 
-    Class: turret
-    SlotHeight: 1
-    SlotWidth: 1
-    Icon: {fileID: 2800000, guid: d3ebef6ec74b4db46a715edccd3b8647, type: 3}
-  OnActivate: []
 --- !u!54 &3143376459598222572
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -227,3 +192,39 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &736988907336248827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0267dd645a67f7146b446c099529af0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LayersAnchor: {fileID: 0}
+  EquipmentContainer: {fileID: 1531360328655141274}
+--- !u!114 &1531360328655141274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e206eddd8f1db3f4c8dadef40bac1ba0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  General:
+    Name: mg45
+    SizeType: 0
+    Layer: 0
+    Class: turret
+    SlotHeight: 1
+    SlotWidth: 1
+    Icon: {fileID: 2800000, guid: d3ebef6ec74b4db46a715edccd3b8647, type: 3}
+  RotationSpeed: 200
+  OnActivate: []

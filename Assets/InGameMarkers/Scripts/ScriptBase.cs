@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Entity;
+using UnityEngine;
 
 namespace Assets.InGameMarkers.Scripts
 {
@@ -6,7 +7,12 @@ namespace Assets.InGameMarkers.Scripts
     {
     public abstract bool Execute(Entity.EntityBody entityBody);
 
-    public abstract bool IsExecuted(Entity.EntityBody entityBody);
+        public void Execute(Hull hull)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public abstract bool IsExecuted(Entity.EntityBody entityBody);
 
     public abstract bool IsFinished(Entity.EntityBody entityBody);
     }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Equipment
 {
-    public class Equipment : InGameObject, IActivation
+    public class Equipment : InGameObject, IActivation, IDamageable
     {
         private Activator _activator;
         public EntityBody EntityBody { get; set; }
@@ -59,6 +59,11 @@ namespace Assets.Entity.Equipment
         public void Activate(Vector3 targetPosition, string type = null) =>_activator.TryActivate(targetPosition, type);
         private void OnCollisionEnter2D(Collision2D collision)
         {
+        }
+
+        public void TakeDamage(float damage)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

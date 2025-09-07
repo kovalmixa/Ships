@@ -3,11 +3,7 @@ using Assets.Entity.AI;
 using Assets.Entity.DataContainers;
 using Assets.Entity.Player;
 using Assets.InGameMarkers.Scripts;
-using Assets.Handlers;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.Mathematics;
 using UnityEngine;
-using System.Collections;
 using Assets.Entity.Interfaces;
 
 namespace Assets.Entity
@@ -15,9 +11,7 @@ namespace Assets.Entity
     public class EntityController : MonoBehaviour
     {
         public bool IsPlayer = false;
-        public string Nation { get; set; } //move to EntityBody as Nation buffs can be added to hull
         public string AiName { get; set; }
-        public string HullId;
         public Dictionary<int, string> DefaultHullIds = new() //перенести в другое место: боты не могут снимать корпус
         {
             { 0, "NONE/boat" },
@@ -25,10 +19,11 @@ namespace Assets.Entity
             { 2, "NONE/helicopter" }
         };
         [SerializeField] public List<ScriptBase> ScriptList = new();
-        //GER_e_mg45
-        [SerializeField] public List<string> EquipmentIds = new();
-        private EntityBody _entityBody;
+
+        public EntityDataContainer Data = new();
         private IEntityController _controller;
+        private EntityBody _entityBody;
+
 
         private void Awake()
         {
@@ -55,7 +50,6 @@ namespace Assets.Entity
         {
             _controller = gameObject.AddComponent<AiController>();
             AiController aiController = _controller as AiController;
-            aiController.Size = _entityBody.CollisionSize;
             Queue<IScript> scripts = new();
             foreach (IScript scriptObj in ScriptList)
             {
@@ -67,20 +61,20 @@ namespace Assets.Entity
 
         public void SetHull(string hullId = "")
         {
-            if (_entityBody == null) return;
-            HullId = string.IsNullOrEmpty(HullId) ? hullId : HullId;
-            if (string.IsNullOrEmpty(HullId))
-                HullId = DefaultHullIds[_entityBody.Type];
-            _entityBody.SetHull(HullId);
+            if (Data == null) return;
+            Data.HullId = string.IsNullOrEmpty(Data.HullId) ? hullId : Data.HullId;
+            if (string.IsNullOrEmpty(Data.HullId))
+                Data.HullId = DefaultHullIds[_entityBody.Type];
+            _entityBody.SetHull(Data.HullId);
             LoadEquipment();
         }
 
         private bool[] LoadEquipment()
         {
-            bool[] installedEquips = new bool[EquipmentIds.Count];
-            for (int i = 0; i < EquipmentIds.Count; i++)
+            bool[] installedEquips = new bool[Data.EquipmentIds.Count];
+            for (int i = 0; i < Data.EquipmentIds.Count; i++)
             {
-                installedEquips[i] = _entityBody.SetEquipment(EquipmentIds[i], i);
+                installedEquips[i] = _entityBody.SetEquipment(Data.EquipmentIds[i].Key, Data.EquipmentIds[i].Value);
             }
             return installedEquips;
         }

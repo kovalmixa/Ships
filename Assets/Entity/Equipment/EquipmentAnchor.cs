@@ -10,6 +10,7 @@ namespace Assets.Entity.Equipment
         public int SizeType;
         public Vector2 RotationSector;
         public Vector2[] FireSectors;
+        public int OrderLayer;
 
         public bool CanBePlaced(Equipment equipment, int index)
         {
@@ -22,9 +23,13 @@ namespace Assets.Entity.Equipment
         {
             if (equipment == null) return;
             var eqTransform = equipment.transform;
-            eqTransform.parent = transform;
+            Vector2 scale = eqTransform.localScale;
+            eqTransform.SetParent(transform, false);
             eqTransform.position = transform.position;
             eqTransform.rotation = transform.rotation;
+            eqTransform.localScale = scale;
+
+            equipment.SetRenderLayerOrder(OrderLayer);
         }
     }
 }

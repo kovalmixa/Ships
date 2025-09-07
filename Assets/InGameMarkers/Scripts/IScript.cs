@@ -1,3 +1,5 @@
+using Assets.Entity;
+
 namespace Assets.InGameMarkers.Scripts
 {
     public interface IScript
@@ -5,5 +7,6 @@ namespace Assets.InGameMarkers.Scripts
         bool IsExecuted(Entity.EntityBody entityBody);
         bool Execute(Entity.EntityBody entityBody);
         bool IsFinished(Entity.EntityBody entityBody);
+        void Execute(Hull hull);
     }
 }

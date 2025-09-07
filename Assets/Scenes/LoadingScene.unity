@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 634284860}
   - component: {fileID: 634284859}
   - component: {fileID: 634284861}
+  - component: {fileID: 634284862}
   m_Layer: 0
   m_Name: Handlers
   m_TagString: Untagged
@@ -185,6 +186,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   resourcesPath: Prefabs/
   cacheLimit: 20
+--- !u!114 &634284862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634284858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84c9c414a460c33499fb158edc74ce37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &649772205 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1043631210884575351, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}

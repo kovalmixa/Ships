@@ -10,41 +10,42 @@ using UnityEngine;
 
 namespace Assets.Entity
 {
-    public class EntityBody : InGameObject, IActivation, IDamageable
+    public class EntityBody : MonoBehaviour, IActivation
     {
+        private GameObject _body;
         public int Type
         {
             get
             {
-                if (EntityContainer.HullContainer.General == null) return 0;
+                if (EntityDataContainer.HullId == null) return 0;
                 return 0;
             }
             set{}
         }
         private Activator _activator;
         public EntityController EntityController;
-        public EntityContainer EntityContainer = new();
+        public EntityDataContainer EntityDataContainer = new();
         private List<GameObject> _equipments = new();
-        public ActivationContainer[] Activations
-        {
-            get => EntityContainer.HullContainer.OnActivate; 
-            set => EntityContainer.HullContainer.OnActivate = value;
-        }
-        public float MaxSpeed = 5f;
-        public float Acceleration = 3f;
-        public float RotationSpeed = 60f;
+
+        public ActivationContainer[] Activations { get; set; }
+
+        //{
+        //    get => Data.HullContainer.OnActivate; 
+        //    set => Data.HullContainer.OnActivate = value;
+        //}
+        public float CurrentSpeed;
+
         private float _targetSpeed;
 
         public float SpeedLevel
         {
-            get => Speed;
-            set => Speed = value;
+            get => _body.GetComponent<Hull>().Speed;
+            set => _body.GetComponent<Hull>().Speed = value;
         }
 
-        private int _maxSpeedLevel = 3;
-        public int MaxSpeedLevel => _maxSpeedLevel;
-        private int _minSpeedLevel = -1;
-        public int MinSpeedLevel => _minSpeedLevel;
+        public int MaxSpeedLevel { get; set; } = 3;
+
+        public int MinSpeedLevel { get; set; } = -1;
 
         private void Awake()
         {
@@ -53,11 +54,10 @@ namespace Assets.Entity
 
         public void SetHull(string hullId)
         {
-            GameObject newBody = GameObjectsHandler.Instance.InstantiatePrefab(hullId,transform.position, Quaternion.identity, transform);
+            GameObject newBody = GameObjectsHandler.Instance.InstantiatePrefab(hullId, transform.position, Quaternion.identity, transform);
             if (newBody == null) return;
-            Destroy(Body);
-            Body = newBody;
-            EntityContainer.HullContainer = Body.GetComponent<Hull>().HullContainer;
+            Destroy(_body);
+            _body = newBody;
             _equipments.Clear();
         }
 
@@ -68,8 +68,9 @@ namespace Assets.Entity
             if (obj == null) return false;
             var equipment = obj.GetComponent<Equipment.Equipment>();
             if (equipment == null) return false;
-            foreach (var equipmentAnchor in Body.GetComponent<Hull>().EquipmentAnchors.Where(go => go.transform.childCount == 0))
+            foreach (var equipmentAnchor in _body.GetComponent<Hull>().EquipmentAnchors.Where(go => go.transform.childCount == 0))
             {
+                if (!equipmentAnchor.CanBePlaced(equipment, index)) continue;
                 equipmentAnchor.SetTransform(equipment);
                 _equipments.Add(equipment.gameObject);
                 return true;
@@ -79,13 +80,14 @@ namespace Assets.Entity
 
         public void Movement(float rotationDirection)
         {
+            var hull = _body.GetComponent<Hull>();
             switch (Type)
             {
                 case 0:
                 {
-                    _targetSpeed = SpeedLevel * (MaxSpeed / _maxSpeedLevel);
-                    CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, _targetSpeed, Acceleration * Time.deltaTime);
-                    transform.Rotate(Vector3.forward, -rotationDirection * RotationSpeed * Time.deltaTime);
+                    _targetSpeed = SpeedLevel * (hull.MaxSpeed / MaxSpeedLevel);
+                    CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, _targetSpeed, hull.Acceleration * Time.deltaTime);
+                    transform.Rotate(Vector3.forward, -rotationDirection * hull.RotationSpeed * Time.deltaTime);
                     transform.Translate(Vector3.up * CurrentSpeed * Time.deltaTime, Space.Self);
                     break;
                 }
@@ -141,11 +143,6 @@ namespace Assets.Entity
                 if (col != null && col.OverlapPoint(position)) return true;
             }
             return false;
-        }
-
-        public void TakeDamage(float damage)
-        {
-            throw new NotImplementedException();
         }
     }
 }

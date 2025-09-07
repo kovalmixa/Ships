@@ -36,7 +36,7 @@ namespace Assets.InGameMarkers.EntityMarkers.Spawner
             EntityController entityController = _entityObj.GetComponent<EntityController>();
             if (entityController != null)
             {
-                entityController.Nation = Nation;
+                //entityController.Nation = Nation;
                 SetupEntity(entityController);
             }
         }

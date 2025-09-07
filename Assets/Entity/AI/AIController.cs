@@ -10,7 +10,6 @@ namespace Assets.Entity.AI
     {
         private Transform _movePoint;
         private Transform _targetPoint;
-        public Vector2 Size;
         public Queue<IScript> ScriptList = new();
         private IAi _ai;
         public void SetAiType(string name) { }
@@ -36,7 +35,7 @@ namespace Assets.Entity.AI
         {
             if (_movePoint == null) return;
             Vector2 directionToPoint = _movePoint.transform.position - entityBody.transform.position;
-            if (directionToPoint.magnitude < Size.y) return; 
+            if (directionToPoint.magnitude < 3) return; 
             float angleToTarget = Vector2.SignedAngle(entityBody.transform.up, directionToPoint.normalized);
             float rotationDirection = -Mathf.Clamp(angleToTarget / 45f, -1f, 1f);
             entityBody.SpeedLevel = Mathf.Clamp(entityBody.SpeedLevel + 1, entityBody.MinSpeedLevel, entityBody.MaxSpeedLevel);

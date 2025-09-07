@@ -22,12 +22,10 @@ namespace Assets.Entity
             }
         }
 
-        public Transform LayersAnchor;
         protected float Speed { get; set; }
         protected float CurrentSpeed { get; set; }
 
         protected bool IsTrigger = false;
-        protected bool IsComplexCollision = false;
 
         public Vector3 Size
         {
@@ -53,18 +51,25 @@ namespace Assets.Entity
 
         protected GameObject Body;
 
+        public void SetRenderLayerOrder(int value)
+        {
+            foreach (Transform child in transform)
+            {
+                var spriteRenderer = child.GetComponent<SpriteRenderer>();
+                if (spriteRenderer == null) continue;
+                spriteRenderer.sortingOrder += value;
+            }
+        }
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (IsComplexCollision) return;
             Bounce(collision);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (IsComplexCollision) return;
-            if (this is not EntityBody) return; 
+            if (this is not Hull) return; 
             IScript script = other.GetComponent<IScript>();
-            script?.Execute(this as EntityBody);
+            script?.Execute(this as Hull);
         }
 
         private void Bounce(Collision2D collision)
