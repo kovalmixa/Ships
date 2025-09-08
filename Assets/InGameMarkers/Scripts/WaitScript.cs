@@ -1,31 +1,28 @@
+using Assets.Entity;
 using UnityEngine;
 
 namespace Assets.InGameMarkers.Scripts
 {
     public class WaitScript : ScriptBase
     {
-        private float waitTime;
-        private float timer = 0f;
+        private bool _isExecuted;
+        private float _waitTime;
+        private float _timer;
 
         public WaitScript(float waitTime)
         {
-            this.waitTime = waitTime;
+            this._waitTime = waitTime;
         }
 
-        public override bool Execute(Entity.EntityBody entityBody)
+        public override bool Execute(EntityController entityController)
         {
-            timer += Time.deltaTime;
-            return timer >= waitTime;
+            _timer += Time.deltaTime;
+            _isExecuted = true;
+            return true;
         }
 
-        public override bool IsExecuted(Entity.EntityBody entityBody)
-        {
-            throw new System.NotImplementedException();
-        }
+        public override bool IsExecuted(EntityController entityController) => _isExecuted;
 
-        public override bool IsFinished(Entity.EntityBody entityBody)
-        {
-            throw new System.NotImplementedException();
-        }
+        public override bool IsFinished(EntityController entityController) => _timer >= _waitTime;
     }
 }

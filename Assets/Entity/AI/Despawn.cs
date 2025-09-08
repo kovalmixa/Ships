@@ -20,8 +20,8 @@ namespace Assets.Entity.AI
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            var entityBody = other.GetComponent<EntityBody>();
-            if (entityBody != null && entityBody.EntityController != null && entityBody.EntityController.IsPlayer)
+            var entityController = other.GetComponent<EntityController>();
+            if (entityController != null && entityController != null && entityController.IsPlayer)
             {
                 _objectPool.Return(_entity);
             }

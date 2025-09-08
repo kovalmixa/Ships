@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.DataContainers;
 using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
 using Assets.InGameMarkers.Scripts;
@@ -22,9 +23,9 @@ namespace Assets.InGameMarkers.EntityMarkers.Spawner
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (Quantity == 0) return;
-            EntityBody entityBody = other.GetComponent<EntityBody>();
-            if (entityBody == null) return;
-            if (!entityBody.EntityController.IsPlayer) return;
+            var entityController = other.GetComponent<EntityController>();
+            if (entityController == null) return;
+            if (!entityController.IsPlayer) return;
             if (!_entityObj || !_entityObj.activeSelf) Spawn();
         }
 
@@ -42,7 +43,18 @@ namespace Assets.InGameMarkers.EntityMarkers.Spawner
         }
         private void SetupEntity(EntityController entityController)
         {
-            entityController.SetHull();
+            
+            entityController.Setup(GenerateHull());
+            //entityController.SetEquipment();
+        }
+
+        private EntityDataContainer GenerateHull()
+        {
+            EntityDataContainer data = new()
+            {
+                HullId = "NONE/boat"
+            };
+            return data;
         }
     }
 }

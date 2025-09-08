@@ -17,18 +17,18 @@ public class NextLocationArea : ScriptBase
         _sceneController = GameObject.Find("Handlers");
         if (_sceneController == null) Debug.LogWarning("SceneController not found");
     }
-    public override bool Execute(EntityBody entityBody)
+    public override bool Execute(EntityController entityController)
     {
-        if (entityBody.EntityController.IsPlayer)
+        if (entityController.IsPlayer)
         {
             _sceneController.GetComponent<SceneController>().NextLocation(LocationName);
-            entityBody.EntityController.transform.position = Vector3.zero;
+            entityController.transform.position = Vector3.zero;
             return true;
         }
         return false;
     }
 
-    public override bool IsFinished(EntityBody entityBody) => false;
+    public override bool IsFinished(EntityController entityController) => false;
 
-    public override bool IsExecuted(EntityBody entityBody) => false;
+    public override bool IsExecuted(EntityController entityController) => false;
 }

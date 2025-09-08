@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.Entity;
 using Assets.InGameMarkers.Scripts;
 using UnityEngine;
 
@@ -24,10 +25,10 @@ namespace Assets.InGameMarkers.Scripts
 
         private void OnTriggerEnter(Collider other)
         {
-            Entity.EntityBody entityBody = other.GetComponent<Entity.EntityBody>();
-            if (entityBody) Execute(entityBody);
+            var entityController = other.GetComponent<EntityController>();
+            if (entityController) Execute(entityController);
         }
-        public override bool Execute(Entity.EntityBody entityBody)
+        public override bool Execute(EntityController entityController)
         {
             if (_scripts.Count == 0)
             {
@@ -36,12 +37,12 @@ namespace Assets.InGameMarkers.Scripts
             }
             foreach (IScript _script in _scripts)
             {
-                _script.Execute(entityBody);
+                _script.Execute(entityController);
             }
             _isExecuted = true;
             return true;
         }
-        public override bool IsFinished(Entity.EntityBody entityBody) => true;
-        public override bool IsExecuted(Entity.EntityBody entityBody) => _isExecuted;
+        public override bool IsFinished(EntityController entityController) => true;
+        public override bool IsExecuted(EntityController entityController) => _isExecuted;
     }
 }

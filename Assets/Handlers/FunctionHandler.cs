@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Handlers
 {
@@ -15,6 +16,7 @@ namespace Assets.Handlers
             if (angle < -180f) angle += 360f;
             return angle;
         }
+
         public static bool IsAngleWithinSector(float angle, float min, float max) => angle >= min && angle <= max;
     }
 }

@@ -1,4 +1,5 @@
-using Assets.Entity.DataContainers;
+using Assets.DataContainers;
+using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
 namespace Assets.Entity.Equipment
@@ -29,7 +30,7 @@ namespace Assets.Entity.Equipment
             eqTransform.rotation = transform.rotation;
             eqTransform.localScale = scale;
 
-            equipment.SetRenderLayerOrder(OrderLayer);
+            GameObjectHandler.Instance.SetRenderLayerOrder(gameObject, OrderLayer);
         }
     }
 }

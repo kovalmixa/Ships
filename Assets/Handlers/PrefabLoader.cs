@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameObjectsHandler : MonoBehaviour
+public class PrefabLoader : MonoBehaviour
 {
-    public static GameObjectsHandler Instance { get; private set; }
+    public static PrefabLoader Instance { get; private set; }
 
     [SerializeField] private string resourcesPath = "Prefabs/";
     [SerializeField] private int cacheLimit = 20;

@@ -1,3 +1,4 @@
+using Assets.Entity;
 using UnityEngine;
 
 namespace Assets.InGameMarkers.Scripts
@@ -6,13 +7,13 @@ namespace Assets.InGameMarkers.Scripts
     {
         public Vector3 Position;
         private bool _isExecuted;
-        public Entity.EntityBody EntityBodyToSpawn;
+        public Entity.EntityBodySetup EntityBodySetupToSpawn;
         //add code for spawning/ it will be like that with point moving
-        public override bool Execute(Entity.EntityBody entityBody)
+        public override bool Execute(EntityController entityController)
         {
             return true;
         }
-        public override bool IsFinished(Entity.EntityBody entityBody) => true;
-        public override bool IsExecuted(Entity.EntityBody entityBody) => _isExecuted;
+        public override bool IsFinished(EntityController entityController) => true;
+        public override bool IsExecuted(EntityController entityController) => _isExecuted;
     }
 }

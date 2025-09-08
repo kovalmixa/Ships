@@ -1,4 +1,4 @@
-namespace Assets.Entity.DataContainers
+namespace Assets.DataContainers
 {
     public class HullProperties
     {

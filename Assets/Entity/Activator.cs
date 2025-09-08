@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Transactions;
-using Assets.Entity.DataContainers;
+using Assets.DataContainers;
 using Assets.Handlers;
 using Assets.InGameMarkers.Actions;
 using UnityEngine;
@@ -69,7 +69,7 @@ namespace Assets.Entity
             float currentAngle = FunctionHandler.NormalizeAngle(transform.rotation.eulerAngles.z);
             float hullRotation = 0;
             if (TryGetComponent(out Equipment.Equipment equipment))
-                hullRotation = FunctionHandler.NormalizeAngle(equipment.EntityBody.transform.rotation.eulerAngles.z);
+                hullRotation = FunctionHandler.NormalizeAngle(equipment.EntityBodySetup.transform.rotation.eulerAngles.z);
             if (Mathf.Abs(targetLocalAngle - currentAngle) % 180 >= 12.5f / activation.Delay) return false;
 
             bool inActivationSector = activation.FireSectors == null || activation.FireSectors.Length == 0 ||

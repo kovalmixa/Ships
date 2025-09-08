@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Assets.InGameMarkers.Scripts;
-using JetBrains.Annotations;
-using UnityEditor.ShaderGraph.Internal;
+﻿using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Assets.Entity.DataContainers
+namespace Assets.DataContainers
 {
     [System.Serializable]
     public class ActivationContainer : MonoBehaviour, IObject

@@ -2,6 +2,6 @@
 {
     public interface IAiBehavior
     {
-        void UpdateBehavior(EntityBody entityBody);
+        void UpdateBehavior(EntityBodySetup entityBodySetup);
     }
 }

@@ -1,7 +1,6 @@
-using Newtonsoft.Json;
 using UnityEngine;
 
-namespace Assets.Entity.DataContainers
+namespace Assets.DataContainers
 {
     [System.Serializable]
     public class General

@@ -1,11 +1,11 @@
-﻿using Assets.Entity.DataContainers;
+﻿using Assets.DataContainers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
 namespace Assets.Entity.Projectile
 {
-    public class Projectile : InGameObject, IActivation
+    public class Projectile : MonoBehaviour, IActivation
     {
         private Activator _activator;
 
@@ -27,7 +27,6 @@ namespace Assets.Entity.Projectile
         private void Awake()
         {
             GetProjectilePool();
-            _activator = gameObject.AddComponent<Activator>();
         }
 
         private void GetProjectilePool()

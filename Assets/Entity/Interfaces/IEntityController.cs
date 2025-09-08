@@ -4,7 +4,7 @@ namespace Assets.Entity.Interfaces
 {
     public interface IEntityController
     {
-        public void UpdateControl(EntityBody entityBody);
+        public void UpdateControl(EntityController controller);
         public void SetMovementPoint(Transform target);
         public void SetTargetPoint(Transform target);
     }

@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
+using Assets.Entity.Hull;
 using Assets.Entity.Interfaces;
-using Unity.VisualScripting;
 using UnityEngine;
-
 namespace Assets.Entity.Player
 {
     public class PlayerController : MonoBehaviour, IEntityController
@@ -26,7 +24,7 @@ namespace Assets.Entity.Player
             { KeyCode.Mouse1, "" }
         };
 
-        public void SetupKeyCodeDictionary()
+        private void Awake()
         {
             for (int i = 0; i <= 9; i++)
             {
@@ -48,43 +46,44 @@ namespace Assets.Entity.Player
             return null;
         }
 
-        public void UpdateControl(EntityBody entityBody)
+        public void UpdateControl(EntityController controller)
         {
-            if(!entityBody) return;
-            MoveControl(entityBody);
-            RotateControl(entityBody);
-            AttackControl(entityBody);
+            if(!controller) return;
+            MoveControl(controller);
+            RotateControl(controller);
+            AttackControl(controller);
         }
 
-        private void MoveControl(EntityBody entityBody)
+        private void MoveControl(EntityController controller)
         {
-            switch (entityBody.Type)
+            Hull.Hull hull = controller.Hull;
+            switch (controller.Data.HullLayer)
             {
                 case 0:
                 {
                     {
-                        if (Input.GetKeyDown(KeyCode.W) && entityBody.SpeedLevel < entityBody.MaxSpeedLevel)
-                            entityBody.SpeedLevel++;
-                        else if (Input.GetKeyDown(KeyCode.S) && entityBody.SpeedLevel > entityBody.MinSpeedLevel)
-                            entityBody.SpeedLevel--;
+                        if (Input.GetKeyDown(KeyCode.W) && hull.SpeedLevel < hull.MaxSpeedLevel)
+                            hull.SpeedLevel++;
+                        else if (Input.GetKeyDown(KeyCode.S) && hull.SpeedLevel > hull.MinSpeedLevel)
+                            hull.SpeedLevel--;
 
                         float rotationInput = Input.GetAxis("Horizontal");
-                        entityBody.Movement(rotationInput);
+                        hull.Movement(rotationInput);
                     }
                     break;
                 }
             }
         }
 
-        private void AttackControl(EntityBody entityBody) => KeyWordControls(entityBody, Camera.ScreenToWorldPoint(Input.mousePosition));
+        private void AttackControl(EntityController controller) => KeyWordControls(controller, Camera.ScreenToWorldPoint(Input.mousePosition));
 
-        private void RotateControl(EntityBody entityBody) => entityBody.RotateEquipment(Camera.ScreenToWorldPoint(Input.mousePosition));
+        private void RotateControl(EntityController controller) => controller.Hull.RotateEquipment(Camera.ScreenToWorldPoint(Input.mousePosition));
 
         public void SetMovementPoint(Transform target) { }
 
         public void SetTargetPoint(Transform target) { }
 
-        private void KeyWordControls(EntityBody entityBody, Vector3 position)
+        private void KeyWordControls(EntityController controller, Vector3 position)
         {
 
             foreach (var entry in keyCodeActivations)
@@ -95,18 +94,18 @@ namespace Assets.Entity.Player
                         entry.Key == KeyCode.Mouse1 ? 1 : -1;
                     if (mouseButton != -1 && Input.GetMouseButton(mouseButton))
                     {
-                        if (ActionIsForbidden(entityBody, position, entry.Value)) return;
-                        entityBody.ActivateCommand(position, entry.Value);
+                        if (ActionIsForbidden(position, entry.Value)) return;
+                        controller.ActivateCommand(position, entry.Value);
                     }
                 }
                 else if (Input.GetKey(entry.Key))
                 {
-                    entityBody.ActivateCommand(position, entry.Value);
+                    controller.ActivateCommand(position, entry.Value);
                 }
             }
         }
 
-        private bool ActionIsForbidden(EntityBody entityBody, Vector3 position, string type)
+        private bool ActionIsForbidden(Vector3 position, string type)
         {
             //инвентарь панельки управления и тд. проверять пассивность/активнотсь абилки ActivationHandler.IsPassive(type);
             return false;

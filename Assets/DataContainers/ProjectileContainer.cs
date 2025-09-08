@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.Entity.DataContainers
+namespace Assets.DataContainers
 {
     public class ProjectileContainer : MonoBehaviour, IObject
     {

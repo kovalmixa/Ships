@@ -1,3 +1,4 @@
+using Assets.Entity;
 using Assets.InGameMarkers.Scripts;
 using UnityEngine;
 
@@ -7,22 +8,22 @@ namespace Assets.InGameMarkers.Scripts
     {
         [SerializeField] public Transform Target;
         private bool _isExecuted;
-        public override bool Execute(Entity.EntityBody entityBody)
+        public override bool Execute(EntityController entityController)
         {
-            if (entityBody.EntityController.IsPlayer) return false;
+            if (entityController.IsPlayer) return false;
             if (Target == null) return false;
-            entityBody.EntityController.SetPointToMove(Target);
+            entityController.SetPointToMove(Target);
             _isExecuted = true;
             return true;
         }
 
-        public override bool IsExecuted(Entity.EntityBody entityBody) => _isExecuted;
-        public override bool IsFinished(Entity.EntityBody entityBody)
+        public override bool IsExecuted(EntityController entityController) => _isExecuted;
+        public override bool IsFinished(EntityController entityController)
         {
             float threshold = 3.5f;
             CircleCollider2D area = Target.GetComponent<CircleCollider2D>();
-            if (area) return Vector3.Distance(entityBody.transform.position, Target.position) < area.radius + threshold;
-            return Vector3.Distance(entityBody.transform.position, Target.position) < threshold;
+            if (area) return Vector3.Distance(entityController.transform.position, Target.position) < area.radius + threshold;
+            return Vector3.Distance(entityController.transform.position, Target.position) < threshold;
         }
         #if UNITY_EDITOR
                 private void OnDrawGizmos()

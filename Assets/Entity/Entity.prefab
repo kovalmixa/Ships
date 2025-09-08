@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8954999742390597031}
-  - component: {fileID: 2045896989682645926}
   - component: {fileID: 2939312566082401126}
   - component: {fileID: 4515895251028235511}
   m_Layer: 0
@@ -37,23 +36,6 @@ Transform:
   - {fileID: 9137880796020220569}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2045896989682645926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1043631210884575351}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a58ab4466f19de4d83f54e45908e85a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LayersAnchor: {fileID: 0}
-  EntityController: {fileID: 2939312566082401126}
-  MaxSpeed: 5
-  Acceleration: 3
-  RotationSpeed: 60
 --- !u!114 &2939312566082401126
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,9 +49,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsPlayer: 0
-  HullId: 
   ScriptList: []
-  EquipmentIds: []
+  Data:
+    HullId: 
 --- !u!61 &4515895251028235511
 BoxCollider2D:
   m_ObjectHideFlags: 0

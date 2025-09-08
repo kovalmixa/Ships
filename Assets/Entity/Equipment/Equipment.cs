@@ -1,14 +1,14 @@
-using Assets.Entity.DataContainers;
+using Assets.DataContainers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
 using UnityEngine;
 
 namespace Assets.Entity.Equipment
 {
-    public class Equipment : InGameObject, IActivation, IDamageable
+    public class Equipment : MonoBehaviour, IActivation, IDamageable
     {
         private Activator _activator;
-        public EntityBody EntityBody { get; set; }
+        public EntityBodySetup EntityBodySetup { get; set; }
         public EquipmentContainer EquipmentContainer;
         public EquipmentAnchor EquipmentAnchor { get; set; }
 
@@ -24,7 +24,7 @@ namespace Assets.Entity.Equipment
         }
         public Vector3 Position
         {
-            get => transform.position + EntityBody.transform.position;
+            get => transform.position + EntityBodySetup.transform.position;
             set{}
         }
         public void Rotate(Vector3 target)
@@ -40,7 +40,7 @@ namespace Assets.Entity.Equipment
                 EquipmentContainer.RotationSpeed * Time.deltaTime
             );
             float resultWorldAngle = FunctionHandler.NormalizeAngle(rotationStep.eulerAngles.z);
-            float hullRotation = FunctionHandler.NormalizeAngle(EntityBody.transform.eulerAngles.z);
+            float hullRotation = FunctionHandler.NormalizeAngle(EntityBodySetup.transform.eulerAngles.z);
             float baseRotation = FunctionHandler.NormalizeAngle(EquipmentAnchor.transform.rotation.z);
             float resultLocalAngle = FunctionHandler.NormalizeAngle(resultWorldAngle - hullRotation - baseRotation);
             Vector2 sector = EquipmentAnchor.RotationSector;

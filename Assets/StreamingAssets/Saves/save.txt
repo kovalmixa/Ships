@@ -1,0 +1,14 @@
+{
+  "EntityDataContainer": {
+    "HullLayer": 0,
+    "HullId": "NONE/smallPatrolBoat",
+    "EquipmentIds": [
+      { "Key": "GER/mg45", "Value": 0 },
+      { "Key": "GER/mg45", "Value": 1 }
+    ],
+    "Position": {
+      "X": 0,
+      "Y": 0
+    }
+  }
+}

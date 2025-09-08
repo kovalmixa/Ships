@@ -1,5 +1,4 @@
 ﻿using Assets.Entity;
-using Assets.Entity.DataContainers;
 using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
@@ -24,7 +23,7 @@ namespace Assets.InGameMarkers.Actions
 
         protected void SetupEffect(ObjectPoolHandler effectPool, ActionContext actionContext)
         {
-            //EffectContainer effectContainer = GameObjectsHandler.Objects[actionContext.ObjectId] as EffectContainer;
+            //EffectContainer effectContainer = PrefabLoader.Objects[actionContext.ObjectId] as EffectContainer;
             //Debug.Log(effectContainer.Graphics.Animations[0]);
         }
     }

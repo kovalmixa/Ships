@@ -1,5 +1,4 @@
 using System;
-using Assets.Entity.DataContainers;
 using Assets.Entity.Projectile;
 using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
@@ -30,7 +29,7 @@ public class FireProjectileAction : IGameAction
 
     //protected void SetupProjectile(ObjectPoolHandler objectPool, ActionContext context)
     //{
-    //    ProjectileContainer projectileContainer = GameObjectsHandler.Objects[context.ObjectId] as ProjectileContainer;
+    //    ProjectileContainer projectileContainer = PrefabLoader.Objects[context.ObjectId] as ProjectileContainer;
     //    GameObject projectileObj = objectPool.Get();
     //    if (projectileObj == null) return;
 

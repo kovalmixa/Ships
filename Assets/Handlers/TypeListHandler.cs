@@ -42,12 +42,10 @@ namespace Assets.Handlers
             }
         };
 
-        public static readonly string[] SizeTypes = new[]
-        {
+        public static readonly string[] SizeTypes = {
             "s", "S", "M", "L", "XL", "XXL", "X"
         };      
-        public static readonly string[] LayerTypes = new[]
-        {
+        public static readonly string[] LayerTypes = {
             "sea", "land", "air"
         };
         public static bool IsWeapon(string type) => DoesBelongToDictionary(WeaponTypesDict, type);

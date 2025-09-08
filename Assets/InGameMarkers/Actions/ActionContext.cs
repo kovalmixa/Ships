@@ -1,5 +1,5 @@
-﻿using Assets.Entity;
-using Assets.Entity.DataContainers;
+﻿using Assets.DataContainers;
+using Assets.Entity;
 using UnityEngine;
 using UnityEngine.UIElements;
 

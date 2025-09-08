@@ -1,19 +1,15 @@
 ﻿using Assets.Entity;
+using Assets.Entity.Hull;
 using UnityEngine;
 
 namespace Assets.InGameMarkers.Scripts
 {
     public abstract class ScriptBase : MonoBehaviour, IScript
     {
-    public abstract bool Execute(Entity.EntityBody entityBody);
+    public abstract bool Execute(EntityController entityController);
 
-        public void Execute(Hull hull)
-        {
-            throw new System.NotImplementedException();
-        }
+    public abstract bool IsExecuted(EntityController entityController);
 
-        public abstract bool IsExecuted(Entity.EntityBody entityBody);
-
-    public abstract bool IsFinished(Entity.EntityBody entityBody);
+    public abstract bool IsFinished(EntityController entityController);
     }
 }

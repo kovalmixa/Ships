@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Assets.Entity.DataContainers;
 using Assets.Handlers;
 using Assets.InGameMarkers.Actions;
 using Unity.VisualScripting;
@@ -30,7 +29,7 @@ public static class ActivationHandler
     {
         //IObject obj;
         //IGameAction action;
-        //if (GameObjectsHandler.Objects.TryGetValue(type, out obj))
+        //if (PrefabLoader.Objects.TryGetValue(type, out obj))
         //{
         //    EquipmentContainer equipment = obj as EquipmentContainer;
         //    foreach (var activation in equipment.OnActivate)
