@@ -4,26 +4,27 @@ namespace Assets.Handlers.SceneHandlers
 {
     public class GameObjectHandler : MonoBehaviour
     {
-        public static GameObjectHandler Instance { get; private set; }
-
-        private void Awake()
+        public static GameObjectHandler Instance
         {
-            if (Instance == null)
-                Instance = this;
-            else
+            get
             {
-                Destroy(gameObject);
-                return;
+                if (_instance == null)
+                {
+                    var go = new GameObject("GameObjectHandler");
+                    _instance = go.AddComponent<GameObjectHandler>();
+                    DontDestroyOnLoad(go);
+                }
+                return _instance;
             }
-            DontDestroyOnLoad(gameObject);
+            private set => _instance = value;
         }
+        private static GameObjectHandler _instance;
 
         public void SetRenderLayerOrder(GameObject parent, int value)
         {
-            foreach (Transform child in parent.transform)
+            var renderers = parent.GetComponentsInChildren<SpriteRenderer>();
+            foreach (var spriteRenderer in renderers)
             {
-                var spriteRenderer = child.GetComponent<SpriteRenderer>();
-                if (spriteRenderer == null) continue;
                 spriteRenderer.sortingOrder += value;
             }
         }

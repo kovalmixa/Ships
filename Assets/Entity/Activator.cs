@@ -69,12 +69,12 @@ namespace Assets.Entity
             float currentAngle = FunctionHandler.NormalizeAngle(transform.rotation.eulerAngles.z);
             float hullRotation = 0;
             if (TryGetComponent(out Equipment.Equipment equipment))
-                hullRotation = FunctionHandler.NormalizeAngle(equipment.EntityBodySetup.transform.rotation.eulerAngles.z);
+                hullRotation = FunctionHandler.NormalizeAngle(equipment.EntityController.transform.rotation.eulerAngles.z);
             if (Mathf.Abs(targetLocalAngle - currentAngle) % 180 >= 12.5f / activation.Delay) return false;
 
             bool inActivationSector = activation.FireSectors == null || activation.FireSectors.Length == 0 ||
                                       activation.FireSectors.Any(sector => FunctionHandler.IsAngleWithinSector(targetLocalAngle, sector.x + currentAngle, sector.y + currentAngle));
-            
+
             bool inHostSector = HostFireSectors == null || HostFireSectors.Length == 0 ||
                                 HostFireSectors.Any(sector => FunctionHandler.IsAngleWithinSector(targetLocalAngle, sector.x + hullRotation, sector.y + hullRotation));
 

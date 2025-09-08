@@ -34,8 +34,9 @@ namespace Assets.Entity
             if (equipmentId == "") return false;
             var obj = PrefabLoader.Instance.InstantiatePrefab(equipmentId, Vector3.zero, Quaternion.identity);
             if (obj == null) return false;
-            var equipment = obj.GetComponent<Equipment.Equipment>();
+            var equipment = obj.GetComponentInChildren<Equipment.Equipment>();
             if (equipment == null) return false;
+            equipment.EntityController = _entityController;
             foreach (var equipmentAnchor in _entityController.Hull.EquipmentAnchors.Where(go => go.transform.childCount == 0))
             {
                 if (!equipmentAnchor.CanBePlaced(equipment, index)) continue;

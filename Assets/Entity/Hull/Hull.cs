@@ -25,17 +25,13 @@ namespace Assets.Entity.Hull
 
         public List<Equipment.Equipment> Equipments;
 
-        public float MaxSpeed = 5f;
+        private Transform _root;
 
         private float _targetSpeed;
 
         public float CurrentSpeed;
 
-        public float SpeedLevel
-        {
-            get => CurrentSpeed;
-            set => CurrentSpeed = value;
-        }
+        public float SpeedLevel { get; set; }
 
         public int MaxSpeedLevel { get; set; } = 3;
 
@@ -43,6 +39,7 @@ namespace Assets.Entity.Hull
 
         private void Awake()
         {
+            _root = transform.parent;
             CollectAnchors(transform);
         }
 
@@ -56,14 +53,15 @@ namespace Assets.Entity.Hull
 
         public void Movement(float rotationDirection)
         {
+            
             switch (Type)
             {
                 case 0:
                 {
                     _targetSpeed = SpeedLevel * (Data.MaxSpeed / MaxSpeedLevel);
-                    CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, _targetSpeed, Data.Acceleration * Time.deltaTime);
-                    transform.Rotate(Vector3.forward, -rotationDirection * Data.RotationSpeed * Time.deltaTime);
-                    transform.Translate(Vector3.up * CurrentSpeed * Time.deltaTime, Space.Self);
+                    CurrentSpeed = MathF.Min(Mathf.MoveTowards(CurrentSpeed, _targetSpeed, Data.Acceleration * Time.deltaTime), Data.MaxSpeed);
+                    _root.Rotate(Vector3.forward, -rotationDirection * Data.RotationSpeed * Time.deltaTime);
+                    _root.Translate(Vector3.up * CurrentSpeed * Time.deltaTime, Space.Self);
                     break;
                 }
             }

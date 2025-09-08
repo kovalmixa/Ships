@@ -184,8 +184,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a92cd5c67eaea9847b91ce58f2ca506f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HullContainer: {fileID: 508184833516364186}
+  Data: {fileID: 508184833516364186}
   EquipmentAnchors: []
+  Equipments: []
+  MaxSpeed: 5
+  CurrentSpeed: 0
 --- !u!114 &508184833516364186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -201,11 +204,14 @@ MonoBehaviour:
   General:
     Name: boat
     SizeType: 0
-    Layer: sea
+    Layer: 0
     Class: boat
     SlotHeight: 0
     SlotWidth: 0
     Icon: {fileID: 0}
+  MaxSpeed: 3
+  Acceleration: 0.5
+  RotationSpeed: 20
   OnActivate: []
 --- !u!54 &3143376459598222572
 Rigidbody:

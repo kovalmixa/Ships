@@ -35,9 +35,9 @@ namespace Assets.Entity.AI
         {
             if (_movePoint == null) return;
             Hull.Hull hull = entityController.Hull;
-            Vector2 directionToPoint = _movePoint.transform.position - hull.transform.position;
+            Vector2 directionToPoint = _movePoint.transform.position - entityController.transform.position;
             if (directionToPoint.magnitude < 3) return; 
-            float angleToTarget = Vector2.SignedAngle(hull.transform.up, directionToPoint.normalized);
+            float angleToTarget = Vector2.SignedAngle(entityController.transform.up, directionToPoint.normalized);
             float rotationDirection = -Mathf.Clamp(angleToTarget / 45f, -1f, 1f);
             hull.SpeedLevel = Mathf.Clamp(hull.SpeedLevel + 1, hull.MinSpeedLevel, hull.MaxSpeedLevel);
             hull.Movement(rotationDirection);

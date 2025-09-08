@@ -138,7 +138,14 @@ namespace Assets.Entity
             if (Hull == null) return;
             _controller?.UpdateControl(this);
         }
-
+        void LateUpdate()
+        {
+            if (Hull != null)
+            {
+                transform.position = Hull.transform.position;
+                transform.rotation = Hull.transform.rotation;
+            }
+        }
 
     }
 }

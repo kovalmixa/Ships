@@ -1,3 +1,4 @@
+using System;
 using Assets.DataContainers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
@@ -8,7 +9,7 @@ namespace Assets.Entity.Equipment
     public class Equipment : MonoBehaviour, IActivation, IDamageable
     {
         private Activator _activator;
-        public EntityBodySetup EntityBodySetup { get; set; }
+        public EntityController EntityController;
         public EquipmentContainer EquipmentContainer;
         public EquipmentAnchor EquipmentAnchor { get; set; }
 
@@ -17,40 +18,44 @@ namespace Assets.Entity.Equipment
             get => EquipmentContainer.OnActivate;
             set => EquipmentContainer.OnActivate = value;
         }
-
-        public void SetEquipment(string id)
-        {
-
-        }
         public Vector3 Position
         {
-            get => transform.position + EntityBodySetup.transform.position;
+            get => transform.position + EntityController.transform.position;
             set{}
+        }
+
+        private void Awake()
+        {
+            _activator = gameObject.AddComponent<Activator>();
         }
         public void Rotate(Vector3 target)
         {
             if (EquipmentContainer == null) return;
             if (!CanRotate()) return;
-            Vector2 direction = target - transform.position;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-            Quaternion rotationStep = Quaternion.RotateTowards(
-                transform.rotation,
-                targetRotation,
-                EquipmentContainer.RotationSpeed * Time.deltaTime
-            );
-            float resultWorldAngle = FunctionHandler.NormalizeAngle(rotationStep.eulerAngles.z);
-            float hullRotation = FunctionHandler.NormalizeAngle(EntityBodySetup.transform.eulerAngles.z);
-            float baseRotation = FunctionHandler.NormalizeAngle(EquipmentAnchor.transform.rotation.z);
-            float resultLocalAngle = FunctionHandler.NormalizeAngle(resultWorldAngle - hullRotation - baseRotation);
-            Vector2 sector = EquipmentAnchor.RotationSector;
-            if (IsAngleWithinSector(resultLocalAngle, sector.x, sector.y))
-            {
-                transform.rotation = rotationStep;
-            }
 
+            // угол к цели в мировых координатах
+            Vector2 direction = target - transform.position;
+            float targetWorldAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+            // угол якоря относительно корпуса
+            float hullAngle = EntityController.transform.eulerAngles.z;
+            float anchorAngle = EquipmentAnchor.transform.eulerAngles.z;
+
+            // локальный угол турели относительно якоря
+            float localAngle = Mathf.DeltaAngle(0f, targetWorldAngle - hullAngle - anchorAngle);
+
+            float min = EquipmentAnchor.RotationSector.x;
+            float max = EquipmentAnchor.RotationSector.y;
+            float clampedLocal = Mathf.Clamp(localAngle, min, max);
+            float finalWorldAngle = clampedLocal + anchorAngle + hullAngle;
+            float rotationSpeed = EquipmentContainer.RotationSpeed * Time.deltaTime;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation,
+                Quaternion.Euler(0f, 0f, finalWorldAngle),
+                rotationSpeed);
+            if (EquipmentAnchor.Index == 1)
+            Debug.Log($"{clampedLocal},{finalWorldAngle}");
         }
-        private bool IsAngleWithinSector(float angle, float min, float max) => min <= angle && angle <= max;
+
         public bool CanRotate()
         {
             if (EquipmentAnchor == null) return false;
