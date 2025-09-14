@@ -4,6 +4,5 @@
     {
         public string[] Sounds;
         public string Id { get; set; }
-        public ActivationContainer[] ActivationContainers;
     }
 }

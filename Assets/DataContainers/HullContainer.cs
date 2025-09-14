@@ -13,7 +13,5 @@ namespace Assets.DataContainers
         public float Acceleration;
 
         public float RotationSpeed;
-
-        public ActivationContainer[] OnActivate;
     }
 }

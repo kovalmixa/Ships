@@ -20,7 +20,7 @@ namespace Assets.Entity.Player
 
         private Dictionary<KeyCode, string> keyCodeActivations = new()
         {
-            { KeyCode.Mouse0, "Attack" },
+            { KeyCode.Mouse0, "turret" },
             { KeyCode.Mouse1, "" }
         };
 

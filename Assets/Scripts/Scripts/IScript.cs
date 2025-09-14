@@ -1,7 +1,6 @@
 using Assets.Entity;
-using Assets.Entity.Hull;
 
-namespace Assets.InGameMarkers.Scripts
+namespace Assets.Scripts.Scripts
 {
     public interface IScript
     {

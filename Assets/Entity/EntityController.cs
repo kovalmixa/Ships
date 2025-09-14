@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using Assets.Entity.AI;
 using Assets.Entity.Player;
-using Assets.InGameMarkers.Scripts;
 using UnityEngine;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Equipment;
 using Assets.Handlers;
 using System;
+using System.Linq;
 using Assets.DataContainers;
+using Assets.Scripts.Actions;
+using Assets.Scripts.Scripts;
 using UnityEditor.SceneManagement;
 
 namespace Assets.Entity
@@ -24,12 +26,12 @@ namespace Assets.Entity
         public EntityDataContainer Data = new();
         private IEntityController _controller;
         public Hull.Hull Hull;
-        public ActivationContainer[] Activations;
 
         private void Awake()
         {
             _activator = gameObject.AddComponent<Activator>();
         }
+
         private void Start()
         {
 
@@ -89,29 +91,18 @@ namespace Assets.Entity
         public void ActivateCommand(Vector3 position, string activationCommand)
         {
             if (activationCommand == "") return;
-            //заменить эту дебильную атаку на атаку снарядами, авиацией и торпеды/ракеты
-            if (!ActivationHandler.IsPassive(activationCommand))
-                if (IsAttackActionForbidden(position)) return;
-            if (Activations is { Length: > 0 })
+            if (TypeListHandler.IsWeaponEquipment(activationCommand)) if (IsAttackActionForbidden(position)) return;
+            var activationTypes = TypeListHandler.TryGetSubType(activationCommand);
+            foreach (var equipment in Hull.Equipments)
             {
-                foreach (var activation in Activations)
-                {
-                    if (activation.Type == activationCommand) Activate(position, activationCommand);
-                }
-            }
-            foreach (var equipmentGameObject in Hull.Equipments)
-            {
-                Equipment.Equipment equipment = equipmentGameObject.GetComponent<Equipment.Equipment>();
                 if (equipment.EquipmentContainer == null) continue;
-                string type = equipment.EquipmentContainer.General.Class;
-                //заменить эту дебильную атаку на атаку снарядами, авиацией и торпеды/ракеты
-                if (activationCommand == "Attack")
+                var type = equipment.EquipmentContainer.General.Class;
+                if (activationTypes != null)
                 {
-                    if (TypeListHandler.IsWeapon(type)) equipment.Activate(position);
-                    continue;
+                    if (activationTypes.Contains(type)) equipment.Activate(position);
                 }
-                if (equipment.EquipmentContainer.General.Class == activationCommand ||
-                    equipment.EquipmentContainer.Id == activationCommand) equipment.Activate(position);
+                else if (equipment.EquipmentContainer.General.Class == activationCommand || equipment.EquipmentContainer.Id == activationCommand)
+                    equipment.Activate(position);
             }
         }
 
@@ -127,8 +118,6 @@ namespace Assets.Entity
             return false;
         }
 
-        public void Activate(Vector3 targetPosition, string type = null) => _activator.TryActivate(targetPosition, type);
-
         public void SetPointToMove(Transform target) => _controller.SetMovementPoint(target);
 
         public void SetTarget(Transform target) => _controller.SetTargetPoint(target);
@@ -138,6 +127,7 @@ namespace Assets.Entity
             if (Hull == null) return;
             _controller?.UpdateControl(this);
         }
+
         void LateUpdate()
         {
             if (Hull != null)
@@ -146,6 +136,5 @@ namespace Assets.Entity
                 transform.rotation = Hull.transform.rotation;
             }
         }
-
     }
 }

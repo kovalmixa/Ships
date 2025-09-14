@@ -1,6 +1,8 @@
-﻿using Assets.DataContainers;
+﻿using System;
+using Assets.DataContainers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers.SceneHandlers;
+using Assets.Scripts.Actions;
 using UnityEngine;
 
 namespace Assets.Entity.Projectile
@@ -10,11 +12,7 @@ namespace Assets.Entity.Projectile
         private Activator _activator;
 
         public ProjectileContainer ProjectileContainer;
-        public ActivationContainer[] Activations
-        {
-            get => ProjectileContainer.OnActivate;
-            set => ProjectileContainer.OnActivate = value;
-        }
+        public IGameAction[] Activations;
 
         private Transform target;
         private GameObject shooter;
@@ -24,9 +22,10 @@ namespace Assets.Entity.Projectile
 
         private ObjectPoolHandler _objectPool;
 
-        private void Awake()
+        private void Start()
         {
             GetProjectilePool();
+            _activator.SetActivations(Activations);
         }
 
         private void GetProjectilePool()
@@ -55,7 +54,6 @@ namespace Assets.Entity.Projectile
                 if (projectileCollider != null && shooterCollider != null)
                     Physics2D.IgnoreCollision(projectileCollider, shooterCollider, true);
             }
-            _activator.SetActivations(Activations);
             gameObject.SetActive(true);
         }
 
@@ -109,7 +107,7 @@ namespace Assets.Entity.Projectile
             }
         }
 
-        public void Activate(Vector3 targetPosition, string type = null) => _activator.TryActivate(targetPosition, type);
+        public void Activate(Vector3 targetPosition) => _activator.TryActivate(targetPosition, true);
 
         private void OnTriggerEnter2D(Collider2D other)
         {

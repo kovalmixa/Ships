@@ -26,13 +26,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815526727935620202}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 124669368259897105}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6936527153698304451
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 3143376459598222572}
   - component: {fileID: 736988907336248827}
   - component: {fileID: 1531360328655141274}
+  - component: {fileID: 5626699735981393471}
   m_Layer: 0
   m_Name: mg45
   m_TagString: Untagged
@@ -222,9 +223,21 @@ MonoBehaviour:
     Name: mg45
     SizeType: 0
     Layer: 0
-    Class: turret
+    Class: machine gun
     SlotHeight: 1
     SlotWidth: 1
     Icon: {fileID: 2800000, guid: d3ebef6ec74b4db46a715edccd3b8647, type: 3}
   RotationSpeed: 200
-  OnActivate: []
+--- !u!114 &5626699735981393471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00474b4455def4449acc2631260f7812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ProjectilePrefab: {fileID: 0}

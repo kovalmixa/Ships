@@ -399,6 +399,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: Data.HullId
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: WeaponIds.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -421,6 +425,10 @@ PrefabInstance:
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: EquipmentIds.Array.data[2]
       value: GER/mg45
+      objectReference: {fileID: 0}
+    - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+      propertyPath: Data.EquipmentIds2.Array.size
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3581992323576170590, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: m_Layer
@@ -506,7 +514,8 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4515895251028235511, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
     m_RemovedGameObjects:
     - {fileID: 8086625953455537062, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
     - {fileID: 2302540830075172482, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}

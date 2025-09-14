@@ -1,7 +1,7 @@
 using Assets.Entity;
 using UnityEngine;
 
-namespace Assets.InGameMarkers.Scripts
+namespace Assets.Scripts.Scripts
 {
     public class SpawnScript : ScriptBase
     {

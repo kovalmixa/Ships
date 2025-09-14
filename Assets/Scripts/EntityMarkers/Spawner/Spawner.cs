@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using Assets.DataContainers;
 using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
-using Assets.InGameMarkers.Scripts;
+using Assets.Scripts.Scripts;
 using UnityEngine;
 
-namespace Assets.InGameMarkers.EntityMarkers.Spawner
+namespace Assets.Scripts.EntityMarkers.Spawner
 {
     public class Spawner : MonoBehaviour
     {

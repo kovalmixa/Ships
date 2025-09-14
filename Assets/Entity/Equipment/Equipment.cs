@@ -1,7 +1,8 @@
-using System;
+using System.Linq;
 using Assets.DataContainers;
 using Assets.Entity.Interfaces;
-using Assets.Handlers;
+using Assets.Scripts.Actions;
+using Assets.Scripts.Modifiers;
 using UnityEngine;
 
 namespace Assets.Entity.Equipment
@@ -13,47 +14,39 @@ namespace Assets.Entity.Equipment
         public EquipmentContainer EquipmentContainer;
         public EquipmentAnchor EquipmentAnchor { get; set; }
 
-        public ActivationContainer[] Activations 
-        { 
-            get => EquipmentContainer.OnActivate;
-            set => EquipmentContainer.OnActivate = value;
-        }
+        public IGameAction[] Activations;
+
+        public IModifier[] Modifiers;
+
         public Vector3 Position
         {
             get => transform.position + EntityController.transform.position;
             set{}
         }
 
-        private void Awake()
+        private void Start()
         {
             _activator = gameObject.AddComponent<Activator>();
+            _activator.SetActivations(Activations);
         }
+
         public void Rotate(Vector3 target)
         {
             if (EquipmentContainer == null) return;
             if (!CanRotate()) return;
-
-            // угол к цели в мировых координатах
-            Vector2 direction = target - transform.position;
-            float targetWorldAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-            // угол якоря относительно корпуса
-            float hullAngle = EntityController.transform.eulerAngles.z;
-            float anchorAngle = EquipmentAnchor.transform.eulerAngles.z;
-
-            // локальный угол турели относительно якоря
-            float localAngle = Mathf.DeltaAngle(0f, targetWorldAngle - hullAngle - anchorAngle);
-
+            float targetWorldAngle = Mathf.Atan2(target.y - transform.position.y, target.x - transform.position.x) * Mathf.Rad2Deg;
+            float baseAngle = EntityController.transform.eulerAngles.z + EquipmentAnchor.transform.localEulerAngles.z;
+            float localTargetAngle = Mathf.DeltaAngle(baseAngle, targetWorldAngle);
             float min = EquipmentAnchor.RotationSector.x;
             float max = EquipmentAnchor.RotationSector.y;
-            float clampedLocal = Mathf.Clamp(localAngle, min, max);
-            float finalWorldAngle = clampedLocal + anchorAngle + hullAngle;
+            float clampedLocal = Mathf.Clamp(localTargetAngle, min, max);
+            float finalWorldAngle = baseAngle + clampedLocal;
             float rotationSpeed = EquipmentContainer.RotationSpeed * Time.deltaTime;
-            transform.rotation = Quaternion.RotateTowards(transform.rotation,
-                Quaternion.Euler(0f, 0f, finalWorldAngle),
-                rotationSpeed);
-            if (EquipmentAnchor.Index == 1)
-            Debug.Log($"{clampedLocal},{finalWorldAngle}");
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                Quaternion.Euler(0f, 0f, finalWorldAngle - 90f), 
+                rotationSpeed
+            );
         }
 
         public bool CanRotate()
@@ -61,7 +54,9 @@ namespace Assets.Entity.Equipment
             if (EquipmentAnchor == null) return false;
             return EquipmentAnchor.RotationSector != Vector2.zero;
         }
-        public void Activate(Vector3 targetPosition, string type = null) =>_activator.TryActivate(targetPosition, type);
+
+        public void Activate(Vector3 targetPosition) => _activator.TryActivate(targetPosition);
+
         private void OnCollisionEnter2D(Collision2D collision)
         {
         }

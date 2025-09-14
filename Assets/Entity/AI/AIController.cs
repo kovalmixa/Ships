@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Assets.Entity.AI.Interfaces;
 using Assets.Entity.Interfaces;
-using Assets.InGameMarkers.Scripts;
+using Assets.Scripts.Scripts;
 using UnityEngine;
 
 namespace Assets.Entity.AI

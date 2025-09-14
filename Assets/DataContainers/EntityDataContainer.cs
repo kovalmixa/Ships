@@ -10,6 +10,5 @@ namespace Assets.DataContainers
         public string HullId;
         public List<KeyValuePair<string, int>> EquipmentIds;
         public Vector2 Position;
-
     }
 }

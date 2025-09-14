@@ -1,4 +1,4 @@
-using Assets.InGameMarkers.Actions;
+using Assets.Scripts.Actions;
 using UnityEngine;
 
 public class HealAction : IGameAction

@@ -241,7 +241,6 @@ MonoBehaviour:
   MaxSpeed: 6
   Acceleration: 1
   RotationSpeed: 40
-  OnActivate: []
 --- !u!1001 &2714691397513860783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -257,6 +256,10 @@ PrefabInstance:
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: ClassType
       value: turret
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: OrderLayer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: RotationSector.x
@@ -343,6 +346,10 @@ PrefabInstance:
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: ClassType
       value: turret
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: OrderLayer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: RotationSector.x

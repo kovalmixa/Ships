@@ -1,3 +1,4 @@
+using Assets.Scripts.Actions;
 using UnityEngine;
 
 namespace Assets.DataContainers
@@ -10,7 +11,7 @@ namespace Assets.DataContainers
         public bool IsHoming;
         public bool IsBallistic;
 
-        public ActivationContainer[] OnActivate;
+        public IGameAction[] OnActivate;
         public string Explosion;
     }
 }

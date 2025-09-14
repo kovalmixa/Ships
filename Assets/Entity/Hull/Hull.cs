@@ -4,7 +4,7 @@ using Assets.DataContainers;
 using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
-using Assets.InGameMarkers.Scripts;
+using Assets.Scripts.Scripts;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -113,6 +113,7 @@ namespace Assets.Entity.Hull
             //Теряет скорость пропорционально массе другого объекта
             CurrentSpeed *= otherRb.mass / totalMass;
         }
+
         public void TakeDamage(float damage)
         {
             throw new System.NotImplementedException();

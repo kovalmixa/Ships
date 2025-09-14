@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using Assets.Entity;
-using Assets.InGameMarkers.Scripts;
 using UnityEngine;
 
-namespace Assets.InGameMarkers.Scripts
+namespace Assets.Scripts.Scripts
 {
     public class AreaScript : ScriptBase
     {

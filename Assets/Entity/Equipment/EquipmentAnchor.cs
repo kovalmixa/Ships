@@ -1,4 +1,6 @@
+using System.Linq;
 using Assets.DataContainers;
+using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
@@ -13,12 +15,22 @@ namespace Assets.Entity.Equipment
         public Vector2 RotationSector;
         public Vector2[] FireSectors;
         public int OrderLayer;
+        public const bool IsStatic = false;
 
         public bool CanBePlaced(Equipment equipment, int index)
         {
+            if (IsStatic) return false;
             EquipmentContainer equipmentContainer = equipment.EquipmentContainer;
-            return equipmentContainer.General.Class == ClassType && Index == index &&
-                   SizeType == equipmentContainer.General.SizeType;
+            var eqClass = equipmentContainer.General.Class;
+            var masterType = TypeListHandler.TryGetMasterType(eqClass);
+            if (SizeType == equipmentContainer.General.SizeType && Index == index)
+            {
+                if (masterType == null)
+                    return eqClass == ClassType;
+                if (masterType == ClassType)
+                    return true;
+            }
+            return false;
         }
 
         public void SetTransform(Equipment equipment)

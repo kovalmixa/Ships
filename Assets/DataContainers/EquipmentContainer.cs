@@ -1,3 +1,4 @@
+using Assets.Scripts.Actions;
 using UnityEngine;
 
 namespace Assets.DataContainers
@@ -9,6 +10,6 @@ namespace Assets.DataContainers
 
         public float RotationSpeed;
 
-        public ActivationContainer[] OnActivate;
+        public IGameAction[] OnActivate;
     }
 }
