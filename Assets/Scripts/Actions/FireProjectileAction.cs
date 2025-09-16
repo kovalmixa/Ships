@@ -4,18 +4,18 @@ using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-    public class FireProjectileAction : MonoBehaviour, IGameAction
+    public class FireProjectileAction : ActionBase, IGameAction
     {
         public GameObject ProjectilePrefab;
-        public bool IsPassive { get; set; } = false;
         private GameObject objectPool;
 
         private void Start()
         {
+            IsPassive = false;
             objectPool = SceneNodesHandler.GetNode("ObjectPools");
         }
 
-        public void Execute(GameObject source, Vector3 targetPos)
+        public override void Execute(GameObject source, Vector3 targetPos)
         {
             if (targetPos == Vector3.zero)
             {

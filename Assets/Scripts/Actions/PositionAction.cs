@@ -3,10 +3,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-    internal class PositionAction : MonoBehaviour, IGameAction
+    internal class PositionAction : ActionBase, IGameAction
     {
-        public bool IsPassive { get; set; }
-        public void Execute(GameObject source, Vector3 targetPos)
+        public override void Execute(GameObject source, Vector3 targetPos)
         {
             throw new NotImplementedException();
         }

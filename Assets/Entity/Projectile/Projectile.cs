@@ -12,7 +12,7 @@ namespace Assets.Entity.Projectile
         private Activator _activator;
 
         public ProjectileContainer ProjectileContainer;
-        public IGameAction[] Activations;
+        public ActionBase[] Activations;
 
         private Transform target;
         private GameObject shooter;

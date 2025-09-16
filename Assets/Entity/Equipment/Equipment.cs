@@ -14,7 +14,7 @@ namespace Assets.Entity.Equipment
         public EquipmentContainer EquipmentContainer;
         public EquipmentAnchor EquipmentAnchor { get; set; }
 
-        public IGameAction[] Activations;
+        public ActionBase[] Activations;
 
         public IModifier[] Modifiers;
 

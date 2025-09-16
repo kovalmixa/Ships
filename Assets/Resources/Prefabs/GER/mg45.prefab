@@ -207,6 +207,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EntityController: {fileID: 0}
   EquipmentContainer: {fileID: 1531360328655141274}
+  Activations:
+  - {fileID: 5626699735981393471}
 --- !u!114 &1531360328655141274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,4 +242,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00474b4455def4449acc2631260f7812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProjectilePrefab: {fileID: 0}
+  ProjectilePrefab: {fileID: 759412284934268011, guid: b9186e77b3831cb42baef91ffe90dc90, type: 3}

@@ -7,13 +7,12 @@ using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-    public class HealAction : MonoBehaviour, IGameAction
+    public class HealAction : ActionBase, IGameAction
     {
-        public bool IsPassive { get; set; } = true;
 
         public int HealValue;
 
-        public void Execute(GameObject source, Vector3 targetPos)
+        public override void Execute(GameObject source, Vector3 targetPos)
         {
             Debug.Log($"Healed:{HealValue}");
             //var stats = context.Target.GetComponent<CharacterStats>();

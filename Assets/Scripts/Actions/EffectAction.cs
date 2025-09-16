@@ -5,9 +5,8 @@ using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-    public class EffectAction : MonoBehaviour, IGameAction
+    public class EffectAction : ActionBase, IGameAction
     {
-        public bool IsPassive { get; set; } = true;
         private Transform _effectPool;
         private void Start()
         {
@@ -16,7 +15,7 @@ namespace Assets.Scripts.Actions
             if (_effectPool == null) Debug.LogWarning("Pool not found");
         }
 
-        public void Execute(GameObject source, Vector3 targetPos){
+        public override void Execute(GameObject source, Vector3 targetPos){
             if (_effectPool == null) return;
             ObjectPoolHandler effectPool = _effectPool.gameObject.GetComponent<ObjectPoolHandler>();
             //SetupEffect(effectPool);

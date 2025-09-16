@@ -10,13 +10,13 @@ namespace Assets.Entity
 {
     public class Activator : MonoBehaviour
     {
-        public IGameAction[] Activations;
+        public ActionBase[] Activations;
 
         private float[] _lastActivationTimes;
 
         public Vector2[] HostFireSectors { get; set; }
 
-        public void SetActivations(IGameAction[] activations)
+        public void SetActivations(ActionBase[] activations)
         {
             Activations = activations;
             if (activations != null)
