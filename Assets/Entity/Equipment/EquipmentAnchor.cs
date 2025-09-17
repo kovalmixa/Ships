@@ -13,7 +13,7 @@ namespace Assets.Entity.Equipment
         public string ClassType;
         public int SizeType;
         public Vector2 RotationSector;
-        public Vector2[] FireSectors;
+        public Vector2[] ActivationSectors;
         public int OrderLayer;
         public const bool IsStatic = false;
 
@@ -51,10 +51,10 @@ namespace Assets.Entity.Equipment
             Vector3 origin = transform.position;
             Gizmos.color = Color.yellow;
             DrawSector(origin, RotationSector, 2f);
-            if (FireSectors != null)
+            if (ActivationSectors != null)
             {
                 Gizmos.color = Color.red;
-                foreach (var sector in FireSectors)
+                foreach (var sector in ActivationSectors)
                 {
                     DrawSector(origin, sector, 3f);
                 }

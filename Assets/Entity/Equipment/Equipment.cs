@@ -9,9 +9,9 @@ namespace Assets.Entity.Equipment
 {
     public class Equipment : MonoBehaviour, IActivation, IDamageable
     {
-        private Activator _activator;
         public EntityController EntityController;
         public EquipmentContainer EquipmentContainer;
+        private const float BasicAngle = 90;
         public EquipmentAnchor EquipmentAnchor { get; set; }
 
         public ActionBase[] Activations;
@@ -24,17 +24,11 @@ namespace Assets.Entity.Equipment
             set{}
         }
 
-        private void Start()
-        {
-            _activator = gameObject.AddComponent<Activator>();
-            _activator.SetActivations(Activations);
-        }
-
-        public void Rotate(Vector3 target)
+        public void Rotate(Vector3 targetPos)
         {
             if (EquipmentContainer == null) return;
             if (!CanRotate()) return;
-            float targetWorldAngle = Mathf.Atan2(target.y - transform.position.y, target.x - transform.position.x) * Mathf.Rad2Deg;
+            float targetWorldAngle = Mathf.Atan2(targetPos.y - transform.position.y, targetPos.x - transform.position.x) * Mathf.Rad2Deg;
             float baseAngle = EntityController.transform.eulerAngles.z + EquipmentAnchor.transform.localEulerAngles.z;
             float localTargetAngle = Mathf.DeltaAngle(baseAngle, targetWorldAngle);
             float min = EquipmentAnchor.RotationSector.x;
@@ -44,7 +38,7 @@ namespace Assets.Entity.Equipment
             float rotationSpeed = EquipmentContainer.RotationSpeed * Time.deltaTime;
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
-                Quaternion.Euler(0f, 0f, finalWorldAngle - 90f), 
+                Quaternion.Euler(0f, 0f, finalWorldAngle - BasicAngle), 
                 rotationSpeed
             );
         }
@@ -55,7 +49,26 @@ namespace Assets.Entity.Equipment
             return EquipmentAnchor.RotationSector != Vector2.zero;
         }
 
-        public void Activate(Vector3 targetPosition) => _activator.TryActivate(targetPosition);
+        public void Activate(Vector3 targetPos)
+        {
+            foreach (var activation in Activations)
+            {
+                if (activation.IsPassive || activation.Delay <= 0) activation.Execute(gameObject, targetPos);
+                float targetWorldAngle = Mathf.Atan2(targetPos.y - transform.position.y, targetPos.x - transform.position.x) * Mathf.Rad2Deg;
+                float currentAngle = Mathf.Repeat(transform.eulerAngles.z + BasicAngle, 360f);
+                float angleDiff = Mathf.DeltaAngle(currentAngle, targetWorldAngle);
+                if (!(Mathf.Abs(angleDiff) < 12.5f / activation.Delay)) continue;
+                if (EquipmentAnchor.ActivationSectors.Length == 0) activation.Execute(gameObject, targetPos);
+                else
+                {
+                    currentAngle = Mathf.Abs(Mathf.DeltaAngle(currentAngle, EquipmentAnchor.transform.eulerAngles.z));
+                    if (EquipmentAnchor.ActivationSectors.Any(sector => currentAngle >= sector.x && currentAngle <= sector.y))
+                    {
+                        activation.Execute(gameObject, targetPos);
+                    }
+                }
+            }
+        }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {

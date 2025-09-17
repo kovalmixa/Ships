@@ -2,7 +2,7 @@
 
 namespace Assets.Scripts.Actions
 {
-    public class ExplosionAction : ActionBase, IGameAction
+    public class ExplosionAction : ActionBase
     {
         public override void Execute(GameObject source, Vector3 targetPos)
         {

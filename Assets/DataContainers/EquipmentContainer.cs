@@ -9,7 +9,5 @@ namespace Assets.DataContainers
         public string Id { get; set; }
 
         public float RotationSpeed;
-
-        public IGameAction[] OnActivate;
     }
 }

@@ -7,7 +7,7 @@ namespace Assets.Scripts.Scripts
     {
         public Vector3 Position;
         private bool _isExecuted;
-        public Entity.EntityBodySetup EntityBodySetupToSpawn;
+        public Entity.EntityHullSetup EntityBodySetupToSpawn;
         //add code for spawning/ it will be like that with point moving
         public override bool Execute(EntityController entityController)
         {

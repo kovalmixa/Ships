@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-    internal class PositionAction : ActionBase, IGameAction
+    public class PositionAction : ActionBase
     {
         public override void Execute(GameObject source, Vector3 targetPos)
         {

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-    public class EffectAction : ActionBase, IGameAction
+    public class EffectAction : ActionBase
     {
         private Transform _effectPool;
         private void Start()
@@ -16,6 +16,7 @@ namespace Assets.Scripts.Actions
         }
 
         public override void Execute(GameObject source, Vector3 targetPos){
+            if (!CanActivate(source, targetPos)) return;
             if (_effectPool == null) return;
             ObjectPoolHandler effectPool = _effectPool.gameObject.GetComponent<ObjectPoolHandler>();
             //SetupEffect(effectPool);

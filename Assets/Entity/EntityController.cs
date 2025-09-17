@@ -20,8 +20,7 @@ namespace Assets.Entity
         public string AiName { get; set; }
         [SerializeField] public List<ScriptBase> ScriptList = new();
 
-        private EntityBodySetup _entityBodySetup;
-        private Activator _activator;
+        private EntityHullSetup _entityBodySetup;
 
         public EntityDataContainer Data = new();
         private IEntityController _controller;
@@ -29,7 +28,6 @@ namespace Assets.Entity
 
         private void Awake()
         {
-            _activator = gameObject.AddComponent<Activator>();
         }
 
         private void Start()
@@ -49,7 +47,7 @@ namespace Assets.Entity
         public void Setup(EntityDataContainer data)
         {
             if (data == null) return;
-            if (_entityBodySetup == null) _entityBodySetup = gameObject.AddComponent<EntityBodySetup>();
+            if (_entityBodySetup == null) _entityBodySetup = gameObject.AddComponent<EntityHullSetup>();
             Data.EquipmentIds = data.EquipmentIds;
             SetHull(data.HullId);
             var dPosition = data.Position;

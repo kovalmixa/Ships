@@ -1,52 +1,59 @@
+using System;
+using System.Reflection;
+using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
 using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-    public class FireProjectileAction : ActionBase, IGameAction
+    public class FireProjectileAction : ActionBase
     {
         public GameObject ProjectilePrefab;
-        private GameObject objectPool;
+        public Transform FirePosition;
+        private ObjectPoolHandler _poolHandler;
 
         private void Start()
         {
             IsPassive = false;
-            objectPool = SceneNodesHandler.GetNode("ObjectPools");
+            _poolHandler = GetPoolHandler();
         }
+
+        //перенести в класс обработчик
+        private static ObjectPoolHandler GetPoolHandler()
+        {
+            ObjectPoolHandler poolHandler;
+            try
+            {
+                var objectPool = SceneNodesHandler.GetNode("ObjectPools");
+                if (objectPool == null) throw new Exception("Master pool node not found");
+                var specifiedPool = objectPool.transform.Find("ProjectilesPool").gameObject;
+                if (specifiedPool == null) throw new Exception("Projectile pool node not found");
+                poolHandler = specifiedPool.GetComponent<ObjectPoolHandler>();
+                if (poolHandler == null) throw new Exception("PoolHandler component not found");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            return poolHandler;
+        }
+        //перенести в класс обработчик
 
         public override void Execute(GameObject source, Vector3 targetPos)
         {
-            if (targetPos == Vector3.zero)
-            {
-                Debug.LogWarning("Invalid projectile attack parameters.");
-                return;
-            }
-            ObjectPoolHandler projectileObj = objectPool.transform.Find("ProjectilesPool").gameObject.GetComponent<ObjectPoolHandler>();
-            if (projectileObj == null)
-            {
-                Debug.LogWarning("Pool not found"); 
-                return;
-            }
+            if (!CanActivate(source, targetPos) || _poolHandler == null) return;
+            ObjectPoolHandler projectileObj = _poolHandler.GetComponent<ObjectPoolHandler>();
             Debug.Log("Pew");
-            //SetupProjectile(projectileObj, context);
+            //SetupProjectile(source, targetPos, projectileObj);
 
         }
 
-        //protected void SetupProjectile(ObjectPoolHandler objectPool, ActionContext context)
+        //protected void SetupProjectile(GameObject source, Vector3 targetPos)
         //{
-        //    ProjectileContainer projectileContainer = PrefabLoader.Objects[context.ObjectId] as ProjectileContainer;
-        //    GameObject projectileObj = objectPool.Get();
-        //    if (projectileObj == null) return;
-
-        //    Transform source = context.Source.transform;
-        //    Vector3 fireOffset = context.Position / 10; // локальное смещение вверх от центра
-        //    Vector3 firePoint = source.TransformPoint(fireOffset); // учитываем поворот и позицию
-
-        //    Vector3 targetPos = context.TargetPosition ?? source.position;
+        //    if (ProjectilePrefab == null) return;
         //    Vector3 direction = (targetPos - firePoint).normalized;
-
-        //    // Устанавливаем позицию снаряда с учётом параллакса
         //    projectileObj.transform.position = firePoint;
 
         //    // Поворот по направлению

@@ -6,6 +6,6 @@ namespace Assets.Entity.Interfaces
 {
     public interface IActivation
     {
-        public void Activate(Vector3 targetPosition);
+        public void Activate(Vector3 targetPos);
     }
 }

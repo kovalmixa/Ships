@@ -269,6 +269,22 @@ PrefabInstance:
       propertyPath: RotationSector.y
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: FireSectors.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: FireSectors.Array.data[0].x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: ActivationSectors.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: ActivationSectors.Array.data[0].y
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 8296754573792745974, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_Name
       value: EquipmentAnchor
@@ -357,6 +373,30 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: RotationSector.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: FireSectors.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: FireSectors.Array.data[0].x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: FireSectors.Array.data[0].y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: ActivationSectors.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: ActivationSectors.Array.data[0].x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: ActivationSectors.Array.data[0].y
       value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 8296754573792745974, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}

@@ -10,8 +10,5 @@ namespace Assets.DataContainers
         public int Speed;
         public bool IsHoming;
         public bool IsBallistic;
-
-        public IGameAction[] OnActivate;
-        public string Explosion;
     }
 }

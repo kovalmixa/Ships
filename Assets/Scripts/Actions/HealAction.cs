@@ -7,13 +7,14 @@ using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-    public class HealAction : ActionBase, IGameAction
+    public class HealAction : ActionBase
     {
 
         public int HealValue;
 
         public override void Execute(GameObject source, Vector3 targetPos)
         {
+            if (!CanActivate(source, targetPos)) return;
             Debug.Log($"Healed:{HealValue}");
             //var stats = context.Target.GetComponent<CharacterStats>();
             //if (stats != null)
@@ -21,5 +22,6 @@ namespace Assets.Scripts.Actions
             //    stats.Heal(context.HealAmount.Value);
             //}
         }
+
     }
 }

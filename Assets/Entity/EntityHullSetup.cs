@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Assets.Entity
 {
-    public class EntityBodySetup : MonoBehaviour
+    public class EntityHullSetup : MonoBehaviour
     {
 
         private EntityController _entityController;

@@ -9,10 +9,9 @@ namespace Assets.Entity.Projectile
 {
     public class Projectile : MonoBehaviour, IActivation
     {
-        private Activator _activator;
-
         public ProjectileContainer ProjectileContainer;
-        public ActionBase[] Activations;
+        public ActionBase[] OnExplosionActivate;
+        public ActionBase[] UpdateActivate;
 
         private Transform target;
         private GameObject shooter;
@@ -25,7 +24,6 @@ namespace Assets.Entity.Projectile
         private void Start()
         {
             GetProjectilePool();
-            _activator.SetActivations(Activations);
         }
 
         private void GetProjectilePool()
@@ -107,7 +105,13 @@ namespace Assets.Entity.Projectile
             }
         }
 
-        public void Activate(Vector3 targetPosition) => _activator.TryActivate(targetPosition, true);
+        public void Activate(Vector3 targetPos)
+        {
+            foreach (var activation in OnExplosionActivate)
+            {
+                activation.Execute(gameObject, targetPos);
+            }
+        }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
