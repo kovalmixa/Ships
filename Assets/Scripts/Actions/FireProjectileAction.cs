@@ -1,9 +1,11 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
 using Unity.VisualScripting;
 using UnityEngine;
+using Object = System.Object;
 
 namespace Assets.Scripts.Actions
 {
@@ -16,53 +18,33 @@ namespace Assets.Scripts.Actions
         private void Start()
         {
             IsPassive = false;
-            _poolHandler = GetPoolHandler();
+            _poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilesPool");
         }
-
-        //перенести в класс обработчик
-        private static ObjectPoolHandler GetPoolHandler()
-        {
-            ObjectPoolHandler poolHandler;
-            try
-            {
-                var objectPool = SceneNodesHandler.GetNode("ObjectPools");
-                if (objectPool == null) throw new Exception("Master pool node not found");
-                var specifiedPool = objectPool.transform.Find("ProjectilesPool").gameObject;
-                if (specifiedPool == null) throw new Exception("Projectile pool node not found");
-                poolHandler = specifiedPool.GetComponent<ObjectPoolHandler>();
-                if (poolHandler == null) throw new Exception("PoolHandler component not found");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            return poolHandler;
-        }
-        //перенести в класс обработчик
 
         public override void Execute(GameObject source, Vector3 targetPos)
         {
             if (!CanActivate(source, targetPos) || _poolHandler == null) return;
-            ObjectPoolHandler projectileObj = _poolHandler.GetComponent<ObjectPoolHandler>();
             Debug.Log("Pew");
-            //SetupProjectile(source, targetPos, projectileObj);
-
+            SetupProjectile(source, targetPos);
         }
 
-        //protected void SetupProjectile(GameObject source, Vector3 targetPos)
-        //{
-        //    if (ProjectilePrefab == null) return;
-        //    Vector3 direction = (targetPos - firePoint).normalized;
-        //    projectileObj.transform.position = firePoint;
+        protected void SetupProjectile(GameObject source, Vector3 targetPos)
+        {
+            var prefabProjectile = ProjectilePrefab.GetComponent<Projectile>();
+            if (prefabProjectile == null)
+            {
+                Debug.LogError($"Projectile prefab {prefabProjectile.name} doesnt have projectile component");
+                return;
+            }
+            var pooledObj = _poolHandler.Get();
+            var objProjectile = pooledObj.GetComponent<Projectile>();
+            objProjectile.SetupByPrefab(prefabProjectile);
+            pooledObj.transform.SetPositionAndRotation(FirePosition.position, Quaternion.identity);
 
-        //    // Поворот по направлению
-        //    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        //    projectileObj.transform.rotation = Quaternion.Euler(0, 0, angle + 90f); // +90f — если спрайт вверх
-
-        //    var projectile = projectileObj.GetComponent<Projectile>();
-        //    projectile.ProjectileContainer = projectileContainer;
-        //    projectile.Launch(direction, null, targetPos, context.Source);
-        //}
+            Vector3 direction = (targetPos - FirePosition.position).normalized;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            pooledObj.transform.rotation = Quaternion.Euler(0, 0, angle + 90f);
+            objProjectile.Launch(direction, targetPos, source);
+        }
     }
 }

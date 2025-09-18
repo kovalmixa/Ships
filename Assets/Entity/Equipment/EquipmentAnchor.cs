@@ -43,7 +43,7 @@ namespace Assets.Entity.Equipment
             eqTransform.rotation = transform.rotation;
             eqTransform.localScale = scale;
             equipment.EquipmentAnchor = this;
-            GameObjectHandler.Instance.SetRenderLayerOrder(gameObject, OrderLayer);
+            GameObjectHandler.SetRenderLayerOrder(gameObject, OrderLayer);
         }
 
         private void OnDrawGizmos()

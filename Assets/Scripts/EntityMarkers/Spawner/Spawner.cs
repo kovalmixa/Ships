@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Assets.DataContainers;
 using Assets.Entity;
+using Assets.Entity.Hull;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Scripts;
 using UnityEngine;
@@ -11,28 +12,28 @@ namespace Assets.Scripts.EntityMarkers.Spawner
     {
         public string Nation;
         public uint Level;
-        public uint Quantity;
-        private Transform _entityPool;
+        public uint Quantity = 1;
+        private ObjectPoolHandler _entityPool;
         private GameObject _entityObj;
         [SerializeField] public List<ScriptBase> ScriptList;
+
         private void Awake()
         {
-            _entityPool = SceneNodesHandler.GetNode("ObjectPools").transform.Find("EntityPool");
+            _entityPool = SceneNodesHandler.GetPoolHandler("EntityPool");
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (Quantity == 0) return;
-            var entityController = other.GetComponent<EntityController>();
+            var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController == null) return;
             if (!entityController.IsPlayer) return;
-            if (!_entityObj || !_entityObj.activeSelf) Spawn();
+            //Debug.Log(_entityObj == null);
+            if (_entityObj == null || !_entityObj.activeSelf) Spawn();
         }
-
 
         void Spawn()
         {
-            _entityObj = _entityPool.GetComponent<ObjectPoolHandler>().Get();
+            _entityObj = _entityPool.Get();
             _entityObj.transform.position = transform.position;
             EntityController entityController = _entityObj.GetComponent<EntityController>();
             if (entityController != null)
@@ -41,17 +42,32 @@ namespace Assets.Scripts.EntityMarkers.Spawner
                 SetupEntity(entityController);
             }
         }
+
         private void SetupEntity(EntityController entityController)
         {
             
             entityController.Setup(GenerateHull());
+            SetIdentityRotation(entityController);
             //entityController.SetEquipment();
+        }
+
+        private void SetIdentityRotation(EntityController entityController)
+        {
+            entityController.transform.rotation = Quaternion.identity;
+            entityController.transform.position = transform.position;
+
+            if (entityController.Hull != null)
+            {
+                entityController.Hull.transform.rotation = Quaternion.identity;
+                entityController.Hull.transform.position = entityController.transform.position;
+            }
         }
 
         private EntityDataContainer GenerateHull()
         {
             EntityDataContainer data = new()
             {
+                EquipmentIds = new (),
                 HullId = "NONE/boat"
             };
             return data;

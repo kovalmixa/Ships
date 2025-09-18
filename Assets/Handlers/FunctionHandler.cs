@@ -9,14 +9,12 @@ namespace Assets.Handlers
 {
     public static class FunctionHandler
     {
-        public static float NormalizeAngle(float angle)
+        public static Vector3 GetAngleDistancePoint(Vector2 startPosition, float angle, float distance)
         {
-            angle %= 360f;
-            if (angle > 180f) angle -= 360f;
-            if (angle < -180f) angle += 360f;
-            return angle;
+            float angleRadians = angle * Mathf.Deg2Rad;
+            float newX = startPosition.x + distance * Mathf.Cos(angleRadians);
+            float newY = startPosition.y + distance * Mathf.Sin(angleRadians);
+            return new Vector3(newX, newY, 0);
         }
-
-        public static bool IsAngleWithinSector(float angle, float min, float max) => angle >= min && angle <= max;
     }
 }

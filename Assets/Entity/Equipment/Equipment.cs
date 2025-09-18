@@ -1,8 +1,10 @@
 using System.Linq;
 using Assets.DataContainers;
 using Assets.Entity.Interfaces;
+using Assets.Handlers;
 using Assets.Scripts.Actions;
 using Assets.Scripts.Modifiers;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Equipment
@@ -15,6 +17,7 @@ namespace Assets.Entity.Equipment
         public EquipmentAnchor EquipmentAnchor { get; set; }
 
         public ActionBase[] Activations;
+        public ActionBase[] UpdateActions;
 
         public IModifier[] Modifiers;
 
@@ -49,8 +52,16 @@ namespace Assets.Entity.Equipment
             return EquipmentAnchor.RotationSector != Vector2.zero;
         }
 
-        public void Activate(Vector3 targetPos)
+        public void Activate(Vector3 targetPos, ActionBase[] actions = null)
         {
+            if (actions == UpdateActions)
+            {
+                foreach (var activation in actions) activation.Execute(gameObject, targetPos);
+                return;
+            }
+            var distance = Vector3.Distance(transform.position, targetPos);
+            var targetPosEq =
+                FunctionHandler.GetAngleDistancePoint(transform.position, transform.eulerAngles.z + BasicAngle, distance);
             foreach (var activation in Activations)
             {
                 if (activation.IsPassive || activation.Delay <= 0) activation.Execute(gameObject, targetPos);
@@ -58,13 +69,13 @@ namespace Assets.Entity.Equipment
                 float currentAngle = Mathf.Repeat(transform.eulerAngles.z + BasicAngle, 360f);
                 float angleDiff = Mathf.DeltaAngle(currentAngle, targetWorldAngle);
                 if (!(Mathf.Abs(angleDiff) < 12.5f / activation.Delay)) continue;
-                if (EquipmentAnchor.ActivationSectors.Length == 0) activation.Execute(gameObject, targetPos);
+                if (EquipmentAnchor.ActivationSectors.Length == 0) activation.Execute(gameObject, targetPosEq);
                 else
                 {
                     currentAngle = Mathf.Abs(Mathf.DeltaAngle(currentAngle, EquipmentAnchor.transform.eulerAngles.z));
                     if (EquipmentAnchor.ActivationSectors.Any(sector => currentAngle >= sector.x && currentAngle <= sector.y))
                     {
-                        activation.Execute(gameObject, targetPos);
+                        activation.Execute(gameObject, targetPosEq);
                     }
                 }
             }

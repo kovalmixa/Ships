@@ -89,7 +89,7 @@ namespace Assets.Entity.Hull
         private void OnTriggerEnter2D(Collider2D other)
         {
             IScript script = other.GetComponent<IScript>();
-            script?.Execute(GetComponent<EntityController>());
+            script?.Execute(transform.parent.GetComponent<EntityController>());
         }
 
         private void Bounce(Collision2D collision)
@@ -105,7 +105,7 @@ namespace Assets.Entity.Hull
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             Vector2 pushDirection = (rb.position - otherRb.position).normalized;
             float totalMass = rb.mass + otherRb.mass; // Общая масса двух объектов
-            float impulse = CurrentSpeed * rb.mass;  // Импульс игрока
+            float impulse = CurrentSpeed * rb.mass * 0.1f;  // Импульс игрока
 
             // Передаем часть импульса другому объекту
             otherRb.AddForce(-pushDirection * (impulse * (rb.mass / totalMass)), ForceMode2D.Impulse);

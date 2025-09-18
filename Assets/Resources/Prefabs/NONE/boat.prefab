@@ -132,8 +132,9 @@ GameObject:
   - component: {fileID: 124669368259897105}
   - component: {fileID: 5888668427879922858}
   - component: {fileID: 508184833516364186}
-  - component: {fileID: 3143376459598222572}
-  m_Layer: 0
+  - component: {fileID: 6679228126235773454}
+  - component: {fileID: 6141477231020090577}
+  m_Layer: 4
   m_Name: boat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -171,7 +172,6 @@ MonoBehaviour:
   Data: {fileID: 508184833516364186}
   EquipmentAnchors: []
   Equipments: []
-  MaxSpeed: 5
   CurrentSpeed: 0
 --- !u!114 &508184833516364186
 MonoBehaviour:
@@ -196,34 +196,68 @@ MonoBehaviour:
   MaxSpeed: 5
   Acceleration: 3
   RotationSpeed: 60
-  OnActivate: []
---- !u!54 &3143376459598222572
-Rigidbody:
+--- !u!50 &6679228126235773454
+Rigidbody2D:
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8122809092557298440}
-  serializedVersion: 4
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
   m_Mass: 1
-  m_Drag: 0
+  m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_SleepingMode: 1
   m_CollisionDetection: 0
+  m_Constraints: 7
+--- !u!70 &6141477231020090577
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.005, y: 0}
+  m_Size: {x: 0.14, y: 0.23}
+  m_Direction: 0
 --- !u!1001 &7149603435938307677
 PrefabInstance:
   m_ObjectHideFlags: 0

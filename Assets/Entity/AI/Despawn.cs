@@ -15,12 +15,12 @@ namespace Assets.Entity.AI
         private void Awake()
         {
             _entity = transform.parent.gameObject;
-            _objectPool = SceneNodesHandler.GetNode("ObjectPools").transform.Find("EntityPool").GetComponent<ObjectPoolHandler>();
+            _objectPool = SceneNodesHandler.GetPoolHandler("EntityPool");
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            var entityController = other.GetComponent<EntityController>();
+            var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController != null && entityController != null && entityController.IsPlayer)
             {
                 _objectPool.Return(_entity);

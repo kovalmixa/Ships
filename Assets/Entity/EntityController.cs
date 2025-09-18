@@ -3,14 +3,11 @@ using Assets.Entity.AI;
 using Assets.Entity.Player;
 using UnityEngine;
 using Assets.Entity.Interfaces;
-using Assets.Entity.Equipment;
 using Assets.Handlers;
 using System;
 using System.Linq;
 using Assets.DataContainers;
-using Assets.Scripts.Actions;
 using Assets.Scripts.Scripts;
-using UnityEditor.SceneManagement;
 
 namespace Assets.Entity
 {
@@ -124,15 +121,6 @@ namespace Assets.Entity
         {
             if (Hull == null) return;
             _controller?.UpdateControl(this);
-        }
-
-        void LateUpdate()
-        {
-            if (Hull != null)
-            {
-                transform.position = Hull.transform.position;
-                transform.rotation = Hull.transform.rotation;
-            }
         }
     }
 }

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1328403097879313759}
   - component: {fileID: 6936527153698304451}
-  - component: {fileID: 9091022321554549564}
   m_Layer: 0
   m_Name: Layer2
   m_TagString: Untagged
@@ -88,13 +87,115 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!60 &9091022321554549564
+--- !u!1 &8122809092557298440
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 124669368259897105}
+  - component: {fileID: 1988447039845939925}
+  - component: {fileID: 7736902894401505519}
+  - component: {fileID: 1691923692890103079}
+  - component: {fileID: 7224750891720324652}
+  m_Layer: 4
+  m_Name: smallPatrolBoat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &124669368259897105
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1328403097879313759}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1988447039845939925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a92cd5c67eaea9847b91ce58f2ca506f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Data: {fileID: 7736902894401505519}
+  EquipmentAnchors: []
+  Equipments: []
+  CurrentSpeed: 0
+--- !u!114 &7736902894401505519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c63eb5b245dd93f4caf4478d85f1fb32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  General:
+    Name: small patrol boat
+    SizeType: 0
+    Layer: 0
+    Class: boat
+    SlotHeight: 2
+    SlotWidth: 1
+    Icon: {fileID: 0}
+  MaxSpeed: 6
+  Acceleration: 1
+  RotationSpeed: 40
+--- !u!50 &1691923692890103079
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
+--- !u!60 &7224750891720324652
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815526727935620202}
+  m_GameObject: {fileID: 8122809092557298440}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -140,107 +241,6 @@ PolygonCollider2D:
       - {x: 0.09, y: -0.13}
       - {x: 0.09, y: 0.1}
   m_UseDelaunayMesh: 0
---- !u!1 &8122809092557298440
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 124669368259897105}
-  - component: {fileID: 1988447039845939925}
-  - component: {fileID: 4444249558384532328}
-  - component: {fileID: 7736902894401505519}
-  m_Layer: 0
-  m_Name: smallPatrolBoat
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &124669368259897105
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.0005415449}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1328403097879313759}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1988447039845939925
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a92cd5c67eaea9847b91ce58f2ca506f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Data: {fileID: 7736902894401505519}
-  EquipmentAnchors: []
-  Equipments: []
-  CurrentSpeed: 0
---- !u!54 &4444249558384532328
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!114 &7736902894401505519
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c63eb5b245dd93f4caf4478d85f1fb32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  General:
-    Name: small patrol boat
-    SizeType: 0
-    Layer: 0
-    Class: boat
-    SlotHeight: 2
-    SlotWidth: 1
-    Icon: {fileID: 0}
-  MaxSpeed: 6
-  Acceleration: 1
-  RotationSpeed: 40
 --- !u!1001 &2714691397513860783
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -279,7 +279,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: ActivationSectors.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: ActivationSectors.Array.data[0].y
@@ -389,7 +389,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: ActivationSectors.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: ActivationSectors.Array.data[0].x

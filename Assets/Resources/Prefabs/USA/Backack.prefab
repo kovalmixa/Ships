@@ -10,8 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1328403097879313759}
   - component: {fileID: 6936527153698304451}
-  - component: {fileID: 2973555151338038047}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Layer1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,13 +85,115 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!60 &2973555151338038047
+--- !u!1 &8122809092557298440
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 124669368259897105}
+  - component: {fileID: 5888668427879922858}
+  - component: {fileID: 508184833516364186}
+  - component: {fileID: 2067661678433763203}
+  - component: {fileID: 8273113706489101639}
+  m_Layer: 0
+  m_Name: Backack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &124669368259897105
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1328403097879313759}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5888668427879922858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a92cd5c67eaea9847b91ce58f2ca506f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Data: {fileID: 508184833516364186}
+  EquipmentAnchors: []
+  Equipments: []
+  CurrentSpeed: 0
+--- !u!114 &508184833516364186
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c63eb5b245dd93f4caf4478d85f1fb32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  General:
+    Name: boat
+    SizeType: 0
+    Layer: 0
+    Class: boat
+    SlotHeight: 0
+    SlotWidth: 0
+    Icon: {fileID: 0}
+  MaxSpeed: 5
+  Acceleration: 0.7
+  RotationSpeed: 10
+--- !u!50 &2067661678433763203
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
+--- !u!60 &8273113706489101639
 PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815526727935620202}
+  m_GameObject: {fileID: 8122809092557298440}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -137,109 +238,6 @@ PolygonCollider2D:
       - {x: 0.1, y: -0.36}
       - {x: 0.1, y: 0.35}
   m_UseDelaunayMesh: 0
---- !u!1 &8122809092557298440
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 124669368259897105}
-  - component: {fileID: 5888668427879922858}
-  - component: {fileID: 508184833516364186}
-  - component: {fileID: 3143376459598222572}
-  m_Layer: 0
-  m_Name: Backack
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &124669368259897105
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1328403097879313759}
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5888668427879922858
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a92cd5c67eaea9847b91ce58f2ca506f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Data: {fileID: 508184833516364186}
-  EquipmentAnchors: []
-  Equipments: []
-  MaxSpeed: 5
-  CurrentSpeed: 0
---- !u!114 &508184833516364186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c63eb5b245dd93f4caf4478d85f1fb32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  General:
-    Name: boat
-    SizeType: 0
-    Layer: 0
-    Class: boat
-    SlotHeight: 0
-    SlotWidth: 0
-    Icon: {fileID: 0}
-  MaxSpeed: 5
-  Acceleration: 0.7
-  RotationSpeed: 10
-  OnActivate: []
---- !u!54 &3143376459598222572
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1001 &7149603435938307677
 PrefabInstance:
   m_ObjectHideFlags: 0

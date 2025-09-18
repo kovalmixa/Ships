@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 759412284934268011}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 12.005704, y: -6.106085, z: 0}
   m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -99,7 +99,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8279f0d1c221c31458993876297405b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProjectileContainer: {fileID: 0}
+  ProjectileContainer: {fileID: 6358870541530698483}
+  OnExplosionActions:
+  - {fileID: 2015599784894819059}
+  UpdateActions: []
 --- !u!114 &6358870541530698483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,12 +116,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LifeTime: 10
-  Speed: 50
+  Speed: 20
   IsHoming: 0
   IsBallistic: 0
-  OnActivate:
-  - {fileID: 0}
-  Explosion: 
 --- !u!114 &2015599784894819059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,3 +131,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c1cc13c091526f49a7207734ac979fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Delay: 0

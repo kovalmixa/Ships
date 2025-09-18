@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Assets.Entity;
+using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
 namespace Assets.Scripts.Scripts
@@ -22,11 +23,12 @@ namespace Assets.Scripts.Scripts
             }
         }
 
-        private void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
-            var entityController = other.GetComponent<EntityController>();
+            var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController) Execute(entityController);
         }
+
         public override bool Execute(EntityController entityController)
         {
             if (_scripts.Count == 0)
@@ -41,7 +43,9 @@ namespace Assets.Scripts.Scripts
             _isExecuted = true;
             return true;
         }
+
         public override bool IsFinished(EntityController entityController) => true;
+
         public override bool IsExecuted(EntityController entityController) => _isExecuted;
     }
 }
