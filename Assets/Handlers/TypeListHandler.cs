@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets.Handlers
 {
@@ -22,24 +17,6 @@ namespace Assets.Handlers
                 "launch", new[] { "torpedo" }
             }
         };
-
-        public static bool IsWeaponEquipment(string type) => DoesBelongToDictionary(WeaponEquipTypesDict, type);
-
-        public static string[] TryGetSubType(string command)
-        {
-            foreach (var weapons in WeaponEquipTypesDict)
-                if (weapons.Key == command) return weapons.Value;
-            return null;
-        }
-
-        public static string TryGetMasterType(string subType)
-        {
-            foreach (var weapons in WeaponEquipTypesDict)
-            {
-                if (weapons.Value.Contains(subType)) return weapons.Key;
-            }
-            return null;
-        }
 
         public static readonly Dictionary<string, string[]> ShipTypesDict = new()
         {
@@ -64,6 +41,25 @@ namespace Assets.Handlers
             }
         };
 
+        public static bool IsWeaponEquipment(string type) => DoesBelongToDictionary(WeaponEquipTypesDict, type);
+
+        public static string[] TryGetSubType(string command)
+        {
+            foreach (var weapons in WeaponEquipTypesDict)
+                if (weapons.Key == command) return weapons.Value;
+            return null;
+        }
+
+        public static string TryGetMasterType(string subType)
+        {
+            foreach (var weapons in WeaponEquipTypesDict)
+            {
+                if (weapons.Value.Contains(subType)) return weapons.Key;
+            }
+            return null;
+        }
+
+
         public static readonly string[] SizeTypes =
         {
             "s", "S", "M", "L", "XL", "XXL", "X"
@@ -73,7 +69,6 @@ namespace Assets.Handlers
         {
             "sea", "land", "air"
         };
-
         private static bool DoesBelongToDictionary(Dictionary<string, string[]> dictionary, string type)
         {
             return dictionary.Any(keyValuePair => keyValuePair.Value.ToList().Any(x => x == type));

@@ -1,12 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using Assets.DataContainers;
-using Assets.Entity.Equipment;
 using Assets.Entity.Hull;
-using Assets.Entity.Interfaces;
-using Assets.Handlers;
 using UnityEngine;
 
 namespace Assets.Entity
@@ -15,18 +8,22 @@ namespace Assets.Entity
     {
 
         private EntityController _entityController;
-
+        [SerializeField] private Transform _entityBody;
         private void Awake()
         {
             _entityController = GetComponent<EntityController>();
         }
-        public Hull.Hull SetHull(string hullId)
+
+        public HullBase SetHull(string hullId)
         {
-            GameObject newHull = PrefabLoader.Instance.InstantiatePrefab(hullId, transform.position, Quaternion.identity, transform);
+            Transform bodyTrans;
+            if (_entityController.Hull) bodyTrans = _entityController.Hull.transform;
+            else bodyTrans = _entityBody;
+            GameObject newHull = PrefabLoader.Instance.InstantiatePrefab(hullId, bodyTrans.position, Quaternion.identity, bodyTrans);
             if (newHull == null) return null;
             var hull = _entityController.Hull;
             if (hull != null) Destroy(hull.gameObject);
-            return newHull.GetComponent<Hull.Hull>();
+            return newHull.GetComponent<HullBase>();
         }
 
         public bool SetEquipment(string equipmentId, int index)
@@ -46,7 +43,5 @@ namespace Assets.Entity
             }
             return false;
         }
-
-        
     }
 }

@@ -11,10 +11,9 @@ namespace Assets.Entity.AI
             set => GetComponent<CircleCollider2D>().radius = value;
         }
         private ObjectPoolHandler _objectPool;
-        private GameObject _entity;
+        [SerializeField] private GameObject _entity;
         private void Awake()
         {
-            _entity = transform.parent.gameObject;
             _objectPool = SceneNodesHandler.GetPoolHandler("EntityPool");
         }
 

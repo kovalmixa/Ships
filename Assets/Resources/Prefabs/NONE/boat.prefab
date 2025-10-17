@@ -166,12 +166,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8122809092557298440}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a92cd5c67eaea9847b91ce58f2ca506f, type: 3}
+  m_Script: {fileID: 11500000, guid: b0ac7d6a8204a7848ae3debee20e939b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Data: {fileID: 508184833516364186}
-  EquipmentAnchors: []
+  Data: {fileID: 0}
+  EquipmentAnchors:
+  - {fileID: 8690893263783899800}
   Equipments: []
+  Root: {fileID: 0}
   CurrentSpeed: 0
 --- !u!114 &508184833516364186
 MonoBehaviour:
@@ -221,8 +223,8 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 7
+  m_CollisionDetection: 1
+  m_Constraints: 0
 --- !u!70 &6141477231020090577
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -332,3 +334,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8661486173044409718, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
   m_PrefabInstance: {fileID: 7149603435938307677}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8690893263783899800 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+  m_PrefabInstance: {fileID: 7149603435938307677}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dde94ff9eb7ca464a989404c28ed20c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

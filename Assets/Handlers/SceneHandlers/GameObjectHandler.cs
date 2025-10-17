@@ -1,4 +1,5 @@
 ﻿using Assets.Entity;
+using Assets.Entity.Hull;
 using UnityEngine;
 
 namespace Assets.Handlers.SceneHandlers
@@ -55,6 +56,11 @@ namespace Assets.Handlers.SceneHandlers
             }
         }
 
-        public static EntityController GetEntityController(Collider2D other) => other.transform.parent.GetComponent<EntityController>();
+        public static EntityController GetEntityController(Collider2D other)
+        {
+            var hull = other.GetComponent<HullBase>();
+            if (hull == null) return null;
+            return hull.Root.GetComponent<EntityController>();
+        } 
     }
 }

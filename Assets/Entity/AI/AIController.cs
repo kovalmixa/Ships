@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Assets.Entity.AI.Interfaces;
+using Assets.Entity.Hull;
 using Assets.Entity.Interfaces;
 using Assets.Scripts.Scripts;
 using UnityEngine;
@@ -10,9 +11,10 @@ namespace Assets.Entity.AI
     {
         private Transform _movePoint;
         private Transform _targetPoint;
-        public Queue<IScript> ScriptList = new();
+        public Queue<ScriptBase> Scripts;
         private IAi _ai;
         public void SetAiType(string name) { }
+
         public void UpdateControl(EntityController entityController)
         {
             if (!entityController) return;
@@ -21,27 +23,38 @@ namespace Assets.Entity.AI
             RotateControl(entityController);
             AttackControl(entityController);
         }
+
         private void AttackControl(EntityController entityController)
         {
         }
+
         private void RotateControl(EntityController entityController)
         {
         }
+
         private void MoveControl(EntityController entityController)
         {
+            // тут от ии зависит продолжать скрипт или переходит в тактику
             PointMovement(entityController);
         }
+
         private void PointMovement(EntityController entityController)
         {
             if (_movePoint == null) return;
-            Hull.Hull hull = entityController.Hull;
+            Hull.HullBase hullBase = entityController.Hull;
+
             Vector2 directionToPoint = _movePoint.transform.position - entityController.transform.position;
-            if (directionToPoint.magnitude < 3) return; 
+            if (directionToPoint.magnitude < 3) return;
             float angleToTarget = Vector2.SignedAngle(entityController.transform.up, directionToPoint.normalized);
             float rotationDirection = -Mathf.Clamp(angleToTarget / 45f, -1f, 1f);
-            hull.SpeedLevel = Mathf.Clamp(hull.SpeedLevel + 1, hull.MinSpeedLevel, hull.MaxSpeedLevel);
-            hull.Movement(rotationDirection);
+            if (Mathf.Abs(angleToTarget) < 60f)
+                hullBase.SetTargetSpeed(directionToPoint);
+            else
+                hullBase.SetTargetSpeed(Vector2.zero);
+            hullBase.Movement(rotationDirection);
         }
+
+
         public void SetupAreaScripts(GameObject[] scriptAreaSets)
         {
             throw new System.NotImplementedException();
@@ -51,22 +64,25 @@ namespace Assets.Entity.AI
             throw new System.NotImplementedException();
         }
         public void SetMovementPoint(Transform target) => _movePoint = target;
+
         public void SetTargetPoint(Transform target) => _targetPoint = target;
+
         private void ActivateScripts(EntityController entityController)
         {
-            if (ScriptList.Count == 0) return;
+            if (Scripts.Count == 0) return;
             if (!IsExecuted(entityController))
             {
-                ScriptList.Peek().Execute(entityController);
+                Scripts.Peek().Execute(entityController);
                 return;
             }
             if (IsScriptActive(entityController)) return;
-            ScriptList.Dequeue();
-            if (ScriptList.Count == 0) return;
-            ScriptList.Peek().Execute(entityController);
+            Scripts.Dequeue();
+            if (Scripts.Count == 0) return;
+            Scripts.Peek().Execute(entityController);
         }
 
-        private bool IsScriptActive(EntityController entityController) => !ScriptList.Peek().IsFinished(entityController);
-        private bool IsExecuted(EntityController entityController) => ScriptList.Peek().IsExecuted(entityController);
+        private bool IsScriptActive(EntityController entityController) => !Scripts.Peek().IsFinished(entityController);
+
+        private bool IsExecuted(EntityController entityController) => Scripts.Peek().IsExecuted(entityController);
     }
 }

@@ -7,21 +7,21 @@ using Assets.Handlers;
 using System;
 using System.Linq;
 using Assets.DataContainers;
+using Assets.Entity.Hull;
+using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Scripts;
+using Cinemachine;
 
 namespace Assets.Entity
 {
     public class EntityController : MonoBehaviour
     {
         public bool IsPlayer = false;
-        public string AiName { get; set; }
-        [SerializeField] public List<ScriptBase> ScriptList = new();
-
-        private EntityHullSetup _entityBodySetup;
-
+        [SerializeField] private EntityHullSetup _entityHullSetup;
         public EntityDataContainer Data = new();
         private IEntityController _controller;
-        public Hull.Hull Hull;
+        private CinemachineVirtualCamera camera;
+        public HullBase Hull;
 
         private void Awake()
         {
@@ -29,22 +29,17 @@ namespace Assets.Entity
 
         private void Start()
         {
-
             if (IsPlayer)
             {
                 _controller = gameObject.AddComponent<PlayerController>();
             }
-            else
-            {
-                SetupScripts();
-                ScriptList.Clear();
-            }
+            var camera_node = SceneNodesHandler.GetNode("CameraNodes").transform.Find("Virtual Camera");
+            camera = camera_node.GetComponent<CinemachineVirtualCamera>();
         }
 
         public void Setup(EntityDataContainer data)
         {
             if (data == null) return;
-            if (_entityBodySetup == null) _entityBodySetup = gameObject.AddComponent<EntityHullSetup>();
             Data.EquipmentIds = data.EquipmentIds;
             SetHull(data.HullId);
             var dPosition = data.Position;
@@ -54,33 +49,34 @@ namespace Assets.Entity
         public bool SetHull(string hullId)
         {
             if (hullId == null) return false;
-            Hull.Hull newHull = _entityBodySetup.SetHull(hullId);
-            if (newHull == null) return false;
-            Hull = newHull;
+            HullBase newHullBase = _entityHullSetup.SetHull(hullId);
+            newHullBase.Root = transform;
+            Hull = newHullBase;
             Data.HullId = hullId;
             for (int i = 0; i < Data.EquipmentIds.Count; i++)
-                if (!_entityBodySetup.SetEquipment(Data.EquipmentIds[i].Key, Data.EquipmentIds[i].Value))
+                if (!_entityHullSetup.SetEquipment(Data.EquipmentIds[i].Key, Data.EquipmentIds[i].Value))
                     Data.EquipmentIds.RemoveAt(i);
+            if (IsPlayer)
+            {
+                camera.Follow = Hull.transform;
+                camera.LookAt = Hull.transform;
+            }
             return true;
         }
 
         public bool SetEquipment(string equipmentId, int index)
         {
-            if (!_entityBodySetup.SetEquipment(equipmentId, index)) return false;
+            if (!_entityHullSetup.SetEquipment(equipmentId, index)) return false;
             Data.EquipmentIds.Add(new KeyValuePair<string, int>(equipmentId, index));
             return true;
         }
 
-        public void SetupScripts()
+        public void SetupScripts(params ScriptBase[] scripts)
         {
             _controller = gameObject.AddComponent<AiController>();
             AiController aiController = _controller as AiController;
-            Queue<IScript> scripts = new();
-            foreach (IScript scriptObj in ScriptList)
-            {
-                scripts.Enqueue(scriptObj);
-            }
-            aiController.ScriptList = scripts;
+            Queue<ScriptBase> scriptsQueue = new(scripts);
+            aiController.Scripts = scriptsQueue;
         }
 
         public void ActivateCommand(Vector3 position, string activationCommand)

@@ -6,6 +6,7 @@ namespace Assets.Entity
     public class CameraController : MonoBehaviour
     {
         [SerializeField] CinemachineVirtualCamera _virtualCamera;
+        
         float _cameraDistance;
         [SerializeField] float _sensitivity;
         public float MinZoom;
@@ -33,6 +34,5 @@ namespace Assets.Entity
         {
             Zoom();
         }
-
     }
 }

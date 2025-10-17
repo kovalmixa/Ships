@@ -1,45 +1,29 @@
-using System;
-using System.Collections.Generic;
+п»їusing System.Collections.Generic;
 using Assets.DataContainers;
 using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
 using Assets.Scripts.Scripts;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Assets.Entity.Hull
 {
-    public class Hull : MonoBehaviour, IDamageable
+    public abstract class HullBase : MonoBehaviour, IDamageable, IHull
     {
-        public int Type
-        {
-            get { return 0; }
-            set { }
-        }
-
-        [SerializeField] public HullContainer Data;
+        public HullContainer Data;
 
         public List<EquipmentAnchor> EquipmentAnchors;
-
         public List<Equipment.Equipment> Equipments;
 
-        private Transform _root;
-
-        private float _targetSpeed;
+        public Transform Root;
+        protected Rigidbody2D Rigidbody2D;
 
         public float CurrentSpeed;
 
-        public float SpeedLevel { get; set; }
-
-        public int MaxSpeedLevel { get; set; } = 3;
-
-        public int MinSpeedLevel { get; set; } = -1;
-
         private void Awake()
         {
-            _root = transform.parent;
+            Rigidbody2D = GetComponent<Rigidbody2D>();
+            Data = GetComponent<HullContainer>();
             CollectAnchors(transform);
         }
 
@@ -51,21 +35,11 @@ namespace Assets.Entity.Hull
             }
         }
 
-        public void Movement(float rotationDirection)
-        {
-            
-            switch (Type)
-            {
-                case 0:
-                {
-                    _targetSpeed = SpeedLevel * (Data.MaxSpeed / MaxSpeedLevel);
-                    CurrentSpeed = MathF.Min(Mathf.MoveTowards(CurrentSpeed, _targetSpeed, Data.Acceleration * Time.deltaTime), Data.MaxSpeed);
-                    _root.Rotate(Vector3.forward, -rotationDirection * Data.RotationSpeed * Time.deltaTime);
-                    _root.Translate(Vector3.up * CurrentSpeed * Time.deltaTime, Space.Self);
-                    break;
-                }
-            }
-        }
+        public abstract void AddSpeed(bool isAddition);
+
+        public abstract void SetTargetSpeed(Vector2 directionToPoint);
+
+        public abstract void Movement(float rotationDirection);
 
         private void CollectAnchors(Transform parent)
         {
@@ -89,7 +63,7 @@ namespace Assets.Entity.Hull
         private void OnTriggerEnter2D(Collider2D other)
         {
             IScript script = other.GetComponent<IScript>();
-            script?.Execute(transform.parent.GetComponent<EntityController>());
+            script?.Execute(Root.GetComponent<EntityController>());
         }
 
         private void Bounce(Collision2D collision)
@@ -104,13 +78,13 @@ namespace Assets.Entity.Hull
             }
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             Vector2 pushDirection = (rb.position - otherRb.position).normalized;
-            float totalMass = rb.mass + otherRb.mass; // Общая масса двух объектов
-            float impulse = CurrentSpeed * rb.mass * 0.1f;  // Импульс игрока
+            float totalMass = rb.mass + otherRb.mass; // РћР±С‰Р°СЏ РјР°СЃСЃР° РґРІСѓС… РѕР±СЉРµРєС‚РѕРІ
+            float impulse = CurrentSpeed * rb.mass * 0.1f;  // РРјРїСѓР»СЊСЃ РёРіСЂРѕРєР°
 
-            // Передаем часть импульса другому объекту
+            // РџРµСЂРµРґР°РµРј С‡Р°СЃС‚СЊ РёРјРїСѓР»СЊСЃР° РґСЂСѓРіРѕРјСѓ РѕР±СЉРµРєС‚Сѓ
             otherRb.AddForce(-pushDirection * (impulse * (rb.mass / totalMass)), ForceMode2D.Impulse);
 
-            //Теряет скорость пропорционально массе другого объекта
+            //РўРµСЂСЏРµС‚ СЃРєРѕСЂРѕСЃС‚СЊ РїСЂРѕРїРѕСЂС†РёРѕРЅР°Р»СЊРЅРѕ РјР°СЃСЃРµ РґСЂСѓРіРѕРіРѕ РѕР±СЉРµРєС‚Р°
             CurrentSpeed *= otherRb.mass / totalMass;
         }
 

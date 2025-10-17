@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Assets.DataContainers;
 using Assets.Entity;
-using Assets.Entity.Hull;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Scripts;
 using UnityEngine;
@@ -40,6 +39,7 @@ namespace Assets.Scripts.EntityMarkers.Spawner
             {
                 //entityController.Nation = Nation;
                 SetupEntity(entityController);
+                entityController.SetupScripts(ScriptList.ToArray());
             }
         }
 

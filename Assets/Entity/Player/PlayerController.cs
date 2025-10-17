@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Assets.Entity.Hull;
 using Assets.Entity.Interfaces;
 using UnityEngine;
+using static UnityEngine.GridBrushBase;
 namespace Assets.Entity.Player
 {
     public class PlayerController : MonoBehaviour, IEntityController
@@ -56,23 +57,13 @@ namespace Assets.Entity.Player
 
         private void MoveControl(EntityController controller)
         {
-            Hull.Hull hull = controller.Hull;
-            switch (controller.Data.HullLayer)
-            {
-                case 0:
-                {
-                    {
-                        if (Input.GetKeyDown(KeyCode.W) && hull.SpeedLevel < hull.MaxSpeedLevel)
-                            hull.SpeedLevel++;
-                        else if (Input.GetKeyDown(KeyCode.S) && hull.SpeedLevel > hull.MinSpeedLevel)
-                            hull.SpeedLevel--;
-
-                        float rotationInput = Input.GetAxis("Horizontal");
-                        hull.Movement(rotationInput);
-                    }
-                    break;
-                }
-            }
+            Hull.HullBase hullBase = controller.Hull;
+            if (Input.GetKeyDown(KeyCode.W))
+                hullBase.AddSpeed(true);
+            else if (Input.GetKeyDown(KeyCode.S))
+                hullBase.AddSpeed(false);
+            float rotationInput = Input.GetAxis("Horizontal");
+            hullBase.Movement(rotationInput);
         }
 
         private void AttackControl(EntityController controller) => KeyWordControls(controller, Camera.ScreenToWorldPoint(Input.mousePosition));
