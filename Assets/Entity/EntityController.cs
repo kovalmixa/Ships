@@ -20,7 +20,6 @@ namespace Assets.Entity
         [SerializeField] private EntityHullSetup _entityHullSetup;
         public EntityDataContainer Data = new();
         private IEntityController _controller;
-        private CinemachineVirtualCamera camera;
         public HullBase Hull;
 
         private void Awake()
@@ -34,7 +33,6 @@ namespace Assets.Entity
                 _controller = gameObject.AddComponent<PlayerController>();
             }
             var camera_node = SceneNodesHandler.GetNode("CameraNodes").transform.Find("Virtual Camera");
-            camera = camera_node.GetComponent<CinemachineVirtualCamera>();
         }
 
         public void Setup(EntityDataContainer data)
@@ -56,11 +54,7 @@ namespace Assets.Entity
             for (int i = 0; i < Data.EquipmentIds.Count; i++)
                 if (!_entityHullSetup.SetEquipment(Data.EquipmentIds[i].Key, Data.EquipmentIds[i].Value))
                     Data.EquipmentIds.RemoveAt(i);
-            if (IsPlayer)
-            {
-                camera.Follow = Hull.transform;
-                camera.LookAt = Hull.transform;
-            }
+
             return true;
         }
 

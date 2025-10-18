@@ -1,4 +1,5 @@
 using System.Linq;
+using Assets.Entity.AI;
 using Assets.Entity.Hull;
 using UnityEngine;
 
@@ -6,9 +7,8 @@ namespace Assets.Entity
 {
     public class EntityHullSetup : MonoBehaviour
     {
-
         private EntityController _entityController;
-        [SerializeField] private Transform _entityBody;
+        [SerializeField] private GameObject _despawnPrefab;
         private void Awake()
         {
             _entityController = GetComponent<EntityController>();
@@ -18,12 +18,26 @@ namespace Assets.Entity
         {
             Transform bodyTrans;
             if (_entityController.Hull) bodyTrans = _entityController.Hull.transform;
-            else bodyTrans = _entityBody;
+            else bodyTrans = _entityController.transform;
             GameObject newHull = PrefabLoader.Instance.InstantiatePrefab(hullId, bodyTrans.position, Quaternion.identity, bodyTrans);
             if (newHull == null) return null;
             var hull = _entityController.Hull;
             if (hull != null) Destroy(hull.gameObject);
+            SetupNodes(newHull);
             return newHull.GetComponent<HullBase>();
+        }
+
+        private void SetupNodes(GameObject hull)
+        {
+            if (_entityController.IsPlayer)
+            {
+                CameraController.Instance.Follow(hull.transform);
+            }
+            else
+            {
+                GameObject despawn = Instantiate(_despawnPrefab, hull.transform.position, hull.transform.rotation, hull.transform);
+                despawn.GetComponent<Despawn>().SetEntity(_entityController.gameObject);
+            }
         }
 
         public bool SetEquipment(string equipmentId, int index)

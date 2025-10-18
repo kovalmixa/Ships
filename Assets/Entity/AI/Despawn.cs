@@ -26,5 +26,6 @@ namespace Assets.Entity.AI
             }
         }
 
+        public void SetEntity(GameObject entity) => _entity = entity;
     }
 }

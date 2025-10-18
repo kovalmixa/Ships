@@ -5,6 +5,7 @@ namespace Assets.Entity
 {
     public class CameraController : MonoBehaviour
     {
+        public static CameraController Instance { get; private set; }
         [SerializeField] CinemachineVirtualCamera _virtualCamera;
         
         float _cameraDistance;
@@ -14,11 +15,25 @@ namespace Assets.Entity
         public float SmoothSpeed = 5f;
         float _targetZoom;
         float _currentZoom;
-        private void Start()
+
+        private void Awake()
         {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
             _currentZoom = _virtualCamera.m_Lens.OrthographicSize;
             _targetZoom = _currentZoom;
         }
+
+        public void Follow(Transform transform)
+        {
+            _virtualCamera.LookAt = transform;
+            _virtualCamera.Follow = transform;
+        }
+
         void Zoom()
         {
             if (Input.GetAxis("Mouse ScrollWheel") != 0)
@@ -34,5 +49,6 @@ namespace Assets.Entity
         {
             Zoom();
         }
+
     }
 }
