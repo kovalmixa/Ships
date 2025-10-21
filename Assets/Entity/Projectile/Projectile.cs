@@ -2,7 +2,6 @@
 using Assets.Entity.Interfaces;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Projectile
@@ -24,7 +23,7 @@ namespace Assets.Entity.Projectile
 
         private void Start()
         {
-            _objectPool = SceneNodesHandler.GetPoolHandler("ProjectilesPool");
+            _objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
         public void SetupByPrefab(Projectile prefab)
@@ -63,8 +62,8 @@ namespace Assets.Entity.Projectile
             _timer += Time.deltaTime;
             if (TargetPosition.HasValue)
             {
-                float distToTarget = Vector3.Distance(transform.position, TargetPosition.Value);
-                if (distToTarget <= 0.5f)
+                float distToTarget = Vector2.Distance(transform.position, TargetPosition.Value);
+                if (distToTarget <= 0.2f)
                 {
                     Explode();
                     return;

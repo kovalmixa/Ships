@@ -63,7 +63,7 @@ namespace Assets.Entity.Player
             else if (Input.GetKeyDown(KeyCode.S))
                 hullBase.AddSpeed(false);
             float rotationInput = Input.GetAxis("Horizontal");
-            hullBase.Movement(rotationInput);
+            hullBase.Movement(-rotationInput);
         }
 
         private void AttackControl(EntityController controller) => KeyWordControls(controller, Camera.ScreenToWorldPoint(Input.mousePosition));

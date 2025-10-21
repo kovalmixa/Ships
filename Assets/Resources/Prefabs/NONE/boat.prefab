@@ -276,6 +276,10 @@ PrefabInstance:
       propertyPath: ClassType
       value: turret
       objectReference: {fileID: 0}
+    - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
+      propertyPath: OrderLayer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8296754573792745974, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_Name
       value: EquipmentAnchor

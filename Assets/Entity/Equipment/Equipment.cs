@@ -4,6 +4,7 @@ using Assets.Entity.Interfaces;
 using Assets.Handlers;
 using Assets.Scripts.Actions;
 using Assets.Scripts.Modifiers;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -29,19 +30,17 @@ namespace Assets.Entity.Equipment
 
         public void Rotate(Vector3 targetPos)
         {
-            if (EquipmentContainer == null) return;
-            if (!CanRotate()) return;
-            float targetWorldAngle = Mathf.Atan2(targetPos.y - transform.position.y, targetPos.x - transform.position.x) * Mathf.Rad2Deg;
-            float baseAngle = EntityController.transform.eulerAngles.z + EquipmentAnchor.transform.localEulerAngles.z;
-            float localTargetAngle = Mathf.DeltaAngle(baseAngle, targetWorldAngle);
+            if (EquipmentContainer == null || !CanRotate()) return;
+            Vector3 localTarget = EquipmentAnchor.transform.InverseTransformPoint(targetPos);
+            float localAngle = Mathf.Atan2(localTarget.y, localTarget.x) * Mathf.Rad2Deg;
             float min = EquipmentAnchor.RotationSector.x;
             float max = EquipmentAnchor.RotationSector.y;
-            float clampedLocal = Mathf.Clamp(localTargetAngle, min, max);
-            float finalWorldAngle = baseAngle + clampedLocal;
+            float clampedLocal = Mathf.Clamp(localAngle, min, max);
+            float finalWorldAngle = EquipmentAnchor.transform.eulerAngles.z + clampedLocal;
             float rotationSpeed = EquipmentContainer.RotationSpeed * Time.deltaTime;
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
-                Quaternion.Euler(0f, 0f, finalWorldAngle - BasicAngle), 
+                Quaternion.Euler(0f, 0f, finalWorldAngle - BasicAngle),
                 rotationSpeed
             );
         }
@@ -59,7 +58,7 @@ namespace Assets.Entity.Equipment
                 foreach (var activation in actions) activation.Execute(gameObject, targetPos);
                 return;
             }
-            var distance = Vector3.Distance(transform.position, targetPos);
+            var distance = Vector2.Distance(transform.position, targetPos);
             var targetPosEq =
                 FunctionHandler.GetAngleDistancePoint(transform.position, transform.eulerAngles.z + BasicAngle, distance);
             foreach (var activation in Activations)

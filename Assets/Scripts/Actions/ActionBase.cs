@@ -10,7 +10,7 @@ namespace Assets.Scripts.Actions
 {
     public abstract class ActionBase : MonoBehaviour
     {
-        public float Delay;
+        public float Delay = 0;
         private float _lastActivationTime;
 
         public bool IsPassive { get; set; } = true;
@@ -19,6 +19,7 @@ namespace Assets.Scripts.Actions
 
         protected bool CanActivate(GameObject source, Vector3 targetPos)
         {
+            if (Delay == 0) return true;
             float time = Time.time;
             //Debug.Log($"Delta time: {time - _lastActivationTime}");
             if (time - _lastActivationTime < Delay) return false;

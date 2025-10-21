@@ -1,31 +1,31 @@
-﻿using Assets.Handlers.SceneHandlers;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.Timeline.Actions;
+﻿using Assets.Effects;
+using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
     public class EffectAction : ActionBase
     {
-        private Transform _effectPool;
-        private void Start()
-        {
-            GameObject objectPool = SceneNodesHandler.GetNode("ObjectPools");
-            _effectPool = objectPool.transform.Find("EffectsPool");
-            if (_effectPool == null) Debug.LogWarning("Pool not found");
-        }
+        private ObjectPoolHandler _effectPool;
+        [SerializeField] private string _id;
 
         public override void Execute(GameObject source, Vector3 targetPos){
+            _effectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
             if (!CanActivate(source, targetPos)) return;
             if (_effectPool == null) return;
             ObjectPoolHandler effectPool = _effectPool.gameObject.GetComponent<ObjectPoolHandler>();
-            //SetupEffect(effectPool);
+            SetupEffect(targetPos);
         }
 
-        protected void SetupEffect(ObjectPoolHandler effectPool, ActionContext actionContext)
+        protected void SetupEffect(Vector3 targetPos)
         {
-            //EffectContainer effectContainer = PrefabLoader.Objects[actionContext.ObjectId] as EffectContainer;
-            //Debug.Log(effectContainer.Graphics.Animations[0]);
+            var effectPrefab = PrefabLoader.Instance.GetPrefab(_id);
+            if (!effectPrefab)
+            {
+                Debug.LogWarning($"unable to load {_id}");
+                return;
+            }
+            var spawnedEffect = Instantiate(effectPrefab, targetPos, Quaternion.identity);
         }
     }
 }

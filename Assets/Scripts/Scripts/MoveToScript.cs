@@ -17,6 +17,7 @@ namespace Assets.Scripts.Scripts
         }
 
         public override bool IsExecuted(EntityController entityController) => _isExecuted;
+
         public override bool IsFinished(EntityController entityController)
         {
             float threshold = 3.5f;

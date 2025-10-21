@@ -4,13 +4,11 @@ using Assets.Entity.Player;
 using UnityEngine;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
-using System;
 using System.Linq;
 using Assets.DataContainers;
 using Assets.Entity.Hull;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Scripts;
-using Cinemachine;
 
 namespace Assets.Entity
 {

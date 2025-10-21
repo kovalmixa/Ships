@@ -1,47 +1,83 @@
+using Assets.Handlers;
+using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
-namespace Assets.Effects.Explosion
+namespace Assets.Effects
 {
     public class GameEffect : MonoBehaviour
     {
-        public Animator animator;           // Ссылка на Animator
-        public AudioSource audioSource;     // Ссылка на AudioSource
+        [SerializeField] protected ParticleSystem Particle;
+        [SerializeField] protected AudioSource[] AudioSources;
+        protected Animator Animator;
+        private ObjectPoolHandler _objectPool;
 
-        public void PlayEffect(string animation, string sound)
+        private void Start()
         {
-            // Запуск анимации и звука
-            if (animator != null)
-                animator.SetTrigger("Explode"); // Предполагается, что в Animator есть Trigger "Explode"
+            _objectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
+        }
+        public void SetupByPrefab(GameEffect prefab)
+        {
+            Particle = prefab.Particle;
+            AudioSources = prefab.AudioSources;
+            Animator = prefab.Animator;
+        }
+
+        public void Play()
+        {
+            Debug.Log("just effect");
+            var randomClipName = PlayRandomAnimation();
+            var audioSource = FunctionHandler.GetRandomElementArray(AudioSources);
+            if (Particle != null)
+                Particle.Play();
 
             if (audioSource != null)
                 audioSource.Play();
 
-            // Запускаем корутину для удаления объекта
-            StartCoroutine(DestroyAfterEffect());
+            StartCoroutine(DestroyAfterEffect(Animator, randomClipName, audioSource));
         }
 
-        private System.Collections.IEnumerator DestroyAfterEffect()
+        private System.Collections.IEnumerator DestroyAfterEffect(Animator animator, string clip_name, AudioSource audioSource)
         {
-            float animDuration = GetAnimationLength("Explosion"); // Название анимации
+            float animDuration = GetAnimationLength(animator, clip_name);
             float soundDuration = audioSource != null ? audioSource.clip.length : 0f;
 
-            float delay = Mathf.Max(animDuration, soundDuration); // Ждём, пока не завершится и то, и другое
+            float delay = Mathf.Max(animDuration, soundDuration);
             yield return new WaitForSeconds(delay);
 
-            Destroy(gameObject);
+            if (_objectPool != null) _objectPool.Return(gameObject);
+            else gameObject.SetActive(false);
         }
 
-        private float GetAnimationLength(string animationName)
+        protected float GetAnimationLength(Animator animator, string animationName)
         {
-            if (animator == null) return 0f;
-
-            RuntimeAnimatorController ac = animator.runtimeAnimatorController;
-            foreach (var clip in ac.animationClips)
+            if (animator == null || animator.runtimeAnimatorController == null) return 0f;
+            foreach (var clip in animator.runtimeAnimatorController.animationClips)
             {
                 if (clip.name == animationName)
                     return clip.length;
             }
             return 0f;
+        }
+
+        protected string PlayRandomAnimation()
+        {
+            string randomClipName = null;
+            if (Animator != null && Animator.runtimeAnimatorController != null)
+            {
+                var clips = Animator.runtimeAnimatorController.animationClips;
+                if (clips.Length > 0)
+                {
+                    var randomClip = FunctionHandler.GetRandomElementArray(clips);
+                    randomClipName = randomClip.name;
+                    Animator.Play(randomClipName);
+                }
+            }
+            return randomClipName;
+        }
+
+        private void Update()
+        {
+            Play();
         }
     }
 }

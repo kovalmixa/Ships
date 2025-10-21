@@ -1,11 +1,6 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Reflection;
 using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
-using Unity.VisualScripting;
 using UnityEngine;
-using Object = System.Object;
 
 namespace Assets.Scripts.Actions
 {
@@ -15,10 +10,10 @@ namespace Assets.Scripts.Actions
         public Transform FirePosition;
         private ObjectPoolHandler _poolHandler;
 
-        private void Start()
+        private void Awake()
         {
             IsPassive = false;
-            _poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilesPool");
+            _poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
         public override void Execute(GameObject source, Vector3 targetPos)

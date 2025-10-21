@@ -21,7 +21,7 @@ namespace Assets.Handlers.SceneHandlers
             ObjectPoolHandler poolHandler;
             try
             {
-                var objectPool = SceneNodesHandler.GetNode("ObjectPools");
+                var objectPool = GetNode("ObjectPools");
                 if (objectPool == null) throw new Exception("Master pool node not found");
                 var specifiedPool = objectPool.transform.Find(poolName).gameObject;
                 if (specifiedPool == null) throw new Exception($"Pool: {poolName} node not found");

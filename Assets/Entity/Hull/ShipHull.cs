@@ -39,7 +39,7 @@ namespace Assets.Entity.Hull
             CurrentSpeed = MathF.Min(
                 Mathf.MoveTowards(CurrentSpeed, _targetSpeed, Data.Acceleration * Time.fixedDeltaTime),
                 Data.MaxSpeed);
-            float angle = -rotationDirection * Data.RotationSpeed * Time.fixedDeltaTime;
+            float angle = rotationDirection * Data.RotationSpeed * Time.fixedDeltaTime;
             Rigidbody2D.MoveRotation(Rigidbody2D.rotation + angle);
             Vector2 nextPos = Rigidbody2D.position + (Vector2)transform.up * CurrentSpeed * Time.fixedDeltaTime;
             Rigidbody2D.MovePosition(nextPos);

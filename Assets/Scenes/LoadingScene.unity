@@ -334,7 +334,7 @@ GameObject:
   - component: {fileID: 8243672420889868332}
   - component: {fileID: 3334279553117379792}
   m_Layer: 0
-  m_Name: EffectsPool
+  m_Name: EffectPool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -550,7 +550,7 @@ GameObject:
   - component: {fileID: 7219243278792480531}
   - component: {fileID: 608758766116970313}
   m_Layer: 0
-  m_Name: ProjectilesPool
+  m_Name: ProjectilePool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

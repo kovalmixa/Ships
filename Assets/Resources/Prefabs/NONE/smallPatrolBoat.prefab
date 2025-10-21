@@ -260,7 +260,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: OrderLayer
-      value: 0
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: RotationSector.x
@@ -366,7 +366,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: OrderLayer
-      value: 0
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: RotationSector.x

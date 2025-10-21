@@ -40,29 +40,40 @@ namespace Assets.Entity.AI
 
         private void PointMovement(EntityController entityController)
         {
-            if (_movePoint == null) return;
-            Hull.HullBase hullBase = entityController.Hull;
+            HullBase hullBase = entityController.Hull;
+            if (_movePoint == null)
+            {
+                hullBase.SetTargetSpeed(Vector2.zero);
+                return;
+            }
+            Vector2 directionToPoint = _movePoint.position - hullBase.transform.position;
+            float distance = directionToPoint.magnitude;
+            if (distance < 3f)
+            {
+                hullBase.SetTargetSpeed(Vector2.zero);
+                return;
+            }
+            Vector2 forward = hullBase.transform.up;
+            float angleToTarget = Vector2.SignedAngle(forward, directionToPoint.normalized);
+            float rotationDirection = Mathf.Clamp(angleToTarget / 45f, -1f, 1f);
+            hullBase.Movement(rotationDirection);
 
-            Vector2 directionToPoint = _movePoint.transform.position - entityController.transform.position;
-            if (directionToPoint.magnitude < 3) return;
-            float angleToTarget = Vector2.SignedAngle(entityController.transform.up, directionToPoint.normalized);
-            float rotationDirection = -Mathf.Clamp(angleToTarget / 45f, -1f, 1f);
-            if (Mathf.Abs(angleToTarget) < 60f)
+            if (Mathf.Abs(angleToTarget) < 10f)
                 hullBase.SetTargetSpeed(directionToPoint);
             else
                 hullBase.SetTargetSpeed(Vector2.zero);
-            hullBase.Movement(rotationDirection);
         }
-
 
         public void SetupAreaScripts(GameObject[] scriptAreaSets)
         {
             throw new System.NotImplementedException();
         }
+
         public void SetupScripts(IScript[] scriptPointSets)
         {
             throw new System.NotImplementedException();
         }
+
         public void SetMovementPoint(Transform target) => _movePoint = target;
 
         public void SetTargetPoint(Transform target) => _targetPoint = target;
