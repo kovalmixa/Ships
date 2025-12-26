@@ -3,7 +3,8 @@ using Assets.DataContainers;
 using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
-using Assets.Scripts.Scripts;
+using Entity.Controllers.GenericController;
+using Scripts;
 using UnityEngine;
 
 namespace Assets.Entity.Hull

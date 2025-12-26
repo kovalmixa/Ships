@@ -1,9 +1,10 @@
 using System.Linq;
+using Actions;
 using Assets.DataContainers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
-using Assets.Scripts.Actions;
-using Assets.Scripts.Modifiers;
+using Entity.Controllers.GenericController;
+using Modifiers;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;

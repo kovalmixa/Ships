@@ -1,4 +1,4 @@
-﻿namespace Assets.Scripts.Modifiers
+﻿namespace Modifiers
 {
     public interface IModifier
     {

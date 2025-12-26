@@ -1,4 +1,6 @@
-﻿namespace Assets.Entity.AI.Interfaces
+﻿using Entity.Controllers.GenericController;
+
+namespace Assets.Entity.AI.Interfaces
 {
     public interface IAiBehavior
     {

@@ -1,7 +1,7 @@
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
-namespace Assets.Entity.AI
+namespace Entity.Controllers.AI
 {
     public class Despawn : MonoBehaviour
     {
@@ -20,7 +20,7 @@ namespace Assets.Entity.AI
         private void OnTriggerExit2D(Collider2D other)
         {
             var entityController = GameObjectHandler.GetEntityController(other);
-            if (entityController != null && entityController != null && entityController.IsPlayer)
+            if (entityController != null && entityController != null && entityController.isPlayer)
             {
                 _objectPool.Return(_entity);
             }

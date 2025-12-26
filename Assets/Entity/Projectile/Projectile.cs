@@ -1,7 +1,7 @@
-﻿using Assets.DataContainers;
+﻿using Actions;
+using Assets.DataContainers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers.SceneHandlers;
-using Assets.Scripts.Actions;
 using UnityEngine;
 
 namespace Assets.Entity.Projectile

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Assets.Entity.Interfaces;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace Assets.Scripts.Actions
+namespace Actions
 {
     public abstract class ActionBase : MonoBehaviour
     {

@@ -1,6 +1,6 @@
-using Assets.Entity;
+using Entity.Controllers.GenericController;
 
-namespace Assets.Scripts.Scripts
+namespace Scripts
 {
     public interface IScript
     {

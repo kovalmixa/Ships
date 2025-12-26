@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using Assets.Entity.Hull;
-using Assets.Entity.Interfaces;
+using Entity.Controllers.GenericController;
 using UnityEngine;
-using static UnityEngine.GridBrushBase;
-namespace Assets.Entity.Player
+
+namespace Entity.Controllers
 {
     public class PlayerController : MonoBehaviour, IEntityController
     {
@@ -19,7 +18,7 @@ namespace Assets.Entity.Player
             set => _camera = value;
         }
 
-        private Dictionary<KeyCode, string> keyCodeActivations = new()
+        private Dictionary<KeyCode, string> _keyCodeActivations = new()
         {
             { KeyCode.Mouse0, "turret" },
             { KeyCode.Mouse1, "" }
@@ -30,14 +29,14 @@ namespace Assets.Entity.Player
             for (int i = 0; i <= 9; i++)
             {
                 KeyCode key = (KeyCode)((int)KeyCode.Alpha0 + i);
-                if (i == 1) keyCodeActivations.Add(key, "heal");
-                else keyCodeActivations.Add(key, "");
+                if (i == 1) _keyCodeActivations.Add(key, "heal");
+                else _keyCodeActivations.Add(key, "");
             }
         }
 
         private Camera FindMainCamera()
         {
-            Camera[] cameras = GameObject.FindObjectsOfType<Camera>();
+            Camera[] cameras = FindObjectsOfType<Camera>();
             foreach (Camera cam in cameras)
             {
                 if (cam.enabled && cam.gameObject.activeInHierarchy)
@@ -51,13 +50,13 @@ namespace Assets.Entity.Player
         {
             if(!controller) return;
             MoveControl(controller);
-            RotateControl(controller);
-            AttackControl(controller);
+            controller.hull.RotateEquipment(Camera.ScreenToWorldPoint(Input.mousePosition));
+            KeyWordControls(controller, Camera.ScreenToWorldPoint(Input.mousePosition));
         }
 
         private void MoveControl(EntityController controller)
         {
-            Hull.HullBase hullBase = controller.Hull;
+            Assets.Entity.Hull.HullBase hullBase = controller.hull;
             if (Input.GetKeyDown(KeyCode.W))
                 hullBase.AddSpeed(true);
             else if (Input.GetKeyDown(KeyCode.S))
@@ -66,18 +65,10 @@ namespace Assets.Entity.Player
             hullBase.Movement(-rotationInput);
         }
 
-        private void AttackControl(EntityController controller) => KeyWordControls(controller, Camera.ScreenToWorldPoint(Input.mousePosition));
-
-        private void RotateControl(EntityController controller) => controller.Hull.RotateEquipment(Camera.ScreenToWorldPoint(Input.mousePosition));
-
-        public void SetMovementPoint(Transform target) { }
-
-        public void SetTargetPoint(Transform target) { }
-
         private void KeyWordControls(EntityController controller, Vector3 position)
         {
 
-            foreach (var entry in keyCodeActivations)
+            foreach (var entry in _keyCodeActivations)
             {
                 if (entry.Key.ToString().StartsWith("Mouse"))
                 {
@@ -101,5 +92,13 @@ namespace Assets.Entity.Player
             //инвентарь панельки управления и тд. проверять пассивность/активнотсь абилки ActivationHandler.IsPassive(type);
             return false;
         }
+
+        #region Bot redundant logic
+
+        public void SetMovementPoint(Transform target) { }
+
+        public void SetTargetPoint(Transform target) { }
+
+        #endregion
     }
 }

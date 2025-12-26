@@ -1,14 +1,18 @@
-﻿using UnityEngine;
+﻿using JetBrains.Annotations;
+using UnityEngine;
 
-namespace Assets.Scripts.Actions
+namespace Actions
 {
     public class ExplosionAction : ActionBase
     {
-        [SerializeField] private EffectAction _effectAction;
+        [SerializeField] [CanBeNull] private EffectAction effectAction;
+
+        [SerializeField] [CanBeNull] private DamageAction damageAction;
         public override void Execute(GameObject source, Vector3 targetPos)
         {
             Debug.Log("boom");
-            _effectAction.Execute(source, targetPos);
+            damageAction?.Execute(source, targetPos);
+            effectAction?.Execute(source, targetPos);
         }
     }
 }

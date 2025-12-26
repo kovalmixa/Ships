@@ -119,5 +119,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29e9d5b139f34004fb663ab9398c4c9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Particle: {fileID: 0}
-  AudioSources: []
+  defaultState: Default
+  particle: {fileID: 0}
+  audioSources: []
+  duration: 0
+  animator: {fileID: 7687289972075828513}

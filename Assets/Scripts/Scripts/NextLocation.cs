@@ -1,8 +1,8 @@
-using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
+using Entity.Controllers.GenericController;
 using UnityEngine;
 
-namespace Assets.Scripts.Scripts
+namespace Scripts
 {
     public class NextLocationArea : ScriptBase
     {
@@ -15,7 +15,7 @@ namespace Assets.Scripts.Scripts
         }
         public override bool Execute(EntityController entityController)
         {
-            if (entityController.IsPlayer)
+            if (entityController.isPlayer)
             {
                 _sceneController.GetComponent<SceneController>().NextLocation(LocationName);
                 entityController.transform.position = Vector3.zero;

@@ -1,25 +1,28 @@
-﻿using Assets.Entity.Interfaces;
-using UnityEditor.Timeline.Actions;
+﻿using System.Linq;
+using Assets.Entity.Interfaces;
 using UnityEngine;
-using UnityEngine.Rendering;
 
-namespace Assets.Scripts.Actions
+namespace Actions
 {
     public class DamageAction : ActionBase
     {
-        public float Radius;
+        [SerializeField] public float radius;
 
-        public float Damage;
+        [SerializeField] public float damage;
 
+        [SerializeField] public LayerMask[] filterLayers;
         public override void Execute(GameObject source, Vector3 targetPos)
         {
+            
             if (!CanActivate(source, targetPos)) return;
-            Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, Radius);
+            int combinedMask = 0;
+            foreach (var mask in filterLayers) combinedMask |= mask.value;
+            Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, radius, combinedMask);
             foreach (var target in targets)
             {
                 if (target.TryGetComponent(out IDamageable damageable))
                 {
-                    damageable.TakeDamage(Damage);
+                    damageable.TakeDamage(damage);
                 }
             }
         }

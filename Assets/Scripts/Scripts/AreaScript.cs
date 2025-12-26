@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
+using Entity.Controllers.GenericController;
 using UnityEngine;
 
-namespace Assets.Scripts.Scripts
+namespace Scripts
 {
     public class AreaScript : ScriptBase
     {

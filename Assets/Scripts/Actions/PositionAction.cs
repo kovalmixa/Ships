@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace Assets.Scripts.Actions
+namespace Actions
 {
     public class PositionAction : ActionBase
     {

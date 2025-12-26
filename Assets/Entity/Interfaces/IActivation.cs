@@ -1,5 +1,5 @@
-﻿using Assets.DataContainers;
-using Assets.Scripts.Actions;
+﻿using Actions;
+using Assets.DataContainers;
 using UnityEngine;
 
 namespace Assets.Entity.Interfaces

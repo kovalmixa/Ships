@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using Assets.DataContainers;
-using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
-using Assets.Scripts.Scripts;
+using Entity.Controllers.GenericController;
+using Scripts;
 using UnityEngine;
 
-namespace Assets.Scripts.EntityMarkers.Spawner
+namespace EntityMarkers.Spawner
 {
     public class Spawner : MonoBehaviour
     {
@@ -25,7 +25,7 @@ namespace Assets.Scripts.EntityMarkers.Spawner
         {
             var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController == null) return;
-            if (!entityController.IsPlayer) return;
+            if (!entityController.isPlayer) return;
             //Debug.Log(_entityObj == null);
             if (_entityObj == null || !_entityObj.activeSelf) Spawn();
         }
@@ -56,10 +56,10 @@ namespace Assets.Scripts.EntityMarkers.Spawner
             entityController.transform.rotation = Quaternion.identity;
             entityController.transform.position = transform.position;
 
-            if (entityController.Hull != null)
+            if (entityController.hull != null)
             {
-                entityController.Hull.transform.rotation = Quaternion.identity;
-                entityController.Hull.transform.position = entityController.transform.position;
+                entityController.hull.transform.rotation = Quaternion.identity;
+                entityController.hull.transform.position = entityController.transform.position;
             }
         }
 

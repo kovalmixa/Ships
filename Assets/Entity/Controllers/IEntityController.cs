@@ -1,6 +1,7 @@
+using Entity.Controllers.GenericController;
 using UnityEngine;
 
-namespace Assets.Entity.Interfaces
+namespace Entity.Controllers
 {
     public interface IEntityController
     {

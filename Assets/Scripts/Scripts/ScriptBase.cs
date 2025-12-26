@@ -1,7 +1,7 @@
-﻿using Assets.Entity;
+﻿using Entity.Controllers.GenericController;
 using UnityEngine;
 
-namespace Assets.Scripts.Scripts
+namespace Scripts
 {
     public abstract class ScriptBase : MonoBehaviour, IScript
     {

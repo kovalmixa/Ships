@@ -1,7 +1,7 @@
-using Assets.Entity;
+using Entity.Controllers.GenericController;
 using UnityEngine;
 
-namespace Assets.Scripts.Scripts
+namespace Scripts
 {
     public class MoveToScript : ScriptBase
     {
@@ -9,7 +9,7 @@ namespace Assets.Scripts.Scripts
         private bool _isExecuted;
         public override bool Execute(EntityController entityController)
         {
-            if (entityController.IsPlayer) return false;
+            if (entityController.isPlayer) return false;
             if (Target == null) return false;
             entityController.SetPointToMove(Target);
             _isExecuted = true;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Assets.UI.MainMenu
+namespace UI.MainMenu
 {
     public class GameInitializer : MonoBehaviour
     {

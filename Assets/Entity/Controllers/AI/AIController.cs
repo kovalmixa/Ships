@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using Assets.Entity;
 using Assets.Entity.AI.Interfaces;
 using Assets.Entity.Hull;
-using Assets.Entity.Interfaces;
-using Assets.Scripts.Scripts;
+using Entity.Controllers.GenericController;
+using Scripts;
 using UnityEngine;
 
-namespace Assets.Entity.AI
+namespace Entity.Controllers.AI
 {
     public class AiController : MonoBehaviour, IEntityController, IAi
     {
@@ -40,7 +41,7 @@ namespace Assets.Entity.AI
 
         private void PointMovement(EntityController entityController)
         {
-            HullBase hullBase = entityController.Hull;
+            HullBase hullBase = entityController.hull;
             if (_movePoint == null)
             {
                 hullBase.SetTargetSpeed(Vector2.zero);

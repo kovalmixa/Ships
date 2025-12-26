@@ -1,42 +1,36 @@
 using System.Collections.Generic;
-using Assets.Entity.AI;
-using Assets.Entity.Player;
-using UnityEngine;
-using Assets.Entity.Interfaces;
-using Assets.Handlers;
 using System.Linq;
 using Assets.DataContainers;
 using Assets.Entity.Hull;
+using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
-using Assets.Scripts.Scripts;
+using Entity.Controllers.AI;
+using Scripts;
+using UnityEngine;
 
-namespace Assets.Entity
+namespace Entity.Controllers.GenericController
 {
     public class EntityController : MonoBehaviour
     {
-        public bool IsPlayer = false;
-        [SerializeField] private EntityHullSetup _entityHullSetup;
-        public EntityDataContainer Data = new();
+        public bool isPlayer;
+        [SerializeField] private EntityHullSetup entityHullSetup;
+        public EntityDataContainer data = new();
         private IEntityController _controller;
-        public HullBase Hull;
-
-        private void Awake()
-        {
-        }
+        public HullBase hull;
 
         private void Start()
         {
-            if (IsPlayer)
+            if (isPlayer)
             {
                 _controller = gameObject.AddComponent<PlayerController>();
             }
-            var camera_node = SceneNodesHandler.GetNode("CameraNodes").transform.Find("Virtual Camera");
+            var cameraNode = SceneNodesHandler.GetNode("CameraNodes").transform.Find("Virtual Camera");
         }
 
         public void Setup(EntityDataContainer data)
         {
             if (data == null) return;
-            Data.EquipmentIds = data.EquipmentIds;
+            this.data.EquipmentIds = data.EquipmentIds;
             SetHull(data.HullId);
             var dPosition = data.Position;
             if (dPosition != Vector2.zero) transform.position = dPosition;
@@ -45,21 +39,21 @@ namespace Assets.Entity
         public bool SetHull(string hullId)
         {
             if (hullId == null) return false;
-            HullBase newHullBase = _entityHullSetup.SetHull(hullId);
+            HullBase newHullBase = entityHullSetup.SetHull(hullId);
             newHullBase.Root = transform;
-            Hull = newHullBase;
-            Data.HullId = hullId;
-            for (int i = 0; i < Data.EquipmentIds.Count; i++)
-                if (!_entityHullSetup.SetEquipment(Data.EquipmentIds[i].Key, Data.EquipmentIds[i].Value))
-                    Data.EquipmentIds.RemoveAt(i);
+            hull = newHullBase;
+            data.HullId = hullId;
+            for (int i = 0; i < data.EquipmentIds.Count; i++)
+                if (!entityHullSetup.SetEquipment(data.EquipmentIds[i].Key, data.EquipmentIds[i].Value))
+                    data.EquipmentIds.RemoveAt(i);
 
             return true;
         }
 
         public bool SetEquipment(string equipmentId, int index)
         {
-            if (!_entityHullSetup.SetEquipment(equipmentId, index)) return false;
-            Data.EquipmentIds.Add(new KeyValuePair<string, int>(equipmentId, index));
+            if (!entityHullSetup.SetEquipment(equipmentId, index)) return false;
+            data.EquipmentIds.Add(new KeyValuePair<string, int>(equipmentId, index));
             return true;
         }
 
@@ -76,7 +70,7 @@ namespace Assets.Entity
             if (activationCommand == "") return;
             if (TypeListHandler.IsWeaponEquipment(activationCommand)) if (IsAttackActionForbidden(position)) return;
             var activationTypes = TypeListHandler.TryGetSubType(activationCommand);
-            foreach (var equipment in Hull.Equipments)
+            foreach (var equipment in hull.Equipments)
             {
                 if (equipment.EquipmentContainer == null) continue;
                 var type = equipment.EquipmentContainer.General.Class;
@@ -93,7 +87,7 @@ namespace Assets.Entity
         {
             Collider2D col = GetComponent<Collider2D>();
             if (col != null && col.OverlapPoint(position)) return true;
-            foreach (var equipment in Hull.Equipments)
+            foreach (var equipment in hull.Equipments)
             {
                 col = equipment.GetComponent<Collider2D>();
                 if (col != null && col.OverlapPoint(position)) return true;
@@ -107,7 +101,7 @@ namespace Assets.Entity
 
         private void Update()
         {
-            if (Hull == null) return;
+            if (hull == null) return;
             _controller?.UpdateControl(this);
         }
     }

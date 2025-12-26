@@ -1,9 +1,9 @@
 using System.Linq;
-using Assets.Entity.AI;
 using Assets.Entity.Hull;
+using Entity.Controllers.AI;
 using UnityEngine;
 
-namespace Assets.Entity
+namespace Entity.Controllers.GenericController
 {
     public class EntityHullSetup : MonoBehaviour
     {
@@ -17,11 +17,11 @@ namespace Assets.Entity
         public HullBase SetHull(string hullId)
         {
             Transform bodyTrans;
-            if (_entityController.Hull) bodyTrans = _entityController.Hull.transform;
+            if (_entityController.hull) bodyTrans = _entityController.hull.transform;
             else bodyTrans = _entityController.transform;
             GameObject newHull = PrefabLoader.Instance.InstantiatePrefab(hullId, bodyTrans.position, Quaternion.identity, bodyTrans);
             if (newHull == null) return null;
-            var hull = _entityController.Hull;
+            var hull = _entityController.hull;
             if (hull != null) Destroy(hull.gameObject);
             SetupNodes(newHull);
             return newHull.GetComponent<HullBase>();
@@ -29,7 +29,7 @@ namespace Assets.Entity
 
         private void SetupNodes(GameObject hull)
         {
-            if (_entityController.IsPlayer)
+            if (_entityController.isPlayer)
             {
                 CameraController.Instance.Follow(hull.transform);
             }
@@ -45,14 +45,14 @@ namespace Assets.Entity
             if (equipmentId == "") return false;
             var obj = PrefabLoader.Instance.InstantiatePrefab(equipmentId, Vector3.zero, Quaternion.identity);
             if (obj == null) return false;
-            var equipment = obj.GetComponentInChildren<Equipment.Equipment>();
+            var equipment = obj.GetComponentInChildren<Assets.Entity.Equipment.Equipment>();
             if (equipment == null) return false;
             equipment.EntityController = _entityController;
-            foreach (var equipmentAnchor in _entityController.Hull.EquipmentAnchors.Where(go => go.transform.childCount == 0))
+            foreach (var equipmentAnchor in _entityController.hull.EquipmentAnchors.Where(go => go.transform.childCount == 0))
             {
                 if (!equipmentAnchor.CanBePlaced(equipment, index)) continue;
                 equipmentAnchor.SetTransform(equipment);
-                _entityController.Hull.Equipments.Add(equipment);
+                _entityController.hull.Equipments.Add(equipment);
                 return true;
             }
             return false;

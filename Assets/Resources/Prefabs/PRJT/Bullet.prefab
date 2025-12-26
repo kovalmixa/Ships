@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6358870541530698483}
   - component: {fileID: 2015599784894819059}
   - component: {fileID: 4663088168565978590}
+  - component: {fileID: 7238007375919873033}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -133,7 +134,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Delay: 0
-  _effectAction: {fileID: 4663088168565978590}
+  effectAction: {fileID: 4663088168565978590}
+  damageAction: {fileID: 7238007375919873033}
 --- !u!114 &4663088168565978590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,4 +149,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Delay: 0
-  _id: EFCT/BulletExplosion
+  _ids:
+  - EFCT/BulletExplosion
+--- !u!114 &7238007375919873033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759412284934268011}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f416e4a84a2bbf45a5f765e4d0d499d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Delay: 0
+  radius: 0
+  damage: 0
+  filterLayers: []

@@ -2,7 +2,7 @@ using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
-namespace Assets.Scripts.Actions
+namespace Actions
 {
     public class FireProjectileAction : ActionBase
     {

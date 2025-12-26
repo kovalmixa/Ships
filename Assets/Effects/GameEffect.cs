@@ -1,44 +1,64 @@
 using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace Assets.Effects
+namespace Effects
 {
     public class GameEffect : MonoBehaviour
     {
-        [SerializeField] protected ParticleSystem Particle;
-        [SerializeField] protected AudioSource[] AudioSources;
-        protected Animator Animator;
+        [SerializeField] private string defaultState = "Default";
+        [SerializeField] private ParticleSystem particle;
+        [SerializeField] private AudioSource[] audioSources; 
+        [SerializeField] private float duration = 0; // Duration in seconds, 0 means play once
+        [SerializeField] private Animator animator;
         private ObjectPoolHandler _objectPool;
 
         private void Start()
         {
             _objectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
+            Play();
         }
-        public void SetupByPrefab(GameEffect prefab)
-        {
-            Particle = prefab.Particle;
-            AudioSources = prefab.AudioSources;
-            Animator = prefab.Animator;
-        }
-
+        
         public void Play()
         {
-            Debug.Log("just effect");
-            var randomClipName = PlayRandomAnimation();
-            var audioSource = FunctionHandler.GetRandomElementArray(AudioSources);
-            if (Particle != null)
-                Particle.Play();
+            Debug.Log($"Effect: {name}");
+            Collider2D hitCollider = Physics2D.OverlapPoint(transform.position);
+            int layer = 0;
+            if (hitCollider != null)
+            {
+                GameObject hitObject = hitCollider.gameObject;
+                layer = hitObject.layer;
+            }
+            string stateName = GetStateByLayer(layer);
+            Debug.Log($"playing with state: {stateName}");
+
+            animator?.Play(stateName);
+
+            var audioSource = FunctionHandler.GetRandomElementArray(audioSources);
+
+            if (particle != null)
+                particle.Play();
 
             if (audioSource != null)
                 audioSource.Play();
 
-            StartCoroutine(DestroyAfterEffect(Animator, randomClipName, audioSource));
+            StartCoroutine(DestroyAfterEffect(animator, stateName, audioSource));
         }
 
-        private System.Collections.IEnumerator DestroyAfterEffect(Animator animator, string clip_name, AudioSource audioSource)
+        private string GetStateByLayer(int layer)
         {
-            float animDuration = GetAnimationLength(animator, clip_name);
+            string layerName = LayerMask.LayerToName(layer);
+
+            if (animator.HasState(0, Animator.StringToHash(layerName)))
+                return layerName;
+
+            return defaultState;
+        }
+
+        private System.Collections.IEnumerator DestroyAfterEffect(Animator animator, string stateName, AudioSource audioSource)
+        {
+            float animDuration = GetAnimationLength(animator, stateName);
             float soundDuration = audioSource != null ? audioSource.clip.length : 0f;
 
             float delay = Mathf.Max(animDuration, soundDuration);
@@ -57,27 +77,6 @@ namespace Assets.Effects
                     return clip.length;
             }
             return 0f;
-        }
-
-        protected string PlayRandomAnimation()
-        {
-            string randomClipName = null;
-            if (Animator != null && Animator.runtimeAnimatorController != null)
-            {
-                var clips = Animator.runtimeAnimatorController.animationClips;
-                if (clips.Length > 0)
-                {
-                    var randomClip = FunctionHandler.GetRandomElementArray(clips);
-                    randomClipName = randomClip.name;
-                    Animator.Play(randomClipName);
-                }
-            }
-            return randomClipName;
-        }
-
-        private void Update()
-        {
-            Play();
         }
     }
 }
