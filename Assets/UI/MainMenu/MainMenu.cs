@@ -1,9 +1,7 @@
-using System.IO;
-using Assets.Handlers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Assets.UI.MainMenu
+namespace UI.MainMenu
 {
     public class MainMenu : MonoBehaviour
     {

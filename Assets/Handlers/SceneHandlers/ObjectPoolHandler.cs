@@ -10,7 +10,7 @@ namespace Assets.Handlers.SceneHandlers
         public int initialSize = 100;
         private Queue<GameObject> pool = new();
 
-        void Start()
+        void Awake()
         {
             for (int i = 0; i < initialSize; i++)
             {

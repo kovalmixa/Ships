@@ -28,7 +28,8 @@ namespace Assets.Handlers.SceneHandlers
             if (Application.CanStreamedLevelBeLoaded(locationName))
             {
                 ClearPools();
-                SceneManager.LoadSceneAsync(locationName);
+                SceneManager.LoadScene(locationName, LoadSceneMode.Single);
+                //Добавить загрузочный экран
             }
             else Debug.LogWarning($"Scene not found by name {locationName}");
         }

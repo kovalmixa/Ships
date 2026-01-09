@@ -1,139 +1,112 @@
-﻿using System;
-using Assets.Entity.DataContainers;
+﻿using System.Collections;
+using Actions;
+using Assets.DataContainers;
 using Assets.Entity.Interfaces;
-using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
-using Assets.InGameMarkers.Actions;
-using Cinemachine;
-using TMPro;
-using Unity.VisualScripting;
+using Handlers.Console;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-namespace Assets.Entity.Projectile
+namespace Entity.Projectile
 {
-    public class Projectile : InGameObject, IActivation
+    public class Projectile : MonoBehaviour, IActivation
     {
-        private Activator _activator;
+        public ProjectileContainer ProjectileContainer;
+        public ActionBase[] OnExplosionActions;
+        public ActionBase[] UpdateActions;
 
-        private ProjectileContainer _projectileContainer;
-        public ProjectileContainer ProjectileContainer
-        {
-            get => _projectileContainer;
-            set
-            {
-                _projectileContainer = value;
-                string[] texturePaths = _projectileContainer.Graphics.Textures;
-                IsTrigger = true;
-                StartCoroutine(SetupLayersCoroutine(texturePaths, true));
-            }
-        }
-        public ActivationContainer[] Activations
-        {
-            get => ProjectileContainer.OnActivate;
-            set => ProjectileContainer.OnActivate = value;
-        }
-
-        private Transform target;
-        private GameObject shooter;
-        private Vector2 direction;
-        public Vector3? targetPosition;
-        private float timer;
+        private Transform _target;
+        private GameObject _source;
+        private Vector2 _direction;
+        public Vector3? TargetPosition;
+        private float _timer;
+        //private float _distanceToTarget = 
 
         private ObjectPoolHandler _objectPool;
 
-        private void Awake()
+        #region Start/Setup
+
+        private void Start()
         {
-            GetProjectilePool();
-            _activator = gameObject.AddComponent<Activator>();
+            _objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
-        private void GetProjectilePool()
+        public void SetupByPrefab(Projectile prefab)
         {
-            GameObject objectPool = GameObject.Find("ObjectPools");
-            if (objectPool != null)
-            {
-                GameObject projectileObj = objectPool.transform.Find("ProjectilesPool")?.gameObject;
-                if (projectileObj != null)
-                    _objectPool = projectileObj.GetComponent<ObjectPoolHandler>();
-            }
+            ProjectileContainer = prefab.ProjectileContainer;
+            OnExplosionActions = prefab.OnExplosionActions;
+            UpdateActions = prefab.UpdateActions;
+            GetComponent<SpriteRenderer>().sprite = prefab.GetComponent<SpriteRenderer>().sprite;
         }
 
-        public void Launch(Vector2 dir, Transform homingTarget = null, Vector3? targetPos = null, GameObject shooter = null)
+        public void Launch(Vector2 dir, Vector3? targetPos = null, GameObject source = null)
         {
-            this.shooter = shooter;
-            direction = dir.normalized;
-            target = homingTarget;
-            targetPosition = targetPos;
-            timer = 0f;
+            _source = source;
+            TargetPosition = targetPos;
+            _direction = dir;
+            _timer = 0f;
 
-            if (this.shooter != null)
+            if (_source != null)
             {
                 var projectileCollider = GetComponent<Collider2D>();
-                var shooterCollider = this.shooter.GetComponent<Collider2D>();
+                var shooterCollider = _source.GetComponent<Collider2D>();
                 if (projectileCollider != null && shooterCollider != null)
                     Physics2D.IgnoreCollision(projectileCollider, shooterCollider, true);
             }
-            _activator.SetActivations(Activations);
             gameObject.SetActive(true);
         }
 
+        #endregion
+
+        #region Update/Activations
+
         private void Update()
         {
-            if (ProjectileContainer.IsHoming && target != null)
+            if (ProjectileContainer.IsHoming && _target != null)
             {
-                Vector2 toTarget = (target.position - transform.position).normalized;
-                direction = Vector2.Lerp(direction, toTarget, Time.deltaTime * 5f);
+                Vector2 toTarget = (_target.position - transform.position).normalized;
+                _direction = Vector2.Lerp(_direction, toTarget, Time.deltaTime * 5f);
             }
-
-            transform.position += (Vector3)(direction * ProjectileContainer.Speed * Time.deltaTime);
-            timer += Time.deltaTime;
-
-            if (targetPosition.HasValue)
+            transform.position += (Vector3)(_direction * (ProjectileContainer.Speed * Time.deltaTime));
+            _timer += Time.deltaTime;
+            if (TargetPosition.HasValue)
             {
-                float distToTarget = Vector3.Distance(transform.position, targetPosition.Value);
-                if (distToTarget <= 0.5f) // порог можно подкорректировать
+                float distToTarget = Vector2.Distance(transform.position, TargetPosition.Value);
+                //DebugHandler.Instance.Log("DistanceLog", $"Distance = {distToTarget}", 0.1f);
+                if (distToTarget <= 0.2f)
                 {
                     Explode();
                     return;
                 }
             }
-
-            if (timer > ProjectileContainer.LifeTime)
-                Deactivate();
+            if (_timer > ProjectileContainer.LifeTime) Explode();
         }
 
         private void Explode()
         {
-            Activate(transform.position);
+            Activate(transform.position, OnExplosionActions);
             Deactivate();
         }
 
         private void Deactivate()
         {
-            if (_objectPool != null)
-            {
-                _objectPool.Return(gameObject);
-            }
-            else
-            {
-                gameObject.SetActive(false);
-            }
-            if (shooter != null)
-            {
-                var projectileCollider = GetComponent<Collider2D>();
-                var shooterCollider = shooter.GetComponent<Collider2D>();
-                if (projectileCollider != null && shooterCollider != null)
-                    Physics2D.IgnoreCollision(projectileCollider, shooterCollider, false);
-            }
+            if (_objectPool != null) _objectPool.Return(gameObject);
+            else gameObject.SetActive(false);
+            if (_source == null) return;
+            var projectileCollider = GetComponent<Collider2D>();
+            var shooterCollider = _source.GetComponent<Collider2D>();
+            if (projectileCollider != null && shooterCollider != null)
+                Physics2D.IgnoreCollision(projectileCollider, shooterCollider, false);
         }
 
-        public void Activate(Vector3 targetPosition, string type = null) => _activator.TryActivate(targetPosition, type);
+        public void Activate(Vector3 targetPos, ActionBase[] actions)
+        {
+            foreach (var activation in actions) activation.Execute(gameObject, targetPos);
+        }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             //если торпеда или абилки с жирными снарядами
-            //if (other.gameObject == shooter)
+            //if (other.gameObject == _source)
             //{
             //    return;
             //}
@@ -147,5 +120,7 @@ namespace Assets.Entity.Projectile
             //    Explode();
             //}
         }
+
+        #endregion
     }
 }

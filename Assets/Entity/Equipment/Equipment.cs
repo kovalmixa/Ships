@@ -1,97 +1,93 @@
-using System;
-using System.Collections;
-using Assets.Entity.DataContainers;
+using System.Linq;
+using Actions;
+using Assets.DataContainers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
-using Assets.InGameMarkers.Actions;
-using Unity.Mathematics;
+using Entity.Controllers.GenericController;
+using Modifiers;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Equipment
 {
-    public class Equipment : InGameObject, IActivation
+    public class Equipment : MonoBehaviour, IActivation, IDamageable
     {
-        private Activator _activator;
-        public EntityBody EntityBody { get; set; }
-        public HullEquipmentProperties HullEquipmentProperties { set; get; }
-        private EquipmentContainer _equipmentContainer;
-        public EquipmentContainer EquipmentContainer
-        {
-            get => _equipmentContainer;
-            set
-            {
-                _equipmentContainer = value;
-                _activator.SetActivations(_equipmentContainer.OnActivate);
-                _activator.HostFireSectors = HullEquipmentProperties.FireSectors;
-                string[] texturePaths = _equipmentContainer.Graphics.Textures;
-                StartCoroutine(SetupTextureLayersCoroutine(texturePaths));
-            }
-        }
-        public ActivationContainer[] Activations 
-        { 
-            get => EquipmentContainer.OnActivate;
-            set => EquipmentContainer.OnActivate = value;
-        }
+        public EntityController EntityController;
+        public EquipmentContainer EquipmentContainer;
+        private const float BasicAngle = 90;
+        public EquipmentAnchor EquipmentAnchor { get; set; }
+
+        public ActionBase[] Activations;
+        public ActionBase[] UpdateActions;
+
+        public IModifier[] Modifiers;
 
         public Vector3 Position
         {
-            get => transform.position + EntityBody.transform.position;
+            get => transform.position + EntityController.transform.position;
             set{}
         }
 
-        public int LayerIndex;
-        private IEnumerator SetupTextureLayersCoroutine(string[] texturePaths)
+        public void Rotate(Vector3 targetPos)
         {
-            IsComplexCollision = true;
-            StartCoroutine(SetupLayersCoroutine(texturePaths, true));
-            foreach (Transform child in LayersAnchor.GetComponentsInChildren<Transform>())
-            {
-                SpriteRenderer renderer = child.GetComponent<SpriteRenderer>();
-                if (renderer != null)
-                    renderer.sortingOrder += LayerIndex + 1;
-            }
-            Quaternion rotation = transform.rotation;
-            rotation.z = HullEquipmentProperties.Rotation;
-            transform.rotation = rotation;
-            yield return null;
-        }
-        private void Awake()
-        {
-            IsComplexCollision = true;
-            _activator = gameObject.AddComponent<Activator>();
-        }
-        public void Rotate(Vector3 target)
-        {
-            if (EquipmentContainer == null) return;
-            if (!CanRotate()) return;
-            Vector2 direction = target - transform.position;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle - 90f);
-            Quaternion rotationStep = Quaternion.RotateTowards(
+            if (EquipmentContainer == null || !CanRotate()) return;
+            Vector3 localTarget = EquipmentAnchor.transform.InverseTransformPoint(targetPos);
+            float localAngle = Mathf.Atan2(localTarget.y, localTarget.x) * Mathf.Rad2Deg;
+            float min = EquipmentAnchor.RotationSector.x;
+            float max = EquipmentAnchor.RotationSector.y;
+            float clampedLocal = Mathf.Clamp(localAngle, min, max);
+            float finalWorldAngle = EquipmentAnchor.transform.eulerAngles.z + clampedLocal;
+            float rotationSpeed = EquipmentContainer.RotationSpeed * Time.deltaTime;
+            transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
-                targetRotation,
-                _equipmentContainer.Physics.RotationSpeed * Time.deltaTime
+                Quaternion.Euler(0f, 0f, finalWorldAngle - BasicAngle),
+                rotationSpeed
             );
-            float resultWorldAngle = FunctionHandler.NormalizeAngle(rotationStep.eulerAngles.z);
-            float hullRotation = FunctionHandler.NormalizeAngle(EntityBody.transform.eulerAngles.z);
-            float baseRotation = FunctionHandler.NormalizeAngle(HullEquipmentProperties.Rotation);
-            float resultLocalAngle = FunctionHandler.NormalizeAngle(resultWorldAngle - hullRotation - baseRotation);
-            Vector2 sector = HullEquipmentProperties.RotationSector;
-            if (IsAngleWithinSector(resultLocalAngle, sector.x, sector.y))
-            {
-                transform.rotation = rotationStep;
-            }
-
         }
-        private bool IsAngleWithinSector(float angle, float min, float max) => min <= angle && angle <= max;
+
         public bool CanRotate()
         {
-            if (HullEquipmentProperties == null) return false;
-            return HullEquipmentProperties.RotationSector != null;
+            if (EquipmentAnchor == null) return false;
+            return EquipmentAnchor.RotationSector != Vector2.zero;
         }
-        public void Activate(Vector3 targetPosition, string type = null) =>_activator.TryActivate(targetPosition, type);
+
+        public void Activate(Vector3 targetPos, ActionBase[] actions = null)
+        {
+            if (actions == UpdateActions)
+            {
+                foreach (var activation in actions) activation.Execute(gameObject, targetPos);
+                return;
+            }
+            var distance = Vector2.Distance(transform.position, targetPos);
+            var targetPosEq =
+                FunctionHandler.GetAngleDistancePoint(transform.position, transform.eulerAngles.z + BasicAngle, distance);
+            foreach (var activation in Activations)
+            {
+                if (activation.IsPassive || activation.Delay <= 0) activation.Execute(gameObject, targetPos);
+                float targetWorldAngle = Mathf.Atan2(targetPos.y - transform.position.y, targetPos.x - transform.position.x) * Mathf.Rad2Deg;
+                float currentAngle = Mathf.Repeat(transform.eulerAngles.z + BasicAngle, 360f);
+                float angleDiff = Mathf.DeltaAngle(currentAngle, targetWorldAngle);
+                if (!(Mathf.Abs(angleDiff) < 12.5f / activation.Delay)) continue;
+                if (EquipmentAnchor.ActivationSectors.Length == 0) activation.Execute(gameObject, targetPosEq);
+                else
+                {
+                    currentAngle = Mathf.Abs(Mathf.DeltaAngle(currentAngle, EquipmentAnchor.transform.eulerAngles.z));
+                    if (EquipmentAnchor.ActivationSectors.Any(sector => currentAngle >= sector.x && currentAngle <= sector.y))
+                    {
+                        activation.Execute(gameObject, targetPosEq);
+                    }
+                }
+            }
+        }
+
         private void OnCollisionEnter2D(Collision2D collision)
         {
+        }
+
+        public void TakeDamage(float damage)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
