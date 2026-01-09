@@ -1,10 +1,12 @@
-﻿using Actions;
+﻿using System.Collections;
+using Actions;
 using Assets.DataContainers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers.SceneHandlers;
+using Handlers.Console;
 using UnityEngine;
 
-namespace Assets.Entity.Projectile
+namespace Entity.Projectile
 {
     public class Projectile : MonoBehaviour, IActivation
     {
@@ -20,6 +22,8 @@ namespace Assets.Entity.Projectile
         //private float _distanceToTarget = 
 
         private ObjectPoolHandler _objectPool;
+
+        #region Start/Setup
 
         private void Start()
         {
@@ -51,6 +55,10 @@ namespace Assets.Entity.Projectile
             gameObject.SetActive(true);
         }
 
+        #endregion
+
+        #region Update/Activations
+
         private void Update()
         {
             if (ProjectileContainer.IsHoming && _target != null)
@@ -58,19 +66,19 @@ namespace Assets.Entity.Projectile
                 Vector2 toTarget = (_target.position - transform.position).normalized;
                 _direction = Vector2.Lerp(_direction, toTarget, Time.deltaTime * 5f);
             }
-            transform.position += (Vector3)(_direction * ProjectileContainer.Speed * Time.deltaTime);
+            transform.position += (Vector3)(_direction * (ProjectileContainer.Speed * Time.deltaTime));
             _timer += Time.deltaTime;
             if (TargetPosition.HasValue)
             {
                 float distToTarget = Vector2.Distance(transform.position, TargetPosition.Value);
+                //DebugHandler.Instance.Log("DistanceLog", $"Distance = {distToTarget}", 0.1f);
                 if (distToTarget <= 0.2f)
                 {
                     Explode();
                     return;
                 }
             }
-            if (_timer > ProjectileContainer.LifeTime)
-                Explode();
+            if (_timer > ProjectileContainer.LifeTime) Explode();
         }
 
         private void Explode()
@@ -112,5 +120,7 @@ namespace Assets.Entity.Projectile
             //    Explode();
             //}
         }
+
+        #endregion
     }
 }

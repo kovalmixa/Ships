@@ -10,7 +10,6 @@ namespace Actions
         [SerializeField] [CanBeNull] private DamageAction damageAction;
         public override void Execute(GameObject source, Vector3 targetPos)
         {
-            Debug.Log("boom");
             damageAction?.Execute(source, targetPos);
             effectAction?.Execute(source, targetPos);
         }

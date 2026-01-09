@@ -1,5 +1,5 @@
-using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
+using Entity.Projectile;
 using UnityEngine;
 
 namespace Actions
