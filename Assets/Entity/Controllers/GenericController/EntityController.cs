@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.DataContainers;
+using Assets.Entity;
 using Assets.Entity.Hull;
 using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;

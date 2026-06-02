@@ -2,6 +2,7 @@
 using Actions;
 using Assets.DataContainers;
 using Assets.Entity.Interfaces;
+using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
 using Handlers.Console;
 using UnityEngine;

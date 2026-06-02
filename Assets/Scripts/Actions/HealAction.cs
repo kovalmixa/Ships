@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+﻿using Assets.Common;
+using UnityEngine;
 
 namespace Actions
 {
-    public class HealAction : ActionBase
+    public class HealAction : ActionBase, IScalableAction
     {
-
-        public int HealValue;
+        [SerializeField] public int HealValue;
 
         public override void Execute(GameObject source, Vector3 targetPos)
         {
@@ -17,6 +17,22 @@ namespace Actions
             //    stats.Heal(context.HealAmount.Value);
             //}
         }
+        public override void Execute(GameObject source, IInteractive target)
+        {
+            
+            target.TakeHeal(HealValue);
+        }
 
+        #region IScalableAction
+        public void ScaleExecute(GameObject source, Vector3 targetPos, float scale)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ScaleExecute(GameObject source, IInteractive target, float scale)
+        {
+            throw new System.NotImplementedException();
+        }
+        #endregion
     }
 }

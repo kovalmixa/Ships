@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using Assets.Common;
 using Assets.DataContainers;
 using Assets.Entity.Equipment;
-using Assets.Entity.Interfaces;
 using Assets.Handlers;
 using Entity.Controllers.GenericController;
 using Scripts;
@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
-    public abstract class HullBase : MonoBehaviour, IDamageable, IHull
+    public abstract class HullBase : MonoBehaviour, IInteractive, IHull
     {
         public HullContainer Data;
 
@@ -89,9 +89,16 @@ namespace Assets.Entity.Hull
             CurrentSpeed *= otherRb.mass / totalMass;
         }
 
+        #region
         public void TakeDamage(float damage)
         {
             throw new System.NotImplementedException();
         }
+
+        public void TakeHeal(float value)
+        {
+            throw new System.NotImplementedException();
+        }
+        #endregion
     }
 }

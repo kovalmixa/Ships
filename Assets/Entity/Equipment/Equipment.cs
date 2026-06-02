@@ -1,5 +1,6 @@
 using System.Linq;
 using Actions;
+using Assets.Common;
 using Assets.DataContainers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
@@ -11,7 +12,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Equipment
 {
-    public class Equipment : MonoBehaviour, IActivation, IDamageable
+    public class Equipment : MonoBehaviour, IActivation, IInteractive
     {
         public EntityController EntityController;
         public EquipmentContainer EquipmentContainer;
@@ -61,7 +62,7 @@ namespace Assets.Entity.Equipment
             }
             var distance = Vector2.Distance(transform.position, targetPos);
             var targetPosEq =
-                FunctionHandler.GetAngleDistancePoint(transform.position, transform.eulerAngles.z + BasicAngle, distance);
+                MathFuncHandler.GetAngleDistancePoint(transform.position, transform.eulerAngles.z + BasicAngle, distance);
             foreach (var activation in Activations)
             {
                 if (activation.IsPassive || activation.Delay <= 0) activation.Execute(gameObject, targetPos);
@@ -85,9 +86,17 @@ namespace Assets.Entity.Equipment
         {
         }
 
+        #region IInteractive
+
         public void TakeDamage(float damage)
         {
             throw new System.NotImplementedException();
         }
+
+        public void TakeHeal(float value)
+        {
+            throw new System.NotImplementedException();
+        }
+        #endregion
     }
 }

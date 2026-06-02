@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Common;
+using UnityEngine;
 
 namespace Actions
 {
@@ -10,6 +11,8 @@ namespace Actions
         public bool IsPassive { get; set; } = true;
 
         public abstract void Execute(GameObject source, Vector3 targetPos);
+
+        public virtual void Execute(GameObject source, IInteractive target) { }
 
         protected bool CanActivate(GameObject source, Vector3 targetPos)
         {
