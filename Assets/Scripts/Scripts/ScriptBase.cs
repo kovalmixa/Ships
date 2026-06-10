@@ -5,10 +5,12 @@ namespace Scripts
 {
     public abstract class ScriptBase : MonoBehaviour, IScript
     {
-    public abstract bool Execute(EntityController entityController);
+        protected bool _isExecuted;
 
-    public abstract bool IsExecuted(EntityController entityController);
+        public abstract bool Execute(EntityController entityController);
 
-    public abstract bool IsFinished(EntityController entityController);
+        public bool IsExecuted(EntityController entityController) => _isExecuted;
+
+        public abstract bool IsFinished(EntityController entityController);
     }
 }

@@ -6,7 +6,6 @@ namespace Scripts
     public class MoveToScript : ScriptBase
     {
         [SerializeField] public Transform Target;
-        private bool _isExecuted;
         public override bool Execute(EntityController entityController)
         {
             if (entityController.isPlayer) return false;
@@ -15,8 +14,6 @@ namespace Scripts
             _isExecuted = true;
             return true;
         }
-
-        public override bool IsExecuted(EntityController entityController) => _isExecuted;
 
         public override bool IsFinished(EntityController entityController)
         {

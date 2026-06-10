@@ -5,7 +5,6 @@ namespace Scripts
 {
     public class WaitScript : ScriptBase
     {
-        private bool _isExecuted;
         private float _waitTime;
         private float _timer;
 
@@ -20,8 +19,6 @@ namespace Scripts
             _isExecuted = true;
             return true;
         }
-
-        public override bool IsExecuted(EntityController entityController) => _isExecuted;
 
         public override bool IsFinished(EntityController entityController) => _timer >= _waitTime;
     }

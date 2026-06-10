@@ -25,7 +25,5 @@ namespace Scripts
         }
 
         public override bool IsFinished(EntityController entityController) => false;
-
-        public override bool IsExecuted(EntityController entityController) => false;
     }
 }
