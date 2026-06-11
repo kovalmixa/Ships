@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Assets.DataContainers;
 using Assets.Entity;
 using Assets.Entity.Hull;
 using Assets.Handlers;
@@ -15,7 +14,7 @@ namespace Entity.Controllers.GenericController
     {
         public bool isPlayer;
         [SerializeField] private EntityHullSetup entityHullSetup;
-        public EntityDataContainer data = new();
+        public EntityDataContainer data;
         private IEntityController controller;
         public HullBase hull;
 
@@ -40,12 +39,12 @@ namespace Entity.Controllers.GenericController
         public bool SetHull(string hullId)
         {
             if (hullId == null) return false;
-            HullBase newHullBase = entityHullSetup.SetHull(hullId);
+            HullBase newHullBase = entityHullSetup.SetHullNodeLogic(hullId);
             newHullBase.Root = transform;
             hull = newHullBase;
             data.HullId = hullId;
             for (int i = 0; i < data.EquipmentIds.Count; i++)
-                if (!entityHullSetup.SetEquipment(data.EquipmentIds[i].Key, data.EquipmentIds[i].Value))
+                if (!entityHullSetup.SetEquipmentNodeLogic(data.EquipmentIds[i].Key, data.EquipmentIds[i].Value))
                     data.EquipmentIds.RemoveAt(i);
 
             return true;
@@ -53,7 +52,7 @@ namespace Entity.Controllers.GenericController
 
         public bool SetEquipment(string equipmentId, int index)
         {
-            if (!entityHullSetup.SetEquipment(equipmentId, index)) return false;
+            if (!entityHullSetup.SetEquipmentNodeLogic(equipmentId, index)) return false;
             data.EquipmentIds.Add(new KeyValuePair<string, int>(equipmentId, index));
             return true;
         }

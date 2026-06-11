@@ -35,6 +35,7 @@ namespace Assets.Entity.Hull
 
         public override void Movement(float rotationDirection)
         {
+            if (Data == null) return;
             targetSpeed = speedLevel * (Data.MaxSpeed / maxSpeedLevel);
             CurrentSpeed = MathF.Min(
                 Mathf.MoveTowards(CurrentSpeed, targetSpeed, Data.Acceleration * Time.fixedDeltaTime),

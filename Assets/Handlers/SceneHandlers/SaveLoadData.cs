@@ -1,6 +1,5 @@
 ﻿using System;
 using Assets.DataContainers;
-using Assets.Entity;
 using Assets.Handlers.FileHandlers;
 using Entity.Controllers.GenericController;
 using UnityEngine;

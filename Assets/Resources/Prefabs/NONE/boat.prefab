@@ -130,8 +130,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 124669368259897105}
+  - component: {fileID: 8767162370263654451}
   - component: {fileID: 5888668427879922858}
-  - component: {fileID: 508184833516364186}
   - component: {fileID: 6679228126235773454}
   - component: {fileID: 6141477231020090577}
   m_Layer: 4
@@ -157,6 +157,31 @@ Transform:
   - {fileID: 1328403097879313759}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8767162370263654451
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c85f499fd81c96348945713bbcac28a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  General:
+    Name: Boat
+    SizeType: 0
+    Layer: 0
+    Class: 
+    SlotHeight: 1
+    SlotWidth: 1
+    Icon: {fileID: 0}
+  MaxSpeed: 5
+  Acceleration: 3
+  RotationSpeed: 60
+  MaxHealth: 10
+  MaxEnergy: 8
 --- !u!114 &5888668427879922858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,35 +194,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ac7d6a8204a7848ae3debee20e939b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Data: {fileID: 0}
+  Data: {fileID: 8767162370263654451}
   EquipmentAnchors:
   - {fileID: 8690893263783899800}
   Equipments: []
   Root: {fileID: 0}
   CurrentSpeed: 0
---- !u!114 &508184833516364186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c63eb5b245dd93f4caf4478d85f1fb32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  General:
-    Name: boat
-    SizeType: 0
-    Layer: 0
-    Class: boat
-    SlotHeight: 1
-    SlotWidth: 1
-    Icon: {fileID: 0}
-  MaxSpeed: 5
-  Acceleration: 3
-  RotationSpeed: 60
 --- !u!50 &6679228126235773454
 Rigidbody2D:
   serializedVersion: 4

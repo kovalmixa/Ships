@@ -147,20 +147,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 8122809092557298440}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c63eb5b245dd93f4caf4478d85f1fb32, type: 3}
+  m_Script: {fileID: 11500000, guid: c85f499fd81c96348945713bbcac28a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   General:
-    Name: boat
+    Name: 
     SizeType: 0
     Layer: 0
-    Class: boat
-    SlotHeight: 0
-    SlotWidth: 0
+    Class: 
+    SlotHeight: 1
+    SlotWidth: 1
     Icon: {fileID: 0}
-  MaxSpeed: 3
-  Acceleration: 0.5
-  RotationSpeed: 20
+  MaxSpeed: 0
+  Acceleration: 0
+  RotationSpeed: 0
+  MaxHealth: 0
+  MaxEnergy: 0
 --- !u!50 &930236656171629701
 Rigidbody2D:
   serializedVersion: 4

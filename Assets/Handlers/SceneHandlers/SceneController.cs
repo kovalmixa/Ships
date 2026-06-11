@@ -9,6 +9,12 @@ namespace Assets.Handlers.SceneHandlers
         private List<Transform> Pools = new();
         public GameObject[] DontDestroyOnLoadObj;
 
+        private void Awake()
+        {
+            base.Awake();
+            Setup();
+        }
+
         private void Setup()
         {
             DontDestroyOnLoad(gameObject);

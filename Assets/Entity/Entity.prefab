@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8954999742390597031}
   - component: {fileID: 2939312566082401126}
-  - component: {fileID: 7187477303106271539}
+  - component: {fileID: 5009713382902950778}
   m_Layer: 0
   m_Name: Entity
   m_TagString: Untagged
@@ -45,14 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c16d133dfdd92274798d883044fb39be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsPlayer: 0
-  _entityHullSetup: {fileID: 7187477303106271539}
-  Data:
+  isPlayer: 0
+  entityHullSetup: {fileID: 5009713382902950778}
+  data:
     HullLayer: 0
     HullId: 
     Position: {x: 0, y: 0}
-  Hull: {fileID: 0}
---- !u!114 &7187477303106271539
+  hull: {fileID: 0}
+--- !u!114 &5009713382902950778
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -64,4 +64,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ade6e1050c71bf449bb6fa798f49115f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _despawnPrefab: {fileID: 2775496303360775713, guid: 3c248bb4160b2744c853112bf7e31b04, type: 3}
+  entityController: {fileID: 2939312566082401126}
+  despawnPrefab: {fileID: 2775496303360775713, guid: 3c248bb4160b2744c853112bf7e31b04, type: 3}

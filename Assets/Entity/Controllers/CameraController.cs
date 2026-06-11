@@ -3,9 +3,8 @@ using UnityEngine;
 
 namespace Entity.Controllers
 {
-    public class CameraController : MonoBehaviour
+    public class CameraController : SingletonMonoBehaviour<CameraController>
     {
-        public static CameraController Instance { get; private set; }
         [SerializeField] CinemachineVirtualCamera virtualCamera;
         
         float cameraDistance;
@@ -18,20 +17,20 @@ namespace Entity.Controllers
 
         private void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
+            base.Awake();
             currentZoom = virtualCamera.m_Lens.OrthographicSize;
             targetZoom = currentZoom;
         }
 
-        public void Follow(Transform transform)
+        public void Follow(Transform targetTransform)
         {
-            virtualCamera.LookAt = transform;
-            virtualCamera.Follow = transform;
+            if (targetTransform == null)
+            {
+                Debug.LogError("CameraController: Попытка следовать за null трансформом!");
+                return;
+            }
+            virtualCamera.LookAt = targetTransform;
+            virtualCamera.Follow = targetTransform;
         }
 
         void Zoom()

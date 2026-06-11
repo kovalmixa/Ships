@@ -13,7 +13,7 @@ namespace Assets.Handlers.SceneHandlers
         {
             for (int i = 0; i < initialSize; i++)
             {
-                GameObject obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, this.transform);
+                GameObject obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
                 obj.SetActive(false);
                 pool.Enqueue(obj);
             }
