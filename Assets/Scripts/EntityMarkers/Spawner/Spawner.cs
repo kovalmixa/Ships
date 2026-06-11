@@ -13,13 +13,13 @@ namespace EntityMarkers.Spawner
         public string Nation;
         public uint Level;
         public uint Quantity = 1;
-        private ObjectPoolHandler _entityPool;
-        private GameObject _entityObj;
+        private ObjectPoolHandler entityPool;
+        private GameObject entityObj;
         [SerializeField] public List<ScriptBase> ScriptList;
 
         private void Awake()
         {
-            _entityPool = SceneNodesHandler.GetPoolHandler("EntityPool");
+            entityPool = SceneNodesHandler.GetPoolHandler("EntityPool");
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -27,15 +27,15 @@ namespace EntityMarkers.Spawner
             var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController == null) return;
             if (!entityController.isPlayer) return;
-            //Debug.Log(_entityObj == null);
-            if (_entityObj == null || !_entityObj.activeSelf) Spawn();
+            //Debug.Log(entityObj == null);
+            if (entityObj == null || !entityObj.activeSelf) Spawn();
         }
 
         void Spawn()
         {
-            _entityObj = _entityPool.Get();
-            _entityObj.transform.position = transform.position;
-            EntityController entityController = _entityObj.GetComponent<EntityController>();
+            entityObj = entityPool.Get();
+            entityObj.transform.position = transform.position;
+            EntityController entityController = entityObj.GetComponent<EntityController>();
             if (entityController != null)
             {
                 //entityController.Nation = Nation;

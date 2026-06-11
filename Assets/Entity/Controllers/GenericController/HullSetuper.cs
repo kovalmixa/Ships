@@ -7,21 +7,21 @@ namespace Entity.Controllers.GenericController
 {
     public class EntityHullSetup : MonoBehaviour
     {
-        private EntityController _entityController;
-        [SerializeField] private GameObject _despawnPrefab;
+        private EntityController entityController;
+        [SerializeField] private GameObject despawnPrefab;
         private void Awake()
         {
-            _entityController = GetComponent<EntityController>();
+            entityController = GetComponent<EntityController>();
         }
 
         public HullBase SetHull(string hullId)
         {
             Transform bodyTrans;
-            if (_entityController.hull) bodyTrans = _entityController.hull.transform;
-            else bodyTrans = _entityController.transform;
+            if (entityController.hull) bodyTrans = entityController.hull.transform;
+            else bodyTrans = entityController.transform;
             GameObject newHull = PrefabLoader.Instance.InstantiatePrefab(hullId, bodyTrans.position, Quaternion.identity, bodyTrans);
             if (newHull == null) return null;
-            var hull = _entityController.hull;
+            var hull = entityController.hull;
             if (hull != null) Destroy(hull.gameObject);
             SetupNodes(newHull);
             return newHull.GetComponent<HullBase>();
@@ -29,14 +29,14 @@ namespace Entity.Controllers.GenericController
 
         private void SetupNodes(GameObject hull)
         {
-            if (_entityController.isPlayer)
+            if (entityController.isPlayer)
             {
                 CameraController.Instance.Follow(hull.transform);
             }
             else
             {
-                GameObject despawn = Instantiate(_despawnPrefab, hull.transform.position, hull.transform.rotation, hull.transform);
-                despawn.GetComponent<Despawn>().SetEntity(_entityController.gameObject);
+                GameObject despawn = Instantiate(despawnPrefab, hull.transform.position, hull.transform.rotation, hull.transform);
+                despawn.GetComponent<Despawn>().SetEntity(entityController.gameObject);
             }
         }
 
@@ -47,12 +47,12 @@ namespace Entity.Controllers.GenericController
             if (obj == null) return false;
             var equipment = obj.GetComponentInChildren<Assets.Entity.Equipment.Equipment>();
             if (equipment == null) return false;
-            equipment.EntityController = _entityController;
-            foreach (var equipmentAnchor in _entityController.hull.EquipmentAnchors.Where(go => go.transform.childCount == 0))
+            equipment.EntityController = entityController;
+            foreach (var equipmentAnchor in entityController.hull.EquipmentAnchors.Where(go => go.transform.childCount == 0))
             {
                 if (!equipmentAnchor.CanBePlaced(equipment, index)) continue;
                 equipmentAnchor.SetTransform(equipment);
-                _entityController.hull.Equipments.Add(equipment);
+                entityController.hull.Equipments.Add(equipment);
                 return true;
             }
             return false;

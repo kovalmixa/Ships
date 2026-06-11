@@ -1,34 +1,33 @@
-﻿using System.Collections;
-using Actions;
-using Assets.DataContainers;
+﻿using Actions;
+using Assets.Common;
+using Assets.Common.ActionEffectStructs;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
-using Handlers.Console;
 using UnityEngine;
 
 namespace Entity.Projectile
 {
-    public class Projectile : MonoBehaviour, IActivation
+    public class Projectile : MonoBehaviour, IActivation, IInteractive
     {
         public ProjectileContainer ProjectileContainer;
         public ActionBase[] OnExplosionActions;
         public ActionBase[] UpdateActions;
 
-        private Transform _target;
-        private GameObject _source;
-        private Vector2 _direction;
+        private Transform target;
+        private ActionContext action;
+        private Vector2 direction;
         public Vector3? TargetPosition;
-        private float _timer;
-        //private float _distanceToTarget = 
+        private float timer;
+        //private float distanceToTarget = 
 
-        private ObjectPoolHandler _objectPool;
+        private ObjectPoolHandler objectPool;
 
         #region Start/Setup
 
         private void Start()
         {
-            _objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
+            objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
         public void SetupByPrefab(Projectile prefab)
@@ -39,17 +38,17 @@ namespace Entity.Projectile
             GetComponent<SpriteRenderer>().sprite = prefab.GetComponent<SpriteRenderer>().sprite;
         }
 
-        public void Launch(Vector2 dir, Vector3? targetPos = null, GameObject source = null)
+        public void Launch(Vector2 dir, Vector3? targetPos = null, ActionContext action = null)
         {
-            _source = source;
+            this.action = action;
             TargetPosition = targetPos;
-            _direction = dir;
-            _timer = 0f;
+            direction = dir;
+            timer = 0f;
 
-            if (_source != null)
+            if (action != null)
             {
                 var projectileCollider = GetComponent<Collider2D>();
-                var shooterCollider = _source.GetComponent<Collider2D>();
+                var shooterCollider = action.Source.GetComponent<Collider2D>();
                 if (projectileCollider != null && shooterCollider != null)
                     Physics2D.IgnoreCollision(projectileCollider, shooterCollider, true);
             }
@@ -62,13 +61,13 @@ namespace Entity.Projectile
 
         private void Update()
         {
-            if (ProjectileContainer.IsHoming && _target != null)
+            if (ProjectileContainer.IsHoming && target != null)
             {
-                Vector2 toTarget = (_target.position - transform.position).normalized;
-                _direction = Vector2.Lerp(_direction, toTarget, Time.deltaTime * 5f);
+                Vector2 toTarget = (target.position - transform.position).normalized;
+                direction = Vector2.Lerp(direction, toTarget, Time.deltaTime * 5f);
             }
-            transform.position += (Vector3)(_direction * (ProjectileContainer.Speed * Time.deltaTime));
-            _timer += Time.deltaTime;
+            transform.position += (Vector3)(direction * (ProjectileContainer.Speed * Time.deltaTime));
+            timer += Time.deltaTime;
             if (TargetPosition.HasValue)
             {
                 float distToTarget = Vector2.Distance(transform.position, TargetPosition.Value);
@@ -79,7 +78,7 @@ namespace Entity.Projectile
                     return;
                 }
             }
-            if (_timer > ProjectileContainer.LifeTime) Explode();
+            if (timer > ProjectileContainer.LifeTime) Explode();
         }
 
         private void Explode()
@@ -90,24 +89,25 @@ namespace Entity.Projectile
 
         private void Deactivate()
         {
-            if (_objectPool != null) _objectPool.Return(gameObject);
+            if (objectPool != null) objectPool.Return(gameObject);
             else gameObject.SetActive(false);
-            if (_source == null) return;
+            if (action == null) return;
             var projectileCollider = GetComponent<Collider2D>();
-            var shooterCollider = _source.GetComponent<Collider2D>();
+            var shooterCollider = action.Source.GetComponent<Collider2D>();
             if (projectileCollider != null && shooterCollider != null)
                 Physics2D.IgnoreCollision(projectileCollider, shooterCollider, false);
         }
 
         public void Activate(Vector3 targetPos, ActionBase[] actions)
         {
-            foreach (var activation in actions) activation.Execute(gameObject, targetPos);
+            var actionContext = new ActionContext(gameObject, null);
+            foreach (var activation in actions) activation.Execute(actionContext, targetPos);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             //если торпеда или абилки с жирными снарядами
-            //if (other.gameObject == _source)
+            //if (other.gameObject == source)
             //{
             //    return;
             //}
@@ -122,6 +122,18 @@ namespace Entity.Projectile
             //}
         }
 
+        #endregion
+
+        #region IInteractive
+        public void TakeDamage(ActionContext context, Damage damage)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void TakeHeal(ActionContext context, Heal heal)
+        {
+            throw new System.NotImplementedException();
+        }
         #endregion
     }
 }

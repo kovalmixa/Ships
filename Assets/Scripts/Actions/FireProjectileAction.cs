@@ -1,3 +1,4 @@
+using Assets.Common.ActionEffectStructs;
 using Assets.Handlers.SceneHandlers;
 using Entity.Projectile;
 using UnityEngine;
@@ -8,22 +9,22 @@ namespace Actions
     {
         public GameObject ProjectilePrefab;
         public Transform FirePosition;
-        private ObjectPoolHandler _poolHandler;
+        private ObjectPoolHandler poolHandler;
 
         private void Awake()
         {
             IsPassive = false;
-            _poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilePool");
+            poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
-        public override void Execute(GameObject source, Vector3 targetPos)
+        public override void Execute(ActionContext context, Vector3 targetPos)
         {
-            if (!CanActivate(source, targetPos) || _poolHandler == null) return;
+            if (!CanActivate(context, targetPos) || poolHandler == null) return;
             Debug.Log("Pew");
-            SetupProjectile(source, targetPos);
+            SetupProjectile(context, targetPos);
         }
 
-        protected void SetupProjectile(GameObject source, Vector3 targetPos)
+        protected void SetupProjectile(ActionContext context, Vector3 targetPos)
         {
             var prefabProjectile = ProjectilePrefab.GetComponent<Projectile>();
             if (prefabProjectile == null)
@@ -31,7 +32,7 @@ namespace Actions
                 Debug.LogError($"Projectile prefab {prefabProjectile.name} doesnt have projectile component");
                 return;
             }
-            var pooledObj = _poolHandler.Get();
+            var pooledObj = poolHandler.Get();
             var objProjectile = pooledObj.GetComponent<Projectile>();
             objProjectile.SetupByPrefab(prefabProjectile);
             pooledObj.transform.SetPositionAndRotation(FirePosition.position, Quaternion.identity);
@@ -39,7 +40,7 @@ namespace Actions
             Vector3 direction = (targetPos - FirePosition.position).normalized;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             pooledObj.transform.rotation = Quaternion.Euler(0, 0, angle + 90f);
-            objProjectile.Launch(direction, targetPos, source);
+            objProjectile.Launch(direction, targetPos, context);
         }
     }
 }

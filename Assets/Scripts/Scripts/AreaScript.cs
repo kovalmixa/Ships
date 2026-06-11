@@ -8,16 +8,16 @@ namespace Scripts
     public class AreaScript : ScriptBase
     {
         [SerializeField] public List<MonoBehaviour> Scripts;
-        private List<IScript> _scripts = new();
-        private bool _isExecuted;
+        private List<IScript> scripts = new();
+        private bool isExecuted;
 
-        public List<IScript> GetScripts() => _scripts;
+        public List<IScript> GetScripts() => scripts;
         private void Awake()
         {
             foreach (MonoBehaviour script in Scripts)
             {
                 if (script is IScript s)
-                    _scripts.Add(s);
+                    scripts.Add(s);
                 else
                     Debug.LogWarning("Assigned scriptBehaviour does not implement IScript!");
             }
@@ -31,16 +31,16 @@ namespace Scripts
 
         public override bool Execute(EntityController entityController)
         {
-            if (_scripts.Count == 0)
+            if (scripts.Count == 0)
             {
                 Debug.LogWarning("Script list is empty!");
                 return false;
             }
-            foreach (IScript _script in _scripts)
+            foreach (IScript script in scripts)
             {
-                _script.Execute(entityController);
+                script.Execute(entityController);
             }
-            _isExecuted = true;
+            isExecuted = true;
             return true;
         }
 

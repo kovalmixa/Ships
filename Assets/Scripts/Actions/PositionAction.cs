@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Common.ActionEffectStructs;
+using System;
 using UnityEngine;
 
 namespace Actions
@@ -7,7 +8,7 @@ namespace Actions
     {
         [SerializeField] public Vector2 Position;
         [SerializeField] public Vector2 Rotation;
-        public override void Execute(GameObject source, Vector3 targetPos)
+        public override void Execute(ActionContext context, Vector3 targetPos)
         {
             throw new NotImplementedException();
         }

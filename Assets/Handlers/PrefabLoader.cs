@@ -1,31 +1,18 @@
+using Assets.Handlers.SceneHandlers;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PrefabLoader : MonoBehaviour
+public class PrefabLoader : SingletonMonoBehaviour<PrefabLoader>
 {
-    public static PrefabLoader Instance { get; private set; }
-
     [SerializeField] private string resourcesPath = "Prefabs/";
     [SerializeField] private int cacheLimit = 20;
 
-    private Dictionary<string, GameObject> _cache = new();
-    private LinkedList<string> _lruOrder = new();
-
-    private void Awake()
-    {
-        if (Instance == null)
-            Instance = this;
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
-        DontDestroyOnLoad(gameObject);
-    }
+    private Dictionary<string, GameObject> cache = new();
+    private LinkedList<string> lruOrder = new();
 
     public GameObject GetPrefab(string id)
     {
-        if (_cache.TryGetValue(id, out GameObject prefab))
+        if (cache.TryGetValue(id, out GameObject prefab))
         {
             TouchLRU(id);
             return prefab;
@@ -49,21 +36,21 @@ public class PrefabLoader : MonoBehaviour
 
     private void AddToCache(string id, GameObject prefab)
     {
-        if (_cache.Count >= cacheLimit)
+        if (cache.Count >= cacheLimit)
         {
-            string oldest = _lruOrder.Last.Value;
-            _lruOrder.RemoveLast();
-            _cache.Remove(oldest);
+            string oldest = lruOrder.Last.Value;
+            lruOrder.RemoveLast();
+            cache.Remove(oldest);
             Debug.Log($"[PrefabManager] Removed from cache: {oldest}");
         }
 
-        _cache[id] = prefab;
-        _lruOrder.AddFirst(id);
+        cache[id] = prefab;
+        lruOrder.AddFirst(id);
     }
 
     private void TouchLRU(string id)
     {
-        _lruOrder.Remove(id);
-        _lruOrder.AddFirst(id);
+        lruOrder.Remove(id);
+        lruOrder.AddFirst(id);
     }
 }

@@ -5,21 +5,21 @@ namespace Scripts
 {
     public class WaitScript : ScriptBase
     {
-        private float _waitTime;
-        private float _timer;
+        private float waitTime;
+        private float timer;
 
         public WaitScript(float waitTime)
         {
-            this._waitTime = waitTime;
+            this.waitTime = waitTime;
         }
 
         public override bool Execute(EntityController entityController)
         {
-            _timer += Time.deltaTime;
-            _isExecuted = true;
+            timer += Time.deltaTime;
+            isExecuted = true;
             return true;
         }
 
-        public override bool IsFinished(EntityController entityController) => _timer >= _waitTime;
+        public override bool IsFinished(EntityController entityController) => timer >= waitTime;
     }
 }

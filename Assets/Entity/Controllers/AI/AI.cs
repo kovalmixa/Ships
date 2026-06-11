@@ -4,6 +4,6 @@ namespace Entity.Controllers.AI
 {
     public class Ai : IAi
     {
-        private string _name;
+        private string name;
     }
 }

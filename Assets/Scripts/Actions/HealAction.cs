@@ -1,4 +1,5 @@
 ﻿using Assets.Common;
+using Assets.Common.ActionEffectStructs;
 using UnityEngine;
 
 namespace Actions
@@ -7,9 +8,9 @@ namespace Actions
     {
         [SerializeField] public int HealValue;
 
-        public override void Execute(GameObject source, Vector3 targetPos)
+        public override void Execute(ActionContext context, Vector3 targetPos)
         {
-            if (!CanActivate(source, targetPos)) return;
+            if (!CanActivate(context, targetPos)) return;
             Debug.Log($"Healed:{HealValue}");
             //var stats = context.Target.GetComponent<CharacterStats>();
             //if (stats != null)
@@ -17,19 +18,19 @@ namespace Actions
             //    stats.Heal(context.HealAmount.Value);
             //}
         }
-        public override void Execute(GameObject source, IInteractive target)
+        public override void Execute(ActionContext context, IInteractive target)
         {
             
-            target.TakeHeal(HealValue);
+            target.TakeHeal(context, new Heal());
         }
 
         #region IScalableAction
-        public void ScaleExecute(GameObject source, Vector3 targetPos, float scale)
+        public void ScaleExecute(ActionContext context, Vector3 targetPos, float scale)
         {
             throw new System.NotImplementedException();
         }
 
-        public void ScaleExecute(GameObject source, IInteractive target, float scale)
+        public void ScaleExecute(ActionContext context, IInteractive target, float scale)
         {
             throw new System.NotImplementedException();
         }

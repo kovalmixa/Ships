@@ -6,19 +6,19 @@ namespace Entity.Controllers
 {
     public class PlayerController : MonoBehaviour, IEntityController
     {
-        private Camera _camera;
+        private Camera camera;
         public Camera Camera
         {
             get
             {
-                if (_camera != null) return _camera;
-                _camera = FindMainCamera();
-                return _camera;
+                if (camera != null) return camera;
+                camera = FindMainCamera();
+                return camera;
             }
-            set => _camera = value;
+            set => camera = value;
         }
 
-        private Dictionary<KeyCode, string> _keyCodeActivations = new()
+        private Dictionary<KeyCode, string> keyCodeActivations = new()
         {
             { KeyCode.Mouse0, "turret" },
             { KeyCode.Mouse1, "" }
@@ -29,8 +29,8 @@ namespace Entity.Controllers
             for (int i = 0; i <= 9; i++)
             {
                 KeyCode key = (KeyCode)((int)KeyCode.Alpha0 + i);
-                if (i == 1) _keyCodeActivations.Add(key, "heal");
-                else _keyCodeActivations.Add(key, "");
+                if (i == 1) keyCodeActivations.Add(key, "heal");
+                else keyCodeActivations.Add(key, "");
             }
         }
 
@@ -68,7 +68,7 @@ namespace Entity.Controllers
         private void KeyWordControls(EntityController controller, Vector3 position)
         {
 
-            foreach (var entry in _keyCodeActivations)
+            foreach (var entry in keyCodeActivations)
             {
                 if (entry.Key.ToString().StartsWith("Mouse"))
                 {

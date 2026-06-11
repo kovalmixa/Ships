@@ -11,7 +11,7 @@ namespace Scripts
             if (entityController.isPlayer) return false;
             if (Target == null) return false;
             entityController.SetPointToMove(Target);
-            _isExecuted = true;
+            isExecuted = true;
             return true;
         }
 
@@ -22,7 +22,7 @@ namespace Scripts
             if (area) return Vector3.Distance(entityController.transform.position, Target.position) < area.radius + threshold;
             return Vector3.Distance(entityController.transform.position, Target.position) < threshold;
         }
-        #if UNITY_EDITOR
+        #if UNITYEDITOR
                 private void OnDrawGizmos()
                 {
                     if (Target != null)

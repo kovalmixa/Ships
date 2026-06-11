@@ -1,4 +1,5 @@
 ﻿using Assets.Common;
+using Assets.Common.ActionEffectStructs;
 using UnityEngine;
 
 namespace Actions
@@ -6,21 +7,21 @@ namespace Actions
     public abstract class ActionBase : MonoBehaviour
     {
         public float Delay = 0;
-        private float _lastActivationTime;
+        private float lastActivationTime;
 
         public bool IsPassive { get; set; } = true;
 
-        public abstract void Execute(GameObject source, Vector3 targetPos);
+        public virtual void Execute(ActionContext context, Vector3 targetPos) { }
 
-        public virtual void Execute(GameObject source, IInteractive target) { }
+        public virtual void Execute(ActionContext context, IInteractive target) { }
 
-        protected bool CanActivate(GameObject source, Vector3 targetPos)
+        protected bool CanActivate(ActionContext context, Vector3 targetPos)
         {
             if (Delay == 0) return true;
             float time = Time.time;
-            //Debug.Log($"Delta time: {time - _lastActivationTime}");
-            if (time - _lastActivationTime < Delay) return false;
-            _lastActivationTime = time;
+            //Debug.Log($"Delta time: {time - lastActivationTime}");
+            if (time - lastActivationTime < Delay) return false;
+            lastActivationTime = time;
             return true;
         }
     }

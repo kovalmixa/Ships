@@ -11,28 +11,28 @@ namespace Assets.Handlers.Sprite
     {
         public Action AnimationFinished;
 
-        private GraphicElement _graphicElement;
+        private GraphicElement graphicElement;
 
         public bool IsLooped = true;
 
-        private float _delay;
-        private int _currentFrameIndex;
-        private float _globalTimer;
-        private float _frameTimer;
-        private SpriteRenderer _spriteRenderer;
+        private float delay;
+        private int currentFrameIndex;
+        private float globalTimer;
+        private float frameTimer;
+        private SpriteRenderer spriteRenderer;
 
         public IEnumerator SetGraphicElement(GraphicElement graphicElement)
         {
             if (graphicElement == null) throw new ArgumentNullException(nameof(graphicElement));
-            _graphicElement = graphicElement;
+            graphicElement = graphicElement;
 
-            _currentFrameIndex = 0;
-            _globalTimer = 0;
-            _frameTimer = 0;
-            _delay = graphicElement.Delay;
+            currentFrameIndex = 0;
+            globalTimer = 0;
+            frameTimer = 0;
+            delay = graphicElement.Delay;
 
-            if (_spriteRenderer == null)
-                _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+            if (spriteRenderer == null)
+                spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
 
             StopAllCoroutines();
             yield return StartCoroutine(SetSpriteByIndex(0));
@@ -40,26 +40,26 @@ namespace Assets.Handlers.Sprite
 
         private IEnumerator SetSpriteByIndex(int i)
         {
-            if (_graphicElement == null) yield break;
+            if (graphicElement == null) yield break;
 
-            yield return StreamingSpriteLoader.LoadSprite(_graphicElement, i, true,
-                sprite => { _spriteRenderer.sprite = sprite; });
+            yield return StreamingSpriteLoader.LoadSprite(graphicElement, i, true,
+                sprite => { spriteRenderer.sprite = sprite; });
         }
 
         private void Update()
         {
-            if (_graphicElement == null) return;
+            if (graphicElement == null) return;
 
-            _frameTimer += Time.deltaTime;
-            if (_frameTimer >= _delay)
+            frameTimer += Time.deltaTime;
+            if (frameTimer >= delay)
             {
-                _globalTimer += _frameTimer;
-                _frameTimer = 0;
+                globalTimer += frameTimer;
+                frameTimer = 0;
 
-                _currentFrameIndex = (_currentFrameIndex + 1) % _graphicElement.Quantity;
-                StartCoroutine(SetSpriteByIndex(_currentFrameIndex));
+                currentFrameIndex = (currentFrameIndex + 1) % graphicElement.Quantity;
+                StartCoroutine(SetSpriteByIndex(currentFrameIndex));
 
-                if (_globalTimer >= _graphicElement.Time && !IsLooped)
+                if (globalTimer >= graphicElement.Time && !IsLooped)
                 {
                     AnimationFinished?.Invoke();
                     enabled = false;

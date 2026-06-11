@@ -5,26 +5,8 @@ using UnityEngine;
 
 namespace Assets.Handlers.SceneHandlers
 {
-    public class GameObjectHandler : MonoBehaviour
+    public class GameObjectHandler : SingletonMonoBehaviour<GameObjectHandler>
     {
-        public static GameObjectHandler Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    var go = new GameObject("GameObjectHandler");
-                    _instance = go.AddComponent<GameObjectHandler>();
-                    DontDestroyOnLoad(go);
-                }
-
-                return _instance;
-            }
-            private set => _instance = value;
-        }
-
-        private static GameObjectHandler _instance;
-
         public static void SetRenderLayerOrder(GameObject parent, int value)
         {
             var renderers = parent.GetComponentsInChildren<SpriteRenderer>();

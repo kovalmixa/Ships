@@ -16,14 +16,14 @@ namespace Entity.Controllers.GenericController
         public bool isPlayer;
         [SerializeField] private EntityHullSetup entityHullSetup;
         public EntityDataContainer data = new();
-        private IEntityController _controller;
+        private IEntityController controller;
         public HullBase hull;
 
         private void Start()
         {
             if (isPlayer)
             {
-                _controller = gameObject.AddComponent<PlayerController>();
+                controller = gameObject.AddComponent<PlayerController>();
             }
             var cameraNode = SceneNodesHandler.GetNode("CameraNodes").transform.Find("Virtual Camera");
         }
@@ -60,8 +60,8 @@ namespace Entity.Controllers.GenericController
 
         public void SetupScripts(params ScriptBase[] scripts)
         {
-            _controller = gameObject.AddComponent<AiController>();
-            AiController aiController = _controller as AiController;
+            controller = gameObject.AddComponent<AiController>();
+            AiController aiController = controller as AiController;
             Queue<ScriptBase> scriptsQueue = new(scripts);
             aiController.Scripts = scriptsQueue;
         }
@@ -70,7 +70,7 @@ namespace Entity.Controllers.GenericController
         {
             if (activationCommand == "") return;
             if (TypeListHandler.IsWeaponEquipment(activationCommand)) if (IsAttackActionForbidden(position)) return;
-            var activationTypes = TypeListHandler.TryGetSubType(activationCommand);
+            var activationTypes = TypeListHandler.TryGetEquipSubTypes(activationCommand);
             foreach (var equipment in hull.Equipments)
             {
                 if (equipment.EquipmentContainer == null) continue;
@@ -96,14 +96,14 @@ namespace Entity.Controllers.GenericController
             return false;
         }
 
-        public void SetPointToMove(Transform target) => _controller.SetMovementPoint(target);
+        public void SetPointToMove(Transform target) => controller.SetMovementPoint(target);
 
-        public void SetTarget(Transform target) => _controller.SetTargetPoint(target);
+        public void SetTarget(Transform target) => controller.SetTargetPoint(target);
 
         private void Update()
         {
             if (hull == null) return;
-            _controller?.UpdateControl(this);
+            controller?.UpdateControl(this);
         }
     }
 }

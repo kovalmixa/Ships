@@ -4,20 +4,13 @@ using UnityEngine.SceneManagement;
 
 namespace Assets.Handlers.SceneHandlers
 {
-    public class SceneController : MonoBehaviour
+    public class SceneController : SingletonMonoBehaviour<SceneController>
     {
-        private static SceneController _instance;
         private List<Transform> Pools = new();
         public GameObject[] DontDestroyOnLoadObj;
-        private void Awake()
-        {
-            if (_instance == null) Setup();
-            else Destroy(gameObject);
-        }
 
         private void Setup()
         {
-            _instance = this;
             DontDestroyOnLoad(gameObject);
             foreach (var obj in DontDestroyOnLoadObj) DontDestroyOnLoad(obj);
             foreach (Transform child in SceneNodesHandler.GetNode("ObjectPools").transform) Pools.Add(child);

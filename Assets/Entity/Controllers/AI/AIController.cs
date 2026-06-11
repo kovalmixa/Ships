@@ -10,10 +10,10 @@ namespace Entity.Controllers.AI
 {
     public class AiController : MonoBehaviour, IEntityController, IAi
     {
-        private Transform _movePoint;
-        private Transform _targetPoint;
+        private Transform movePoint;
+        private Transform targetPoint;
         public Queue<ScriptBase> Scripts;
-        private IAi _ai;
+        private IAi ai;
         public void SetAiType(string name) { }
 
         public void UpdateControl(EntityController entityController)
@@ -42,12 +42,12 @@ namespace Entity.Controllers.AI
         private void PointMovement(EntityController entityController)
         {
             HullBase hullBase = entityController.hull;
-            if (_movePoint == null)
+            if (movePoint == null)
             {
                 hullBase.SetTargetSpeed(Vector2.zero);
                 return;
             }
-            Vector2 directionToPoint = _movePoint.position - hullBase.transform.position;
+            Vector2 directionToPoint = movePoint.position - hullBase.transform.position;
             float distance = directionToPoint.magnitude;
             if (distance < 3f)
             {
@@ -75,9 +75,9 @@ namespace Entity.Controllers.AI
             throw new System.NotImplementedException();
         }
 
-        public void SetMovementPoint(Transform target) => _movePoint = target;
+        public void SetMovementPoint(Transform target) => movePoint = target;
 
-        public void SetTargetPoint(Transform target) => _targetPoint = target;
+        public void SetTargetPoint(Transform target) => targetPoint = target;
 
         private void ActivateScripts(EntityController entityController)
         {

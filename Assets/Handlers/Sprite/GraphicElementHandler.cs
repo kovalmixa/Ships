@@ -32,14 +32,14 @@ namespace Assets.Handlers.Sprite
                 foreach (GraphicElement graphicElement in graphicElements)
                 {
                     string name = graphicElement.Filename;
-                    string key = $"{tag}_{name[..name.IndexOf(".png", StringComparison.Ordinal)]}";
+                    string key = $"{tag}{name[..name.IndexOf(".png", StringComparison.Ordinal)]}";
                     graphicElement.Filename = key;
                     graphicElement.SpriteAtlasPath = atlasPath;
                     Objects.Add(key, graphicElement);
                     //Debug.Log(key);
                 }
             }
-            //Debug.Log(Objects["USA_Duck.png"].Frame.Width);
+            //Debug.Log(Objects["USADuck.png"].Frame.Width);
         }
     }
 }

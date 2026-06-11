@@ -1,3 +1,4 @@
+using Assets.Handlers.Console;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,30 +6,30 @@ namespace Handlers.Console
 {
     public class DebugHandler
     {
-        private static DebugHandler _instance;
+        private static DebugHandler instance;
 
         public static DebugHandler Instance
         {
             get
             {
-                if (_instance == null) _instance = new DebugHandler(); 
-                return _instance;
+                if (instance == null) instance = new DebugHandler(); 
+                return instance;
             }
         }
-        private readonly Dictionary<string, float> _timers = new();
-        private GameObject InGameConsole;
+        private readonly Dictionary<string, float> timers = new();
+        private InGameConsole inGameConsole;
 
         public void Log(string key, string text, float interval)
         {
-            if (!_timers.ContainsKey(key))
-                _timers[key] = 0f;
+            if (!timers.ContainsKey(key))
+                timers[key] = 0f;
 
-            _timers[key] += Time.deltaTime;
+            timers[key] += Time.deltaTime;
 
-            if (_timers[key] >= interval)
+            if (timers[key] >= interval)
             {
                 Debug.Log(text);
-                _timers[key] = 0f;
+                timers[key] = 0f;
             }
         }
     }

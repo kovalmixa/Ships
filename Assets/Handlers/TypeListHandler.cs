@@ -1,77 +1,62 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Assets.Handlers
 {
     public static class TypeListHandler
     {
-        public static readonly Dictionary<string, string[]> WeaponEquipTypesDict = new()
+        public static readonly Dictionary<string, string[]> EquipTypesDict = new(StringComparer.OrdinalIgnoreCase)
         {
-            {
-                "turret", new[] { "machine gun", "laser", "light cannon", "cannon", "missile" }
-            },
-            {
-                "aircraft", new[] { "fighter", "bomber", "helicopter" }
-            },
-            {
-                "launch", new[] { "torpedo" }
-            }
+            { "turret", new[] { "machine gun", "laser", "light cannon", "cannon", "missile" } },
+            { "aircraft", new[] { "fighter", "bomber", "helicopter" } },
+            { "launch", new[] { "torpedo" } }
         };
 
-        public static readonly Dictionary<string, string[]> ShipTypesDict = new()
+        public static readonly Dictionary<string, string[]> ShipTypesDict = new(StringComparer.OrdinalIgnoreCase)
         {
-            {
-                "ship", new[]
-                {
-                    "boat", "destroyer", "light cruiser", "cruiser", "heavy cruiser", "battleship", "super battleship"
-                }
-            },
-            {
-                "aircraft carrier", new[]
-                {
-                    "aircraft carrier", "helicopter carrier", "light aircraft carrier", "super aircraft carrier"
-                }
-            },
-            {
-                "submarine", new[]
-                {
-                    "submarine", "submarine cruiser", "nuclear submarine", "submarine battleship",
-                    "submarine aircraft carrier"
-                }
-            }
+            { "ship", new[] { "boat", "destroyer", "light cruiser", "cruiser", "heavy cruiser", "battleship", "super battleship" } },
+            { "aircraft carrier", new[] { "aircraft carrier", "helicopter carrier", "light aircraft carrier", "super aircraft carrier" } },
+            { "submarine", new[] { "submarine", "submarine cruiser", "nuclear submarine", "submarine battleship", "submarine aircraft carrier" } }
         };
 
-        public static bool IsWeaponEquipment(string type) => DoesBelongToDictionary(WeaponEquipTypesDict, type);
+        public static readonly HashSet<string> SizeTypes = new(StringComparer.OrdinalIgnoreCase) { "s", "m", "l", "xl", "xxl", "x" };
+        public static readonly HashSet<string> LayerTypes = new(StringComparer.OrdinalIgnoreCase) { "sea", "land", "air" };
 
-        public static string[] TryGetSubType(string command)
+        private static readonly Dictionary<string, string> EquipReverseDict = new(StringComparer.OrdinalIgnoreCase);
+        private static readonly Dictionary<string, string> ShipReverseDict = new(StringComparer.OrdinalIgnoreCase);
+
+        static TypeListHandler()
         {
-            foreach (var weapons in WeaponEquipTypesDict)
-                if (weapons.Key == command) return weapons.Value;
-            return null;
+            InitializeReverseLookup(EquipTypesDict, EquipReverseDict);
+            InitializeReverseLookup(ShipTypesDict, ShipReverseDict);
+        }
+
+        private static void InitializeReverseLookup(Dictionary<string, string[]> source, Dictionary<string, string> destination)
+        {
+            foreach (var kvp in source)
+                foreach (var subType in kvp.Value)
+                    destination[subType] = kvp.Key;
+        }
+
+        public static bool IsWeaponEquipment(string subType) => EquipReverseDict.ContainsKey(subType);
+
+        public static bool IsShip(string subType) => ShipReverseDict.ContainsKey(subType);
+
+        public static string[] TryGetEquipSubTypes(string masterType)
+        {
+            return EquipTypesDict.TryGetValue(masterType, out var subTypes) ? subTypes : Array.Empty<string>();
+        }
+
+        public static string[] TryGetShipSubTypes(string masterType)
+        {
+            return ShipTypesDict.TryGetValue(masterType, out var subTypes) ? subTypes : Array.Empty<string>();
         }
 
         public static string TryGetMasterType(string subType)
         {
-            foreach (var weapons in WeaponEquipTypesDict)
-            {
-                if (weapons.Value.Contains(subType)) return weapons.Key;
-            }
+            if (EquipReverseDict.TryGetValue(subType, out var weaponMaster)) return weaponMaster;
+            if (ShipReverseDict.TryGetValue(subType, out var shipMaster)) return shipMaster;
             return null;
-        }
-
-
-        public static readonly string[] SizeTypes =
-        {
-            "s", "S", "M", "L", "XL", "XXL", "X"
-        };
-
-        public static readonly string[] LayerTypes =
-        {
-            "sea", "land", "air"
-        };
-        private static bool DoesBelongToDictionary(Dictionary<string, string[]> dictionary, string type)
-        {
-            return dictionary.Any(keyValuePair => keyValuePair.Value.ToList().Any(x => x == type));
         }
     }
 }

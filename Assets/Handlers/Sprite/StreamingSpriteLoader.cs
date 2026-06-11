@@ -11,11 +11,11 @@ namespace Assets.Handlers.Sprite
     public static class StreamingSpriteLoader
     {
         private static readonly Dictionary<string, Texture2D> Cache = new();
-        //private static readonly Dictionary<string, WeakReference<Texture2D>> _cache = new();
+        //private static readonly Dictionary<string, WeakReference<Texture2D>> cache = new();
 
         //private static Texture2D GetOrLoad(string path)
         //{
-        //    if (_cache.TryGetValue(path, out var weakRef))
+        //    if (cache.TryGetValue(path, out var weakRef))
         //    {
         //        if (weakRef.TryGetTarget(out var tex) && tex != null)
         //        {
@@ -23,14 +23,14 @@ namespace Assets.Handlers.Sprite
         //        }
         //    }
         //    Texture2D loadedTex = LoadTexture(path);
-        //    _cache[path] = new WeakReference<Texture2D>(loadedTex);
+        //    cache[path] = new WeakReference<Texture2D>(loadedTex);
         //    return loadedTex;
         //}
 
         //private static void Cleanup()
         //{
         //    var keysToRemove = new List<string>();
-        //    foreach (var kvp in _cache)
+        //    foreach (var kvp in cache)
         //    {
         //        if (!kvp.Value.TryGetTarget(out var tex) || tex == null)
         //        {
@@ -39,7 +39,7 @@ namespace Assets.Handlers.Sprite
         //    }
         //    foreach (var key in keysToRemove)
         //    {
-        //        _cache.Remove(key);
+        //        cache.Remove(key);
         //    }
         //}
 

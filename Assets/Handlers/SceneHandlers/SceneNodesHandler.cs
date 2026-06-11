@@ -30,7 +30,7 @@ namespace Assets.Handlers.SceneHandlers
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.Log(e);
                 throw;
             }
             return poolHandler;

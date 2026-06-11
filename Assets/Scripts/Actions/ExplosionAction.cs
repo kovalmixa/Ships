@@ -1,4 +1,5 @@
 ﻿using Assets.Common;
+using Assets.Common.ActionEffectStructs;
 using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,11 @@ namespace Actions
 
         [SerializeField] [CanBeNull] private Dictionary<float, IScalableAction[]> ActionZones;
 
-        [SerializeField] [CanBeNull] private EffectAction effectAction;
+        [SerializeField] [CanBeNull] private VisualAction visualAction;
 
-        public override void Execute(GameObject source, Vector3 targetPos)
+        public override void Execute(ActionContext context, Vector3 targetPos)
         {
-            effectAction?.Execute(source, targetPos);
+            visualAction?.Execute(context, targetPos);
 
             var colliders = new List<Collider>();
             foreach(int layer in Layers)
@@ -44,7 +45,7 @@ namespace Actions
                     float rangeProp = Vector2.Distance(target.Value, targetPos) / Range;
                     if (zone.Key <= rangeProp)
                         foreach (var action in zone.Value)
-                            action?.ScaleExecute(source, target.Key, 1 - rangeProp / zone.Key);
+                            action?.ScaleExecute(context, target.Key, 1 - rangeProp / zone.Key);
                 }
         }
     }

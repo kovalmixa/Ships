@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Assets.Handlers
+﻿namespace Assets.Handlers
 {
-    internal class TileHandler
+    internal class TileHandler : SingletonMonoBehaviour<TileHandler>
     {
     }
 }
