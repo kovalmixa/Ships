@@ -251,9 +251,9 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1043631210884575351, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
   m_PrefabInstance: {fileID: 2912457315036530571}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &649772206 stripped
+--- !u!114 &649772209 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7187477303106271539, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+  m_CorrespondingSourceObject: {fileID: 5009713382902950778, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
   m_PrefabInstance: {fileID: 2912457315036530571}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 649772205}
@@ -457,7 +457,7 @@ PrefabInstance:
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: entityHullSetup
       value: 
-      objectReference: {fileID: 649772206}
+      objectReference: {fileID: 649772209}
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: WeaponIds.Array.size
       value: 1

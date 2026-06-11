@@ -26,13 +26,11 @@ namespace Assets.Entity.Equipment
         public bool IsDirty { get; set; }
         protected List<EffectComponent> cachedCombinedEffects = new List<EffectComponent>();
 
-
         public Vector3 Position
         {
             get => transform.position + EntityController.transform.position;
             set{}
         }
-
 
         public void Rotate(Vector3 targetPos)
         {

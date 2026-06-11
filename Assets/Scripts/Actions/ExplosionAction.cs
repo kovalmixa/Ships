@@ -12,13 +12,13 @@ namespace Actions
 
         [SerializeField] public int[] Layers;
 
-        [SerializeField] [CanBeNull] private Dictionary<float, IScalableAction[]> ActionZones;
+        [SerializeField] [CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
 
-        [SerializeField] [CanBeNull] private VisualAction visualAction;
+        [SerializeField] [CanBeNull] public VisualAction VisualAction;
 
         public override void Execute(ActionContext context, Vector3 targetPos)
         {
-            visualAction?.Execute(context, targetPos);
+            VisualAction?.Execute(context, targetPos);
 
             var colliders = new List<Collider>();
             foreach(int layer in Layers)

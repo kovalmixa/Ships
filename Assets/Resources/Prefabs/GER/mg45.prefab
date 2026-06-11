@@ -211,7 +211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EntityController: {fileID: 0}
   EquipmentContainer: {fileID: 1531360328655141274}
-  Activations:
+  Actions:
   - {fileID: 5626699735981393471}
   UpdateActions: []
 --- !u!114 &1531360328655141274
