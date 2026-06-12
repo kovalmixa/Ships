@@ -6,16 +6,16 @@ namespace Entity.Controllers
 {
     public class PlayerController : MonoBehaviour, IEntityController
     {
-        private Camera camera;
+        private Camera _camera;
         public Camera Camera
         {
             get
             {
-                if (camera != null) return camera;
-                camera = FindMainCamera();
-                return camera;
+                if (_camera != null) return _camera;
+                _camera = FindMainCamera();
+                return _camera;
             }
-            set => camera = value;
+            set => _camera = value;
         }
 
         private Dictionary<KeyCode, string> keyCodeActivations = new()

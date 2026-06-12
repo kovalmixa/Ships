@@ -9,25 +9,25 @@ namespace Assets.Entity.Equipment
     [ExecuteInEditMode]
     public class EquipmentAnchor : MonoBehaviour
     {
-        public int Index;
-        public string ClassType;
-        public int SizeType;
-        public Vector2 RotationSector;
-        public Vector2[] ActivationSectors;
-        public int OrderLayer;
-        public const bool IsStatic = false;
+        public int index;
+        public string classType;
+        public int sizeType;
+        public Vector2 rotationSector;
+        public Vector2[] activationSectors;
+        public int orderLayer;
+        public const bool isStatic = false;
 
         public bool CanBePlaced(Equipment equipment, int index)
         {
-            if (IsStatic) return false;
-            EquipmentContainer equipmentContainer = equipment.EquipmentContainer;
-            var eqClass = equipmentContainer.General.Class;
+            if (isStatic) return false;
+            EquipmentContainer equipmentContainer = equipment.equipmentContainer;
+            var eqClass = equipmentContainer.general.Class;
             var masterType = TypeListHandler.TryGetMasterType(eqClass);
-            if (SizeType == equipmentContainer.General.SizeType && Index == index)
+            if (sizeType == equipmentContainer.general.SizeType && this.index == index)
             {
                 if (masterType == null)
-                    return eqClass == ClassType;
-                if (masterType == ClassType)
+                    return eqClass == classType;
+                if (masterType == classType)
                     return true;
             }
             return false;
@@ -43,18 +43,18 @@ namespace Assets.Entity.Equipment
             eqTransform.rotation = transform.rotation;
             eqTransform.localScale = scale;
             equipment.EquipmentAnchor = this;
-            GameObjectHandler.SetRenderLayerOrder(gameObject, OrderLayer);
+            GameObjectHandler.SetRenderLayerOrder(gameObject, orderLayer);
         }
 
         private void OnDrawGizmos()
         {
             Vector3 origin = transform.position;
             Gizmos.color = Color.yellow;
-            DrawSector(origin, RotationSector, 2f);
-            if (ActivationSectors != null)
+            DrawSector(origin, rotationSector, 2f);
+            if (activationSectors != null)
             {
                 Gizmos.color = Color.red;
-                foreach (var sector in ActivationSectors)
+                foreach (var sector in activationSectors)
                 {
                     DrawSector(origin, sector, 3f);
                 }

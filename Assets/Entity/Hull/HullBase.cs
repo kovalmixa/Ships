@@ -14,14 +14,14 @@ namespace Assets.Entity.Hull
 {
     public abstract class HullBase : MonoBehaviour, IInteractive, IHull, IModified
     {
-        public HullContainer Data;
+        public HullContainer data;
 
-        public List<EquipmentAnchor> EquipmentAnchors;
-        public List<Equipment.Equipment> Equipments;
+        public List<EquipmentAnchor> equipmentAnchors;
+        public List<Equipment.Equipment> equipments;
 
-        public Transform Root;
-        protected Rigidbody2D rigidbody2D;
-        public float CurrentSpeed;
+        public Transform root;
+        protected Rigidbody2D rigidBody2D;
+        public float currentSpeed;
 
         public List<EffectComponent> Effects { get; set; }
         public bool IsDirty { get; set; }
@@ -32,8 +32,8 @@ namespace Assets.Entity.Hull
 
         private void Awake()
         {
-            rigidbody2D = GetComponent<Rigidbody2D>();
-            Data = GetComponent<HullContainer>();
+            rigidBody2D = GetComponent<Rigidbody2D>();
+            data = GetComponent<HullContainer>();
             CollectAnchors(transform);
         }
 
@@ -45,7 +45,7 @@ namespace Assets.Entity.Hull
                 var equipmentAnchor = child.GetComponent<EquipmentAnchor>();
                 if (equipmentAnchor != null)
                 {
-                    EquipmentAnchors.Add(equipmentAnchor);
+                    equipmentAnchors.Add(equipmentAnchor);
                 }
                 CollectAnchors(child);
             }
@@ -57,7 +57,7 @@ namespace Assets.Entity.Hull
 
         public void RotateEquipment(Vector3 target)
         {
-            foreach (var eq in Equipments)
+            foreach (var eq in equipments)
             {
                 eq.GetComponent<Equipment.Equipment>().Rotate(target);
             }
@@ -81,7 +81,7 @@ namespace Assets.Entity.Hull
         private void OnTriggerEnter2D(Collider2D other)
         {
             IScript script = other.GetComponent<IScript>();
-            script?.Execute(Root.GetComponent<EntityController>());
+            script?.Execute(root.GetComponent<EntityController>());
         }
 
         private void Bounce(Collision2D collision)
@@ -89,23 +89,23 @@ namespace Assets.Entity.Hull
             Rigidbody2D otherRb = collision.rigidbody;
             if (otherRb == null) return;
             if (collision.gameObject.layer != LayerMask.NameToLayer(
-                TypeListHandler.LayerTypes.ToArray()[Data.General.Layer]) 
+                TypeListHandler.layerTypes.ToArray()[data.general.Layer]) 
                 && collision.gameObject.layer != LayerMask.NameToLayer("Markers")
                 )
             {
-                CurrentSpeed = 0;
+                currentSpeed = 0;
                 return;
             }
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             Vector2 pushDirection = (rb.position - otherRb.position).normalized;
             float totalMass = rb.mass + otherRb.mass; // Общая масса двух объектов
-            float impulse = CurrentSpeed * rb.mass * 0.1f;  // Импульс игрока
+            float impulse = currentSpeed * rb.mass * 0.1f;  // Импульс игрока
 
             // Передаем часть импульса другому объекту
             otherRb.AddForce(-pushDirection * (impulse * (rb.mass / totalMass)), ForceMode2D.Impulse);
 
             //Теряет скорость пропорционально массе другого объекта
-            CurrentSpeed *= otherRb.mass / totalMass;
+            currentSpeed *= otherRb.mass / totalMass;
         }
         
         #endregion

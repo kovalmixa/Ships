@@ -6,9 +6,9 @@ namespace Assets.Entity.Equipment
 {
     public class EquipmentContainer : MonoBehaviour, IObject
     {
-        public GeneralOptions General;
+        public GeneralOptions general;
         public string Id { get; set; }
 
-        public float RotationSpeed;
+        public float rotationSpeed;
     }
 }

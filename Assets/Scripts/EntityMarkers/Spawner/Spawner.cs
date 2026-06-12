@@ -68,8 +68,8 @@ namespace EntityMarkers.Spawner
         {
             EntityDataContainer data = new()
             {
-                EquipmentIds = new (),
-                HullId = "NONE/boat"
+                equipmentIds = new (),
+                hullId = "NONE/boat"
             };
             return data;
         }

@@ -5,18 +5,18 @@ namespace Assets.DataContainers
 {
     public class HullContainer : MonoBehaviour, IObject
     {
-        public GeneralOptions General;
+        public GeneralOptions general;
 
         public string Id { get; set; }
 
-        public float MaxSpeed;
+        public float maxSpeed;
 
-        public float Acceleration;
+        public float acceleration;
 
-        public float RotationSpeed;
+        public float rotationSpeed;
 
-        public uint MaxHealth;
+        public uint maxHealth;
 
-        public uint MaxEnergy;
+        public uint maxEnergy;
     }
 }

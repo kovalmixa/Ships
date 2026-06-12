@@ -7,19 +7,19 @@ namespace Entity.Controllers.GenericController
 {
     public class EntityHullSetup : MonoBehaviour
     {
-        [SerializeField] private EntityController entityController;
-        [SerializeField] private GameObject despawnPrefab;
+        [SerializeField] private EntityController _entityController;
+        [SerializeField] private GameObject _despawnPrefab;
 
         public HullBase SetHullNodeLogic(string hullId)
         {
             Transform bodyTrans;
-            if (entityController.hull) bodyTrans = entityController.hull.transform;
-            else bodyTrans = entityController.transform;
+            if (_entityController.hull) bodyTrans = _entityController.hull.transform;
+            else bodyTrans = _entityController.transform;
             GameObject newHull = PrefabLoader.Instance.InstantiatePrefab(
                 hullId, bodyTrans.position, Quaternion.identity, bodyTrans);
 
             if (newHull == null) return null;
-            var hull = entityController.hull;
+            var hull = _entityController.hull;
             if (hull != null) Object.Destroy(hull.gameObject);
 
             SetupNodes(newHull);
@@ -28,15 +28,15 @@ namespace Entity.Controllers.GenericController
 
         private void SetupNodes(GameObject hull)
         {
-            if (entityController.isPlayer)
+            if (_entityController.isPlayer)
             {
                 CameraController.Instance.Follow(hull.transform);
             }
             else
             {
-                GameObject despawn = Object.Instantiate(despawnPrefab, 
+                GameObject despawn = Object.Instantiate(_despawnPrefab, 
                     hull.transform.position, hull.transform.rotation, hull.transform);
-                despawn.GetComponent<Despawn>().SetEntity(entityController.gameObject);
+                despawn.GetComponent<Despawn>().SetEntity(_entityController.gameObject);
             }
         }
 
@@ -47,13 +47,13 @@ namespace Entity.Controllers.GenericController
             if (obj == null) return false;
             var equipment = obj.GetComponentInChildren<Assets.Entity.Equipment.Equipment>();
             if (equipment == null) return false;
-            equipment.EntityController = entityController;
-            foreach (var equipmentAnchor in entityController.hull.EquipmentAnchors.Where(go => go.transform.childCount == 0))
+            equipment.entityController = _entityController;
+            foreach (var equipmentAnchor in _entityController.hull.equipmentAnchors.Where(go => go.transform.childCount == 0))
             {
                 //make spawn to inventory
                 if (!equipmentAnchor.CanBePlaced(equipment, index)) continue;
                 equipmentAnchor.SetTransform(equipment);
-                entityController.hull.Equipments.Add(equipment);
+                _entityController.hull.equipments.Add(equipment);
                 return true;
             }
             return false;

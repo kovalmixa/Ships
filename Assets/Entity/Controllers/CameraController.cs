@@ -6,20 +6,20 @@ namespace Entity.Controllers
     public class CameraController : SingletonMonoBehaviour<CameraController>
     {
         [SerializeField] CinemachineVirtualCamera virtualCamera;
-        
-        float cameraDistance;
-        [SerializeField] float sensitivity;
-        public float MinZoom;
-        public float MaxZoom;
-        public float SmoothSpeed = 5f;
-        float targetZoom;
-        float currentZoom;
+
+        public float CameraDistance { get; set; }
+        [SerializeField] float _sensitivity;
+        public float minZoom;
+        public float maxZoom;
+        public float SmoothSpeed { get; set; } = 5f;
+        float _targetZoom;
+        float _currentZoom;
 
         private void Awake()
         {
             base.Awake();
-            currentZoom = virtualCamera.m_Lens.OrthographicSize;
-            targetZoom = currentZoom;
+            _currentZoom = virtualCamera.m_Lens.OrthographicSize;
+            _targetZoom = _currentZoom;
         }
 
         public void Follow(Transform targetTransform)
@@ -37,11 +37,11 @@ namespace Entity.Controllers
         {
             if (Input.GetAxis("Mouse ScrollWheel") != 0)
             {
-                targetZoom -= Input.GetAxis("Mouse ScrollWheel") * sensitivity;
-                targetZoom = Mathf.Clamp(targetZoom, MinZoom, MaxZoom);
+                _targetZoom -= Input.GetAxis("Mouse ScrollWheel") * _sensitivity;
+                _targetZoom = Mathf.Clamp(_targetZoom, minZoom, maxZoom);
             }
-            currentZoom = Mathf.Lerp(currentZoom, targetZoom, SmoothSpeed * Time.deltaTime);
-            virtualCamera.m_Lens.OrthographicSize = currentZoom;
+            _currentZoom = Mathf.Lerp(_currentZoom, _targetZoom, SmoothSpeed * Time.deltaTime);
+            virtualCamera.m_Lens.OrthographicSize = _currentZoom;
         }
 
         void Update()

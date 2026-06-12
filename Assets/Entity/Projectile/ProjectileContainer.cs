@@ -6,9 +6,15 @@ namespace Assets.Entity.Projectile
     public class ProjectileContainer : MonoBehaviour, IObject
     {
         public string Id { get; set; }
-        public int LifeTime;
-        public int Speed;
-        public bool IsHoming;
-        public bool IsBallistic;
+
+        public float damage;
+        public float speed;
+        public float radius;
+        public float penetration;
+        public float critChance;
+
+        public int lifeTime;
+        public bool isHoming;
+        public bool isBallistic;
     }
 }

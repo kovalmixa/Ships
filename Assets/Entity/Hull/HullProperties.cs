@@ -2,10 +2,10 @@ namespace Assets.Entity.Hull
 {
     public class HullProperties
     {
-        public int Health;
+        public int health;
 
-        public int Energy;
+        public int energy;
 
-        public float EnginePower;
+        public float enginePower;
     }
 }

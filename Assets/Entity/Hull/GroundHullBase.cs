@@ -7,15 +7,15 @@ namespace Assets.Entity.Hull
         public override void SetTargetSpeed(Vector2 directionToPoint)
         {
             float angleToTarget = Vector2.SignedAngle(transform.up, directionToPoint.normalized);
-            float targetSpeed = Mathf.Clamp(directionToPoint.magnitude, 0, Data.MaxSpeed);
+            float targetSpeed = Mathf.Clamp(directionToPoint.magnitude, 0, data.maxSpeed);
             if (Mathf.Abs(angleToTarget) < 90f)
-                CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, targetSpeed, Data.Acceleration * Time.deltaTime);
+                currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, data.acceleration * Time.deltaTime);
             else
-                CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, -targetSpeed, Data.Acceleration * Time.deltaTime);
+                currentSpeed = Mathf.MoveTowards(currentSpeed, -targetSpeed, data.acceleration * Time.deltaTime);
         }
         public override void AddSpeed(bool isAddition)
         {
-            CurrentSpeed = CurrentSpeed + (isAddition ? 1 : -1);
+            currentSpeed = currentSpeed + (isAddition ? 1 : -1);
         }
 
         public override void Movement(float rotationDirection)

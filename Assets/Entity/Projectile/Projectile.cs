@@ -10,40 +10,35 @@ namespace Entity.Projectile
 {
     public class Projectile : MonoBehaviour, IActivation, IInteractive
     {
-        public ProjectileContainer ProjectileContainer;
-        public ActionBase[] OnExplosionActions;
-        public ActionBase[] UpdateActions;
+        public ProjectileContainer projectileContainer;
+        public ActionBase[] onExplosionActions;
+        public ActionBase[] updateActions;
 
-        private Transform target;
-        private ActionContext action;
-        private Vector2 direction;
-        public Vector3? TargetPosition;
-        private float timer;
+        private Transform _target;
+        private ActionContext _action;
+        private Vector2 _direction;
+        public Vector3? targetPosition;
+        private float _timer;
         //private float distanceToTarget = 
 
-        private ObjectPoolHandler objectPool;
+        private ObjectPoolHandler _objectPool;
 
         #region Start/Setup
 
-        private void Start()
-        {
-            objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
-        }
-
         public void SetupByPrefab(Projectile prefab)
         {
-            ProjectileContainer = prefab.ProjectileContainer;
-            OnExplosionActions = prefab.OnExplosionActions;
-            UpdateActions = prefab.UpdateActions;
+            projectileContainer = prefab.projectileContainer;
+            onExplosionActions = prefab.onExplosionActions;
+            updateActions = prefab.updateActions;
             GetComponent<SpriteRenderer>().sprite = prefab.GetComponent<SpriteRenderer>().sprite;
         }
 
         public void Launch(Vector2 dir, Vector3? targetPos = null, ActionContext action = null)
         {
-            this.action = action;
-            TargetPosition = targetPos;
-            direction = dir;
-            timer = 0f;
+            this._action = action;
+            targetPosition = targetPos;
+            _direction = dir;
+            _timer = 0f;
 
             if (action != null)
             {
@@ -61,16 +56,16 @@ namespace Entity.Projectile
 
         private void Update()
         {
-            if (ProjectileContainer.IsHoming && target != null)
+            if (projectileContainer.isHoming && _target != null)
             {
-                Vector2 toTarget = (target.position - transform.position).normalized;
-                direction = Vector2.Lerp(direction, toTarget, Time.deltaTime * 5f);
+                Vector2 toTarget = (_target.position - transform.position).normalized;
+                _direction = Vector2.Lerp(_direction, toTarget, Time.deltaTime * 5f);
             }
-            transform.position += (Vector3)(direction * (ProjectileContainer.Speed * Time.deltaTime));
-            timer += Time.deltaTime;
-            if (TargetPosition.HasValue)
+            transform.position += (Vector3)(_direction * (projectileContainer.speed * Time.deltaTime));
+            _timer += Time.deltaTime;
+            if (targetPosition.HasValue)
             {
-                float distToTarget = Vector2.Distance(transform.position, TargetPosition.Value);
+                float distToTarget = Vector2.Distance(transform.position, targetPosition.Value);
                 //DebugHandler.Instance.Log("DistanceLog", $"Distance = {distToTarget}", 0.1f);
                 if (distToTarget <= 0.2f)
                 {
@@ -78,22 +73,23 @@ namespace Entity.Projectile
                     return;
                 }
             }
-            if (timer > ProjectileContainer.LifeTime) Explode();
+            if (_timer > projectileContainer.lifeTime) Explode();
         }
 
         private void Explode()
         {
-            Activate(transform.position, OnExplosionActions);
+            Activate(transform.position, onExplosionActions);
             Deactivate();
         }
 
         private void Deactivate()
         {
-            if (objectPool != null) objectPool.Return(gameObject);
+            var objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
+            if (_objectPool != null) _objectPool.Return(gameObject);
             else gameObject.SetActive(false);
-            if (action == null) return;
+            if (_action == null) return;
             var projectileCollider = GetComponent<Collider2D>();
-            var shooterCollider = action.Source.GetComponent<Collider2D>();
+            var shooterCollider = _action.Source.GetComponent<Collider2D>();
             if (projectileCollider != null && shooterCollider != null)
                 Physics2D.IgnoreCollision(projectileCollider, shooterCollider, false);
         }

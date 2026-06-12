@@ -43,7 +43,7 @@ namespace Assets.Handlers.SceneHandlers
         {
             var hull = other.GetComponent<HullBase>();
             if (hull == null) return null;
-            return hull.Root.GetComponent<EntityController>();
+            return hull.root.GetComponent<EntityController>();
         } 
     }
 }

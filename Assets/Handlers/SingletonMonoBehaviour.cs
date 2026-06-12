@@ -1,47 +1,46 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
 {
-    private static T instance;
-    private static readonly object lock_ = new object();
-    private static bool isQuitting = false;
+    private static T _instance;
+    private static readonly object _lock = new object();
+    private static bool _isQuitting = false;
 
     public static T Instance
     {
         get
         {
-            if (isQuitting) return null;
-            lock (lock_)
+            if (_isQuitting) return null;
+            lock (_lock)
             {
-                if (instance == null)
+                if (_instance == null)
                 {
-                    instance = FindFirstObjectByType<T>();
-                    if (instance == null)
+                    _instance = FindFirstObjectByType<T>();
+                    if (_instance == null)
                     {
                         GameObject singletonObject = new GameObject();
-                        instance = singletonObject.AddComponent<T>();
+                        _instance = singletonObject.AddComponent<T>();
                         singletonObject.name = typeof(T).Name + " (Singleton)";
                         DontDestroyOnLoad(singletonObject);
                     }
                 }
-                return instance;
+                return _instance;
             }
         }
     }
 
     protected virtual void Awake()
     {
-        if (instance == null)
+        if (_instance == null)
         {
-            instance = this as T;
+            _instance = this as T;
             DontDestroyOnLoad(gameObject);
         }
-        else if (instance != this) Destroy(gameObject);
+        else if (_instance != this) Destroy(gameObject);
     }
 
     protected virtual void OnApplicationQuit()
     {
-        isQuitting = true;
+        _isQuitting = true;
     }
 }

@@ -6,9 +6,9 @@ namespace Assets.Entity
     [System.Serializable]
     public class EntityDataContainer
     {
-        public int HullLayer;
-        public string HullId;
-        public List<KeyValuePair<string, int>> EquipmentIds;
-        public Vector2 Position;
+        public int hullLayer;
+        public string hullId;
+        public List<KeyValuePair<string, int>> equipmentIds;
+        public Vector2 position;
     }
 }
