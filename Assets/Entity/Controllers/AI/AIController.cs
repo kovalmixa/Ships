@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Assets.Entity;
 using Assets.Entity.AI.Interfaces;
 using Assets.Entity.Hull;
-using Entity.Controllers.GenericController;
+using Entity.Controllers;
 using Scripts;
 using UnityEngine;
 

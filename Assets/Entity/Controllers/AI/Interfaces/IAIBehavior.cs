@@ -1,4 +1,4 @@
-﻿using Entity.Controllers.GenericController;
+﻿using Entity.Controllers;
 
 namespace Assets.Entity.AI.Interfaces
 {

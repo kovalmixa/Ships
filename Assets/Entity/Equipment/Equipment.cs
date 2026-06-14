@@ -5,7 +5,7 @@ using Assets.Entity.Hull;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
 using Assets.Scripts.Effects;
-using Entity.Controllers.GenericController;
+using Entity.Controllers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;

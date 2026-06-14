@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Entity.Controllers.GenericController;
+using Entity.Controllers;
 using UnityEngine;
 
 namespace Entity.Controllers

@@ -1,4 +1,3 @@
-using Entity.Controllers.GenericController;
 using UnityEngine;
 
 namespace Entity.Controllers

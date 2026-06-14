@@ -1,7 +1,7 @@
 ﻿using System;
 using Assets.DataContainers;
 using Assets.Handlers.FileHandlers;
-using Entity.Controllers.GenericController;
+using Entity.Controllers;
 using UnityEngine;
 
 namespace Assets.Handlers.SceneHandlers

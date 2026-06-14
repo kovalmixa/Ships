@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Assets.DataContainers;
 using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
-using Entity.Controllers.GenericController;
+using Entity.Controllers;
 using Scripts;
 using UnityEngine;
 

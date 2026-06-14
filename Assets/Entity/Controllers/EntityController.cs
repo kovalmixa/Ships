@@ -8,7 +8,7 @@ using Entity.Controllers.AI;
 using Scripts;
 using UnityEngine;
 
-namespace Entity.Controllers.GenericController
+namespace Entity.Controllers
 {
     public class EntityController : MonoBehaviour
     {

@@ -3,7 +3,7 @@ using Assets.Entity.Hull;
 using Entity.Controllers.AI;
 using UnityEngine;
 
-namespace Entity.Controllers.GenericController
+namespace Entity.Controllers
 {
     public class EntityHullSetup : MonoBehaviour
     {

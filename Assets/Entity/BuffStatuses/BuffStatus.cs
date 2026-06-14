@@ -1,9 +1,12 @@
 ﻿using Assets.Entity.BuffStatuses;
+using Assets.Entity.Modifiers;
+using UnityEngine;
 
-public abstract class BuffStatus
+public abstract class BuffStatus : MonoBehaviour
 {
-    public float Duration;
-    public float RemainingTime;
+    [SerializeField] public Modifiers Modifiers;
+    [SerializeField] public float Duration;
+    [SerializeField] public float RemainingTime;
 
     public virtual void OnApply(StatusContext context)
     {

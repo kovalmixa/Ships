@@ -2,7 +2,7 @@
 
 namespace Assets.Entity.Hull
 {
-    public class GroundHullBase : HullBase
+    public class GroundHull : HullBase
     {
         public override void SetTargetSpeed(Vector2 directionToPoint)
         {

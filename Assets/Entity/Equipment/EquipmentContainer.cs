@@ -1,5 +1,4 @@
 using Assets.Common;
-using Assets.Entity.Hull;
 using UnityEngine;
 
 namespace Assets.Entity.Equipment

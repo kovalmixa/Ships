@@ -1,6 +1,6 @@
 ﻿using Assets.Entity;
 using Assets.Entity.Hull;
-using Entity.Controllers.GenericController;
+using Entity.Controllers;
 using UnityEngine;
 
 namespace Assets.Handlers.SceneHandlers

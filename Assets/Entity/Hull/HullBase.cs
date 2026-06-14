@@ -2,36 +2,33 @@
 using Assets.Common.ActionEffectStructs;
 using Assets.DataContainers;
 using Assets.Entity.Equipment;
+using Assets.Entity.Modifiers;
 using Assets.Handlers;
-using Assets.Scripts.Effects;
-using Entity.Controllers.GenericController;
+using Entity.Controllers;
 using Scripts;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
-    public abstract class HullBase : MonoBehaviour, IInteractive, IHull, IModified
+    public abstract class HullBase : MonoBehaviour, IInteractive, IHull, IBuffStat
     {
         public HullContainer data;
 
         public List<EquipmentAnchor> equipmentAnchors;
         public List<Equipment.Equipment> equipments;
-
         public Transform root;
-        protected Rigidbody2D rigidBody2D;
         public float currentSpeed;
-
-        public List<EffectComponent> Effects { get; set; }
-        public bool IsDirty { get; set; }
-        protected List<EffectComponent> cachedCombinedEffects = new List<EffectComponent>();
-
+        protected EntityController entityController;
+        protected Rigidbody2D rigidBody2D;
 
         #region Setup
 
         private void Awake()
         {
+            entityController = GetComponentInParent<EntityController>();
             rigidBody2D = GetComponent<Rigidbody2D>();
             data = GetComponent<HullContainer>();
             CollectAnchors(transform);
@@ -81,7 +78,7 @@ namespace Assets.Entity.Hull
         private void OnTriggerEnter2D(Collider2D other)
         {
             IScript script = other.GetComponent<IScript>();
-            script?.Execute(root.GetComponent<EntityController>());
+            script?.Execute(entityController);
         }
 
         private void Bounce(Collision2D collision)
@@ -124,25 +121,61 @@ namespace Assets.Entity.Hull
 
         #endregion
 
-        #region IModified
-        public List<EffectComponent> GetBuildEffects() => IsDirty ? RebuildEffects() : cachedCombinedEffects;
+        #region IBuffStat
+        public Dictionary<StatType, float> StatsDict => new();
+        public Modifiers.Modifiers Modifiers
+        {
+            get => modifiers;
+            set
+            {
+                modifiers = value;
+                IsDirty = true;
+            }
+        }
+        public List<BuffStatus> BuffStatuses
+        {
+            get => buffStatuses;
+            set
+            {
+                buffStatuses = value;
+                IsDirty = true;
+            }
+        }
+        public bool IsDirty { get; set; }
 
-        public List<EffectComponent> RebuildEffects()
+        private Modifiers.Modifiers modifiers = new();
+        private List<BuffStatus> buffStatuses = new();
+        protected Dictionary<StatType, float> cachedCombinedStats = new();
+
+        public bool TryGetCurrentStat(StatType type, out float value) => 
+            (IsDirty ? RebuildCachedStats() : cachedCombinedStats).TryGetValue(type, out value);
+
+        public void SetupStats()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Dictionary<StatType, float> RebuildCachedStats()
         {
             if (IsDirty)
             {
-                cachedCombinedEffects.Clear();
-                cachedCombinedEffects.AddRange(GetSets());
+                cachedCombinedStats.Clear();
+                cachedCombinedStats.AddRange(StatsDict);
+
+                var allMods = Modifiers;
                 //get from accessories, get from skills...
+                allMods.Add((entityController as IBuffStat).Modifiers);
+                foreach (var mod in BuffStatuses.Select(buff => buff.Modifiers)) allMods.Add(mod);
+
+
+                foreach (var stat in cachedCombinedStats)
+                    cachedCombinedStats[stat.Key] = allMods.ApplyModByType(stat.Key, stat.Value);
             }
-            return cachedCombinedEffects;
+            return cachedCombinedStats;
         }
 
-        private List<EffectComponent> GetSets()
-        {
-            var effects = new List<EffectComponent>();
-            return effects;
-        }
+        public float TryGetCurrentStat(StatType type) => cachedCombinedStats.TryGetValue(type, out float value) ? value : 0f;
+
     }
     #endregion
 }

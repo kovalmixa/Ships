@@ -1,5 +1,5 @@
 ﻿using Effects;
-using Entity.Controllers.GenericController;
+using Entity.Controllers;
 using System;
 
 namespace Assets.Scripts.Effects
