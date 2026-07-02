@@ -1,28 +1,27 @@
 ﻿using Assets.Common;
 using Assets.Common.ActionEffectStructs;
 using Assets.DataContainers;
+using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
-using Assets.Entity.Modifiers;
 using Assets.Handlers;
 using Entity.Controllers;
 using Scripts;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
-    public abstract class HullBase : MonoBehaviour, IInteractive, IHull, IBuffStat
+    public abstract class HullBase : MonoBehaviour, IInteractive, IHull
     {
         public HullContainer data;
-
         public List<EquipmentAnchor> equipmentAnchors;
         public List<Equipment.Equipment> equipments;
         public Transform root;
         public float currentSpeed;
         protected EntityController entityController;
         protected Rigidbody2D rigidBody2D;
+        private BuffStatController _buffStatController;
 
         #region Setup
 
@@ -31,6 +30,8 @@ namespace Assets.Entity.Hull
             entityController = GetComponentInParent<EntityController>();
             rigidBody2D = GetComponent<Rigidbody2D>();
             data = GetComponent<HullContainer>();
+            _buffStatController.BaseStats = data.stats;
+            _buffStatController.LocalModifiers = data.equipmentLocalModifiers;
             CollectAnchors(transform);
         }
 
@@ -86,7 +87,7 @@ namespace Assets.Entity.Hull
             Rigidbody2D otherRb = collision.rigidbody;
             if (otherRb == null) return;
             if (collision.gameObject.layer != LayerMask.NameToLayer(
-                TypeListHandler.layerTypes.ToArray()[data.general.Layer]) 
+                TypeListHandler.layerTypes.ToArray()[data.general.Layer])
                 && collision.gameObject.layer != LayerMask.NameToLayer("Markers")
                 )
             {
@@ -104,7 +105,7 @@ namespace Assets.Entity.Hull
             //Теряет скорость пропорционально массе другого объекта
             currentSpeed *= otherRb.mass / totalMass;
         }
-        
+
         #endregion
 
         #region IInteractive
@@ -120,62 +121,5 @@ namespace Assets.Entity.Hull
 
 
         #endregion
-
-        #region IBuffStat
-        public Dictionary<StatType, float> StatsDict => new();
-        public Modifiers.Modifiers Modifiers
-        {
-            get => modifiers;
-            set
-            {
-                modifiers = value;
-                IsDirty = true;
-            }
-        }
-        public List<BuffStatus> BuffStatuses
-        {
-            get => buffStatuses;
-            set
-            {
-                buffStatuses = value;
-                IsDirty = true;
-            }
-        }
-        public bool IsDirty { get; set; }
-
-        private Modifiers.Modifiers modifiers = new();
-        private List<BuffStatus> buffStatuses = new();
-        protected Dictionary<StatType, float> cachedCombinedStats = new();
-
-        public bool TryGetCurrentStat(StatType type, out float value) => 
-            (IsDirty ? RebuildCachedStats() : cachedCombinedStats).TryGetValue(type, out value);
-
-        public void SetupStats()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Dictionary<StatType, float> RebuildCachedStats()
-        {
-            if (IsDirty)
-            {
-                cachedCombinedStats.Clear();
-                cachedCombinedStats.AddRange(StatsDict);
-
-                var allMods = Modifiers;
-                //get from accessories, get from skills...
-                allMods.Add((entityController as IBuffStat).Modifiers);
-                foreach (var mod in BuffStatuses.Select(buff => buff.Modifiers)) allMods.Add(mod);
-
-
-                foreach (var stat in cachedCombinedStats)
-                    cachedCombinedStats[stat.Key] = allMods.ApplyModByType(stat.Key, stat.Value);
-            }
-            return cachedCombinedStats;
-        }
-
-        public float TryGetCurrentStat(StatType type) => cachedCombinedStats.TryGetValue(type, out float value) ? value : 0f;
-
     }
-    #endregion
 }

@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Entity.Controllers;
 using UnityEngine;
 
 namespace Entity.Controllers
@@ -92,13 +91,5 @@ namespace Entity.Controllers
             //инвентарь панельки управления и тд. проверять пассивность/активнотсь абилки ActivationHandler.IsPassive(type);
             return false;
         }
-
-        #region Bot redundant logic
-
-        public void SetMovementPoint(Transform target) { }
-
-        public void SetTargetPoint(Transform target) { }
-
-        #endregion
     }
 }

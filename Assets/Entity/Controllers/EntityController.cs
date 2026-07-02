@@ -12,19 +12,69 @@ namespace Entity.Controllers
 {
     public class EntityController : MonoBehaviour
     {
-        public bool isPlayer;
-        [SerializeField] private EntityHullSetup _entityHullSetup;
         public EntityDataContainer data;
         private IEntityController _controller;
+        [SerializeField] private GameObject _despawnPrefab;
         public HullBase hull;
 
         private void Start()
         {
+            if (GameObjectHandler.GetAI(this) == null) GameObjectHandler.RegisterPlayer(this);
+        }
+
+        #region Setup
+
+        public void SetController(IEntityController controller)
+        {
+            _controller = controller;
+        }
+
+        private HullBase SetHullNodeLogic(string hullId)
+        {
+            Transform bodyTrans;
+            if (hull) bodyTrans = hull.transform;
+            else bodyTrans = transform;
+            GameObject newHull = PrefabLoader.Instance.InstantiatePrefab(
+                hullId, bodyTrans.position, Quaternion.identity, bodyTrans);
+
+            if (newHull == null) return null;
+            if (hull != null) Object.Destroy(hull.gameObject);
+
+            SetupNodes(newHull);
+            return newHull.GetComponent<HullBase>();
+        }
+
+        private void SetupNodes(GameObject hull)
+        {
             if (isPlayer)
             {
-                _controller = gameObject.AddComponent<PlayerController>();
+                CameraController.Instance.Follow(hull.transform);
             }
-            var cameraNode = SceneNodesHandler.GetNode("CameraNodes").transform.Find("Virtual Camera");
+            else
+            {
+                GameObject despawn = Object.Instantiate(_despawnPrefab,
+                    hull.transform.position, hull.transform.rotation, hull.transform);
+                despawn.GetComponent<Despawn>().SetEntity(gameObject);
+            }
+        }
+
+        private bool SetEquipmentNodeLogic(string equipmentId, int index)
+        {
+            if (equipmentId == "") return false;
+            var obj = PrefabLoader.Instance.InstantiatePrefab(equipmentId, Vector3.zero, Quaternion.identity);
+            if (obj == null) return false;
+            var equipment = obj.GetComponentInChildren<Assets.Entity.Equipment.Equipment>();
+            if (equipment == null) return false;
+            equipment.entityController = this;
+            foreach (var equipmentAnchor in hull.equipmentAnchors.Where(go => go.transform.childCount == 0))
+            {
+                //make spawn to inventory
+                if (!equipmentAnchor.CanBePlaced(equipment, index)) continue;
+                equipmentAnchor.SetTransform(equipment);
+                hull.equipments.Add(equipment);
+                return true;
+            }
+            return false;
         }
 
         public void Setup(EntityDataContainer data)
@@ -39,12 +89,12 @@ namespace Entity.Controllers
         public bool SetHull(string hullId)
         {
             if (hullId == null) return false;
-            HullBase newHullBase = _entityHullSetup.SetHullNodeLogic(hullId);
+            HullBase newHullBase = SetHullNodeLogic(hullId);
             newHullBase.root = transform;
             hull = newHullBase;
             data.hullId = hullId;
             for (int i = 0; i < data.equipmentIds.Count; i++)
-                if (!_entityHullSetup.SetEquipmentNodeLogic(data.equipmentIds[i].Key, data.equipmentIds[i].Value))
+                if (!SetEquipmentNodeLogic(data.equipmentIds[i].Key, data.equipmentIds[i].Value))
                     data.equipmentIds.RemoveAt(i);
 
             return true;
@@ -52,7 +102,7 @@ namespace Entity.Controllers
 
         public bool SetEquipment(string equipmentId, int index)
         {
-            if (!_entityHullSetup.SetEquipmentNodeLogic(equipmentId, index)) return false;
+            if (!SetEquipmentNodeLogic(equipmentId, index)) return false;
             data.equipmentIds.Add(new KeyValuePair<string, int>(equipmentId, index));
             return true;
         }
@@ -65,6 +115,8 @@ namespace Entity.Controllers
             aiController.Scripts = scriptsQueue;
         }
 
+        #endregion
+       
         public void ActivateCommand(Vector3 position, string activationCommand)
         {
             if (activationCommand == "") return;
@@ -94,10 +146,6 @@ namespace Entity.Controllers
             }
             return false;
         }
-
-        public void SetPointToMove(Transform target) => _controller.SetMovementPoint(target);
-
-        public void SetTarget(Transform target) => _controller.SetTargetPoint(target);
 
         private void Update()
         {

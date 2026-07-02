@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Assets.Entity;
 using Assets.Entity.AI.Interfaces;
+using Assets.Entity.Controllers.AI;
 using Assets.Entity.Hull;
 using Entity.Controllers;
 using Scripts;
@@ -8,7 +9,7 @@ using UnityEngine;
 
 namespace Entity.Controllers.AI
 {
-    public class AiController : MonoBehaviour, IEntityController, IAi
+    public class AiController : MonoBehaviour, IAIEntityController, IAi
     {
         private Transform _movePoint;
         private Transform _targetPoint;

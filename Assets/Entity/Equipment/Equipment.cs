@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Equipment
 {
-    public class Equipment : MonoBehaviour, IActivation, IInteractive, IModified
+    public class Equipment : MonoBehaviour, IActivation, IInteractive
     {
         public EntityController entityController;
         public EquipmentContainer equipmentContainer;

@@ -6,7 +6,7 @@ namespace Scripts
     public class SpawnScript : ScriptBase
     {
         public Vector3 Position;
-        public EntityHullSetup EntityBodySetupToSpawn;
+        public EntityController entitToSpawm;
         //add code for spawning/ it will be like that with point moving
         public override bool Execute(EntityController entityController)
         {

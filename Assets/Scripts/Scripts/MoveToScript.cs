@@ -1,16 +1,24 @@
+using Assets.Entity.Controllers.AI;
+using Assets.Handlers.SceneHandlers;
 using Entity.Controllers;
+using Entity.Controllers.AI;
 using UnityEngine;
 
 namespace Scripts
 {
     public class MoveToScript : ScriptBase
     {
-        [SerializeField] public Transform Target;
+        [SerializeField] protected Transform Target;
         public override bool Execute(EntityController entityController)
         {
-            if (entityController.isPlayer) return false;
             if (Target == null) return false;
-            entityController.SetPointToMove(Target);
+            var ai = GameObjectHandler.GetAI(entityController);
+            if (ai != null)
+            {
+                ai.SetMovementPoint(Target);
+                isExecuted = true;
+                return true;
+            }
             isExecuted = true;
             return true;
         }

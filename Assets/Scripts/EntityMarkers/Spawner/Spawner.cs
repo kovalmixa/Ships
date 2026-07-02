@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Assets.DataContainers;
 using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
 using Entity.Controllers;

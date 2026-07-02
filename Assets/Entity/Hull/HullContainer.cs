@@ -1,4 +1,6 @@
 using Assets.Common;
+using Assets.Entity.Modifiers;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.DataContainers
@@ -9,14 +11,16 @@ namespace Assets.DataContainers
 
         public string Id { get; set; }
 
-        public float maxSpeed;
+        public float maxSpeed;//replace
 
-        public float acceleration;
+        public float acceleration;//replace
 
-        public float rotationSpeed;
+        public float rotationSpeed; //replace
 
-        public uint maxHealth;
+        public uint maxHealth; //replace
 
-        public uint maxEnergy;
+        public uint maxEnergy; //replace
+        public Dictionary<(StatType Type, bool IsGlobal), float> stats { get; set; }
+
     }
 }

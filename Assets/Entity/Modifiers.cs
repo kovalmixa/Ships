@@ -3,6 +3,14 @@ using System.Linq;
 
 namespace Assets.Entity.Modifiers
 {
+    public enum StatLayer
+    {
+        Hull,
+        Equipment,
+        Projectile,
+        Global
+    }
+
     public enum StatCalcType
     {
         Set = 0,
@@ -14,46 +22,96 @@ namespace Assets.Entity.Modifiers
     {
         Hp, HpPercent, Energy, EnergyPercent,
         MoveSpeed, RotationSpeed, Mass,
-        Armor, FireResistance, 
-        FireRate, Penetration, Damage, ProjectileSpeed, 
+        Armor, FireResistance,
+        FireRate, Penetration, Damage, ProjectileSpeed,
         FireChance, CritChance
     }
 
-    public class StatMod
+    public readonly struct StatMod
     {
-        public StatType Type { get; set; }
-        public StatCalcType CalcType { get; set; }
-        public float Value { get; set; }
+        public StatType Type { get; }
+        public bool IsGlobal { get; }
+        public StatCalcType CalcType { get; }
+        public float Value { get; }
 
-        public StatMod Clone() => new() { Type = Type, CalcType = CalcType, Value = Value };
+        public StatMod(StatType type, bool isGlobal, StatCalcType calcType, float value)
+        {
+            Type = type;
+            IsGlobal = isGlobal;
+            CalcType = calcType;
+            Value = value;
+        }
+
+        public StatMod WithValue(float newValue) => new(Type, IsGlobal, CalcType, newValue);
     }
 
     public class Modifiers
     {
-        public List<StatMod> StatsMods { get; private set; } = new();
+        private readonly Dictionary<(StatType Type, bool IsGlobal), List<StatMod>> _modsMap = new();
 
-        public void Add(Modifiers modifiers)
+        public IEnumerable<StatMod> StatsMods => _modsMap.Values.SelectMany(x => x);
+
+        public void Add(Modifiers otherModifiers)
         {
-            foreach (var stat in modifiers.StatsMods)
+            if (otherModifiers == null) return;
+            foreach (var incomingMod in otherModifiers.StatsMods) AddSingle(incomingMod);
+        }
+
+        public void AddSingle(StatMod mod)
+        {
+            var key = (mod.Type, mod.IsGlobal);
+
+            if (!_modsMap.TryGetValue(key, out var list))
             {
-                var targetStat = StatsMods.FirstOrDefault(s => s.Type == stat.Type && s.Type == stat.Type);
-                if (targetStat != null) targetStat.Value += stat.Value;
-                else StatsMods.Add(stat.Clone());
+                list = new List<StatMod>();
+                _modsMap[key] = list;
+            }
+            int existingIndex = list.FindIndex(m => m.CalcType == mod.CalcType);
+            if (existingIndex != -1) list[existingIndex] = list[existingIndex].WithValue(list[existingIndex].Value + mod.Value);
+            else list.Add(mod);
+        }
+
+        public float ApplyModByType(StatType type, float basicValue, bool? getGlobal = null)
+        {
+            float currentSum = basicValue;
+            float totalAddition = 0f;
+            float totalPercent = 0f;
+            bool anyModApplied = false;
+
+            if (getGlobal == null || getGlobal == true)
+                ProcessKey((type, true), ref currentSum, ref totalAddition, ref totalPercent, ref anyModApplied);
+            if (getGlobal == null || getGlobal == false)
+                ProcessKey((type, false), ref currentSum, ref totalAddition, ref totalPercent, ref anyModApplied);
+            if (!anyModApplied) return basicValue;
+
+            currentSum += totalAddition;
+            currentSum += currentSum * (totalPercent / 100f);
+
+            return currentSum;
+        }
+
+        private void ProcessKey((StatType Type, bool IsGlobal) key, ref float currentSum, ref float totalAddition, ref float totalPercent, ref bool anyModApplied)
+        {
+            if (!_modsMap.TryGetValue(key, out var mods)) return;
+            anyModApplied = true;
+            for (int i = 0; i < mods.Count; i++)
+            {
+                var mod = mods[i];
+                switch (mod.CalcType)
+                {
+                    case StatCalcType.Set:
+                        currentSum = mod.Value;
+                        break;
+                    case StatCalcType.Addition:
+                        totalAddition += mod.Value;
+                        break;
+                    case StatCalcType.Percentage:
+                        totalPercent += mod.Value;
+                        break;
+                }
             }
         }
 
-        public float ApplyModByType(StatType type, float basicValue)
-        {
-            var statsByName = StatsMods.Where(s => s.Type == type).ToList();
-            if (!statsByName.Any()) return basicValue;
-
-            var setStat = statsByName.LastOrDefault(s => s.CalcType == StatCalcType.Set);
-            float currentSum = setStat != null ? setStat.Value : basicValue;
-            float totalAddition = statsByName.Where(s => s.CalcType == StatCalcType.Addition).Sum(s => s.Value);
-            currentSum += totalAddition;
-            float totalPercent = statsByName.Where(s => s.CalcType == StatCalcType.Percentage).Sum(s => s.Value);
-            currentSum += currentSum * totalPercent / 100f;
-            return currentSum;
-        }
+        public void Clear() => _modsMap.Clear();
     }
 }
