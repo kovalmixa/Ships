@@ -1,12 +1,10 @@
 using Actions;
 using Assets.Common;
-using Assets.Common.ActionEffectStructs;
-using Assets.Entity.Hull;
+using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
 using Assets.Handlers;
-using Assets.Scripts.Effects;
+using Assets.Scripts.Actions;
 using Entity.Controllers;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -15,21 +13,15 @@ namespace Assets.Entity.Equipment
     public class Equipment : MonoBehaviour, IActivation, IInteractive
     {
         public EntityController entityController;
+        public BuffStatController buffStatController;
         public EquipmentContainer equipmentContainer;
-        private const float _basicAngle = 90;
         public EquipmentAnchor EquipmentAnchor { get; set; }
-
-        public ActionBase[] actions;
-        public ActionBase[] updateActions;
-
-        public List<EffectComponent> Effects { get; set; }
-        public bool IsDirty { get; set; }
-        protected List<EffectComponent> cachedCombinedEffects = new List<EffectComponent>();
-
+        public TemplateActionBase[] actions;
+        private const float _basicAngle = 90;
         public Vector3 Position
         {
             get => transform.position + entityController.transform.position;
-            set{}
+            set { }
         }
 
         public void Rotate(Vector3 targetPos)
@@ -55,24 +47,18 @@ namespace Assets.Entity.Equipment
             return EquipmentAnchor.rotationSector != Vector2.zero;
         }
 
-        public void Activate(Vector3 targetPos, ActionBase[] actions = null)
+        public void Activate(Vector3 targetPos, TemplateActionBase[] actions = null)
         {
-            var actionContext = new ActionContext(gameObject, null);
-            if (actions == updateActions)
-            {
-                foreach (var activation in actions) activation.Execute(actionContext, targetPos);
-                return;
-            }
+            var actionContext = new EntitySnapshot(entityController, entityController.data, buffStatController.BuffStatuses.ToArray());
             var distance = Vector2.Distance(transform.position, targetPos);
-            var targetPosEq =
-                MathFuncHandler.GetAngleDistancePoint(transform.position, transform.eulerAngles.z + _basicAngle, distance);
+            var targetPosEq = MathFuncHandler.GetAngleDistancePoint(transform.position, transform.eulerAngles.z + _basicAngle, distance);
             foreach (var activation in this.actions)
             {
-                if (activation.IsPassive || activation.Delay <= 0) activation.Execute(actionContext, targetPos);
+                if (activation.IsPassive || activation.delay <= 0) activation.Execute(actionContext, targetPos);
                 float targetWorldAngle = Mathf.Atan2(targetPos.y - transform.position.y, targetPos.x - transform.position.x) * Mathf.Rad2Deg;
                 float currentAngle = Mathf.Repeat(transform.eulerAngles.z + _basicAngle, 360f);
                 float angleDiff = Mathf.DeltaAngle(currentAngle, targetWorldAngle);
-                if (!(Mathf.Abs(angleDiff) < 12.5f / activation.Delay)) continue;
+                if (!(Mathf.Abs(angleDiff) < 12.5f / activation.delay)) continue;
                 if (EquipmentAnchor.activationSectors.Length == 0) activation.Execute(actionContext, targetPosEq);
                 else
                 {
@@ -90,37 +76,15 @@ namespace Assets.Entity.Equipment
         }
 
         #region IInteractive
-        public void TakeDamage(ActionContext context, Damage damage)
+        public void TakeDamage(EntitySnapshot entitySnapshot, Damage damage)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(ActionContext context, Heal heal)
+        public void TakeHeal(EntitySnapshot entitySnapshot, Heal heal)
         {
             throw new System.NotImplementedException();
         }
-        #endregion
-
-        #region IModiefied
-        public List<EffectComponent> RebuildEffects()
-        {
-            if (IsDirty)
-            {
-                cachedCombinedEffects.Clear();
-                if (entityController != null && entityController.GetComponent<HullBase>() != null)
-                {
-                    var hullEffects = entityController.GetComponent<HullBase>().GetBuildEffects();
-                    if (hullEffects != null) cachedCombinedEffects.AddRange(hullEffects);
-                }
-                if (Effects != null)
-                    cachedCombinedEffects.AddRange(Effects.OfType<EffectComponent>());
-                IsDirty = false;
-            }
-            return cachedCombinedEffects;
-        }
-       
-        public List<EffectComponent> GetBuildEffects() => IsDirty ? RebuildEffects() : cachedCombinedEffects;
-
         #endregion
     }
 }

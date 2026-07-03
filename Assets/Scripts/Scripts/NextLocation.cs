@@ -15,7 +15,7 @@ namespace Scripts
         }
         public override bool Execute(EntityController entityController)
         {
-            if (entityController.isPlayer)
+            if (GameOb entityController.isPlayer)
             {
                 sceneController.GetComponent<SceneController>().NextLocation(LocationName);
                 entityController.transform.position = Vector3.zero;

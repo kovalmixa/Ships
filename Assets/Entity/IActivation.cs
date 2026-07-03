@@ -5,6 +5,6 @@ namespace Assets.Entity.Interfaces
 {
     public interface IActivation
     {
-        public void Activate(Vector3 targetPos, ActionBase[] actions);
+        public void Activate(Vector3 targetPos, TemplateActionBase[] actions);
     }
 }

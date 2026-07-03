@@ -1,23 +1,22 @@
 ﻿using Actions;
 using Assets.Common;
-using Assets.Common.ActionEffectStructs;
-using Assets.Scripts.Effects;
+using Assets.Entity;
 using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
 
-    public class SetEffectAction : ActionBase
+    public class SetBuffAction : TemplateActionBase, IScalableAction
     {
         public enum TargetType
         {
             All, Player, Friendly, Hostile
         }
-        public EffectComponent[] EffectComponents { get; set; }
+        public BuffStatus[] BuffStatuses { get; set; }
         public TargetType targetType = TargetType.All;
         public float Radius { get; set; }
 
-        public override void Execute(ActionContext context, Vector3 targetPos)
+        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos)
         {
             //Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, Radius, combinedMask);
             //foreach (var target in targets)
@@ -28,9 +27,19 @@ namespace Assets.Scripts.Actions
             //}
         }
 
-        public override void Execute(ActionContext context, IInteractive target)
+        public override void Execute(EntitySnapshot entitySnapshot, IInteractive target)
         {
             //target.TakeDamage(context, damage);
+        }
+
+        public void ScaleExecute(EntitySnapshot entitySnapshot, Vector3 targetPos, float scale)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ScaleExecute(EntitySnapshot entitySnapshot, IInteractive target, float scale)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

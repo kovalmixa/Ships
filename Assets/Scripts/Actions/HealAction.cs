@@ -1,16 +1,17 @@
 ﻿using Assets.Common;
-using Assets.Common.ActionEffectStructs;
+using Assets.Entity;
+using Assets.Scripts.Actions;
 using UnityEngine;
 
 namespace Actions
 {
-    public class HealAction : ActionBase, IScalableAction
+    public class HealAction : TemplateActionBase, IScalableAction
     {
         [SerializeField] public int HealValue;
 
-        public override void Execute(ActionContext context, Vector3 targetPos)
+        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos)
         {
-            if (!CanActivate(context, targetPos)) return;
+            if (!CanActivate(entitySnapshot, targetPos)) return;
             Debug.Log($"Healed:{HealValue}");
             //var stats = context.Target.GetComponent<CharacterStats>();
             //if (stats != null)
@@ -18,19 +19,19 @@ namespace Actions
             //    stats.Heal(context.HealAmount.Value);
             //}
         }
-        public override void Execute(ActionContext context, IInteractive target)
+        public override void Execute(EntitySnapshot entitySnapshot, IInteractive target)
         {
             
-            target.TakeHeal(context, new Heal());
+            target.TakeHeal(entitySnapshot, new Heal());
         }
 
         #region IScalableAction
-        public void ScaleExecute(ActionContext context, Vector3 targetPos, float scale)
+        public void ScaleExecute(EntitySnapshot entitySnapshot, Vector3 targetPos, float scale)
         {
             throw new System.NotImplementedException();
         }
 
-        public void ScaleExecute(ActionContext context, IInteractive target, float scale)
+        public void ScaleExecute(EntitySnapshot entitySnapshot, IInteractive target, float scale)
         {
             throw new System.NotImplementedException();
         }

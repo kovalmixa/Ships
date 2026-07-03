@@ -7,7 +7,7 @@ namespace Assets.Handlers
     {
         public static readonly Dictionary<string, string[]> equipTypesDict = new(StringComparer.OrdinalIgnoreCase)
         {
-            { "turret", new[] { "machine gun", "laser", "light cannon", "cannon", "missile" } },
+            { "turret", new[] { "machine gun", "flame gun", "laser", "light cannon", "cannon", "missile" } },
             { "aircraft", new[] { "fighter", "bomber", "helicopter" } },
             { "launch", new[] { "torpedo" } }
         };

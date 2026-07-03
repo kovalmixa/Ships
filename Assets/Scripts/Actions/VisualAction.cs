@@ -1,18 +1,17 @@
-﻿using Assets.Common;
-using Assets.Common.ActionEffectStructs;
+﻿using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
 namespace Actions
 {
-    public class VisualAction : ActionBase
+    public class VisualAction : TemplateActionBase
     {
         private ObjectPoolHandler effectPool;
         [SerializeField] private string[] ids;
 
-        public override void Execute(ActionContext context, Vector3 targetPos){
+        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos){
             var effectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
-            if (!CanActivate(context, targetPos)) return;
+            if (!CanActivate(entitySnapshot, targetPos)) return;
             if (effectPool == null) return;
             effectPool = effectPool.gameObject.GetComponent<ObjectPoolHandler>();
             foreach (var id in ids) SetupEffect(targetPos, id);

@@ -1,12 +1,12 @@
 ﻿using Assets.Common;
-using Assets.Common.ActionEffectStructs;
+using Assets.Entity;
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Actions
 {
-    public class ExplosionAction : ActionBase
+    public class ExplosionAction : TemplateActionBase
     {
         [SerializeField] public uint Range;
 
@@ -16,9 +16,9 @@ namespace Actions
 
         [SerializeField] [CanBeNull] public VisualAction VisualAction;
 
-        public override void Execute(ActionContext context, Vector3 targetPos)
+        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos)
         {
-            VisualAction?.Execute(context, targetPos);
+            VisualAction?.Execute(entitySnapshot, targetPos);
 
             var colliders = new List<Collider>();
             foreach(int layer in Layers)
@@ -42,7 +42,7 @@ namespace Actions
                     float rangeProp = Vector2.Distance(target.Value, targetPos) / Range;
                     if (zone.Key <= rangeProp)
                         foreach (var action in zone.Value)
-                            action?.ScaleExecute(context, target.Key, 1 - rangeProp / zone.Key);
+                            action?.ScaleExecute(entitySnapshot, target.Key, 1 - rangeProp / zone.Key);
                 }
         }
     }

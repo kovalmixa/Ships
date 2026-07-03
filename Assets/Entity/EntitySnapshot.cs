@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Entity.Controllers;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Entity
@@ -11,13 +12,15 @@ namespace Assets.Entity
         public Vector2 position;
     }
 
-    public class Snapshot
+    public class EntitySnapshot
     {
+        public EntityController source;
         public EntityDataContainer entityData;
         public BuffStatus[] buffStatuses;
 
-        public Snapshot(BuffStatus[] buffStatuses, EntityDataContainer entityData)
+        public EntitySnapshot(EntityController source, EntityDataContainer entityData, BuffStatus[] buffStatuses)
         {
+            this.source = source;
             this.buffStatuses = buffStatuses;
             this.entityData = entityData;
         }

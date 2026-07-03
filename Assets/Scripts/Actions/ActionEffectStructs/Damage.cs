@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using static Actions.DamageAction;
 
-namespace Assets.Common.ActionEffectStructs
+namespace Assets.Scripts.Actions
 {
     public enum DamageType
     {

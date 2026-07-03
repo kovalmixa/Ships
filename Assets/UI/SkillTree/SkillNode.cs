@@ -6,7 +6,7 @@ namespace Assets.UI.SkillTree
     public class SkillNode
     {
         public string skillName;
-        public ActionBase[] actions;
+        public TemplateActionBase[] actions;
         public BuffStatus[] statuses;
 
         public uint level;

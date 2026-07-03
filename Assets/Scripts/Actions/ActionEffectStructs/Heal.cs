@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Common.ActionEffectStructs
+namespace Assets.Scripts.Actions
 {
     public struct Heal
     {

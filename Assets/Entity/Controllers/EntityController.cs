@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Entity;
+using Assets.Entity.Controllers;
 using Assets.Entity.Hull;
 using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
@@ -38,7 +39,7 @@ namespace Entity.Controllers
                 hullId, bodyTrans.position, Quaternion.identity, bodyTrans);
 
             if (newHull == null) return null;
-            if (hull != null) Object.Destroy(hull.gameObject);
+            if (hull != null) Destroy(hull.gameObject);
 
             SetupNodes(newHull);
             return newHull.GetComponent<HullBase>();
@@ -46,7 +47,7 @@ namespace Entity.Controllers
 
         private void SetupNodes(GameObject hull)
         {
-            if (isPlayer)
+            if (GameObjectHandler.IsPlayer(this))
             {
                 CameraController.Instance.Follow(hull.transform);
             }
@@ -127,9 +128,7 @@ namespace Entity.Controllers
                 if (equipment.equipmentContainer == null) continue;
                 var type = equipment.equipmentContainer.general.Class;
                 if (activationTypes != null)
-                {
                     if (activationTypes.Contains(type)) equipment.Activate(position);
-                }
                 else if (equipment.equipmentContainer.general.Class == activationCommand || equipment.equipmentContainer.Id == activationCommand)
                     equipment.Activate(position);
             }

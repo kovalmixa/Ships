@@ -1,5 +1,5 @@
 ﻿using Assets.Common;
-using Assets.Common.ActionEffectStructs;
+using Assets.Scripts.Actions;
 using Assets.DataContainers;
 using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
@@ -31,7 +31,7 @@ namespace Assets.Entity.Hull
             rigidBody2D = GetComponent<Rigidbody2D>();
             data = GetComponent<HullContainer>();
             _buffStatController.BaseStats = data.stats;
-            _buffStatController.LocalModifiers = data.equipmentLocalModifiers;
+            //_buffStatController.LocalModifiers = data.equipmentLocalModifiers;
             CollectAnchors(transform);
         }
 
@@ -41,10 +41,7 @@ namespace Assets.Entity.Hull
             foreach (Transform child in parent)
             {
                 var equipmentAnchor = child.GetComponent<EquipmentAnchor>();
-                if (equipmentAnchor != null)
-                {
-                    equipmentAnchors.Add(equipmentAnchor);
-                }
+                if (equipmentAnchor != null) equipmentAnchors.Add(equipmentAnchor);
                 CollectAnchors(child);
             }
         }
@@ -109,12 +106,12 @@ namespace Assets.Entity.Hull
         #endregion
 
         #region IInteractive
-        public void TakeDamage(ActionContext context, Damage damage)
+        public void TakeDamage(EntitySnapshot entitySnapshot, Damage damage)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(ActionContext context, Heal heal)
+        public void TakeHeal(EntitySnapshot entitySnapshot, Heal heal)
         {
             throw new System.NotImplementedException();
         }

@@ -1,11 +1,12 @@
-using Assets.Common.ActionEffectStructs;
+using Assets.Scripts.Actions;
 using Assets.Handlers.SceneHandlers;
 using Entity.Projectile;
 using UnityEngine;
+using Assets.Entity;
 
 namespace Actions
 {
-    public class FireProjectileAction : ActionBase
+    public class FireProjectileAction : TemplateActionBase
     {
         public GameObject ProjectilePrefab;
         public Transform FirePosition;
@@ -17,14 +18,14 @@ namespace Actions
             poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
-        public override void Execute(ActionContext context, Vector3 targetPos)
+        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos)
         {
-            if (!CanActivate(context, targetPos) || poolHandler == null) return;
+            if (!CanActivate(entitySnapshot, targetPos) || poolHandler == null) return;
             Debug.Log("Pew");
-            SetupProjectile(context, targetPos);
+            SetupProjectile(entitySnapshot, targetPos);
         }
 
-        protected void SetupProjectile(ActionContext context, Vector3 targetPos)
+        protected void SetupProjectile(EntitySnapshot entitySnapshot, Vector3 targetPos)
         {
             var prefabProjectile = ProjectilePrefab.GetComponent<Projectile>();
             if (prefabProjectile == null)
@@ -40,7 +41,7 @@ namespace Actions
             Vector3 direction = (targetPos - FirePosition.position).normalized;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             pooledObj.transform.rotation = Quaternion.Euler(0, 0, angle + 90f);
-            objProjectile.Launch(direction, targetPos, context);
+            objProjectile.Launch(direction, targetPos, entitySnapshot);
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿using Assets.Common.ActionEffectStructs;
-using UnityEngine;
+﻿using Assets.Entity;
+using Assets.Scripts.Actions;
 
 namespace Assets.Common
 {
     public interface IInteractive
     {
-        void TakeDamage(ActionContext context, Damage damage);
+        void TakeDamage(EntitySnapshot entitySnapshot, Damage damage);
 
-        void TakeHeal(ActionContext context, Heal heal);
+        void TakeHeal(EntitySnapshot entitySnapshot, Heal heal);
     }
 }

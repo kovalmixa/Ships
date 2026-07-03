@@ -1,9 +1,10 @@
 ﻿using Actions;
 using Assets.Common;
-using Assets.Common.ActionEffectStructs;
+using Assets.Entity;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
+using Assets.Scripts.Actions;
 using UnityEngine;
 
 namespace Entity.Projectile
@@ -11,11 +12,11 @@ namespace Entity.Projectile
     public class Projectile : MonoBehaviour, IActivation, IInteractive
     {
         public ProjectileContainer projectileContainer;
-        public ActionBase[] onExplosionActions;
-        public ActionBase[] updateActions;
+        public TemplateActionBase[] onExplosionActions;
+        public TemplateActionBase[] updateActions;
 
         private Transform _target;
-        private ActionContext _action;
+        private EntitySnapshot _entitySnapshot;
         private Vector2 _direction;
         public Vector3? targetPosition;
         private float _timer;
@@ -33,17 +34,17 @@ namespace Entity.Projectile
             GetComponent<SpriteRenderer>().sprite = prefab.GetComponent<SpriteRenderer>().sprite;
         }
 
-        public void Launch(Vector2 dir, Vector3? targetPos = null, ActionContext action = null)
+        public void Launch(Vector2 dir, Vector3? targetPos = null, EntitySnapshot entitySnapshot = null)
         {
-            this._action = action;
+            this._entitySnapshot = entitySnapshot;
             targetPosition = targetPos;
             _direction = dir;
             _timer = 0f;
 
-            if (action != null)
+            if (entitySnapshot != null)
             {
                 var projectileCollider = GetComponent<Collider2D>();
-                var shooterCollider = action.Source.GetComponent<Collider2D>();
+                var shooterCollider = entitySnapshot.source.GetComponent<Collider2D>();
                 if (projectileCollider != null && shooterCollider != null)
                     Physics2D.IgnoreCollision(projectileCollider, shooterCollider, true);
             }
@@ -87,17 +88,16 @@ namespace Entity.Projectile
             var objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
             if (_objectPool != null) _objectPool.Return(gameObject);
             else gameObject.SetActive(false);
-            if (_action == null) return;
+            if (_entitySnapshot == null) return;
             var projectileCollider = GetComponent<Collider2D>();
-            var shooterCollider = _action.Source.GetComponent<Collider2D>();
+            var shooterCollider = _entitySnapshot.source.GetComponent<Collider2D>();
             if (projectileCollider != null && shooterCollider != null)
                 Physics2D.IgnoreCollision(projectileCollider, shooterCollider, false);
         }
 
-        public void Activate(Vector3 targetPos, ActionBase[] actions)
+        public void Activate(Vector3 targetPos, TemplateActionBase[] actions)
         {
-            var actionContext = new ActionContext(gameObject, null);
-            foreach (var activation in actions) activation.Execute(actionContext, targetPos);
+            foreach (var activation in actions) activation.Execute(_entitySnapshot, targetPos);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -121,12 +121,12 @@ namespace Entity.Projectile
         #endregion
 
         #region IInteractive
-        public void TakeDamage(ActionContext context, Damage damage)
+        public void TakeDamage(EntitySnapshot entitySnapshot, Damage damage)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(ActionContext context, Heal heal)
+        public void TakeHeal(EntitySnapshot entitySnapshot, Heal heal)
         {
             throw new System.NotImplementedException();
         }
