@@ -25,7 +25,7 @@ namespace EntityMarkers.Spawner
         {
             var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController == null) return;
-            if (!entityController.isPlayer) return;
+            if (!GameObjectHandler.IsPlayer(entityController)) return;
             //Debug.Log(entityObj == null);
             if (entityObj == null || !entityObj.activeSelf) Spawn();
         }

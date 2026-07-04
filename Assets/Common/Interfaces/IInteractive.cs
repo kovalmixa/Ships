@@ -1,12 +1,17 @@
-﻿using Assets.Entity;
+﻿using Assets.Entity.Controllers;
 using Assets.Scripts.Actions;
 
 namespace Assets.Common
 {
     public interface IInteractive
     {
-        void TakeDamage(EntitySnapshot entitySnapshot, Damage damage);
+        BuffStatController BuffController { get; }
+        void TakeDamage(InterractionContext interractionContext, Damage damage);
 
-        void TakeHeal(EntitySnapshot entitySnapshot, Heal heal);
+        void TakeHeal(InterractionContext interractionContext, Heal heal);
+
+        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs);
+
+        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs);
     }
 }

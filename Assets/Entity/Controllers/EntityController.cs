@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Entity;
-using Assets.Entity.Controllers;
 using Assets.Entity.Hull;
 using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
@@ -18,12 +17,12 @@ namespace Entity.Controllers
         [SerializeField] private GameObject _despawnPrefab;
         public HullBase hull;
 
+        #region Setup
+
         private void Start()
         {
             if (GameObjectHandler.GetAI(this) == null) GameObjectHandler.RegisterPlayer(this);
         }
-
-        #region Setup
 
         public void SetController(IEntityController controller)
         {
@@ -118,6 +117,8 @@ namespace Entity.Controllers
 
         #endregion
        
+        public EntitySnapshot GetSnapshot() => new EntitySnapshot(this, data);
+
         public void ActivateCommand(Vector3 position, string activationCommand)
         {
             if (activationCommand == "") return;

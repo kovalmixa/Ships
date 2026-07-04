@@ -1,4 +1,4 @@
-﻿using Assets.Entity;
+﻿using Assets.Scripts.Actions;
 using System;
 using UnityEngine;
 
@@ -8,7 +8,7 @@ namespace Actions
     {
         [SerializeField] public Vector2 Position;
         [SerializeField] public Vector2 Rotation;
-        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos)
+        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
         {
             throw new NotImplementedException();
         }

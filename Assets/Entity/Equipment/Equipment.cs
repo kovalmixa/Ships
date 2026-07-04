@@ -13,7 +13,6 @@ namespace Assets.Entity.Equipment
     public class Equipment : MonoBehaviour, IActivation, IInteractive
     {
         public EntityController entityController;
-        public BuffStatController buffStatController;
         public EquipmentContainer equipmentContainer;
         public EquipmentAnchor EquipmentAnchor { get; set; }
         public TemplateActionBase[] actions;
@@ -49,23 +48,27 @@ namespace Assets.Entity.Equipment
 
         public void Activate(Vector3 targetPos, TemplateActionBase[] actions = null)
         {
-            var actionContext = new EntitySnapshot(entityController, entityController.data, buffStatController.BuffStatuses.ToArray());
+            var interractionCtx = new InterractionContext(){
+                SourceObject = gameObject,
+                Caster = entityController.GetSnapshot()
+            };
+
             var distance = Vector2.Distance(transform.position, targetPos);
             var targetPosEq = MathFuncHandler.GetAngleDistancePoint(transform.position, transform.eulerAngles.z + _basicAngle, distance);
             foreach (var activation in this.actions)
             {
-                if (activation.IsPassive || activation.delay <= 0) activation.Execute(actionContext, targetPos);
+                if (activation.IsPassive || activation.delay <= 0) activation.Execute(interractionCtx, targetPos);
                 float targetWorldAngle = Mathf.Atan2(targetPos.y - transform.position.y, targetPos.x - transform.position.x) * Mathf.Rad2Deg;
                 float currentAngle = Mathf.Repeat(transform.eulerAngles.z + _basicAngle, 360f);
                 float angleDiff = Mathf.DeltaAngle(currentAngle, targetWorldAngle);
                 if (!(Mathf.Abs(angleDiff) < 12.5f / activation.delay)) continue;
-                if (EquipmentAnchor.activationSectors.Length == 0) activation.Execute(actionContext, targetPosEq);
+                if (EquipmentAnchor.activationSectors.Length == 0) activation.Execute(interractionCtx, targetPosEq);
                 else
                 {
                     currentAngle = Mathf.Abs(Mathf.DeltaAngle(currentAngle, EquipmentAnchor.transform.eulerAngles.z));
                     if (EquipmentAnchor.activationSectors.Any(sector => currentAngle >= sector.x && currentAngle <= sector.y))
                     {
-                        activation.Execute(actionContext, targetPosEq);
+                        activation.Execute(interractionCtx, targetPosEq);
                     }
                 }
             }
@@ -76,12 +79,24 @@ namespace Assets.Entity.Equipment
         }
 
         #region IInteractive
-        public void TakeDamage(EntitySnapshot entitySnapshot, Damage damage)
+        [SerializeField] private BuffStatController _buffController;
+        public BuffStatController BuffController => _buffController;
+
+        public void TakeDamage(InterractionContext interractionContext, Damage damage)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(EntitySnapshot entitySnapshot, Heal heal)
+        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+        {
+            throw new System.NotImplementedException();
+        }
+        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
         {
             throw new System.NotImplementedException();
         }

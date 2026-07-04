@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Assets.Common.Interfaces;
+﻿using Assets.Common.Interfaces;
 using Assets.Entity.BuffStatuses;
 using Assets.Entity.Modifiers;
+using Assets.Scripts.Actions;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Entity.Controllers
@@ -11,29 +12,32 @@ namespace Assets.Entity.Controllers
     {
         public Dictionary<(StatType Type, bool IsGlobal), float> BaseStats { get; set; } = new();
         public Modifiers.Modifiers LocalModifiers { get; set; } = new();
-        public List<(BuffStatus status, EntitySnapshot source)> BuffStatuses { get; set; } = new();
+        public Dictionary<(string buffId, string sourceId), (BuffStatus status, EntitySnapshot source)> ActiveBuffs { get; private set; } = new();
+        public ILookup<string, BuffStatus> BuffsById => ActiveBuffs.Values.Select(v => v.status).ToLookup(b => b.BuffId);
+       
+        private bool _isDirty { get; set; } = true;
         private List<Modifiers.Modifiers> _externalModifiers = new();
-
-        public bool IsDirty { get; set; } = true;
         private Dictionary<(StatType Type, bool IsGlobal), float> _cachedCombinedStats = new();
+
+        #region Modifiers
 
         public void RegisterExternalModifiers(Modifiers.Modifiers mods)
         {
             if (mods == null || _externalModifiers.Contains(mods)) return;
             _externalModifiers.Add(mods);
-            IsDirty = true;
+            _isDirty = true;
         }
 
         public void UnregisterExternalModifiers(Modifiers.Modifiers mods)
         {
             if (mods == null) return;
             _externalModifiers.Remove(mods);
-            IsDirty = true;
+            _isDirty = true;
         }
 
         public float GetStat((StatType Type, bool IsGlobal) key)
         {
-            if (IsDirty) RebuildCachedStats();
+            if (_isDirty) RebuildCachedStats();
             return _cachedCombinedStats.TryGetValue(key, out float value) ? value : 1f;
         }
 
@@ -46,45 +50,118 @@ namespace Assets.Entity.Controllers
             finalMods.Add(LocalModifiers);
 
             foreach (var extMod in _externalModifiers) finalMods.Add(extMod);
-            foreach (var buff in BuffStatuses) finalMods.Add(buff.status.modifiers);
-
+            foreach (var buff in ActiveBuffs.Values) finalMods.Add(buff.status.modifiers);
             var keys = new List<(StatType Type, bool IsGlobal)>(_cachedCombinedStats.Keys);
             foreach (var key in keys) 
                 _cachedCombinedStats[key] = finalMods.ApplyModByType(key.Type, _cachedCombinedStats[key], key.IsGlobal);
 
-            IsDirty = false;
+            _isDirty = false;
+        }
+
+        #endregion
+
+        #region Buffs
+        public void AddBuff(BuffStatus newBuff, EntitySnapshot source)
+        {
+            if (newBuff == null) return;
+            var key = (newBuff.BuffId, newBuff.SourceId);
+            if (ActiveBuffs.TryGetValue(key, out var existing))
+            {
+                switch (newBuff.Policy)
+                {
+                    case BuffApplicationPolicy.Replace:
+                    case BuffApplicationPolicy.UniquePerSource:
+                        RemoveBuffInternal(existing.status);
+                        break;
+                    case BuffApplicationPolicy.Refresh:
+                        existing.status.Duration = newBuff.Duration;
+                        existing.status.onRefresh?.Invoke();
+                        Destroy(newBuff);
+                        _isDirty = true;
+                        return;
+
+                    case BuffApplicationPolicy.Stack:
+                        break;
+                }
+            }
+            ActiveBuffs[key] = (newBuff, source);
+            newBuff.transform.SetParent(transform, false);
+            _isDirty = true;
+        }
+
+        public bool RemoveBuff(string buffId, string sourceId = null)
+        {
+            bool removed = false;
+            if (string.IsNullOrEmpty(sourceId))
+            {
+                foreach (var entry in ActiveBuffs.Where(kv => kv.Key.buffId == buffId).ToList())
+                {
+                    RemoveBuffInternal(entry.Value.status);
+                    removed = true;
+                }
+            }
+            else
+            {
+                var key = (buffId, sourceId);
+                if (ActiveBuffs.TryGetValue(key, out var tuple))
+                {
+                    RemoveBuffInternal(tuple.status);
+                    removed = true;
+                }
+            }
+
+            if (removed) _isDirty = true;
+            return removed;
+        }
+
+        private void RemoveBuffInternal(BuffStatus buff)
+        {
+            buff.onRemove?.Invoke();
+            ActiveBuffs.Remove((buff.BuffId, buff.SourceId));
+            Destroy(buff);
+        }
+
+        public void RemoveBuffBySource(string sourceId)
+        {
+            if (string.IsNullOrEmpty(sourceId)) return;
+
+            var toRemove = ActiveBuffs.Where(kv => kv.Key.sourceId == sourceId).ToList();
+
+            foreach (var entry in toRemove)
+            {
+                RemoveBuffInternal(entry.Value.status);
+            }
+
+            if (toRemove.Count > 0)
+                _isDirty = true;
+        }
+
+        public void ClearAllBuffs()
+        {
+            foreach (var entry in ActiveBuffs.ToList())
+                RemoveBuffInternal(entry.Value.status);
+
+            _isDirty = true;
         }
 
         private void Update()
         {
             bool needsRebuild = false;
-            StatusContext context = new StatusContext();
-            for (int i = BuffStatuses.Count - 1; i >= 0; i--)
+            foreach (var kv in ActiveBuffs.ToList())
             {
-                var tuple = BuffStatuses[i];
-                var buff = tuple.status;
-
-                if (buff == null)
+                var buff = kv.Value.status;
+                if (buff == null || buff.Tick(new InterractionContext()))
                 {
-                    BuffStatuses.RemoveAt(i);
-                    needsRebuild = true;
-                    continue;
-                }
-
-                bool isExpired = buff.Tick(context);
-
-                if (isExpired)
-                {
-                    buff.onRemove?.Invoke();
-                    Destroy(buff);
-                    BuffStatuses.RemoveAt(i);
+                    RemoveBuffInternal(buff);
                     needsRebuild = true;
                 }
             }
-            if (needsRebuild) IsDirty = true;
+            if (needsRebuild) _isDirty = true;
         }
 
-        #region
+        #endregion
+
+        #region Crud
         public void OnUpdate()
         {
             RebuildCachedStats();

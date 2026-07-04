@@ -1,5 +1,4 @@
 ﻿using Assets.Common;
-using Assets.Entity;
 using Assets.Scripts.Actions;
 using UnityEngine;
 
@@ -9,9 +8,9 @@ namespace Actions
     {
         [SerializeField] public int HealValue;
 
-        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos)
+        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
         {
-            if (!CanActivate(entitySnapshot, targetPos)) return;
+            if (!CanActivate(interractionContext, targetPos)) return;
             Debug.Log($"Healed:{HealValue}");
             //var stats = context.Target.GetComponent<CharacterStats>();
             //if (stats != null)
@@ -19,19 +18,19 @@ namespace Actions
             //    stats.Heal(context.HealAmount.Value);
             //}
         }
-        public override void Execute(EntitySnapshot entitySnapshot, IInteractive target)
+        public override void Execute(InterractionContext interractionContext, IInteractive target)
         {
             
-            target.TakeHeal(entitySnapshot, new Heal());
+            target.TakeHeal(interractionContext, new Heal());
         }
 
         #region IScalableAction
-        public void ScaleExecute(EntitySnapshot entitySnapshot, Vector3 targetPos, float scale)
+        public void ScaleExecute(InterractionContext interractionContext, Vector3 targetPos, float scale)
         {
             throw new System.NotImplementedException();
         }
 
-        public void ScaleExecute(EntitySnapshot entitySnapshot, IInteractive target, float scale)
+        public void ScaleExecute(InterractionContext interractionContext, IInteractive target, float scale)
         {
             throw new System.NotImplementedException();
         }

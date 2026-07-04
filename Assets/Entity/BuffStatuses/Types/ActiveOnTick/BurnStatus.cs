@@ -1,4 +1,6 @@
 ﻿
+using Assets.Scripts.Actions;
+
 namespace Assets.Entity.BuffStatuses.Tick
 {
     public class BurnStatus : TickStatus
@@ -7,15 +9,15 @@ namespace Assets.Entity.BuffStatuses.Tick
 
         public BurnStatus(float duration,float tickInterval,float damage)
         {
-            this.duration = duration;
+            Duration = duration;
             TickInterval = tickInterval;
             this.damage = damage;
         }
 
-        protected override void OnTick(StatusContext context)
+        protected override void OnTick(InterractionContext interractionContext)
         {
             //context.Target.TakeDamage(
-            //    context.ActionContext,
+            //    interractionContext,
             //    new Damage
             //    {
             //        Value = damage,

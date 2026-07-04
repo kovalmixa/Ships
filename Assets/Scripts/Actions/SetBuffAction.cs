@@ -1,45 +1,50 @@
 ﻿using Actions;
 using Assets.Common;
-using Assets.Entity;
+using Assets.Scripts.Actions;
+using JetBrains.Annotations;
+using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
-namespace Assets.Scripts.Actions
+public class SetBuffAction : TemplateActionBase, IScalableAction
 {
+    public BuffStatus[] BuffTemplates;
+    public string SourceId { get; set; } = "Ability_XXX";
+    [SerializeField] public uint Range;
+    [SerializeField] public int[] Layers;
+    [SerializeField][CanBeNull] public VisualAction VisualAction;
 
-    public class SetBuffAction : TemplateActionBase, IScalableAction
+    public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
     {
-        public enum TargetType
-        {
-            All, Player, Friendly, Hostile
-        }
-        public BuffStatus[] BuffStatuses { get; set; }
-        public TargetType targetType = TargetType.All;
-        public float Radius { get; set; }
+        VisualAction?.Execute(interractionContext, targetPos);
 
-        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos)
-        {
-            //Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, Radius, combinedMask);
-            //foreach (var target in targets)
-            //{
-            //    if (target.TryGetComponent(out IInteractive interactive))
-            //        // logic to choose what type
-            //        interactive.TakeDamage(context, damage);
-            //}
-        }
+        var targets = GetTargetsToExecuteInRange(targetPos, Range, Layers);
+        foreach (var target in targets.Values) Execute(interractionContext, target);
+    }
 
-        public override void Execute(EntitySnapshot entitySnapshot, IInteractive target)
+    public override void Execute(InterractionContext interractionContext, IInteractive target)
+    {
+        foreach (var template in BuffTemplates)
         {
-            //target.TakeDamage(context, damage);
-        }
+            var instance = Instantiate(template);
 
-        public void ScaleExecute(EntitySnapshot entitySnapshot, Vector3 targetPos, float scale)
-        {
-            throw new System.NotImplementedException();
-        }
+            instance.Initialize(
+                buffId: template.name,
+                sourceId: interractionContext?.AbilityId ?? SourceId,
+                duration: template.IsPermanent ? -1f : template.Duration
+            );
 
-        public void ScaleExecute(EntitySnapshot entitySnapshot, IInteractive target, float scale)
-        {
-            throw new System.NotImplementedException();
+            target.AddBuff(interractionContext, instance);
         }
+    }
+
+    public void ScaleExecute(InterractionContext interractionContext, Vector3 targetPos, float scale)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void ScaleExecute(InterractionContext interractionContext, IInteractive target, float scale)
+    {
+        throw new System.NotImplementedException();
     }
 }

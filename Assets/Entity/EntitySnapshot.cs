@@ -16,13 +16,13 @@ namespace Assets.Entity
     {
         public EntityController source;
         public EntityDataContainer entityData;
-        public BuffStatus[] buffStatuses;
 
-        public EntitySnapshot(EntityController source, EntityDataContainer entityData, BuffStatus[] buffStatuses)
+        public EntitySnapshot(EntityController source, EntityDataContainer entityData)
         {
             this.source = source;
-            this.buffStatuses = buffStatuses;
             this.entityData = entityData;
         }
+
+        public string Id { get; internal set; }
     }
 }

@@ -21,7 +21,7 @@ namespace Assets.Entity.Hull
         public float currentSpeed;
         protected EntityController entityController;
         protected Rigidbody2D rigidBody2D;
-        private BuffStatController _buffStatController;
+
 
         #region Setup
 
@@ -30,7 +30,7 @@ namespace Assets.Entity.Hull
             entityController = GetComponentInParent<EntityController>();
             rigidBody2D = GetComponent<Rigidbody2D>();
             data = GetComponent<HullContainer>();
-            _buffStatController.BaseStats = data.stats;
+            BuffController.BaseStats = data.stats;
             //_buffStatController.LocalModifiers = data.equipmentLocalModifiers;
             CollectAnchors(transform);
         }
@@ -106,17 +106,65 @@ namespace Assets.Entity.Hull
         #endregion
 
         #region IInteractive
-        public void TakeDamage(EntitySnapshot entitySnapshot, Damage damage)
+        [SerializeField] private BuffStatController _buffController;
+        public BuffStatController BuffController => _buffController;
+
+        public void TakeDamage(InterractionContext interractionContext, Damage damage)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(EntitySnapshot entitySnapshot, Heal heal)
+        public void TakeHeal(InterractionContext interractionContext, Heal heal)
         {
             throw new System.NotImplementedException();
         }
+        public void AddBuff(InterractionContext context, params BuffStatus[] buffs)
+        {
+            if (_buffController == null || buffs == null) return;
 
+            string sourceId = GenerateSourceId(context);
 
+            foreach (var template in buffs)
+            {
+                if (template == null) continue;
+                var instance = Instantiate(template, _buffController.transform);
+                instance.Initialize(
+                    buffId: template.name,
+                    sourceId: sourceId,
+                    duration: template.IsPermanent ? -1f : template.Duration
+                );
+
+                if (context != null && string.IsNullOrEmpty(instance.SourceId))
+                    instance.SourceId = sourceId;
+
+                _buffController.AddBuff(instance, context?.Caster);
+            }
+        }
+
+        public void RemoveBuff(InterractionContext context, params BuffStatus[] buffs)
+        {
+            if (_buffController == null) return;
+            string sourceId = GenerateSourceId(context);
+            if (buffs == null || buffs.Length == 0)
+            {
+                _buffController.RemoveBuffBySource(sourceId);
+                return;
+            }
+
+            foreach (var buff in buffs)
+            {
+                if (buff == null) continue;
+                _buffController.RemoveBuff(buff.BuffId, sourceId);
+            }
+        }
+
+        private string GenerateSourceId(InterractionContext context)
+        {
+            if (context == null) return "Unknown";
+            if (!string.IsNullOrEmpty(context.AbilityId)) return context.AbilityId;
+            if (context.SourceObject != null) return context.SourceObject.name;
+            return context.Caster?.Id ?? "System";
+        }
         #endregion
     }
 }

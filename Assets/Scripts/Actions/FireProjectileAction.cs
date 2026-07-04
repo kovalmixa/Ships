@@ -1,8 +1,7 @@
-using Assets.Scripts.Actions;
 using Assets.Handlers.SceneHandlers;
 using Entity.Projectile;
 using UnityEngine;
-using Assets.Entity;
+using Assets.Scripts.Actions;
 
 namespace Actions
 {
@@ -18,14 +17,14 @@ namespace Actions
             poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
-        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos)
+        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
         {
-            if (!CanActivate(entitySnapshot, targetPos) || poolHandler == null) return;
+            if (!CanActivate(interractionContext, targetPos) || poolHandler == null) return;
             Debug.Log("Pew");
-            SetupProjectile(entitySnapshot, targetPos);
+            SetupProjectile(interractionContext, targetPos);
         }
 
-        protected void SetupProjectile(EntitySnapshot entitySnapshot, Vector3 targetPos)
+        protected void SetupProjectile(InterractionContext interractionContext, Vector3 targetPos)
         {
             var prefabProjectile = ProjectilePrefab.GetComponent<Projectile>();
             if (prefabProjectile == null)
@@ -41,7 +40,7 @@ namespace Actions
             Vector3 direction = (targetPos - FirePosition.position).normalized;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             pooledObj.transform.rotation = Quaternion.Euler(0, 0, angle + 90f);
-            objProjectile.Launch(direction, targetPos, entitySnapshot);
+            objProjectile.Launch(direction, targetPos, interractionContext);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Actions;
 using Assets.Common;
-using Assets.Entity;
+using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
@@ -16,7 +16,7 @@ namespace Entity.Projectile
         public TemplateActionBase[] updateActions;
 
         private Transform _target;
-        private EntitySnapshot _entitySnapshot;
+        private InterractionContext _interractionContext;
         private Vector2 _direction;
         public Vector3? targetPosition;
         private float _timer;
@@ -34,17 +34,17 @@ namespace Entity.Projectile
             GetComponent<SpriteRenderer>().sprite = prefab.GetComponent<SpriteRenderer>().sprite;
         }
 
-        public void Launch(Vector2 dir, Vector3? targetPos = null, EntitySnapshot entitySnapshot = null)
+        public void Launch(Vector2 dir, Vector3? targetPos = null, InterractionContext interractionContext = null)
         {
-            this._entitySnapshot = entitySnapshot;
+            this._interractionContext = interractionContext;
             targetPosition = targetPos;
             _direction = dir;
             _timer = 0f;
 
-            if (entitySnapshot != null)
+            if (_interractionContext != null)
             {
                 var projectileCollider = GetComponent<Collider2D>();
-                var shooterCollider = entitySnapshot.source.GetComponent<Collider2D>();
+                var shooterCollider = _interractionContext.SourceObject.GetComponent<Collider2D>();
                 if (projectileCollider != null && shooterCollider != null)
                     Physics2D.IgnoreCollision(projectileCollider, shooterCollider, true);
             }
@@ -88,16 +88,16 @@ namespace Entity.Projectile
             var objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
             if (_objectPool != null) _objectPool.Return(gameObject);
             else gameObject.SetActive(false);
-            if (_entitySnapshot == null) return;
+            if (_interractionContext == null) return;
             var projectileCollider = GetComponent<Collider2D>();
-            var shooterCollider = _entitySnapshot.source.GetComponent<Collider2D>();
+            var shooterCollider = _interractionContext.SourceObject.GetComponent<Collider2D>();
             if (projectileCollider != null && shooterCollider != null)
                 Physics2D.IgnoreCollision(projectileCollider, shooterCollider, false);
         }
 
         public void Activate(Vector3 targetPos, TemplateActionBase[] actions)
         {
-            foreach (var activation in actions) activation.Execute(_entitySnapshot, targetPos);
+            foreach (var activation in actions) activation.Execute(_interractionContext, targetPos);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -121,12 +121,23 @@ namespace Entity.Projectile
         #endregion
 
         #region IInteractive
-        public void TakeDamage(EntitySnapshot entitySnapshot, Damage damage)
+        [SerializeField] private BuffStatController _buffController;
+        public BuffStatController BuffController => _buffController;
+        public void TakeDamage(InterractionContext interractionContext, Damage damage)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(EntitySnapshot entitySnapshot, Heal heal)
+        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+        {
+            throw new System.NotImplementedException();
+        }
+        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
         {
             throw new System.NotImplementedException();
         }

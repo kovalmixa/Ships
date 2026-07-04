@@ -20,7 +20,7 @@ namespace Entity.Controllers.AI
         private void OnTriggerExit2D(Collider2D other)
         {
             var entityController = GameObjectHandler.GetEntityController(other);
-            if (entityController != null && entityController != null && entityController.isPlayer)
+            if (entityController != null && entityController != null && GameObjectHandler.IsPlayer(entityController))
             {
                 _objectPool.Return(_entity);
             }

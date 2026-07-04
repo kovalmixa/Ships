@@ -1,5 +1,4 @@
 ﻿using Assets.Common;
-using Assets.Entity;
 using Assets.Scripts.Actions;
 using UnityEngine;
 
@@ -13,22 +12,22 @@ namespace Actions
 
         [SerializeField] public LayerMask[] FilterLayers;
 
-        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos)
+        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
         {
-            if (!CanActivate(entitySnapshot, targetPos)) return;
+            if (!CanActivate(interractionContext, targetPos)) return;
             int combinedMask = 0;
             foreach (var mask in FilterLayers) combinedMask |= mask.value;
             Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, Radius, combinedMask);
             foreach (var target in targets)
                 if (target.TryGetComponent(out IInteractive interactive))
-                    interactive.TakeDamage(entitySnapshot, Damage);
+                    interactive.TakeDamage(interractionContext, Damage);
 
             //todo add extra damage options with types
         }
 
-        public override void Execute(EntitySnapshot entitySnapshot, IInteractive target)
+        public override void Execute(InterractionContext interractionContext, IInteractive target)
         {
-            target.TakeDamage(entitySnapshot, Damage);
+            target.TakeDamage(interractionContext, Damage);
         }
     }
 }

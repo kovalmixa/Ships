@@ -1,5 +1,6 @@
 ﻿using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
+using Assets.Scripts.Actions;
 using UnityEngine;
 
 namespace Actions
@@ -9,9 +10,9 @@ namespace Actions
         private ObjectPoolHandler effectPool;
         [SerializeField] private string[] ids;
 
-        public override void Execute(EntitySnapshot entitySnapshot, Vector3 targetPos){
+        public override void Execute(InterractionContext interractionContext, Vector3 targetPos){
             var effectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
-            if (!CanActivate(entitySnapshot, targetPos)) return;
+            if (!CanActivate(interractionContext, targetPos)) return;
             if (effectPool == null) return;
             effectPool = effectPool.gameObject.GetComponent<ObjectPoolHandler>();
             foreach (var id in ids) SetupEffect(targetPos, id);
