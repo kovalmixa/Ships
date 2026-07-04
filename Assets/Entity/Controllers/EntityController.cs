@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Common;
 using Assets.Entity;
+using Assets.Entity.Controllers;
 using Assets.Entity.Hull;
-using Assets.Handlers;
 using Assets.Handlers.SceneHandlers;
 using Entity.Controllers.AI;
 using Scripts;
@@ -10,17 +11,20 @@ using UnityEngine;
 
 namespace Entity.Controllers
 {
-    public class EntityController : MonoBehaviour
+    public class EntityController : MonoBehaviour, IObject
     {
         public EntityDataContainer data;
+        public AbbilitiesController abbilitiesController;
         private IEntityController _controller;
         [SerializeField] private GameObject _despawnPrefab;
+        public string Id { get; set; }
         public HullBase hull;
 
         #region Setup
 
-        private void Start()
+        private void Awake()
         {
+            Id = GameObjectHandler.GenerateUniqueId(name);
             if (GameObjectHandler.GetAI(this) == null) GameObjectHandler.RegisterPlayer(this);
         }
 
@@ -72,6 +76,7 @@ namespace Entity.Controllers
                 if (!equipmentAnchor.CanBePlaced(equipment, index)) continue;
                 equipmentAnchor.SetTransform(equipment);
                 hull.equipments.Add(equipment);
+                abbilitiesController?.MarkDirty();
                 return true;
             }
             return false;
@@ -97,6 +102,7 @@ namespace Entity.Controllers
                 if (!SetEquipmentNodeLogic(data.equipmentIds[i].Key, data.equipmentIds[i].Value))
                     data.equipmentIds.RemoveAt(i);
 
+            abbilitiesController?.MarkDirty();
             return true;
         }
 
@@ -116,36 +122,8 @@ namespace Entity.Controllers
         }
 
         #endregion
-       
+
         public EntitySnapshot GetSnapshot() => new EntitySnapshot(this, data);
-
-        public void ActivateCommand(Vector3 position, string activationCommand)
-        {
-            if (activationCommand == "") return;
-            if (TypeListHandler.IsWeaponEquipment(activationCommand)) if (IsAttackActionForbidden(position)) return;
-            var activationTypes = TypeListHandler.TryGetEquipSubTypes(activationCommand);
-            foreach (var equipment in hull.equipments)
-            {
-                if (equipment.equipmentContainer == null) continue;
-                var type = equipment.equipmentContainer.general.Class;
-                if (activationTypes != null)
-                    if (activationTypes.Contains(type)) equipment.Activate(position);
-                else if (equipment.equipmentContainer.general.Class == activationCommand || equipment.equipmentContainer.Id == activationCommand)
-                    equipment.Activate(position);
-            }
-        }
-
-        private bool IsAttackActionForbidden(Vector3 position)
-        {
-            Collider2D col = GetComponent<Collider2D>();
-            if (col != null && col.OverlapPoint(position)) return true;
-            foreach (var equipment in hull.equipments)
-            {
-                col = equipment.GetComponent<Collider2D>();
-                if (col != null && col.OverlapPoint(position)) return true;
-            }
-            return false;
-        }
 
         private void Update()
         {

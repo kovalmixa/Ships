@@ -1,9 +1,13 @@
-﻿using Assets.Common;
-using Assets.Scripts.Actions;
+﻿using Actions;
+using Assets.Common;
 using Assets.DataContainers;
 using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
+using Assets.Entity.Interfaces;
 using Assets.Handlers;
+using Assets.Handlers.Enums;
+using Assets.Handlers.SceneHandlers;
+using Assets.Scripts.Actions;
 using Entity.Controllers;
 using Scripts;
 using System.Collections.Generic;
@@ -12,21 +16,23 @@ using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
-    public abstract class HullBase : MonoBehaviour, IInteractive, IHull
+    public abstract class HullBase : MonoBehaviour, IInteractive, IHull, IAbbility
     {
         public HullContainer data;
         public List<EquipmentAnchor> equipmentAnchors;
         public List<Equipment.Equipment> equipments;
         public Transform root;
         public float currentSpeed;
+        public string Id { get; set; }
+
         protected EntityController entityController;
         protected Rigidbody2D rigidBody2D;
-
 
         #region Setup
 
         private void Awake()
         {
+            Id = GameObjectHandler.GenerateUniqueId(name);
             entityController = GetComponentInParent<EntityController>();
             rigidBody2D = GetComponent<Rigidbody2D>();
             data = GetComponent<HullContainer>();
@@ -83,10 +89,8 @@ namespace Assets.Entity.Hull
         {
             Rigidbody2D otherRb = collision.rigidbody;
             if (otherRb == null) return;
-            if (collision.gameObject.layer != LayerMask.NameToLayer(
-                TypeListHandler.layerTypes.ToArray()[data.general.Layer])
-                && collision.gameObject.layer != LayerMask.NameToLayer("Markers")
-                )
+            if (collision.gameObject.layer != LayerMask.NameToLayer(data.general.layer.ToString())
+                && collision.gameObject.layer != LayerMask.NameToLayer("Markers"))
             {
                 currentSpeed = 0;
                 return;
@@ -137,7 +141,7 @@ namespace Assets.Entity.Hull
                 if (context != null && string.IsNullOrEmpty(instance.SourceId))
                     instance.SourceId = sourceId;
 
-                _buffController.AddBuff(instance, context?.Caster);
+                _buffController.AddBuff(instance, context?.SourceSnapshot);
             }
         }
 
@@ -163,8 +167,36 @@ namespace Assets.Entity.Hull
             if (context == null) return "Unknown";
             if (!string.IsNullOrEmpty(context.AbilityId)) return context.AbilityId;
             if (context.SourceObject != null) return context.SourceObject.name;
-            return context.Caster?.Id ?? "System";
+            return context.SourceSnapshot?.Id ?? "System";
         }
+        #endregion
+
+        #region IAbbility
+        public ItemAbility[] Abilities = System.Array.Empty<ItemAbility>();
+        private List<ItemAbility> _runtimeAbilities;
+
+        public IReadOnlyList<ItemAbility> RuntimeAbilities
+        {
+            get
+            {
+                _runtimeAbilities ??= new List<ItemAbility>(Abilities ?? System.Array.Empty<ItemAbility>());
+                return _runtimeAbilities;
+            }
+        }
+
+        public void AddAbility(ItemAbility ability)
+        {
+            if (ability == null) return;
+            ((List<ItemAbility>)RuntimeAbilities).Add(ability);
+        }
+
+        public bool RemoveAbility(ItemAbility ability) => ((List<ItemAbility>)RuntimeAbilities).Remove(ability);
+       
+        public void Activate(Vector3 targetPos, TemplateActionBase[] actions)
+        {
+            throw new System.NotImplementedException();
+        }
+
         #endregion
     }
 }

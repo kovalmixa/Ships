@@ -63,5 +63,7 @@ namespace Assets.Handlers.SceneHandlers
             entityController.SetController(entityController.gameObject.AddComponent<PlayerController>());
         }
         #endregion
+
+        public static string GenerateUniqueId(string name) => $"{name}_{System.Guid.NewGuid().ToString("N").Substring(0, 8)}";
     }
 }

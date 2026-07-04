@@ -2,6 +2,6 @@
 {
     public class ItemInstance
     {
-        public int Seed;
+        public int seed;
     }
 }

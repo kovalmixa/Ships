@@ -1,3 +1,4 @@
+using Assets.Handlers.Enums;
 using UnityEngine;
 
 namespace Assets.Common
@@ -5,12 +6,11 @@ namespace Assets.Common
     [System.Serializable]
     public class GeneralOptions
     {
-        public string Name;
-        public int SizeType;
-        public int Layer;
-        public string Class;
-        public int SlotHeight = 1;
-        public int SlotWidth = 1;
-        public Texture Icon;
+        public string name;
+        public SizeType sizeType;
+        public LayerType layer;
+        public int slotHeight = 1;
+        public int slotWidth = 1;
+        public Texture icon;
     }
 }

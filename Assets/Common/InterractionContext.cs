@@ -6,8 +6,8 @@ namespace Assets.Scripts.Actions
 {
     public class InterractionContext
     {
-        public EntitySnapshot Caster { get; set; }
-        public IInteractive CasterInteractive { get; set; }
+        public EntitySnapshot SourceSnapshot { get; set; }
+        public IInteractive SourceInterractive { get; set; }
         public string AbilityId { get; set; }
         public GameObject SourceObject { get; set; }
         public GameObject target;

@@ -3,7 +3,7 @@ using Assets.Scripts.Actions;
 
 namespace Assets.Common
 {
-    public interface IInteractive
+    public interface IInteractive : IObject
     {
         BuffStatController BuffController { get; }
         void TakeDamage(InterractionContext interractionContext, Damage damage);

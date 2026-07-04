@@ -1,3 +1,5 @@
+using Assets.Handlers;
+using Assets.Handlers.Enums;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,10 +19,10 @@ namespace Entity.Controllers
             set => _camera = value;
         }
 
-        private Dictionary<KeyCode, string> keyCodeActivations = new()
+        private readonly Dictionary<KeyCode, AbilityType> _keyCodeActivations = new()
         {
-            { KeyCode.Mouse0, "turret" },
-            { KeyCode.Mouse1, "" }
+            { KeyCode.Mouse0, AbilityType.FirePrimary },
+            { KeyCode.Mouse1, AbilityType.FireSecondary },
         };
 
         private void Awake()
@@ -28,8 +30,7 @@ namespace Entity.Controllers
             for (int i = 0; i <= 9; i++)
             {
                 KeyCode key = (KeyCode)((int)KeyCode.Alpha0 + i);
-                if (i == 1) keyCodeActivations.Add(key, "heal");
-                else keyCodeActivations.Add(key, "");
+                _keyCodeActivations[key] = i == 1 ? AbilityType.Heal : AbilityType.None;
             }
         }
 
@@ -41,16 +42,17 @@ namespace Entity.Controllers
                 if (cam.enabled && cam.gameObject.activeInHierarchy)
                     return cam;
             }
-            Debug.LogWarning("Камера не найдена!");
+            Debug.LogWarning("No active camera found.");
             return null;
         }
 
         public void UpdateControl(EntityController controller)
         {
-            if(!controller) return;
+            if (!controller) return;
             MoveControl(controller);
-            controller.hull.RotateEquipment(Camera.ScreenToWorldPoint(Input.mousePosition));
-            KeyWordControls(controller, Camera.ScreenToWorldPoint(Input.mousePosition));
+            Vector3 worldPos = Camera.ScreenToWorldPoint(Input.mousePosition);
+            controller.hull.RotateEquipment(worldPos);
+            KeyWordControls(controller, worldPos);
         }
 
         private void MoveControl(EntityController controller)
@@ -66,30 +68,18 @@ namespace Entity.Controllers
 
         private void KeyWordControls(EntityController controller, Vector3 position)
         {
-
-            foreach (var entry in keyCodeActivations)
+            foreach (var entry in _keyCodeActivations)
             {
-                if (entry.Key.ToString().StartsWith("Mouse"))
-                {
-                    int mouseButton = entry.Key == KeyCode.Mouse0 ? 0 :
-                        entry.Key == KeyCode.Mouse1 ? 1 : -1;
-                    if (mouseButton != -1 && Input.GetMouseButton(mouseButton))
-                    {
-                        if (ActionIsForbidden(position, entry.Value)) return;
-                        controller.ActivateCommand(position, entry.Value);
-                    }
-                }
-                else if (Input.GetKey(entry.Key))
-                {
-                    controller.ActivateCommand(position, entry.Value);
-                }
-            }
-        }
+                if (entry.Value == AbilityType.None) continue;
 
-        private bool ActionIsForbidden(Vector3 position, string type)
-        {
-            //инвентарь панельки управления и тд. проверять пассивность/активнотсь абилки ActivationHandler.IsPassive(type);
-            return false;
+                bool held = entry.Key == KeyCode.Mouse0 ? Input.GetMouseButton(0)
+                    : entry.Key == KeyCode.Mouse1 ? Input.GetMouseButton(1)
+                    : Input.GetKey(entry.Key);
+
+                if (!held) continue;
+
+                controller.abbilitiesController.Invoke(position, entry.Value);
+            }
         }
     }
 }

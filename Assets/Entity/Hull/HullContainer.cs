@@ -1,4 +1,5 @@
 using Assets.Common;
+using Assets.Entity.Controllers;
 using Assets.Entity.Modifiers;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +22,6 @@ namespace Assets.DataContainers
 
         public uint maxEnergy; //replace
         public Dictionary<(StatType Type, bool IsGlobal), float> stats { get; set; }
-
+        public ItemAbility[] BaseAbilities = System.Array.Empty<ItemAbility>();
     }
 }

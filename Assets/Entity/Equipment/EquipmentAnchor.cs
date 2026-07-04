@@ -1,6 +1,5 @@
-using System.Linq;
-using Assets.DataContainers;
 using Assets.Handlers;
+using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
@@ -9,9 +8,16 @@ namespace Assets.Entity.Equipment
     [ExecuteInEditMode]
     public class EquipmentAnchor : MonoBehaviour
     {
+        public enum AnchorFilterMode { ByMasterType, BySubType }
+
         public int index;
-        public string classType;
-        public int sizeType;
+
+        public AnchorFilterMode filterMode;
+        public EquipmentMasterType masterClassType;
+        public EquipmentSubType subClassType;
+
+        public SizeType sizeType;
+
         public Vector2 rotationSector;
         public Vector2[] activationSectors;
         public int orderLayer;
@@ -20,17 +26,17 @@ namespace Assets.Entity.Equipment
         public bool CanBePlaced(Equipment equipment, int index)
         {
             if (isStatic) return false;
+            if (this.index != index) return false;
+
             EquipmentContainer equipmentContainer = equipment.equipmentContainer;
-            var eqClass = equipmentContainer.general.Class;
-            var masterType = TypeListHandler.TryGetMasterType(eqClass);
-            if (sizeType == equipmentContainer.general.SizeType && this.index == index)
+            if (sizeType != equipmentContainer.general.sizeType) return false;
+            EquipmentSubType eqSubType = equipmentContainer.type;
+            if (filterMode == AnchorFilterMode.BySubType) return eqSubType == subClassType;
+            else
             {
-                if (masterType == null)
-                    return eqClass == classType;
-                if (masterType == classType)
-                    return true;
+                EquipmentMasterType eqMasterType = EquipmentHandler.TryGetMasterType(eqSubType);
+                return eqMasterType == masterClassType;
             }
-            return false;
         }
 
         public void SetTransform(Equipment equipment)

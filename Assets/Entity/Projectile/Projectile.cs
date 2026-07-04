@@ -5,15 +5,17 @@ using Assets.Entity.Interfaces;
 using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Entity.Projectile
 {
-    public class Projectile : MonoBehaviour, IActivation, IInteractive
+    public class Projectile : MonoBehaviour, IAbbility, IInteractive
     {
         public ProjectileContainer projectileContainer;
         public TemplateActionBase[] onExplosionActions;
         public TemplateActionBase[] updateActions;
+        public string Id { get; set; }
 
         private Transform _target;
         private InterractionContext _interractionContext;
@@ -25,6 +27,11 @@ namespace Entity.Projectile
         private ObjectPoolHandler _objectPool;
 
         #region Start/Setup
+
+        private void Awake()
+        {
+            Id = GameObjectHandler.GenerateUniqueId(name);
+        }
 
         public void SetupByPrefab(Projectile prefab)
         {
@@ -53,7 +60,17 @@ namespace Entity.Projectile
 
         #endregion
 
-        #region Update/Activations
+        #region Update/IAbbility
+        public ItemAbility[] Abilities = System.Array.Empty<ItemAbility>();
+        private List<ItemAbility> _runtimeAbilities;
+        public IReadOnlyList<ItemAbility> RuntimeAbilities
+        {
+            get
+            {
+                _runtimeAbilities ??= new List<ItemAbility>(Abilities ?? System.Array.Empty<ItemAbility>());
+                return _runtimeAbilities;
+            }
+        }
 
         private void Update()
         {
@@ -100,6 +117,14 @@ namespace Entity.Projectile
             foreach (var activation in actions) activation.Execute(_interractionContext, targetPos);
         }
 
+        public void AddAbility(ItemAbility ability)
+        {
+            if (ability == null) return;
+            ((List<ItemAbility>)RuntimeAbilities).Add(ability);
+        }
+
+        public bool RemoveAbility(ItemAbility ability) => ((List<ItemAbility>)RuntimeAbilities).Remove(ability);
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             //если торпеда или абилки с жирными снарядами
@@ -141,6 +166,7 @@ namespace Entity.Projectile
         {
             throw new System.NotImplementedException();
         }
+
         #endregion
     }
 }

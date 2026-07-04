@@ -1,10 +1,9 @@
-using System.Collections.Generic;
-using Assets.Entity;
 using Assets.Entity.AI.Interfaces;
 using Assets.Entity.Controllers.AI;
 using Assets.Entity.Hull;
-using Entity.Controllers;
+using Assets.Handlers.Enums;
 using Scripts;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Entity.Controllers.AI
@@ -28,15 +27,18 @@ namespace Entity.Controllers.AI
 
         private void AttackControl(EntityController entityController)
         {
+            if (_targetPoint == null) return;
+            entityController.abbilitiesController.Invoke(_targetPoint.position, AbilityType.FirePrimary);
         }
 
         private void RotateControl(EntityController entityController)
         {
+            if (_targetPoint == null) return;
+            entityController.hull.RotateEquipment(_targetPoint.position);
         }
 
         private void MoveControl(EntityController entityController)
         {
-            // тут от ии зависит продолжать скрипт или переходит в тактику
             PointMovement(entityController);
         }
 

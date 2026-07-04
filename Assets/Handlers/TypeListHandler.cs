@@ -1,62 +1,176 @@
-﻿using System;
+﻿using Assets.Handlers.Enums;
+using System;
 using System.Collections.Generic;
+
+namespace Assets.Handlers.Enums
+{
+    public enum AbilityType
+    {
+        None,
+        FirePrimary, FireSecondary, LaunchAircraft, LaunchMissile,
+        DropBomb, FireLaser, LaunchTorpedo,
+        Heal, Regeneration, Shield, RadarPulse, Smoke,
+        Dash, Teleport, Repair, SummonDrone
+    }
+
+    public enum EquipmentMasterType
+    {
+        None,
+        Turret,
+        Aircraft,
+        Launcher,
+        Engine,
+        Radar,
+        Shield,
+        Utility
+    }
+
+    public enum EquipmentSubType
+    {
+        None,
+        MachineGun, FlameGun, Laser, LightCannon, Cannon, Missile,
+        Fighter, Bomber, Helicopter,
+        Torpedo
+    }
+
+    public enum VehicleMasterType
+    {
+        None,
+        Ship,
+        AircraftCarrier,
+        Submarine
+    }
+
+    public enum VehicleSubType
+    {
+        None,
+        Boat, Destroyer, LightCruiser, Cruiser, HeavyCruiser, Battleship, SuperBattleship,
+        AircraftCarrier, HelicopterCarrier, LightAircraftCarrier, SuperAircraftCarrier,
+        Submarine, SubmarineCruiser, NuclearSubmarine, SubmarineBattleship, SubmarineAircraftCarrier
+    }
+
+    public enum SizeType
+    {
+        None, S, M, L, XL, XXL, X
+    }
+
+    public enum LayerType
+    {
+        None, Sea, Land, Air
+    }
+}
 
 namespace Assets.Handlers
 {
-    public static class TypeListHandler
+    public static class EquipmentHandler
     {
-        public static readonly Dictionary<string, string[]> equipTypesDict = new(StringComparer.OrdinalIgnoreCase)
+        public static readonly Dictionary<EquipmentMasterType, EquipmentSubType[]> TypesDict = new()
         {
-            { "turret", new[] { "machine gun", "flame gun", "laser", "light cannon", "cannon", "missile" } },
-            { "aircraft", new[] { "fighter", "bomber", "helicopter" } },
-            { "launch", new[] { "torpedo" } }
+            { EquipmentMasterType.Turret, new[] {
+                EquipmentSubType.MachineGun, EquipmentSubType.FlameGun, EquipmentSubType.Laser,
+                EquipmentSubType.LightCannon, EquipmentSubType.Cannon, EquipmentSubType.Missile }
+            },
+            { EquipmentMasterType.Aircraft, new[] {
+                EquipmentSubType.Fighter, EquipmentSubType.Bomber, EquipmentSubType.Helicopter }
+            },
+            { EquipmentMasterType.Launcher, new[] {
+                EquipmentSubType.Torpedo }
+            }
         };
 
-        public static readonly Dictionary<string, string[]> shipTypesDict = new(StringComparer.OrdinalIgnoreCase)
+        private static readonly Dictionary<EquipmentSubType, EquipmentMasterType> _reverseDict = new();
+
+        static EquipmentHandler()
         {
-            { "ship", new[] { "boat", "destroyer", "light cruiser", "cruiser", "heavy cruiser", "battleship", "super battleship" } },
-            { "aircraft carrier", new[] { "aircraft carrier", "helicopter carrier", "light aircraft carrier", "super aircraft carrier" } },
-            { "submarine", new[] { "submarine", "submarine cruiser", "nuclear submarine", "submarine battleship", "submarine aircraft carrier" } }
-        };
-
-        public static readonly HashSet<string> sizeTypes = new(StringComparer.OrdinalIgnoreCase) { "s", "m", "l", "xl", "xxl", "x" };
-        public static readonly HashSet<string> layerTypes = new(StringComparer.OrdinalIgnoreCase) { "sea", "land", "air" };
-
-        private static readonly Dictionary<string, string> _equipReverseDict = new(StringComparer.OrdinalIgnoreCase);
-        private static readonly Dictionary<string, string> _shipReverseDict = new(StringComparer.OrdinalIgnoreCase);
-
-        static TypeListHandler()
-        {
-            InitializeReverseLookup(equipTypesDict, _equipReverseDict);
-            InitializeReverseLookup(shipTypesDict, _shipReverseDict);
-        }
-
-        private static void InitializeReverseLookup(Dictionary<string, string[]> source, Dictionary<string, string> destination)
-        {
-            foreach (var kvp in source)
+            foreach (var kvp in TypesDict)
                 foreach (var subType in kvp.Value)
-                    destination[subType] = kvp.Key;
+                    _reverseDict[subType] = kvp.Key;
         }
 
-        public static bool IsWeaponEquipment(string subType) => _equipReverseDict.ContainsKey(subType);
+        public static bool IsWeaponEquipment(EquipmentSubType subType) => _reverseDict.ContainsKey(subType);
 
-        public static bool IsShip(string subType) => _shipReverseDict.ContainsKey(subType);
+        public static EquipmentSubType[] TryGetSubTypes(EquipmentMasterType masterType) =>
+            TypesDict.TryGetValue(masterType, out var subTypes) ? subTypes : Array.Empty<EquipmentSubType>();
 
-        public static string[] TryGetEquipSubTypes(string masterType)
+        public static EquipmentMasterType TryGetMasterType(EquipmentSubType subType) =>
+            _reverseDict.TryGetValue(subType, out var master) ? master : EquipmentMasterType.None;
+    }
+
+    public static class VehicleHandler
+    {
+        public static readonly Dictionary<VehicleMasterType, VehicleSubType[]> TypesDict = new()
         {
-            return equipTypesDict.TryGetValue(masterType, out var subTypes) ? subTypes : Array.Empty<string>();
+            { VehicleMasterType.Ship, new[] {
+                VehicleSubType.Boat, VehicleSubType.Destroyer, VehicleSubType.LightCruiser,
+                VehicleSubType.Cruiser, VehicleSubType.HeavyCruiser, VehicleSubType.Battleship, VehicleSubType.SuperBattleship }
+            },
+            { VehicleMasterType.AircraftCarrier, new[] {
+                VehicleSubType.AircraftCarrier, VehicleSubType.HelicopterCarrier,
+                VehicleSubType.LightAircraftCarrier, VehicleSubType.SuperAircraftCarrier }
+            },
+            { VehicleMasterType.Submarine, new[] {
+                VehicleSubType.Submarine, VehicleSubType.SubmarineCruiser, VehicleSubType.NuclearSubmarine,
+                VehicleSubType.SubmarineBattleship, VehicleSubType.SubmarineAircraftCarrier }
+            }
+        };
+
+        private static readonly Dictionary<VehicleSubType, VehicleMasterType> _reverseDict = new();
+
+        static VehicleHandler()
+        {
+            foreach (var kvp in TypesDict)
+                foreach (var subType in kvp.Value)
+                    _reverseDict[subType] = kvp.Key;
         }
 
-        public static string[] TryGetShipSubTypes(string masterType)
-        {
-            return shipTypesDict.TryGetValue(masterType, out var subTypes) ? subTypes : Array.Empty<string>();
-        }
+        public static bool IsVehicle(VehicleSubType subType) => _reverseDict.ContainsKey(subType);
 
-        public static string TryGetMasterType(string subType)
+        public static VehicleSubType[] TryGetSubTypes(VehicleMasterType masterType) =>
+            TypesDict.TryGetValue(masterType, out var subTypes) ? subTypes : Array.Empty<VehicleSubType>();
+
+        public static VehicleMasterType TryGetMasterType(VehicleSubType subType) =>
+            _reverseDict.TryGetValue(subType, out var master) ? master : VehicleMasterType.None;
+    }
+
+    public static class AbilityHandler
+    {
+        public static readonly Dictionary<EquipmentMasterType, AbilityType[]> MasterTypeAbilities = new()
         {
-            if (_equipReverseDict.TryGetValue(subType, out var weaponMaster)) return weaponMaster;
-            if (_shipReverseDict.TryGetValue(subType, out var shipMaster)) return shipMaster;
-            return null;
+            { EquipmentMasterType.Turret, new[] { AbilityType.FirePrimary } },
+            { EquipmentMasterType.Launcher, new[] { AbilityType.LaunchMissile } },
+            { EquipmentMasterType.Aircraft, new[] { AbilityType.LaunchAircraft } },
+            { EquipmentMasterType.Radar, new[] { AbilityType.RadarPulse } },
+            { EquipmentMasterType.Shield, new[] { AbilityType.Shield } }
+        };
+
+        public static readonly Dictionary<EquipmentSubType, AbilityType[]> SubTypeAbilities = new()
+        {
+            { EquipmentSubType.Bomber, new[] { AbilityType.DropBomb } },
+            { EquipmentSubType.Laser, new[] { AbilityType.FireLaser } },
+            { EquipmentSubType.Torpedo, new[] { AbilityType.LaunchTorpedo } }
+        };
+
+        public static AbilityType[] GetMasterAbilities(EquipmentMasterType masterType) =>
+            MasterTypeAbilities.TryGetValue(masterType, out var abilities) ? abilities : Array.Empty<AbilityType>();
+
+        public static AbilityType[] GetSpecificAbilities(EquipmentSubType subType) =>
+            SubTypeAbilities.TryGetValue(subType, out var abilities) ? abilities : Array.Empty<AbilityType>();
+
+        public static AbilityType[] GetAllAbilitiesFor(EquipmentSubType subType)
+        {
+            var masterType = EquipmentHandler.TryGetMasterType(subType);
+
+            var masterAbilities = GetMasterAbilities(masterType);
+            var specificAbilities = GetSpecificAbilities(subType);
+
+            if (masterAbilities.Length == 0 && specificAbilities.Length == 0) return Array.Empty<AbilityType>();
+
+            var combinedAbilities = new HashSet<AbilityType>(masterAbilities);
+            foreach (var ability in specificAbilities) combinedAbilities.Add(ability);
+
+            var result = new AbilityType[combinedAbilities.Count];
+            combinedAbilities.CopyTo(result);
+            return result;
         }
     }
 }
