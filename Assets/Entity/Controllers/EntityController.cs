@@ -33,77 +33,69 @@ namespace Entity.Controllers
             _controller = controller;
         }
 
-        private HullBase SetHullNodeLogic(string hullId)
-        {
-            Transform bodyTrans;
-            if (hull) bodyTrans = hull.transform;
-            else bodyTrans = transform;
-            GameObject newHull = PrefabLoader.Instance.InstantiatePrefab(
-                hullId, bodyTrans.position, Quaternion.identity, bodyTrans);
-
-            if (newHull == null) return null;
-            if (hull != null) Destroy(hull.gameObject);
-
-            SetupNodes(newHull);
-            return newHull.GetComponent<HullBase>();
-        }
-
-        private void SetupNodes(GameObject hull)
-        {
-            if (GameObjectHandler.IsPlayer(this))
-            {
-                CameraController.Instance.Follow(hull.transform);
-            }
-            else
-            {
-                GameObject despawn = Object.Instantiate(_despawnPrefab,
-                    hull.transform.position, hull.transform.rotation, hull.transform);
-                despawn.GetComponent<Despawn>().SetEntity(gameObject);
-            }
-        }
-
-        private bool SetEquipmentNodeLogic(string equipmentId, int index)
-        {
-            if (equipmentId == "") return false;
-            var obj = PrefabLoader.Instance.InstantiatePrefab(equipmentId, Vector3.zero, Quaternion.identity);
-            if (obj == null) return false;
-            var equipment = obj.GetComponentInChildren<Assets.Entity.Equipment.Equipment>();
-            if (equipment == null) return false;
-            equipment.entityController = this;
-            foreach (var equipmentAnchor in hull.equipmentAnchors.Where(go => go.transform.childCount == 0))
-            {
-                //make spawn to inventory
-                if (!equipmentAnchor.CanBePlaced(equipment, index)) continue;
-                equipmentAnchor.SetTransform(equipment);
-                hull.equipments.Add(equipment);
-                abbilitiesController?.MarkDirty();
-                return true;
-            }
-            return false;
-        }
-
         public void Setup(EntityDataContainer data)
         {
             if (data == null) return;
+
             this.data.equipmentIds = data.equipmentIds;
             SetHull(data.hullId);
+
             var dPosition = data.position;
-            if (dPosition != Vector2.zero) transform.position = dPosition;
+            if (dPosition != Vector2.zero)
+                transform.position = dPosition;
         }
 
         public bool SetHull(string hullId)
         {
             if (hullId == null) return false;
+            if (hull != null)
+            {
+                Destroy(hull.gameObject);
+                hull = null;
+            }
+
             HullBase newHullBase = SetHullNodeLogic(hullId);
+            if (newHullBase == null) return false;
+
             newHullBase.root = transform;
             hull = newHullBase;
             data.hullId = hullId;
-            for (int i = 0; i < data.equipmentIds.Count; i++)
-                if (!SetEquipmentNodeLogic(data.equipmentIds[i].Key, data.equipmentIds[i].Value))
-                    data.equipmentIds.RemoveAt(i);
+
+            for (int i = data.equipmentIds.Count - 1; i >= 0; i--)
+            {
+                var pair = data.equipmentIds[i];
+                if (!SetEquipmentNodeLogic(pair.Key, pair.Value)) data.equipmentIds.RemoveAt(i);
+            }
 
             abbilitiesController?.MarkDirty();
             return true;
+        }
+
+        private HullBase SetHullNodeLogic(string hullId)
+        {
+            Transform bodyTrans = hull != null ? hull.transform : transform;
+
+            GameObject newHull = PrefabLoader.Instance.InstantiatePrefab(
+                hullId, bodyTrans.position, Quaternion.identity, bodyTrans);
+
+            if (newHull == null) return null;
+
+            SetupNodes(newHull);
+            return newHull.GetComponent<HullBase>();
+        }
+
+        private void SetupNodes(GameObject hullObject)
+        {
+            if (GameObjectHandler.IsPlayer(this))
+            {
+                CameraController.Instance.Follow(hullObject.transform);
+            }
+            else
+            {
+                GameObject despawn = Object.Instantiate(_despawnPrefab,
+                    hullObject.transform.position, hullObject.transform.rotation, hullObject.transform);
+                if (despawn.TryGetComponent<Despawn>(out var despawnComp)) despawnComp.SetEntity(gameObject);
+            }
         }
 
         public bool SetEquipment(string equipmentId, int index)
@@ -113,12 +105,44 @@ namespace Entity.Controllers
             return true;
         }
 
+        private bool SetEquipmentNodeLogic(string equipmentId, int index)
+        {
+            if (string.IsNullOrEmpty(equipmentId)) return false;
+            if (hull == null) return false;
+
+            var obj = PrefabLoader.Instance.InstantiatePrefab(equipmentId, Vector3.zero, Quaternion.identity);
+            if (obj == null) return false;
+
+            var equipment = obj.GetComponentInChildren<Assets.Entity.Equipment.Equipment>();
+            if (equipment == null)
+            {
+                Destroy(obj);
+                return false;
+            }
+
+            equipment.entityController = this;
+
+            foreach (var equipmentAnchor in hull.equipmentAnchors.Where(go => go.transform.childCount == 0))
+            {
+                if (!equipmentAnchor.CanBePlaced(equipment, index)) continue;
+
+                equipmentAnchor.SetTransform(equipment);
+                hull.equipments.Add(equipment);
+                abbilitiesController?.MarkDirty();
+                return true;
+            }
+
+            Destroy(obj);
+            return false;
+        }
+
         public void SetupScripts(params ScriptBase[] scripts)
         {
             _controller = gameObject.AddComponent<AiController>();
-            AiController aiController = _controller as AiController;
-            Queue<ScriptBase> scriptsQueue = new(scripts);
-            aiController.Scripts = scriptsQueue;
+            if (_controller is AiController aiController)
+            {
+                aiController.Scripts = new Queue<ScriptBase>(scripts);
+            }
         }
 
         #endregion

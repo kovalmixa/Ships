@@ -2,6 +2,7 @@
 using Assets.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
+using Assets.Entity.Modifiers;
 using Assets.Entity.Projectile;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
@@ -12,7 +13,9 @@ namespace Entity.Projectile
 {
     public class Projectile : MonoBehaviour, IAbbility, IInteractive
     {
-        public ProjectileContainer projectileContainer;
+        [SerializeField] private ProjectileContainer projectileContainer;
+        public ProjectileContainer ProjectileContainer => projectileContainer;
+
         public TemplateActionBase[] onExplosionActions;
         public TemplateActionBase[] updateActions;
         public string Id { get; set; }
@@ -61,25 +64,30 @@ namespace Entity.Projectile
         #endregion
 
         #region Update/IAbbility
-        public ItemAbility[] Abilities = System.Array.Empty<ItemAbility>();
-        private List<ItemAbility> _runtimeAbilities;
-        public IReadOnlyList<ItemAbility> RuntimeAbilities
+        public ItemAbilities[] Abilities = System.Array.Empty<ItemAbilities>();
+        private List<ItemAbilities> _runtimeAbilities;
+        public IReadOnlyList<ItemAbilities> RuntimeAbilities
         {
             get
             {
-                _runtimeAbilities ??= new List<ItemAbility>(Abilities ?? System.Array.Empty<ItemAbility>());
+                _runtimeAbilities ??= new List<ItemAbilities>(Abilities ?? System.Array.Empty<ItemAbilities>());
                 return _runtimeAbilities;
             }
         }
 
         private void Update()
         {
-            if (projectileContainer.isHoming && _target != null)
+            var isHoming = GetLifetimeStat(StatType.PrIsHoming);
+            var lifeTime = GetLifetimeStat(StatType.PrLifeTime);
+            var speed = GetLifetimeStat(StatType.PrSpeed);
+
+
+            if (isHoming == 1 && _target != null)
             {
                 Vector2 toTarget = (_target.position - transform.position).normalized;
                 _direction = Vector2.Lerp(_direction, toTarget, Time.deltaTime * 5f);
             }
-            transform.position += (Vector3)(_direction * (projectileContainer.speed * Time.deltaTime));
+            transform.position += (Vector3)(_direction * (speed * Time.deltaTime));
             _timer += Time.deltaTime;
             if (targetPosition.HasValue)
             {
@@ -91,7 +99,7 @@ namespace Entity.Projectile
                     return;
                 }
             }
-            if (_timer > projectileContainer.lifeTime) Explode();
+            if (_timer > lifeTime) Explode();
         }
 
         private void Explode()
@@ -117,13 +125,13 @@ namespace Entity.Projectile
             foreach (var activation in actions) activation.Execute(_interractionContext, targetPos);
         }
 
-        public void AddAbility(ItemAbility ability)
+        public void AddAbility(ItemAbilities ability)
         {
             if (ability == null) return;
-            ((List<ItemAbility>)RuntimeAbilities).Add(ability);
+            ((List<ItemAbilities>)RuntimeAbilities).Add(ability);
         }
 
-        public bool RemoveAbility(ItemAbility ability) => ((List<ItemAbility>)RuntimeAbilities).Remove(ability);
+        public bool RemoveAbility(ItemAbilities ability) => ((List<ItemAbilities>)RuntimeAbilities).Remove(ability);
 
         private void OnTriggerEnter2D(Collider2D other)
         {
@@ -148,6 +156,27 @@ namespace Entity.Projectile
         #region IInteractive
         [SerializeField] private BuffStatController _buffController;
         public BuffStatController BuffController => _buffController;
+
+        private Dictionary<StatType, float> _lifetimeStats;
+        public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
+
+        private const StatLayer _statLayer = StatLayer.Projectile;
+
+        public void ResetLifetimeStats()
+        {
+            _lifetimeStats.Clear();
+            _lifetimeStats[StatType.PrSpeed] = _buffController.GetStat((StatType.MaxMoveSpeed, _statLayer));
+            _lifetimeStats[StatType.PrMoveType] = _buffController.GetStat((StatType.PrMoveType, _statLayer));
+            _lifetimeStats[StatType.PrLifeTime] = _buffController.GetStat((StatType.PrMoveType, _statLayer));
+            _lifetimeStats[StatType.PrIsHoming] = _buffController.GetStat((StatType.PrIsHoming, _statLayer));
+        }
+
+        public float GetLifetimeStat(StatType type)
+        {
+            if (BuffController.IsDirty) ResetLifetimeStats();
+            if (LifetimeStats.TryGetValue(type, out float value)) return value;
+            return 0f;
+        }
         public void TakeDamage(InterractionContext interractionContext, Damage damage)
         {
             throw new System.NotImplementedException();

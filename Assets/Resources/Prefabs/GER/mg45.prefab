@@ -49,6 +49,11 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -70,6 +75,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -160,6 +166,7 @@ BoxCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8122809092557298440}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -183,7 +190,8 @@ BoxCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
@@ -194,7 +202,6 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
   m_Size: {x: 0.03, y: 0.12}
   m_EdgeRadius: 0
 --- !u!114 &736988907336248827
@@ -209,11 +216,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0267dd645a67f7146b446c099529af0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EntityController: {fileID: 0}
-  EquipmentContainer: {fileID: 1531360328655141274}
-  Actions:
-  - {fileID: 5626699735981393471}
-  UpdateActions: []
+  entityController: {fileID: 0}
+  _equipmentContainer: {fileID: 1531360328655141274}
+  Type: 0
+  Abilities: []
+  _buffController: {fileID: 0}
 --- !u!114 &1531360328655141274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -226,15 +233,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e206eddd8f1db3f4c8dadef40bac1ba0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  General:
-    Name: mg45
-    SizeType: 0
-    Layer: 0
-    Class: machine gun
-    SlotHeight: 1
-    SlotWidth: 1
-    Icon: {fileID: 2800000, guid: d3ebef6ec74b4db46a715edccd3b8647, type: 3}
-  RotationSpeed: 200
+  general:
+    name: 
+    sizeType: 0
+    layer: 0
+    slotHeight: 1
+    slotWidth: 1
+    icon: {fileID: 0}
+  statOptions:
+    <Stats>k__BackingField: []
+    mods: []
+    abilities: []
 --- !u!114 &5626699735981393471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,6 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00474b4455def4449acc2631260f7812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delay: 0.1
+  name: 
+  delay: 0
   ProjectilePrefab: {fileID: 759412284934268011, guid: b9186e77b3831cb42baef91ffe90dc90, type: 3}
   FirePosition: {fileID: 2912151450467240726}

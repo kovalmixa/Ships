@@ -51,6 +51,11 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -72,6 +77,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -94,6 +100,7 @@ CapsuleCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815526727935620202}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -117,7 +124,8 @@ CapsuleCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: -0.005, y: 0}
   m_Size: {x: 0.14, y: 0.23}
   m_Direction: 0
@@ -169,19 +177,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c85f499fd81c96348945713bbcac28a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  General:
-    Name: Boat
-    SizeType: 0
-    Layer: 0
-    Class: 
-    SlotHeight: 1
-    SlotWidth: 1
-    Icon: {fileID: 0}
-  MaxSpeed: 5
-  Acceleration: 3
-  RotationSpeed: 60
-  MaxHealth: 10
-  MaxEnergy: 8
+  general:
+    name: 
+    sizeType: 0
+    layer: 0
+    slotHeight: 1
+    slotWidth: 1
+    icon: {fileID: 0}
+  maxSpeed: 0
+  acceleration: 0
+  rotationSpeed: 0
+  maxHealth: 0
+  maxEnergy: 0
+  BaseAbilities: []
 --- !u!114 &5888668427879922858
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,15 +202,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ac7d6a8204a7848ae3debee20e939b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Data: {fileID: 8767162370263654451}
-  EquipmentAnchors:
-  - {fileID: 8690893263783899800}
-  Equipments: []
-  Root: {fileID: 0}
-  CurrentSpeed: 0
+  data: {fileID: 0}
+  equipmentAnchors: []
+  equipments: []
+  root: {fileID: 0}
+  currentSpeed: 0
+  _buffController: {fileID: 0}
+  Abilities: []
 --- !u!50 &6679228126235773454
 Rigidbody2D:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -213,8 +222,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -235,6 +244,7 @@ CapsuleCollider2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8122809092557298440}
   m_Enabled: 1
+  serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -258,7 +268,8 @@ CapsuleCollider2D:
     m_Bits: 4294967295
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_UsedByComposite: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
   m_Offset: {x: -0.005, y: 0}
   m_Size: {x: 0.14, y: 0.23}
   m_Direction: 0
@@ -340,14 +351,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8661486173044409718, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
   m_PrefabInstance: {fileID: 7149603435938307677}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8690893263783899800 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: -7231585757982397243, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
-  m_PrefabInstance: {fileID: 7149603435938307677}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dde94ff9eb7ca464a989404c28ed20c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

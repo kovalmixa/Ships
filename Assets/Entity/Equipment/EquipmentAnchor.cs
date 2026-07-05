@@ -28,9 +28,9 @@ namespace Assets.Entity.Equipment
             if (isStatic) return false;
             if (this.index != index) return false;
 
-            EquipmentContainer equipmentContainer = equipment.equipmentContainer;
+            EquipmentContainer equipmentContainer = equipment.EquipmentContainer;
             if (sizeType != equipmentContainer.general.sizeType) return false;
-            EquipmentSubType eqSubType = equipmentContainer.type;
+            EquipmentSubType eqSubType = equipmentContainer.Type;
             if (filterMode == AnchorFilterMode.BySubType) return eqSubType == subClassType;
             else
             {

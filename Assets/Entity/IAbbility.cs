@@ -7,9 +7,9 @@ namespace Assets.Entity.Interfaces
 {
     public interface IAbbility
     {
-        public IReadOnlyList<ItemAbility> RuntimeAbilities { get; }
-        public void AddAbility(ItemAbility ability);
-        public bool RemoveAbility(ItemAbility ability);
+        public IReadOnlyList<ItemAbilities> RuntimeAbilities { get; }
+        public void AddAbility(ItemAbilities ability);
+        public bool RemoveAbility(ItemAbilities ability);
 
         public void Activate(Vector3 targetPos, TemplateActionBase[] actions);
     }

@@ -1,27 +1,16 @@
 using Assets.Common;
-using Assets.Entity.Controllers;
-using Assets.Entity.Modifiers;
-using System.Collections.Generic;
+using Assets.Handlers.Enums;
 using UnityEngine;
 
 namespace Assets.DataContainers
 {
-    public class HullContainer : MonoBehaviour, IObject
+    public class HullContainer : MonoBehaviour
     {
         public GeneralOptions general;
-
         public string Id { get; set; }
+        [field: SerializeField] public VehicleSubType VehicleType { get; private set; }
 
-        public float maxSpeed;//replace
+        [SerializeField] public StatOptions statOptions;
 
-        public float acceleration;//replace
-
-        public float rotationSpeed; //replace
-
-        public uint maxHealth; //replace
-
-        public uint maxEnergy; //replace
-        public Dictionary<(StatType Type, StatLayer Layer), float> stats { get; set; }
-        public ItemAbility[] BaseAbilities = System.Array.Empty<ItemAbility>();
     }
 }

@@ -2,7 +2,7 @@
 {
     public interface ICrud
     {
-        public void OnUpdate();
+        public void OnChange();
         
         public void OnDelete();
 

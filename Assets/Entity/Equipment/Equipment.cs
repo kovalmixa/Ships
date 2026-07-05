@@ -2,6 +2,7 @@ using Actions;
 using Assets.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
+using Assets.Entity.Modifiers;
 using Assets.Handlers;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
@@ -16,7 +17,9 @@ namespace Assets.Entity.Equipment
     public class Equipment : MonoBehaviour, IAbbility, IInteractive
     {
         public EntityController entityController;
-        public EquipmentContainer equipmentContainer;
+        [SerializeField] private EquipmentContainer _equipmentContainer;
+        public EquipmentContainer EquipmentContainer => _equipmentContainer;
+
         public EquipmentAnchor EquipmentAnchor { get; set; }
         public EquipmentSubType Type;
 
@@ -30,9 +33,9 @@ namespace Assets.Entity.Equipment
 
         #region Runtime abilities
 
-        private List<ItemAbility> _runtimeAbilities;
-        public ItemAbility[] Abilities = System.Array.Empty<ItemAbility>();
-        public IReadOnlyList<ItemAbility> RuntimeAbilities
+        private List<ItemAbilities> _runtimeAbilities;
+        public ItemAbilities[] Abilities = System.Array.Empty<ItemAbilities>();
+        public IReadOnlyList<ItemAbilities> RuntimeAbilities
         {
             get
             {
@@ -44,14 +47,14 @@ namespace Assets.Entity.Equipment
         private void EnsureRuntimeAbilities()
         {
             if (_runtimeAbilities != null) return;
-            _runtimeAbilities = new List<ItemAbility>();
-            if (equipmentContainer != null && equipmentContainer.baseAbilities != null)
-                _runtimeAbilities.AddRange(equipmentContainer.baseAbilities);
+            _runtimeAbilities = new List<ItemAbilities>();
+            if (_equipmentContainer != null && _equipmentContainer.statOptions.abilities != null)
+                _runtimeAbilities.AddRange(_equipmentContainer.statOptions.abilities);
             if (Abilities != null)
                 _runtimeAbilities.AddRange(Abilities);
         }
 
-        public void AddAbility(ItemAbility ability)
+        public void AddAbility(ItemAbilities ability)
         {
             if (ability == null) return;
             EnsureRuntimeAbilities();
@@ -59,7 +62,7 @@ namespace Assets.Entity.Equipment
             entityController?.abbilitiesController?.MarkDirty();
         }
 
-        public bool RemoveAbility(ItemAbility ability)
+        public bool RemoveAbility(ItemAbilities ability)
         {
             EnsureRuntimeAbilities();
             bool removed = _runtimeAbilities.Remove(ability);
@@ -76,18 +79,20 @@ namespace Assets.Entity.Equipment
 
         public void Rotate(Vector3 targetPos)
         {
-            if (equipmentContainer == null || !CanRotate()) return;
+            var rotationSpeed = GetLifetimeStat(StatType.RotationSpeed);
+
+            if (_equipmentContainer == null || !CanRotate()) return;
             Vector3 localTarget = EquipmentAnchor.transform.InverseTransformPoint(targetPos);
             float localAngle = Mathf.Atan2(localTarget.y, localTarget.x) * Mathf.Rad2Deg;
             float min = EquipmentAnchor.rotationSector.x;
             float max = EquipmentAnchor.rotationSector.y;
             float clampedLocal = Mathf.Clamp(localAngle, min, max);
             float finalWorldAngle = EquipmentAnchor.transform.eulerAngles.z + clampedLocal;
-            float rotationSpeed = equipmentContainer.rotationSpeed * Time.deltaTime;
+            float rotationSpeedDelta = rotationSpeed * Time.deltaTime;
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation,
                 Quaternion.Euler(0f, 0f, finalWorldAngle - _basicAngle),
-                rotationSpeed
+                rotationSpeedDelta
             );
         }
 
@@ -97,7 +102,7 @@ namespace Assets.Entity.Equipment
             return EquipmentAnchor.rotationSector != Vector2.zero;
         }
 
-        public void ActivateAbility(Vector3 targetPos, ItemAbility ability)
+        public void ActivateAbility(Vector3 targetPos, ItemAbilities ability)
         {
             var action = ability?.Action;
             if (action == null) return;
@@ -158,6 +163,23 @@ namespace Assets.Entity.Equipment
         #region IInteractive
         [SerializeField] private BuffStatController _buffController;
         public BuffStatController BuffController => _buffController;
+        private Dictionary<StatType, float> _lifetimeStats = new();
+        public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
+
+        private const StatLayer _statLayer = StatLayer.Equipment;
+
+        public void ResetLifetimeStats()
+        {
+            _lifetimeStats.Clear();
+            _lifetimeStats[StatType.RotationSpeed] = _buffController.GetStat((StatType.RotationSpeed, _statLayer));
+        }
+
+        public float GetLifetimeStat(StatType type)
+        {
+            if (BuffController.IsDirty) ResetLifetimeStats();
+            if (LifetimeStats.TryGetValue(type, out float value)) return value;
+            return 0f;
+        }
 
         public void TakeDamage(InterractionContext interractionContext, Damage damage)
         {

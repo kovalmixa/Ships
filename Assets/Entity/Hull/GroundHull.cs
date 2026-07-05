@@ -1,17 +1,24 @@
-﻿using UnityEngine;
+﻿using Assets.Entity.Modifiers;
+using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
     public class GroundHull : HullBase
     {
+
         public override void SetTargetSpeed(Vector2 directionToPoint)
         {
+           
+            var maxMoveSpeed = GetLifetimeStat(StatType.MaxMoveSpeed);
+            var acceleration = GetLifetimeStat(StatType.Acceleration);
+
             float angleToTarget = Vector2.SignedAngle(transform.up, directionToPoint.normalized);
-            float targetSpeed = Mathf.Clamp(directionToPoint.magnitude, 0, data.maxSpeed);
+            float targetSpeed = Mathf.Clamp(directionToPoint.magnitude, 0, maxMoveSpeed);
             if (Mathf.Abs(angleToTarget) < 90f)
-                currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, data.acceleration * Time.deltaTime);
+                currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, acceleration * Time.deltaTime);
             else
-                currentSpeed = Mathf.MoveTowards(currentSpeed, -targetSpeed, data.acceleration * Time.deltaTime);
+                currentSpeed = Mathf.MoveTowards(currentSpeed, -targetSpeed, acceleration * Time.deltaTime);
+            //need to add angle calculation
         }
         public override void AddSpeed(bool isAddition)
         {

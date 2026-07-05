@@ -54,6 +54,11 @@ SpriteRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -75,6 +80,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -101,10 +107,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8279f0d1c221c31458993876297405b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ProjectileContainer: {fileID: 6358870541530698483}
-  OnExplosionActions:
-  - {fileID: 2015599784894819059}
-  UpdateActions: []
+  projectileContainer: {fileID: 6358870541530698483}
+  onExplosionActions: []
+  updateActions: []
+  Abilities: []
+  _buffController: {fileID: 0}
 --- !u!114 &6358870541530698483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,10 +124,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbe34ac8e6255694cb3a5dc2e411015f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LifeTime: 10
-  Speed: 20
-  IsHoming: 0
-  IsBallistic: 0
+  <Type>k__BackingField: 0
+  statOptions:
+    <Stats>k__BackingField: []
+    mods: []
+    abilities: []
 --- !u!114 &2015599784894819059
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,9 +141,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c1cc13c091526f49a7207734ac979fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delay: 0
-  effectAction: {fileID: 4663088168565978590}
-  damageAction: {fileID: 7238007375919873033}
+  name: 
+  delay: 0
+  Range: 0
+  Layers: 
+  VisualAction: {fileID: 0}
 --- !u!114 &4663088168565978590
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,9 +158,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5bf1ecf2307edd408ffbaec4687fd8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delay: 0
-  _ids:
-  - EFCT/BulletExplosion
+  name: 
+  delay: 0
+  ids: []
 --- !u!114 &7238007375919873033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f416e4a84a2bbf45a5f765e4d0d499d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Delay: 0
-  radius: 0
-  damage: 0
-  filterLayers: []
+  name: 
+  delay: 0
+  Radius: 0
+  FilterLayers: []

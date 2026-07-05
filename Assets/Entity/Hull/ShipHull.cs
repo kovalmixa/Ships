@@ -1,3 +1,4 @@
+using Assets.Entity.Modifiers;
 using System;
 using UnityEngine;
 
@@ -35,12 +36,14 @@ namespace Assets.Entity.Hull
 
         public override void Movement(float rotationDirection)
         {
-            if (data == null) return;
-            _targetSpeed = _speedLevel * (data.maxSpeed / _maxSpeedLevel);
+            var maxMoveSpeed = GetLifetimeStat(StatType.MaxMoveSpeed);
+            var acceleration = GetLifetimeStat(StatType.Acceleration);
+            var rotationSpeed = GetLifetimeStat(StatType.RotationSpeed);
+
+            _targetSpeed = _speedLevel * (maxMoveSpeed / _maxSpeedLevel);
             currentSpeed = MathF.Min(
-                Mathf.MoveTowards(currentSpeed, _targetSpeed, data.acceleration * Time.fixedDeltaTime),
-                data.maxSpeed);
-            float angle = rotationDirection * data.rotationSpeed * Time.fixedDeltaTime;
+                Mathf.MoveTowards(currentSpeed, _targetSpeed, acceleration * Time.fixedDeltaTime),maxMoveSpeed);
+            float angle = rotationDirection * rotationSpeed * Time.fixedDeltaTime;
             rigidBody2D.MoveRotation(rigidBody2D.rotation + angle);
             Vector2 nextPos = rigidBody2D.position + (Vector2)transform.up * currentSpeed * Time.fixedDeltaTime;
             rigidBody2D.MovePosition(nextPos);

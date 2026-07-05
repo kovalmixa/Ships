@@ -1,6 +1,4 @@
 ﻿using Actions;
-using Assets.Entity.Equipment;
-using Assets.Handlers;
 using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
@@ -14,11 +12,10 @@ namespace Assets.Entity.Controllers
     {
         Primary,
         Ability,
-        Passive
     }
 
     [Serializable]
-    public class ItemAbility
+    public class ItemAbilities
     {
         public AbilityType Ability;
         public AbilityActivationMode Mode;
@@ -28,7 +25,7 @@ namespace Assets.Entity.Controllers
     public class AbbilitiesController : MonoBehaviour
     {
         private EntityController _entityController;
-        private readonly Dictionary<AbilityType, List<(Equipment.Equipment Source, ItemAbility Item)>> _equipmentAbilities = new();
+        private readonly Dictionary<AbilityType, List<(Equipment.Equipment Source, ItemAbilities Item)>> _equipmentAbilities = new();
         private readonly Dictionary<AbilityType, Action<InterractionContext, Vector3>> _entityAbilities = new();
         private bool _dirty = true;
 
@@ -52,9 +49,8 @@ namespace Assets.Entity.Controllers
                     if (equipment == null) continue;
                     foreach (var ability in equipment.RuntimeAbilities)
                     {
-                        if (ability?.Action == null || ability.Mode == AbilityActivationMode.Passive) continue;
                         if (!_equipmentAbilities.TryGetValue(ability.Ability, out var list))
-                            _equipmentAbilities[ability.Ability] = list = new List<(Equipment.Equipment, ItemAbility)>();
+                            _equipmentAbilities[ability.Ability] = list = new List<(Equipment.Equipment, ItemAbilities)>();
                         list.Add((equipment, ability));
                     }
                 }

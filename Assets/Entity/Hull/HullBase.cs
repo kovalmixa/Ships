@@ -4,8 +4,7 @@ using Assets.DataContainers;
 using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
-using Assets.Handlers;
-using Assets.Handlers.Enums;
+using Assets.Entity.Modifiers;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
@@ -36,8 +35,8 @@ namespace Assets.Entity.Hull
             entityController = GetComponentInParent<EntityController>();
             rigidBody2D = GetComponent<Rigidbody2D>();
             data = GetComponent<HullContainer>();
-            BuffController.BaseStats = data.stats;
-            //_buffStatController.LocalModifiers = data.equipmentLocalModifiers;
+            BuffController.SetupStatsMods(data.statOptions.Stats.ToDictionary(s => (s.Type, s.StatLayer), s => s.Value),
+                new Modifiers.Modifiers(data.statOptions.mods));
             CollectAnchors(transform);
         }
 
@@ -113,6 +112,26 @@ namespace Assets.Entity.Hull
         [SerializeField] private BuffStatController _buffController;
         public BuffStatController BuffController => _buffController;
 
+        private Dictionary<StatType, float> _lifetimeStats = new();
+        public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
+
+        private const StatLayer _statLayer = StatLayer.Hull;
+
+        public void ResetLifetimeStats()
+        {
+            _lifetimeStats.Clear();
+            _lifetimeStats[StatType.MaxMoveSpeed] = _buffController.GetStat((StatType.MaxMoveSpeed, _statLayer));
+            _lifetimeStats[StatType.RotationSpeed] = _buffController.GetStat((StatType.RotationSpeed, _statLayer));
+            _lifetimeStats[StatType.Acceleration] = _buffController.GetStat((StatType.Acceleration, _statLayer));
+        }
+
+        public float GetLifetimeStat(StatType type)
+        {
+            if (BuffController.IsDirty) ResetLifetimeStats();
+            if (LifetimeStats.TryGetValue(type, out float value)) return value;
+            return 0f;
+        }
+
         public void TakeDamage(InterractionContext interractionContext, Damage damage)
         {
             throw new System.NotImplementedException();
@@ -172,25 +191,25 @@ namespace Assets.Entity.Hull
         #endregion
 
         #region IAbbility
-        public ItemAbility[] Abilities = System.Array.Empty<ItemAbility>();
-        private List<ItemAbility> _runtimeAbilities;
+        public ItemAbilities[] Abilities = System.Array.Empty<ItemAbilities>();
+        private List<ItemAbilities> _runtimeAbilities;
 
-        public IReadOnlyList<ItemAbility> RuntimeAbilities
+        public IReadOnlyList<ItemAbilities> RuntimeAbilities
         {
             get
             {
-                _runtimeAbilities ??= new List<ItemAbility>(Abilities ?? System.Array.Empty<ItemAbility>());
+                _runtimeAbilities ??= new List<ItemAbilities>(Abilities ?? System.Array.Empty<ItemAbilities>());
                 return _runtimeAbilities;
             }
         }
 
-        public void AddAbility(ItemAbility ability)
+        public void AddAbility(ItemAbilities ability)
         {
             if (ability == null) return;
-            ((List<ItemAbility>)RuntimeAbilities).Add(ability);
+            ((List<ItemAbilities>)RuntimeAbilities).Add(ability);
         }
 
-        public bool RemoveAbility(ItemAbility ability) => ((List<ItemAbility>)RuntimeAbilities).Remove(ability);
+        public bool RemoveAbility(ItemAbilities ability) => ((List<ItemAbilities>)RuntimeAbilities).Remove(ability);
        
         public void Activate(Vector3 targetPos, TemplateActionBase[] actions)
         {

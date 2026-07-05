@@ -49,6 +49,11 @@ namespace Assets.Handlers.Enums
         Submarine, SubmarineCruiser, NuclearSubmarine, SubmarineBattleship, SubmarineAircraftCarrier
     }
 
+    public enum ProjectileType
+    {
+        None, Projectile, Missile, Beam
+    }
+
     public enum SizeType
     {
         None, S, M, L, XL, XXL, X

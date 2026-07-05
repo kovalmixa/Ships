@@ -9,14 +9,28 @@ namespace Assets.Entity.Controllers
 {
     public class BuffStatController : MonoBehaviour, ICrud
     {
-        public Dictionary<(StatType Type, StatLayer Layer), float> BaseStats { get; set; } = new();
-        public Modifiers.Modifiers LocalModifiers { get; set; } = new();
+        private Dictionary<(StatType Type, StatLayer Layer), float> _baseStats = new();
+        public Dictionary<(StatType Type, StatLayer Layer), float> BaseStats => _baseStats;
+
+        private Modifiers.Modifiers _localModifiers;
+        public Modifiers.Modifiers LocalModifiers => _localModifiers;
+
+        private bool _isDirty { get; set; } = true;
+        public bool IsDirty => _isDirty;
+
         public Dictionary<(string buffId, string sourceId), (BuffStatus status, EntitySnapshot source)> ActiveBuffs { get; private set; } = new();
         public ILookup<string, BuffStatus> BuffsById => ActiveBuffs.Values.Select(v => v.status).ToLookup(b => b.BuffId);
-       
-        private bool _isDirty { get; set; } = true;
+
+
         private List<Modifiers.Modifiers> _externalModifiers = new();
         private Dictionary<(StatType Type, StatLayer Layer), float> _cachedCombinedStats = new();
+
+        public void SetupStatsMods(Dictionary<(StatType Type, StatLayer Layer), float> baseStats, 
+            Modifiers.Modifiers modifiers)
+        {
+            _baseStats = baseStats;
+            _localModifiers = modifiers;
+        }
 
         #region Modifiers
 
@@ -161,7 +175,7 @@ namespace Assets.Entity.Controllers
         #endregion
 
         #region Crud
-        public void OnUpdate()
+        public void OnChange()
         {
             RebuildCachedStats();
         }
