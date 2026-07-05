@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 namespace Assets.Entity.Modifiers
 {
@@ -31,24 +31,24 @@ namespace Assets.Entity.Modifiers
     public readonly struct StatMod
     {
         public StatType Type { get; }
-        public bool IsGlobal { get; }
+        public StatLayer Layer { get; }
         public StatCalcType CalcType { get; }
         public float Value { get; }
 
-        public StatMod(StatType type, bool isGlobal, StatCalcType calcType, float value)
+        public StatMod(StatType type, StatLayer layer, StatCalcType calcType, float value)
         {
             Type = type;
-            IsGlobal = isGlobal;
+            Layer = layer;
             CalcType = calcType;
             Value = value;
         }
 
-        public StatMod WithValue(float newValue) => new(Type, IsGlobal, CalcType, newValue);
+        public StatMod WithValue(float newValue) => new(Type, Layer, CalcType, newValue);
     }
 
     public class Modifiers
     {
-        private readonly Dictionary<(StatType Type, bool IsGlobal), List<StatMod>> _modsMap = new();
+        private readonly Dictionary<(StatType Type, StatLayer Layer), List<StatMod>> _modsMap = new();
 
         public IEnumerable<StatMod> StatsMods => _modsMap.Values.SelectMany(x => x);
 
@@ -60,7 +60,7 @@ namespace Assets.Entity.Modifiers
 
         public void AddSingle(StatMod mod)
         {
-            var key = (mod.Type, mod.IsGlobal);
+            var key = (mod.Type, mod.Layer);
 
             if (!_modsMap.TryGetValue(key, out var list))
             {
@@ -72,17 +72,14 @@ namespace Assets.Entity.Modifiers
             else list.Add(mod);
         }
 
-        public float ApplyModByType(StatType type, float basicValue, bool? getGlobal = null)
+        public float ApplyModByType(StatType type, StatLayer layer, float basicValue)
         {
             float currentSum = basicValue;
             float totalAddition = 0f;
             float totalPercent = 0f;
             bool anyModApplied = false;
 
-            if (getGlobal == null || getGlobal == true)
-                ProcessKey((type, true), ref currentSum, ref totalAddition, ref totalPercent, ref anyModApplied);
-            if (getGlobal == null || getGlobal == false)
-                ProcessKey((type, false), ref currentSum, ref totalAddition, ref totalPercent, ref anyModApplied);
+            ProcessKey((type, layer), ref currentSum, ref totalAddition, ref totalPercent, ref anyModApplied);
             if (!anyModApplied) return basicValue;
 
             currentSum += totalAddition;
@@ -91,7 +88,7 @@ namespace Assets.Entity.Modifiers
             return currentSum;
         }
 
-        private void ProcessKey((StatType Type, bool IsGlobal) key, ref float currentSum, ref float totalAddition, ref float totalPercent, ref bool anyModApplied)
+        private void ProcessKey((StatType Type, StatLayer Layer) key, ref float currentSum, ref float totalAddition, ref float totalPercent, ref bool anyModApplied)
         {
             if (!_modsMap.TryGetValue(key, out var mods)) return;
             anyModApplied = true;

@@ -1,5 +1,4 @@
 ﻿using Assets.Common.Interfaces;
-using Assets.Entity.BuffStatuses;
 using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
 using System.Collections.Generic;
@@ -10,14 +9,14 @@ namespace Assets.Entity.Controllers
 {
     public class BuffStatController : MonoBehaviour, ICrud
     {
-        public Dictionary<(StatType Type, bool IsGlobal), float> BaseStats { get; set; } = new();
+        public Dictionary<(StatType Type, StatLayer Layer), float> BaseStats { get; set; } = new();
         public Modifiers.Modifiers LocalModifiers { get; set; } = new();
         public Dictionary<(string buffId, string sourceId), (BuffStatus status, EntitySnapshot source)> ActiveBuffs { get; private set; } = new();
         public ILookup<string, BuffStatus> BuffsById => ActiveBuffs.Values.Select(v => v.status).ToLookup(b => b.BuffId);
        
         private bool _isDirty { get; set; } = true;
         private List<Modifiers.Modifiers> _externalModifiers = new();
-        private Dictionary<(StatType Type, bool IsGlobal), float> _cachedCombinedStats = new();
+        private Dictionary<(StatType Type, StatLayer Layer), float> _cachedCombinedStats = new();
 
         #region Modifiers
 
@@ -35,7 +34,7 @@ namespace Assets.Entity.Controllers
             _isDirty = true;
         }
 
-        public float GetStat((StatType Type, bool IsGlobal) key)
+        public float GetStat((StatType Type, StatLayer Layer) key)
         {
             if (_isDirty) RebuildCachedStats();
             return _cachedCombinedStats.TryGetValue(key, out float value) ? value : 1f;
@@ -51,9 +50,9 @@ namespace Assets.Entity.Controllers
 
             foreach (var extMod in _externalModifiers) finalMods.Add(extMod);
             foreach (var buff in ActiveBuffs.Values) finalMods.Add(buff.status.modifiers);
-            var keys = new List<(StatType Type, bool IsGlobal)>(_cachedCombinedStats.Keys);
+            var keys = new List<(StatType Type, StatLayer Layer)>(_cachedCombinedStats.Keys);
             foreach (var key in keys) 
-                _cachedCombinedStats[key] = finalMods.ApplyModByType(key.Type, _cachedCombinedStats[key], key.IsGlobal);
+                _cachedCombinedStats[key] = finalMods.ApplyModByType(key.Type, key.Layer, _cachedCombinedStats[key]);
 
             _isDirty = false;
         }

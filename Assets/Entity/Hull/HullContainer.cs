@@ -21,7 +21,7 @@ namespace Assets.DataContainers
         public uint maxHealth; //replace
 
         public uint maxEnergy; //replace
-        public Dictionary<(StatType Type, bool IsGlobal), float> stats { get; set; }
+        public Dictionary<(StatType Type, StatLayer Layer), float> stats { get; set; }
         public ItemAbility[] BaseAbilities = System.Array.Empty<ItemAbility>();
     }
 }
