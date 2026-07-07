@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Actions
 {
-    public abstract class TemplateActionBase : MonoBehaviour
+    public abstract class TemplateActionBase<T> : MonoBehaviour
     {
         public string name;
         public float delay = 0;
@@ -18,13 +18,13 @@ namespace Actions
             name = gameObject.name;
         }
 
-        public virtual void Execute(InterractionContext interractionContext, Vector3 targetPos) { }
+        public virtual void Execute(InterractionContext<T> interractionContext, Vector3 targetPos) { }
 
-        public virtual void Execute(InterractionContext interractionContext, IInteractive target) { }
+        public virtual void Execute(InterractionContext<T> interractionContext, IInteractive target) { }
 
         #region Additional
         
-        protected bool CanActivate(InterractionContext interractionContext, Vector3 targetPos)
+        protected bool CanActivate(InterractionContext<T> interractionContext, Vector3 targetPos)
         {
             if (delay == 0) return true;
             float time = Time.time;

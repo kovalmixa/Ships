@@ -2,10 +2,16 @@ using Assets.Handlers.SceneHandlers;
 using Entity.Projectile;
 using UnityEngine;
 using Assets.Scripts.Actions;
+using Assets.Entity.Projectile;
 
 namespace Actions
 {
-    public class FireProjectileAction : TemplateActionBase
+    public class LaunchData
+    {
+
+    }
+    
+    public class FireProjectileAction : TemplateActionBase<ProjectileDefinition>
     {
         public GameObject ProjectilePrefab;
         public Transform FirePosition;
@@ -17,30 +23,11 @@ namespace Actions
             poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
-        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
+        public override void Execute(InterractionContext<ProjectileDefinition> interractionContext, Vector3 targetPos)
         {
             if (!CanActivate(interractionContext, targetPos) || poolHandler == null) return;
             Debug.Log("Pew");
-            SetupProjectile(interractionContext, targetPos);
-        }
-
-        protected void SetupProjectile(InterractionContext interractionContext, Vector3 targetPos)
-        {
-            var prefabProjectile = ProjectilePrefab.GetComponent<Projectile>();
-            if (prefabProjectile == null)
-            {
-                Debug.LogError($"Projectile prefab {prefabProjectile.name} doesnt have projectile component");
-                return;
-            }
-            var pooledObj = poolHandler.Get();
-            var objProjectile = pooledObj.GetComponent<Projectile>();
-            objProjectile.SetupByPrefab(prefabProjectile);
-            pooledObj.transform.SetPositionAndRotation(FirePosition.position, Quaternion.identity);
-
-            Vector3 direction = (targetPos - FirePosition.position).normalized;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            pooledObj.transform.rotation = Quaternion.Euler(0, 0, angle + 90f);
-            objProjectile.Launch(direction, targetPos, interractionContext);
+            ProjectileController.Instance.Launch(interractionContext);
         }
     }
 }

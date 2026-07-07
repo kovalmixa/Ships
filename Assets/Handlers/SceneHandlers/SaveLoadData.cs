@@ -11,8 +11,9 @@ namespace Assets.Handlers.SceneHandlers
         public string FileName;
         public GameObject Player;
 
-        private void Start()
+        protected override void Awake()
         {
+            base.Awake();
             try
             {
                 string path = Application.streamingAssetsPath + "/Saves/" + FileName;

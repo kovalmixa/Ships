@@ -12,7 +12,7 @@ namespace Assets.Scripts.Actions
     {
         [SerializeField] public DamageType Type;
 
-        [SerializeField] public float Radius;
+        [SerializeField] public float Range;
 
         [SerializeField] public float Value;
     }

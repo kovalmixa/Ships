@@ -5,6 +5,7 @@ using Entity.Controllers;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.LightTransport;
 
 namespace Assets.Entity.Controllers
 {
@@ -17,16 +18,16 @@ namespace Assets.Entity.Controllers
     [Serializable]
     public class ItemAbilities
     {
+        public Vector2 Position;
         public AbilityType Ability;
         public AbilityActivationMode Mode;
-        public TemplateActionBase Action;
     }
 
     public class AbbilitiesController : MonoBehaviour
     {
         private EntityController _entityController;
-        private readonly Dictionary<AbilityType, List<(Equipment.Equipment Source, ItemAbilities Item)>> _equipmentAbilities = new();
-        private readonly Dictionary<AbilityType, Action<InterractionContext, Vector3>> _entityAbilities = new();
+        private readonly Dictionary<AbilityType, List<Vector2?>> _equipmentAbilities = new();
+        private readonly Dictionary<AbilityType, List<Vector2?>> _entityAbilities = new();
         private bool _dirty = true;
 
         private void Awake()
@@ -64,23 +65,16 @@ namespace Assets.Entity.Controllers
             if (IsAttackAbility(key) && IsPositionBlocked(targetPos)) return;
 
             RebuildIfNeeded();
-
-            var context = new InterractionContext
-            {
-                SourceObject = gameObject,
-                SourceSnapshot = _entityController != null ? _entityController.GetSnapshot() : null,
-                AbilityId = key.ToString()
-            };
-
             if (_equipmentAbilities.TryGetValue(key, out var targets))
                 foreach (var (source, ability) in targets)
-                    source.ActivateAbility(targetPos, ability);
+                    ExecuteAction(key, );
 
             if (_entityAbilities.TryGetValue(key, out var entityAction))
-                entityAction.Invoke(context, targetPos);
+                ExecuteAction(key);
+            entityAction.Invoke(context, targetPos);
         }
 
-        public void RegisterEntityAbility(AbilityType key, Action<InterractionContext, Vector3> action)
+        public void RegisterEntityAbility(AbilityType key, Action<InterractionContext, Vector2> action)
         {
             if (key == AbilityType.None || action == null) return;
             _entityAbilities[key] = action;
@@ -111,6 +105,30 @@ namespace Assets.Entity.Controllers
                 if (col != null && col.OverlapPoint(position)) return true;
             }
             return false;
+        }
+
+        private void ExecuteAction(AbilityType key)
+        {
+            var context = new InterractionContext
+            {
+                SourceObject = gameObject,
+                SourceSnapshot = _entityController != null ? _entityController.GetSnapshot() : null,
+                AbilityId = key.ToString()
+            };
+            switch (key) {
+                case AbilityType.None:
+                {
+                    break;
+                }
+                case AbilityType.FirePrimary:
+                {
+                    break;
+                }
+                case AbilityType.FireSecondary:
+                {
+                    break;
+                }
+            }
         }
     }
 }

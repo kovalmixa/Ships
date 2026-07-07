@@ -6,7 +6,7 @@ namespace Assets.Handlers.Enums
 {
     public enum AbilityType
     {
-        None,
+        None, AllTurrets,
         FirePrimary, FireSecondary, LaunchAircraft, LaunchMissile,
         DropBomb, FireLaser, LaunchTorpedo,
         Heal, Regeneration, Shield, RadarPulse, Smoke,
@@ -18,7 +18,8 @@ namespace Assets.Handlers.Enums
         None,
         Turret,
         Aircraft,
-        Launcher,
+        Torpedo,
+        Missile,
         Engine,
         Radar,
         Shield,
@@ -78,8 +79,11 @@ namespace Assets.Handlers
             { EquipmentMasterType.Aircraft, new[] {
                 EquipmentSubType.Fighter, EquipmentSubType.Bomber, EquipmentSubType.Helicopter }
             },
-            { EquipmentMasterType.Launcher, new[] {
+            { EquipmentMasterType.Torpedo, new[] {
                 EquipmentSubType.Torpedo }
+            }, 
+            { EquipmentMasterType.Missile, new[] {
+                EquipmentSubType.Missile }
             }
         };
 
@@ -142,7 +146,8 @@ namespace Assets.Handlers
         public static readonly Dictionary<EquipmentMasterType, AbilityType[]> MasterTypeAbilities = new()
         {
             { EquipmentMasterType.Turret, new[] { AbilityType.FirePrimary } },
-            { EquipmentMasterType.Launcher, new[] { AbilityType.LaunchMissile } },
+            { EquipmentMasterType.Torpedo, new[] { AbilityType.LaunchMissile } },
+            { EquipmentMasterType.Missile, new[] { AbilityType.LaunchMissile } },
             { EquipmentMasterType.Aircraft, new[] { AbilityType.LaunchAircraft } },
             { EquipmentMasterType.Radar, new[] { AbilityType.RadarPulse } },
             { EquipmentMasterType.Shield, new[] { AbilityType.Shield } }

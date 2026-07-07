@@ -1,39 +1,80 @@
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Assets.Handlers.SceneHandlers
 {
+    public enum PoolType
+    {
+        None,
+        Projectile,
+        Effect,
+    }
+
     public class ObjectPoolHandler : MonoBehaviour
     {
-        public GameObject prefab;
-        public int initialSize = 100;
-        private Queue<GameObject> pool = new();
+        private static Dictionary<PoolType, ObjectPoolHandler> _poolInstances;
 
-        void Awake()
+        [SerializeField] public PoolType poolType = PoolType.None;
+        [SerializeField] private GameObject prefab;
+        [SerializeField] private int defaultCapacity = 100;
+        [SerializeField] private int maxSize = 200;
+
+        private List<GameObject> _activeObjects = new();
+        private IObjectPool<GameObject> pool;
+        
+        public static void RealeasePools()
         {
-            for (int i = 0; i < initialSize; i++)
-            {
-                GameObject obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-                obj.SetActive(false);
-                pool.Enqueue(obj);
-            }
+            foreach (var pool in _poolInstances.Values)
+                foreach (Transform child in pool.transform)
+                    if (child.gameObject.activeSelf) pool.Return(child.gameObject);
         }
 
-        public GameObject Get()
+        public static ObjectPoolHandler GetInstance(PoolType type)
         {
-            if (pool.Count > 0)
-            {
-                var obj = pool.Dequeue();
-                obj.SetActive(true);
-                return obj;
-            }
+            if (_poolInstances.TryGetValue(type, out ObjectPoolHandler pool)) return pool;
             return null;
         }
 
-        public void Return(GameObject obj)
+        void Awake()
         {
-            obj.SetActive(false);
-            pool.Enqueue(obj);
+            pool = new ObjectPool<GameObject>(
+                createFunc: CreateInstance,
+                actionOnGet: OnGetFromPool,
+                actionOnRelease: OnReleaseToPool,
+                actionOnDestroy: OnDestroyPoolObject,
+                collectionCheck: true,
+                defaultCapacity: defaultCapacity,
+                maxSize: maxSize
+            );
+
+            List<GameObject> tempList = new List<GameObject>();
+            for (int i = 0; i < defaultCapacity; i++) tempList.Add(pool.Get());
+            foreach (var obj in tempList) pool.Release(obj);
+            _poolInstances.Add(poolType, this);
         }
+
+        private GameObject CreateInstance() => Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+
+        private void OnGetFromPool(GameObject obj)
+        {
+            _activeObjects.Add(obj);
+            obj.SetActive(true);
+        }
+
+        private void OnReleaseToPool(GameObject obj)
+        {
+            _activeObjects.Remove(obj);
+            obj.SetActive(false);
+        }
+
+        private void OnDestroyPoolObject(GameObject obj) => Destroy(obj);
+
+        public GameObject Get() => pool.Get();
+
+        public GameObject[] GetAllActive() => _activeObjects.ToArray();
+
+        public void Return(GameObject obj) => pool.Release(obj);
     }
 }

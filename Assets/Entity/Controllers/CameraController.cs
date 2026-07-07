@@ -5,7 +5,7 @@ namespace Entity.Controllers
 {
     public class CameraController : SingletonMonoBehaviour<CameraController>
     {
-        [SerializeField] CinemachineVirtualCamera virtualCamera;
+        [SerializeField] private CinemachineVirtualCamera _virtualCamera;
 
         public float CameraDistance { get; set; }
         [SerializeField] float _sensitivity;
@@ -15,10 +15,10 @@ namespace Entity.Controllers
         float _targetZoom;
         float _currentZoom;
 
-        private void Awake()
+        protected override void Awake()
         {
             base.Awake();
-            _currentZoom = virtualCamera.m_Lens.OrthographicSize;
+            _currentZoom = _virtualCamera.m_Lens.OrthographicSize;
             _targetZoom = _currentZoom;
         }
 
@@ -29,8 +29,8 @@ namespace Entity.Controllers
                 Debug.LogError("CameraController: Попытка следовать за null трансформом!");
                 return;
             }
-            virtualCamera.LookAt = targetTransform;
-            virtualCamera.Follow = targetTransform;
+            _virtualCamera.LookAt = targetTransform;
+            _virtualCamera.Follow = targetTransform;
         }
 
         void Zoom()
@@ -41,7 +41,7 @@ namespace Entity.Controllers
                 _targetZoom = Mathf.Clamp(_targetZoom, minZoom, maxZoom);
             }
             _currentZoom = Mathf.Lerp(_currentZoom, _targetZoom, SmoothSpeed * Time.deltaTime);
-            virtualCamera.m_Lens.OrthographicSize = _currentZoom;
+            _virtualCamera.m_Lens.OrthographicSize = _currentZoom;
         }
 
         void Update()

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Actions
 {
-    public class DamageAction : TemplateActionBase
+    public class DamageAction : TemplateActionBase<Damage>
     {
         [SerializeField] public float Radius;
 
@@ -12,7 +12,7 @@ namespace Actions
 
         [SerializeField] public LayerMask[] FilterLayers;
 
-        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
+        public override void Execute(InterractionContext<Damage> interractionContext, Vector3 targetPos)
         {
             if (!CanActivate(interractionContext, targetPos)) return;
             int combinedMask = 0;
