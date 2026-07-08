@@ -1,21 +1,23 @@
-using System.Collections.Generic;
-using System.Linq;
+using Actions;
 using Assets.Common;
 using Assets.Entity;
 using Assets.Entity.Controllers;
 using Assets.Entity.Hull;
+using Assets.Entity.Interfaces;
 using Assets.Handlers.SceneHandlers;
 using Entity.Controllers.AI;
 using Scripts;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Entity.Controllers
 {
-    public class EntityController : MonoBehaviour, IObject
+    public class EntityController : MonoBehaviour, IObject, IAbbility
     {
         public EntityDataContainer data;
         public AbbilitiesController abbilitiesController;
-        private IEntityController _controller;
+        private IDriver _driver;
         [SerializeField] private GameObject _despawnPrefab;
         public string Id { get; set; }
         public HullBase hull;
@@ -28,9 +30,9 @@ namespace Entity.Controllers
             if (GameObjectHandler.GetAI(this) == null) GameObjectHandler.RegisterPlayer(this);
         }
 
-        public void SetController(IEntityController controller)
+        public void SetController(IDriver controller)
         {
-            _controller = controller;
+            _driver = controller;
         }
 
         public void Setup(EntityDataContainer data)
@@ -138,8 +140,8 @@ namespace Entity.Controllers
 
         public void SetupScripts(params ScriptBase[] scripts)
         {
-            _controller = gameObject.AddComponent<AiController>();
-            if (_controller is AiController aiController)
+            _driver = gameObject.AddComponent<AiController>();
+            if (_driver is AiController aiController)
             {
                 aiController.Scripts = new Queue<ScriptBase>(scripts);
             }
@@ -152,7 +154,35 @@ namespace Entity.Controllers
         private void Update()
         {
             if (hull == null) return;
-            _controller?.UpdateControl(this);
+            _driver?.UpdateControl(this);
         }
+
+        #region IAbbility
+        public ItemAbilities[] Abilities = System.Array.Empty<ItemAbilities>();
+        private List<ItemAbilities> _runtimeAbilities;
+
+        public IReadOnlyList<ItemAbilities> RuntimeAbilities
+        {
+            get
+            {
+                _runtimeAbilities ??= new List<ItemAbilities>(Abilities ?? System.Array.Empty<ItemAbilities>());
+                return _runtimeAbilities;
+            }
+        }
+
+        public void AddAbility(ItemAbilities ability)
+        {
+            if (ability == null) return;
+            ((List<ItemAbilities>)RuntimeAbilities).Add(ability);
+        }
+
+        public bool RemoveAbility(ItemAbilities ability) => ((List<ItemAbilities>)RuntimeAbilities).Remove(ability);
+
+        public void Activate(Vector3 targetPos, params TemplateActionBase[] actions)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion
     }
 }

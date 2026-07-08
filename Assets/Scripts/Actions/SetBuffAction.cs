@@ -2,9 +2,7 @@
 using Assets.Common;
 using Assets.Scripts.Actions;
 using JetBrains.Annotations;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class SetBuffAction : TemplateActionBase, IScalableAction
 {

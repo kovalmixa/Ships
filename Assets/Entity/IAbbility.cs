@@ -11,6 +11,6 @@ namespace Assets.Entity.Interfaces
         public void AddAbility(ItemAbilities ability);
         public bool RemoveAbility(ItemAbilities ability);
 
-        public void Activate(Vector3 targetPos, TemplateActionBase[] actions);
+        public void Activate(Vector3 targetPos, params TemplateActionBase[] actions);
     }
 }

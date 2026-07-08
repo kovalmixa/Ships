@@ -1,9 +1,14 @@
-﻿using JetBrains.Annotations;
+﻿using Assets.Scripts.Actions;
+using JetBrains.Annotations;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Actions
 {
+    public class Explosion : IActionStruct
+    {
+    }
+
     public class ExplosionAction : TemplateActionBase
     {
         [SerializeField] public uint Range;

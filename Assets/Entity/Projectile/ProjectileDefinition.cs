@@ -1,5 +1,5 @@
-﻿using Assets.Handlers.Enums;
-using Assets.Scripts.Actions;
+﻿using Actions;
+using Assets.Handlers.Enums;
 using UnityEngine;
 
 namespace Assets.Entity.Projectile

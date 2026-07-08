@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Actions
 {
+    public struct Heal : IActionStruct
+    {
+        [SerializeField] public float Value;
+    }
+
     public class HealAction : TemplateActionBase, IScalableAction
     {
         [SerializeField] public int HealValue;

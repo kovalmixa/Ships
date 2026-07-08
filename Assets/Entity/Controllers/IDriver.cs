@@ -1,6 +1,6 @@
 namespace Entity.Controllers
 {
-    public interface IEntityController
+    public interface IDriver
     {
         public void UpdateControl(EntityController controller);
     }

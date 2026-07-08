@@ -132,16 +132,16 @@ namespace Assets.Entity.Hull
             return 0f;
         }
 
-        public void TakeDamage(InterractionContext interractionContext, Damage damage)
+        public void TakeDamage(InterractionContext interractionContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+        public void TakeHeal(InterractionContext interractionContext)
         {
             throw new System.NotImplementedException();
         }
-        public void AddBuff(InterractionContext context, params BuffStatus[] buffs)
+        public void AddBuff(InterractionContext context)
         {
             if (_buffController == null || buffs == null) return;
 

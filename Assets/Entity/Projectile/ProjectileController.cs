@@ -10,7 +10,7 @@ namespace Assets.Entity.Projectile
     {
         private ObjectPoolHandler _projectilePool;
 
-        public void Launch(InterractionContext<ProjectileDefinition> interractionContext)
+        public void Launch(InterractionContext interractionContext)
         {
             var projectile = _projectilePool.Get();
             projectile.GetComponent<ProjectileInstance>().Setup(interractionContext);

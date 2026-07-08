@@ -24,7 +24,7 @@ namespace Assets.Entity.Equipment
         public EquipmentSubType Type;
 
         private const float _basicAngle = 90;
-        public Vector3 Position
+        public Vector2 Position
         {
             get => transform.position + entityController.transform.position;
             set { }

@@ -14,12 +14,12 @@ namespace Assets.Common
 
         public float GetLifetimeStat(StatType type);
 
-        public void TakeDamage(InterractionContext interractionContext, Damage damage);
+        public void TakeDamage(InterractionContext interractionContext);
 
-        public void TakeHeal(InterractionContext interractionContext, Heal heal);
+        public void TakeHeal(InterractionContext interractionContext);
 
-        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs);
+        public void AddBuff(InterractionContext interractionContext);
 
-        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs);
+        public void RemoveBuff(InterractionContext interractionContext);
     }
 }

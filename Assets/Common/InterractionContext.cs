@@ -1,10 +1,11 @@
 ﻿using Assets.Common;
 using Assets.Entity;
+using Assets.Scripts.Actions.Definitions;
 using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-    public class InterractionContext<T>
+    public class InterractionContext
     {
         public EntitySnapshot SourceSnapshot { get; set; }
         public IInteractive SourceInterractive { get; set; }
@@ -12,6 +13,6 @@ namespace Assets.Scripts.Actions
         public GameObject SourceObject { get; set; }
         public GameObject target;
 
-        public T interractionDefinition;
+        public IDefinition interractionDefinition;
     }
 }

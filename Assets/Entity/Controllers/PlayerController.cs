@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Entity.Controllers
 {
-    public class PlayerController : MonoBehaviour, IEntityController
+    public class PlayerController : MonoBehaviour, IDriver
     {
         private Camera _camera;
         public Camera Camera

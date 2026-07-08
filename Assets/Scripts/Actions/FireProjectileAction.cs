@@ -1,8 +1,7 @@
 using Assets.Handlers.SceneHandlers;
-using Entity.Projectile;
 using UnityEngine;
-using Assets.Scripts.Actions;
 using Assets.Entity.Projectile;
+using Assets.Scripts.Actions;
 
 namespace Actions
 {
@@ -11,7 +10,7 @@ namespace Actions
 
     }
     
-    public class FireProjectileAction : TemplateActionBase<ProjectileDefinition>
+    public class FireProjectileAction : TemplateActionBase
     {
         public GameObject ProjectilePrefab;
         public Transform FirePosition;
@@ -23,7 +22,7 @@ namespace Actions
             poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
-        public override void Execute(InterractionContext<ProjectileDefinition> interractionContext, Vector3 targetPos)
+        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
         {
             if (!CanActivate(interractionContext, targetPos) || poolHandler == null) return;
             Debug.Log("Pew");

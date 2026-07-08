@@ -5,7 +5,6 @@ using Entity.Controllers;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.LightTransport;
 
 namespace Assets.Entity.Controllers
 {
@@ -26,8 +25,8 @@ namespace Assets.Entity.Controllers
     public class AbbilitiesController : MonoBehaviour
     {
         private EntityController _entityController;
-        private readonly Dictionary<AbilityType, List<Vector2?>> _equipmentAbilities = new();
-        private readonly Dictionary<AbilityType, List<Vector2?>> _entityAbilities = new();
+        private readonly Dictionary<AbilityType, Action> _equipmentAbilities = new();
+        private readonly Dictionary<AbilityType, Action> _entityAbilities = new();
         private bool _dirty = true;
 
         private void Awake()
@@ -51,8 +50,8 @@ namespace Assets.Entity.Controllers
                     foreach (var ability in equipment.RuntimeAbilities)
                     {
                         if (!_equipmentAbilities.TryGetValue(ability.Ability, out var list))
-                            _equipmentAbilities[ability.Ability] = list = new List<(Equipment.Equipment, ItemAbilities)>();
-                        list.Add((equipment, ability));
+                            _equipmentAbilities[ability.Ability] = list = new ();
+                        list.Add(equipment.Position);
                     }
                 }
             }
@@ -65,13 +64,12 @@ namespace Assets.Entity.Controllers
             if (IsAttackAbility(key) && IsPositionBlocked(targetPos)) return;
 
             RebuildIfNeeded();
-            if (_equipmentAbilities.TryGetValue(key, out var targets))
-                foreach (var (source, ability) in targets)
-                    ExecuteAction(key, );
+            if (_equipmentAbilities.TryGetValue(key, out var positions))
+                foreach (var startPos in positions)
+                    ExecuteAction(key, startPos, targetPos);
 
             if (_entityAbilities.TryGetValue(key, out var entityAction))
                 ExecuteAction(key);
-            entityAction.Invoke(context, targetPos);
         }
 
         public void RegisterEntityAbility(AbilityType key, Action<InterractionContext, Vector2> action)

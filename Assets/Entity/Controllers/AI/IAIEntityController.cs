@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Controllers.AI
 {
-    public interface IAIEntityController : IEntityController
+    public interface IAIEntityController : IDriver
     {
         public void SetMovementPoint(Transform target);
         public void SetTargetPoint(Transform target);
