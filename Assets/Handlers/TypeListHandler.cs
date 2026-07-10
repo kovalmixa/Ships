@@ -1,4 +1,5 @@
-﻿using Assets.Handlers.Enums;
+﻿using Actions;
+using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
 using System;
 using System.Collections.Generic;
@@ -183,7 +184,5 @@ namespace Assets.Handlers
             combinedAbilities.CopyTo(result);
             return result;
         }
-    
-        public static InterractionContext<T> Prepare
     }
 }

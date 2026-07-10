@@ -4,19 +4,18 @@ using UnityEngine;
 
 namespace Actions
 {
-    public struct Heal : IActionStruct
+    public class Heal
     {
-        [SerializeField] public float Value;
+        [SerializeField] public float value;
     }
 
     public class HealAction : TemplateActionBase, IScalableAction
     {
-        [SerializeField] public int HealValue;
+        [SerializeField] public Heal heal;
 
         public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
         {
-            if (!CanActivate(interractionContext, targetPos)) return;
-            Debug.Log($"Healed:{HealValue}");
+            Debug.Log($"Healed:{heal.value}");
             //var stats = context.Target.GetComponent<CharacterStats>();
             //if (stats != null)
             //{
@@ -26,7 +25,7 @@ namespace Actions
         public override void Execute(InterractionContext interractionContext, IInteractive target)
         {
             
-            target.TakeHeal(interractionContext, new Heal());
+            target.TakeHeal(interractionContext, heal);
         }
 
         #region IScalableAction

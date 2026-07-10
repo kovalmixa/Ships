@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Entity.Controllers.AI
 {
-    public class AiController : MonoBehaviour, IAIEntityController, IAi
+    public class AiController : MonoBehaviour, IAIDriver, IAi
     {
         private Transform _movePoint;
         private Transform _targetPoint;

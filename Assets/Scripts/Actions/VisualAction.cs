@@ -1,5 +1,4 @@
-﻿using Assets.Entity;
-using Assets.Handlers.SceneHandlers;
+﻿using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using UnityEngine;
 
@@ -7,15 +6,18 @@ namespace Actions
 {
     public class VisualAction : TemplateActionBase
     {
-        private ObjectPoolHandler effectPool;
-        [SerializeField] private string[] ids;
+        private ObjectPoolHandler _effectPool;
+        [SerializeField] private string[] _ids;
+
+        private void Awake()
+        {
+            _effectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
+        }
 
         public override void Execute(InterractionContext interractionContext, Vector3 targetPos){
-            var effectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
-            if (!CanActivate(interractionContext, targetPos)) return;
-            if (effectPool == null) return;
-            effectPool = effectPool.gameObject.GetComponent<ObjectPoolHandler>();
-            foreach (var id in ids) SetupEffect(targetPos, id);
+            if (_effectPool == null) return;
+            _effectPool = _effectPool.gameObject.GetComponent<ObjectPoolHandler>();
+            foreach (var id in _ids) SetupEffect(targetPos, id);
         }
 
         protected void SetupEffect(Vector3 targetPos, string id)

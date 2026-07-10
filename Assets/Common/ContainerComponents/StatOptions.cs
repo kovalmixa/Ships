@@ -1,16 +1,34 @@
-﻿using Assets.Entity.Controllers;
+﻿using Actions;
 using Assets.Entity.Modifiers;
+using Assets.Handlers.Enums;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Common
 {
+    public enum AbilityActivationMode
+    {
+        Primary,
+        Ability,
+    }
+
+    [Serializable]
+    public class AbilityUnit
+    {
+        public AbilityType type;
+        public TemplateActionBase action;
+        public AbilityActivationMode mode;
+        public float delay;
+        public bool isPassive;
+    }
+
     [System.Serializable]
     public class StatOptions
     {
         [field: SerializeField] public List<StatUnit> Stats { get; private set; }
 
         public List<ModUnit> mods;
-        public List<ItemAbilities> abilities;
+        public List<AbilityUnit> abilities;
     }
 }

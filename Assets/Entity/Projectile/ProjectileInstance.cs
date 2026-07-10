@@ -11,9 +11,7 @@ namespace Assets.Entity.Projectile
 
         public void Setup(InterractionContext interractionContext)
         {
-            _definition = interractionContext.interractionDefinition;
             _context = interractionContext;
-
             Vector3 direction = (_definition.targetPosition - _definition.startPosition).normalized;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 

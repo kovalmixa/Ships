@@ -1,8 +1,5 @@
 ﻿using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
-using UnityEngine;
-using UnityEngine.LightTransport;
-using UnityEngine.WSA;
 
 namespace Assets.Entity.Projectile
 {

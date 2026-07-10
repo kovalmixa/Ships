@@ -1,201 +1,201 @@
-﻿using Actions;
-using Assets.Common;
-using Assets.Entity.Controllers;
-using Assets.Entity.Interfaces;
-using Assets.Entity.Modifiers;
-using Assets.Entity.Projectile;
-using Assets.Handlers.SceneHandlers;
-using Assets.Scripts.Actions;
-using System.Collections.Generic;
-using UnityEngine;
+﻿//using Actions;
+//using Assets.Common;
+//using Assets.Entity.Controllers;
+//using Assets.Entity.Interfaces;
+//using Assets.Entity.Modifiers;
+//using Assets.Entity.Projectile;
+//using Assets.Handlers.SceneHandlers;
+//using Assets.Scripts.Actions;
+//using System.Collections.Generic;
+//using UnityEngine;
 
-namespace Entity.Projectile
-{
-    public class Projectile : MonoBehaviour, IAbbility, IInteractive
-    {
-        [SerializeField] private ProjectileContainer projectileContainer;
-        public ProjectileContainer ProjectileContainer => projectileContainer;
+//namespace Entity.Projectile
+//{
+//    public class Projectile : MonoBehaviour, IAbbility, IInteractive
+//    {
+//        [SerializeField] private ProjectileContainer projectileContainer;
+//        public ProjectileContainer ProjectileContainer => projectileContainer;
 
-        public TemplateActionBase[] onExplosionActions;
-        public TemplateActionBase[] updateActions;
-        public string Id { get; set; }
+//        public TemplateActionBase[] onExplosionActions;
+//        public TemplateActionBase[] updateActions;
+//        public string Id { get; set; }
 
-        private Transform _target;
-        private InterractionContext _interractionContext;
-        private Vector2 _direction;
-        public Vector3? targetPosition;
-        private float _timer;
-        //private float distanceToTarget = 
+//        private Transform _target;
+//        private InterractionContext _interractionContext;
+//        private Vector2 _direction;
+//        public Vector3? targetPosition;
+//        private float _timer;
+//        //private float distanceToTarget = 
 
-        private ObjectPoolHandler _objectPool;
+//        private ObjectPoolHandler _objectPool;
 
-        #region Start/Setup
+//        #region Start/Setup
 
-        private void Awake()
-        {
-            Id = GameObjectHandler.GenerateUniqueId(name);
-        }
+//        private void Awake()
+//        {
+//            Id = GameObjectHandler.GenerateUniqueId(name);
+//        }
 
-        public void SetupByPrefab(Projectile prefab)
-        {
-            projectileContainer = prefab.projectileContainer;
-            onExplosionActions = prefab.onExplosionActions;
-            updateActions = prefab.updateActions;
-            GetComponent<SpriteRenderer>().sprite = prefab.GetComponent<SpriteRenderer>().sprite;
-        }
+//        public void SetupByPrefab(Projectile prefab)
+//        {
+//            projectileContainer = prefab.projectileContainer;
+//            onExplosionActions = prefab.onExplosionActions;
+//            updateActions = prefab.updateActions;
+//            GetComponent<SpriteRenderer>().sprite = prefab.GetComponent<SpriteRenderer>().sprite;
+//        }
 
-        public void Launch(Vector2 dir, Vector3? targetPos = null, InterractionContext interractionContext = null)
-        {
-            this._interractionContext = interractionContext;
-            targetPosition = targetPos;
-            _direction = dir;
-            _timer = 0f;
+//        public void Launch(Vector2 dir, Vector3? targetPos = null, InterractionContext interractionContext = null)
+//        {
+//            this._interractionContext = interractionContext;
+//            targetPosition = targetPos;
+//            _direction = dir;
+//            _timer = 0f;
 
-            if (_interractionContext != null)
-            {
-                var projectileCollider = GetComponent<Collider2D>();
-                var shooterCollider = _interractionContext.SourceObject.GetComponent<Collider2D>();
-                if (projectileCollider != null && shooterCollider != null)
-                    Physics2D.IgnoreCollision(projectileCollider, shooterCollider, true);
-            }
-            gameObject.SetActive(true);
-        }
+//            if (_interractionContext != null)
+//            {
+//                var projectileCollider = GetComponent<Collider2D>();
+//                var shooterCollider = _interractionContext.SourceObject.GetComponent<Collider2D>();
+//                if (projectileCollider != null && shooterCollider != null)
+//                    Physics2D.IgnoreCollision(projectileCollider, shooterCollider, true);
+//            }
+//            gameObject.SetActive(true);
+//        }
 
-        #endregion
+//        #endregion
 
-        #region Update/IAbbility
-        public ItemAbilities[] Abilities = System.Array.Empty<ItemAbilities>();
-        private List<ItemAbilities> _runtimeAbilities;
-        public IReadOnlyList<ItemAbilities> RuntimeAbilities
-        {
-            get
-            {
-                _runtimeAbilities ??= new List<ItemAbilities>(Abilities ?? System.Array.Empty<ItemAbilities>());
-                return _runtimeAbilities;
-            }
-        }
+//        #region Update/IAbbility
+//        public AbilityUnit[] Abilities = System.Array.Empty<AbilityUnit>();
+//        private List<AbilityUnit> _runtimeAbilities;
+//        public IReadOnlyList<AbilityUnit> RuntimeAbilities
+//        {
+//            get
+//            {
+//                _runtimeAbilities ??= new List<AbilityUnit>(Abilities ?? System.Array.Empty<AbilityUnit>());
+//                return _runtimeAbilities;
+//            }
+//        }
 
-        private void Update()
-        {
-            var isHoming = GetLifetimeStat(StatType.PrIsHoming);
-            var lifeTime = GetLifetimeStat(StatType.PrLifeTime);
-            var speed = GetLifetimeStat(StatType.PrSpeed);
+//        private void Update()
+//        {
+//            var isHoming = GetLifetimeStat(StatType.PrIsHoming);
+//            var lifeTime = GetLifetimeStat(StatType.PrLifeTime);
+//            var speed = GetLifetimeStat(StatType.PrSpeed);
 
 
-            if (isHoming == 1 && _target != null)
-            {
-                Vector2 toTarget = (_target.position - transform.position).normalized;
-                _direction = Vector2.Lerp(_direction, toTarget, Time.deltaTime * 5f);
-            }
-            transform.position += (Vector3)(_direction * (speed * Time.deltaTime));
-            _timer += Time.deltaTime;
-            if (targetPosition.HasValue)
-            {
-                float distToTarget = Vector2.Distance(transform.position, targetPosition.Value);
-                //DebugHandler.Instance.Log("DistanceLog", $"Distance = {distToTarget}", 0.1f);
-                if (distToTarget <= 0.2f)
-                {
-                    Explode();
-                    return;
-                }
-            }
-            if (_timer > lifeTime) Explode();
-        }
+//            if (isHoming == 1 && _target != null)
+//            {
+//                Vector2 toTarget = (_target.position - transform.position).normalized;
+//                _direction = Vector2.Lerp(_direction, toTarget, Time.deltaTime * 5f);
+//            }
+//            transform.position += (Vector3)(_direction * (speed * Time.deltaTime));
+//            _timer += Time.deltaTime;
+//            if (targetPosition.HasValue)
+//            {
+//                float distToTarget = Vector2.Distance(transform.position, targetPosition.Value);
+//                //DebugHandler.Instance.Log("DistanceLog", $"Distance = {distToTarget}", 0.1f);
+//                if (distToTarget <= 0.2f)
+//                {
+//                    Explode();
+//                    return;
+//                }
+//            }
+//            if (_timer > lifeTime) Explode();
+//        }
 
-        private void Explode()
-        {
-            Activate(transform.position, onExplosionActions);
-            Deactivate();
-        }
+//        private void Explode()
+//        {
+//            Activate(transform.position, onExplosionActions);
+//            Deactivate();
+//        }
 
-        private void Deactivate()
-        {
-            var objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
-            if (_objectPool != null) _objectPool.Return(gameObject);
-            else gameObject.SetActive(false);
-            if (_interractionContext == null) return;
-            var projectileCollider = GetComponent<Collider2D>();
-            var shooterCollider = _interractionContext.SourceObject.GetComponent<Collider2D>();
-            if (projectileCollider != null && shooterCollider != null)
-                Physics2D.IgnoreCollision(projectileCollider, shooterCollider, false);
-        }
+//        private void Deactivate()
+//        {
+//            var objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
+//            if (_objectPool != null) _objectPool.Return(gameObject);
+//            else gameObject.SetActive(false);
+//            if (_interractionContext == null) return;
+//            var projectileCollider = GetComponent<Collider2D>();
+//            var shooterCollider = _interractionContext.SourceObject.GetComponent<Collider2D>();
+//            if (projectileCollider != null && shooterCollider != null)
+//                Physics2D.IgnoreCollision(projectileCollider, shooterCollider, false);
+//        }
 
-        public void Activate(Vector3 targetPos, TemplateActionBase[] actions)
-        {
-            foreach (var activation in actions) activation.Execute(_interractionContext, targetPos);
-        }
+//        public void Activate(Vector3 targetPos, TemplateActionBase[] actions)
+//        {
+//            foreach (var activation in actions) activation.Execute(_interractionContext, targetPos);
+//        }
 
-        public void AddAbility(ItemAbilities ability)
-        {
-            if (ability == null) return;
-            ((List<ItemAbilities>)RuntimeAbilities).Add(ability);
-        }
+//        public void AddAbility(AbilityUnit ability)
+//        {
+//            if (ability == null) return;
+//            ((List<AbilityUnit>)RuntimeAbilities).Add(ability);
+//        }
 
-        public bool RemoveAbility(ItemAbilities ability) => ((List<ItemAbilities>)RuntimeAbilities).Remove(ability);
+//        public bool RemoveAbility(AbilityUnit ability) => ((List<AbilityUnit>)RuntimeAbilities).Remove(ability);
 
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            //если торпеда или абилки с жирными снарядами
-            //if (other.gameObject == source)
-            //{
-            //    return;
-            //}
+//        private void OnTriggerEnter2D(Collider2D other)
+//        {
+//            //если торпеда или абилки с жирными снарядами
+//            //if (other.gameObject == source)
+//            //{
+//            //    return;
+//            //}
 
-            //if (other.CompareTag("Enemy"))
-            //{
-            //    Explode();
-            //}
-            //else
-            //{
-            //    Explode();
-            //}
-        }
+//            //if (other.CompareTag("Enemy"))
+//            //{
+//            //    Explode();
+//            //}
+//            //else
+//            //{
+//            //    Explode();
+//            //}
+//        }
 
-        #endregion
+//        #endregion
 
-        #region IInteractive
-        [SerializeField] private BuffStatController _buffController;
-        public BuffStatController BuffController => _buffController;
+//        #region IInteractive
+//        [SerializeField] private BuffStatController _buffController;
+//        public BuffStatController BuffController => _buffController;
 
-        private Dictionary<StatType, float> _lifetimeStats;
-        public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
+//        private Dictionary<StatType, float> _lifetimeStats;
+//        public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
 
-        private const StatLayer _statLayer = StatLayer.Projectile;
+//        private const StatLayer _statLayer = StatLayer.Projectile;
 
-        public void ResetLifetimeStats()
-        {
-            _lifetimeStats.Clear();
-            _lifetimeStats[StatType.PrSpeed] = _buffController.GetStat((StatType.MaxMoveSpeed, _statLayer));
-            _lifetimeStats[StatType.PrMoveType] = _buffController.GetStat((StatType.PrMoveType, _statLayer));
-            _lifetimeStats[StatType.PrLifeTime] = _buffController.GetStat((StatType.PrMoveType, _statLayer));
-            _lifetimeStats[StatType.PrIsHoming] = _buffController.GetStat((StatType.PrIsHoming, _statLayer));
-        }
+//        public void ResetLifetimeStats()
+//        {
+//            _lifetimeStats.Clear();
+//            _lifetimeStats[StatType.PrSpeed] = _buffController.GetStat((StatType.MaxMoveSpeed, _statLayer));
+//            _lifetimeStats[StatType.PrMoveType] = _buffController.GetStat((StatType.PrMoveType, _statLayer));
+//            _lifetimeStats[StatType.PrLifeTime] = _buffController.GetStat((StatType.PrMoveType, _statLayer));
+//            _lifetimeStats[StatType.PrIsHoming] = _buffController.GetStat((StatType.PrIsHoming, _statLayer));
+//        }
 
-        public float GetLifetimeStat(StatType type)
-        {
-            if (BuffController.IsDirty) ResetLifetimeStats();
-            if (LifetimeStats.TryGetValue(type, out float value)) return value;
-            return 0f;
-        }
-        public void TakeDamage(InterractionContext interractionContext, Damage damage)
-        {
-            throw new System.NotImplementedException();
-        }
+//        public float GetLifetimeStat(StatType type)
+//        {
+//            if (BuffController.IsDirty) ResetLifetimeStats();
+//            if (LifetimeStats.TryGetValue(type, out float value)) return value;
+//            return 0f;
+//        }
+//        public void TakeDamage(InterractionContext interractionContext, Damage damage)
+//        {
+//            throw new System.NotImplementedException();
+//        }
 
-        public void TakeHeal(InterractionContext interractionContext, Heal heal)
-        {
-            throw new System.NotImplementedException();
-        }
-        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
-        {
-            throw new System.NotImplementedException();
-        }
+//        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+//        {
+//            throw new System.NotImplementedException();
+//        }
+//        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+//        {
+//            throw new System.NotImplementedException();
+//        }
 
-        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
-        {
-            throw new System.NotImplementedException();
-        }
+//        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+//        {
+//            throw new System.NotImplementedException();
+//        }
 
-        #endregion
-    }
-}
+//        #endregion
+//    }
+//}

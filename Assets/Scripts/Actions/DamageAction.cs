@@ -9,39 +9,38 @@ namespace Actions
         None, Explosive, Corrosion, Energy, Fire, Radiation
     }
 
-    public class Damage : IActionStruct
+    public class Damage
     {
-        [SerializeField] public DamageType Type;
+        [SerializeField] public DamageType type;
 
-        [SerializeField] public float Range;
+        [SerializeField] public float penetration;
 
-        [SerializeField] public float Value;
+        [SerializeField] public float value;
     }
 
     public class DamageAction : TemplateActionBase
     {
-        [SerializeField] public float Radius;
+        [SerializeField] public float range;
 
-        [SerializeField] public Damage Damage;
+        [SerializeField] public Damage damage;
 
-        [SerializeField] public LayerMask[] FilterLayers;
+        [SerializeField] public LayerMask[] filterLayers;
 
         public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
         {
-            if (!CanActivate(interractionContext, targetPos)) return;
             int combinedMask = 0;
-            foreach (var mask in FilterLayers) combinedMask |= mask.value;
-            Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, Radius, combinedMask);
+            foreach (var mask in filterLayers) combinedMask |= mask.value;
+            Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, range, combinedMask);
             foreach (var target in targets)
                 if (target.TryGetComponent(out IInteractive interactive))
-                    interactive.TakeDamage(interractionContext);
+                    interactive.TakeDamage(interractionContext, damage);
 
             //todo add extra damage options with types
         }
 
         public override void Execute(InterractionContext interractionContext, IInteractive target)
         {
-            target.TakeDamage(interractionContext);
+            target.TakeDamage(interractionContext, damage);
         }
     }
 }

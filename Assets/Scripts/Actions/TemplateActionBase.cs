@@ -5,37 +5,14 @@ using UnityEngine;
 
 namespace Actions
 {
-    public interface IActionStruct { }
-
     public abstract class TemplateActionBase : MonoBehaviour
     {
-        public string name;
-        public float delay = 0;
-        private float _lastActivationTime;
-
-        public bool IsPassive { get; set; } = true;
-
-        protected virtual void Awake()
-        {
-            name = gameObject.name;
-        }
-
         public virtual void Execute(InterractionContext interractionContext, Vector3 targetPos) { }
 
         public virtual void Execute(InterractionContext interractionContext, IInteractive target) { }
 
         #region Additional
         
-        protected bool CanActivate(InterractionContext interractionContext, Vector3 targetPos)
-        {
-            if (delay == 0) return true;
-            float time = Time.time;
-            //Debug.Log($"Delta time: {time - lastActivationTime}");
-            if (time - _lastActivationTime < delay) return false;
-            _lastActivationTime = time;
-            return true;
-        }
-
         protected virtual Dictionary<IInteractive, Vector2> GetTargetsToExecuteInRange(
             Vector2 targetPos, float range, int[] layers)
         {

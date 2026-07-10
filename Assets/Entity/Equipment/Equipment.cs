@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Equipment
 {
-    public class Equipment : MonoBehaviour, IAbbility, IInteractive
+    public class Equipment : MonoBehaviour, IInteractive, IBuffable, IAbbility
     {
         public EntityController entityController;
         [SerializeField] private EquipmentContainer _equipmentContainer;
@@ -30,47 +30,6 @@ namespace Assets.Entity.Equipment
             set { }
         }
         public string Id { get; set; }
-
-        #region Runtime abilities
-
-        private List<ItemAbilities> _runtimeAbilities;
-        public ItemAbilities[] Abilities = System.Array.Empty<ItemAbilities>();
-        public IReadOnlyList<ItemAbilities> RuntimeAbilities
-        {
-            get
-            {
-                EnsureRuntimeAbilities();
-                return _runtimeAbilities;
-            }
-        }
-
-        private void EnsureRuntimeAbilities()
-        {
-            if (_runtimeAbilities != null) return;
-            _runtimeAbilities = new List<ItemAbilities>();
-            if (_equipmentContainer != null && _equipmentContainer.statOptions.abilities != null)
-                _runtimeAbilities.AddRange(_equipmentContainer.statOptions.abilities);
-            if (Abilities != null)
-                _runtimeAbilities.AddRange(Abilities);
-        }
-
-        public void AddAbility(ItemAbilities ability)
-        {
-            if (ability == null) return;
-            EnsureRuntimeAbilities();
-            _runtimeAbilities.Add(ability);
-            entityController?.abbilitiesController?.MarkDirty();
-        }
-
-        public bool RemoveAbility(ItemAbilities ability)
-        {
-            EnsureRuntimeAbilities();
-            bool removed = _runtimeAbilities.Remove(ability);
-            if (removed) entityController?.abbilitiesController?.MarkDirty();
-            return removed;
-        }
-
-        #endregion
 
         private void Awake()
         {
@@ -102,24 +61,105 @@ namespace Assets.Entity.Equipment
             return EquipmentAnchor.rotationSector != Vector2.zero;
         }
 
-        public void ActivateAbility(Vector3 targetPos, ItemAbilities ability)
+        #region IInteractive
+
+        public void TakeDamage(InterractionContext interractionContext, Damage damage)
         {
-            var action = ability?.Action;
+            throw new System.NotImplementedException();
+        }
+
+        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion
+
+        #region IBuffable
+
+        [SerializeField] private BuffStatController _buffController;
+        public BuffStatController BuffController => _buffController;
+        private Dictionary<StatType, float> _lifetimeStats = new();
+        public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
+
+        private const StatLayer _statLayer = StatLayer.Equipment;
+        public void ResetLifetimeStats()
+        {
+            _lifetimeStats.Clear();
+            _lifetimeStats[StatType.RotationSpeed] = _buffController.GetStat((StatType.RotationSpeed, _statLayer));
+        }
+
+        public float GetLifetimeStat(StatType type)
+        {
+            if (BuffController.IsDirty) ResetLifetimeStats();
+            if (LifetimeStats.TryGetValue(type, out float value)) return value;
+            return 0f;
+        }
+
+        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        #endregion
+
+        #region IAbbility
+
+        private List<AbilityUnit> _runtimeAbilities;
+        private readonly Dictionary<AbilityUnit, float> _abilityCooldowns = new();
+        public AbilityUnit[] Abilities = System.Array.Empty<AbilityUnit>();
+        public IReadOnlyList<AbilityUnit> RuntimeAbilities
+        {
+            get
+            {
+                EnsureRuntimeAbilities();
+                return _runtimeAbilities;
+            }
+        }
+
+        private void EnsureRuntimeAbilities()
+        {
+            if (_runtimeAbilities != null) return;
+            _runtimeAbilities = new List<AbilityUnit>();
+            if (_equipmentContainer != null && _equipmentContainer.statOptions.abilities != null)
+                _runtimeAbilities.AddRange(_equipmentContainer.statOptions.abilities);
+            if (Abilities != null)
+                _runtimeAbilities.AddRange(Abilities);
+        }
+
+        public void AddAbility(AbilityUnit ability)
+        {
+            if (ability == null) return;
+            EnsureRuntimeAbilities();
+            _runtimeAbilities.Add(ability);
+            entityController?.abbilitiesController?.MarkDirty();
+        }
+
+        public bool RemoveAbility(AbilityUnit ability)
+        {
+            EnsureRuntimeAbilities();
+            bool removed = _runtimeAbilities.Remove(ability);
+            if (removed) entityController?.abbilitiesController?.MarkDirty();
+            return removed;
+        }
+
+        public void Activate(Vector3 targetPos, AbilityUnit abilityUnit, InterractionContext context)
+        {
+            var action = abilityUnit.action;
             if (action == null) return;
-            var interractionCtx = new InterractionContext
+            if (CanActivate(targetPos, abilityUnit))
             {
-                SourceObject = gameObject,
-                SourceSnapshot = entityController.GetSnapshot(),
-                AbilityId = ability.Ability.ToString()
-            };
-            if (action.IsPassive || action.delay <= 0)
-            {
-                action.Execute(interractionCtx, targetPos);
+                action.Execute(context, targetPos);
                 return;
             }
-            if (!IsAimedAtTarget(targetPos, action.delay, out Vector3 targetPosEq)) return;
+            if (!IsAimedAtTarget(targetPos, abilityUnit.delay, out Vector3 targetPosEq)) return;
             if (!IsWithinActivationSector()) return;
-            action.Execute(interractionCtx, targetPosEq);
+            action.Execute(context, targetPosEq);
         }
 
         private bool IsAimedAtTarget(Vector3 targetPos, float delay, out Vector3 targetPosEq)
@@ -142,63 +182,17 @@ namespace Assets.Entity.Equipment
             return EquipmentAnchor.activationSectors.Any(sector => currentAngle >= sector.x && currentAngle <= sector.y);
         }
 
-        private void OnCollisionEnter2D(Collision2D collision)
+        public bool CanActivate(Vector3 targetPos, AbilityUnit abilityUnit)
         {
+            float time = Time.time;
+            float delay = abilityUnit.delay;
+            if (delay <= 0 || abilityUnit.isPassive) return true;
+            _abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);
+            if (time - lastActivationTime < delay) return false;
+            _abilityCooldowns[abilityUnit] = time;
+            return true;
         }
 
-        #region IActivation (raw action arrays - unrelated to the AbilityType routing above,
-        public void Activate(Vector3 targetPos, TemplateActionBase[] actions)
-        {
-            if (actions == null || actions.Length == 0) return;
-            var interractionCtx = new InterractionContext
-            {
-                SourceObject = gameObject,
-                SourceSnapshot = entityController.GetSnapshot()
-            };
-            foreach (var action in actions) action.Execute(interractionCtx, targetPos);
-        }
-
-        #endregion
-
-        #region IInteractive
-        [SerializeField] private BuffStatController _buffController;
-        public BuffStatController BuffController => _buffController;
-        private Dictionary<StatType, float> _lifetimeStats = new();
-        public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
-
-        private const StatLayer _statLayer = StatLayer.Equipment;
-
-        public void ResetLifetimeStats()
-        {
-            _lifetimeStats.Clear();
-            _lifetimeStats[StatType.RotationSpeed] = _buffController.GetStat((StatType.RotationSpeed, _statLayer));
-        }
-
-        public float GetLifetimeStat(StatType type)
-        {
-            if (BuffController.IsDirty) ResetLifetimeStats();
-            if (LifetimeStats.TryGetValue(type, out float value)) return value;
-            return 0f;
-        }
-
-        public void TakeDamage(InterractionContext interractionContext, Damage damage)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void TakeHeal(InterractionContext interractionContext, Heal heal)
-        {
-            throw new System.NotImplementedException();
-        }
-        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
-        {
-            throw new System.NotImplementedException();
-        }
         #endregion
     }
 }

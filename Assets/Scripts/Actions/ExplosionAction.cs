@@ -5,10 +5,6 @@ using UnityEngine;
 
 namespace Actions
 {
-    public class Explosion : IActionStruct
-    {
-    }
-
     public class ExplosionAction : TemplateActionBase
     {
         [SerializeField] public uint Range;

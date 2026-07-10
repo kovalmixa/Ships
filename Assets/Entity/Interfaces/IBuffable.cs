@@ -3,9 +3,9 @@ using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
 using System.Collections.Generic;
 
-namespace Assets.Common
+namespace Assets.Entity
 {
-    public interface IInteractive : IObject
+    public interface IBuffable
     {
         public BuffStatController BuffController { get; }
         public Dictionary<StatType, float> LifetimeStats { get; }
@@ -13,13 +13,5 @@ namespace Assets.Common
         public void ResetLifetimeStats();
 
         public float GetLifetimeStat(StatType type);
-
-        public void TakeDamage(InterractionContext interractionContext);
-
-        public void TakeHeal(InterractionContext interractionContext);
-
-        public void AddBuff(InterractionContext interractionContext);
-
-        public void RemoveBuff(InterractionContext interractionContext);
     }
 }

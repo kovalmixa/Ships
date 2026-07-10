@@ -5,6 +5,7 @@ using Assets.Entity.Controllers;
 using Assets.Entity.Hull;
 using Assets.Entity.Interfaces;
 using Assets.Handlers.SceneHandlers;
+using Assets.Scripts.Actions;
 using Entity.Controllers.AI;
 using Scripts;
 using System.Collections.Generic;
@@ -158,29 +159,40 @@ namespace Entity.Controllers
         }
 
         #region IAbbility
-        public ItemAbilities[] Abilities = System.Array.Empty<ItemAbilities>();
-        private List<ItemAbilities> _runtimeAbilities;
-
-        public IReadOnlyList<ItemAbilities> RuntimeAbilities
+        public AbilityUnit[] Abilities = System.Array.Empty<AbilityUnit>();
+        private List<AbilityUnit> _runtimeAbilities;
+        private readonly Dictionary<AbilityUnit, float> _abilityCooldowns = new();
+        public IReadOnlyList<AbilityUnit> RuntimeAbilities
         {
             get
             {
-                _runtimeAbilities ??= new List<ItemAbilities>(Abilities ?? System.Array.Empty<ItemAbilities>());
+                _runtimeAbilities ??= new List<AbilityUnit>(Abilities ?? System.Array.Empty<AbilityUnit>());
                 return _runtimeAbilities;
             }
         }
 
-        public void AddAbility(ItemAbilities ability)
+        public void AddAbility(AbilityUnit ability)
         {
             if (ability == null) return;
-            ((List<ItemAbilities>)RuntimeAbilities).Add(ability);
+            ((List<AbilityUnit>)RuntimeAbilities).Add(ability);
         }
 
-        public bool RemoveAbility(ItemAbilities ability) => ((List<ItemAbilities>)RuntimeAbilities).Remove(ability);
+        public bool RemoveAbility(AbilityUnit ability) => ((List<AbilityUnit>)RuntimeAbilities).Remove(ability);
 
-        public void Activate(Vector3 targetPos, params TemplateActionBase[] actions)
+        public void Activate(Vector3 targetPos, AbilityUnit abilityUnit, InterractionContext context)
         {
             throw new System.NotImplementedException();
+        }
+
+        public bool CanActivate(Vector3 targetPos, AbilityUnit abilityUnit)
+        {
+            float time = Time.time;
+            float delay = abilityUnit.delay;
+            if (delay <= 0) return true;
+            _abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);
+            if (time - lastActivationTime < delay) return false;
+            _abilityCooldowns[abilityUnit] = time;
+            return true;
         }
 
         #endregion

@@ -1,5 +1,4 @@
-﻿using Actions;
-using Assets.Handlers.Enums;
+﻿using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
 using System;
@@ -8,25 +7,12 @@ using UnityEngine;
 
 namespace Assets.Entity.Controllers
 {
-    public enum AbilityActivationMode
-    {
-        Primary,
-        Ability,
-    }
-
-    [Serializable]
-    public class ItemAbilities
-    {
-        public Vector2 Position;
-        public AbilityType Ability;
-        public AbilityActivationMode Mode;
-    }
-
     public class AbbilitiesController : MonoBehaviour
     {
         private EntityController _entityController;
-        private readonly Dictionary<AbilityType, Action> _equipmentAbilities = new();
-        private readonly Dictionary<AbilityType, Action> _entityAbilities = new();
+
+        private readonly Dictionary<AbilityType, Action<InterractionContext, Vector3>> _equipmentAbilities = new();
+        private readonly Dictionary<AbilityType, Action<InterractionContext, Vector3>> _entityAbilities = new();
         private bool _dirty = true;
 
         private void Awake()
@@ -49,9 +35,14 @@ namespace Assets.Entity.Controllers
                     if (equipment == null) continue;
                     foreach (var ability in equipment.RuntimeAbilities)
                     {
-                        if (!_equipmentAbilities.TryGetValue(ability.Ability, out var list))
-                            _equipmentAbilities[ability.Ability] = list = new ();
-                        list.Add(equipment.Position);
+                        if (ability == null) continue;
+                        if (!_equipmentAbilities.ContainsKey(ability.type))
+                            _equipmentAbilities[ability.type] = null;
+
+                        _equipmentAbilities[ability.type] += (context, targetPos) =>
+                        {
+                            equipment.Activate(targetPos, ability, context);
+                        };
                     }
                 }
             }
@@ -62,23 +53,24 @@ namespace Assets.Entity.Controllers
         {
             if (key == AbilityType.None) return;
             if (IsAttackAbility(key) && IsPositionBlocked(targetPos)) return;
-
             RebuildIfNeeded();
-            if (_equipmentAbilities.TryGetValue(key, out var positions))
-                foreach (var startPos in positions)
-                    ExecuteAction(key, startPos, targetPos);
-
-            if (_entityAbilities.TryGetValue(key, out var entityAction))
-                ExecuteAction(key);
+            var context = CreateInteractionContext(key);
+            if (_equipmentAbilities.TryGetValue(key, out var equipmentAction)) equipmentAction?.Invoke(context, targetPos);
+            if (_entityAbilities.TryGetValue(key, out var entityAction)) entityAction?.Invoke(context, targetPos);
         }
 
-        public void RegisterEntityAbility(AbilityType key, Action<InterractionContext, Vector2> action)
+        public void RegisterEntityAbility(AbilityType key, Action<InterractionContext, Vector3> action)
         {
             if (key == AbilityType.None || action == null) return;
-            _entityAbilities[key] = action;
+
+            if (!_entityAbilities.ContainsKey(key)) _entityAbilities[key] = null;
+            _entityAbilities[key] += action;
         }
 
-        public bool UnregisterEntityAbility(AbilityType key) => _entityAbilities.Remove(key);
+        public void UnregisterEntityAbility(AbilityType key, Action<InterractionContext, Vector3> action)
+        {
+            if (_entityAbilities.ContainsKey(key)) _entityAbilities[key] -= action;
+        }
 
         private static bool IsAttackAbility(AbilityType type) => type switch
         {
@@ -99,34 +91,21 @@ namespace Assets.Entity.Controllers
 
             foreach (var equipment in hull.equipments)
             {
+                if (equipment == null) continue;
                 col = equipment.GetComponent<Collider2D>();
                 if (col != null && col.OverlapPoint(position)) return true;
             }
             return false;
         }
 
-        private void ExecuteAction(AbilityType key)
+        private InterractionContext CreateInteractionContext(AbilityType key)
         {
-            var context = new InterractionContext
+            return new InterractionContext
             {
                 SourceObject = gameObject,
                 SourceSnapshot = _entityController != null ? _entityController.GetSnapshot() : null,
                 AbilityId = key.ToString()
             };
-            switch (key) {
-                case AbilityType.None:
-                {
-                    break;
-                }
-                case AbilityType.FirePrimary:
-                {
-                    break;
-                }
-                case AbilityType.FireSecondary:
-                {
-                    break;
-                }
-            }
         }
     }
 }

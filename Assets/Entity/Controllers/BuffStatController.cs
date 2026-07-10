@@ -2,6 +2,7 @@
 using Assets.Entity.Modifiers;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Controllers
@@ -162,7 +163,7 @@ namespace Assets.Entity.Controllers
             foreach (var kv in ActiveBuffs.ToList())
             {
                 var buff = kv.Value.status;
-                if (buff == null || buff.Tick(new InterractionContext()))
+                if (buff == null || buff.Tick(null)) //add real interraction context of buff
                 {
                     RemoveBuffInternal(buff);
                     needsRebuild = true;

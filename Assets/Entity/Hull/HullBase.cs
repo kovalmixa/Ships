@@ -15,7 +15,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
-    public abstract class HullBase : MonoBehaviour, IInteractive, IHull, IAbbility
+    public abstract class HullBase : MonoBehaviour, IHull, IInteractive, IBuffable, IAbbility
     {
         public HullContainer data;
         public List<EquipmentAnchor> equipmentAnchors;
@@ -57,10 +57,7 @@ namespace Assets.Entity.Hull
 
         public void RotateEquipment(Vector3 target)
         {
-            foreach (var eq in equipments)
-            {
-                eq.GetComponent<Equipment.Equipment>().Rotate(target);
-            }
+            foreach (var eq in equipments) eq.GetComponent<Equipment.Equipment>().Rotate(target);
         }
 
         public abstract void AddSpeed(bool isAddition);
@@ -109,6 +106,28 @@ namespace Assets.Entity.Hull
         #endregion
 
         #region IInteractive
+        public void TakeDamage(InterractionContext interractionContext, Damage damage)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private string GenerateSourceId(InterractionContext context)
+        {
+            if (context == null) return "Unknown";
+            if (!string.IsNullOrEmpty(context.AbilityId)) return context.AbilityId;
+            if (context.SourceObject != null) return context.SourceObject.name;
+            return context.SourceSnapshot?.Id ?? "System";
+        }
+
+        #endregion
+
+        #region IBuffable
+
         [SerializeField] private BuffStatController _buffController;
         public BuffStatController BuffController => _buffController;
 
@@ -132,16 +151,7 @@ namespace Assets.Entity.Hull
             return 0f;
         }
 
-        public void TakeDamage(InterractionContext interractionContext)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void TakeHeal(InterractionContext interractionContext)
-        {
-            throw new System.NotImplementedException();
-        }
-        public void AddBuff(InterractionContext context)
+        public void AddBuff(InterractionContext context, params BuffStatus[] buffs)
         {
             if (_buffController == null || buffs == null) return;
 
@@ -181,39 +191,43 @@ namespace Assets.Entity.Hull
             }
         }
 
-        private string GenerateSourceId(InterractionContext context)
-        {
-            if (context == null) return "Unknown";
-            if (!string.IsNullOrEmpty(context.AbilityId)) return context.AbilityId;
-            if (context.SourceObject != null) return context.SourceObject.name;
-            return context.SourceSnapshot?.Id ?? "System";
-        }
         #endregion
 
         #region IAbbility
-        public ItemAbilities[] Abilities = System.Array.Empty<ItemAbilities>();
-        private List<ItemAbilities> _runtimeAbilities;
-
-        public IReadOnlyList<ItemAbilities> RuntimeAbilities
+        public AbilityUnit[] Abilities = System.Array.Empty<AbilityUnit>();
+        private List<AbilityUnit> _runtimeAbilities;
+        private readonly Dictionary<AbilityUnit, float> _abilityCooldowns = new();
+        public IReadOnlyList<AbilityUnit> RuntimeAbilities
         {
             get
             {
-                _runtimeAbilities ??= new List<ItemAbilities>(Abilities ?? System.Array.Empty<ItemAbilities>());
+                _runtimeAbilities ??= new List<AbilityUnit>(Abilities ?? System.Array.Empty<AbilityUnit>());
                 return _runtimeAbilities;
             }
         }
 
-        public void AddAbility(ItemAbilities ability)
+        public void AddAbility(AbilityUnit ability)
         {
             if (ability == null) return;
-            ((List<ItemAbilities>)RuntimeAbilities).Add(ability);
+            ((List<AbilityUnit>)RuntimeAbilities).Add(ability);
         }
 
-        public bool RemoveAbility(ItemAbilities ability) => ((List<ItemAbilities>)RuntimeAbilities).Remove(ability);
+        public bool RemoveAbility(AbilityUnit ability) => ((List<AbilityUnit>)RuntimeAbilities).Remove(ability);
        
-        public void Activate(Vector3 targetPos, TemplateActionBase[] actions)
+        public void Activate(Vector3 targetPos, AbilityUnit abilityUnit, InterractionContext context)
         {
             throw new System.NotImplementedException();
+        }
+
+        public bool CanActivate(Vector3 targetPos, AbilityUnit abilityUnit)
+        {
+            float time = Time.time;
+            float delay = abilityUnit.delay;
+            if (delay <= 0 || abilityUnit.isPassive) return true;
+            _abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);
+            if (time - lastActivationTime < delay) return false;
+            _abilityCooldowns[abilityUnit] = time;
+            return true;
         }
 
         #endregion

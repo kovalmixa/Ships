@@ -50,10 +50,10 @@ namespace Assets.Handlers.SceneHandlers
             return hull.root.GetComponent<EntityController>();
         }
 
-        public static IAIEntityController GetAI(EntityController entityController)
+        public static IAIDriver GetAI(EntityController entityController)
         {
             if (entityController == null) return null;
-            return entityController.TryGetComponent<IAIEntityController>(out var ai) ? ai : null;
+            return entityController.TryGetComponent<IAIDriver>(out var ai) ? ai : null;
         }
 
         public static bool IsPlayer(EntityController entityController) => GetAI(entityController) == null;
