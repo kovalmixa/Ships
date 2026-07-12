@@ -3,13 +3,10 @@ using Assets.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
-using Assets.Handlers;
-using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Assets.Entity.Equipment
@@ -21,7 +18,6 @@ namespace Assets.Entity.Equipment
         public EquipmentContainer EquipmentContainer => _equipmentContainer;
 
         public EquipmentAnchor EquipmentAnchor { get; set; }
-        public EquipmentSubType Type;
 
         private const float _basicAngle = 90;
         public Vector2 Position
@@ -34,6 +30,7 @@ namespace Assets.Entity.Equipment
         private void Awake()
         {
             Id = GameObjectHandler.GenerateUniqueId(name);
+            abilitiesController = new(entityController.totalAbbilitiesController, transform, _basicAngle, EquipmentAnchor);
         }
 
         public void Rotate(Vector3 targetPos)
@@ -77,8 +74,8 @@ namespace Assets.Entity.Equipment
 
         #region IBuffable
 
-        [SerializeField] private BuffStatController _buffController;
-        public BuffStatController BuffController => _buffController;
+        [SerializeField] private StatModController _buffController;
+        public StatModController BuffController => _buffController;
         private Dictionary<StatType, float> _lifetimeStats = new();
         public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
 
@@ -110,87 +107,16 @@ namespace Assets.Entity.Equipment
 
         #region IAbbility
 
-        private List<AbilityUnit> _runtimeAbilities;
-        private readonly Dictionary<AbilityUnit, float> _abilityCooldowns = new();
-        public AbilityUnit[] Abilities = System.Array.Empty<AbilityUnit>();
-        public IReadOnlyList<AbilityUnit> RuntimeAbilities
-        {
-            get
-            {
-                EnsureRuntimeAbilities();
-                return _runtimeAbilities;
-            }
-        }
+        public EqAbilitiesController abilitiesController;
+        public IReadOnlyList<AbilityUnit> RuntimeAbilities => abilitiesController.RuntimeAbilities;
 
-        private void EnsureRuntimeAbilities()
-        {
-            if (_runtimeAbilities != null) return;
-            _runtimeAbilities = new List<AbilityUnit>();
-            if (_equipmentContainer != null && _equipmentContainer.statOptions.abilities != null)
-                _runtimeAbilities.AddRange(_equipmentContainer.statOptions.abilities);
-            if (Abilities != null)
-                _runtimeAbilities.AddRange(Abilities);
-        }
+        public void AddAbility(AbilityUnit ability) => abilitiesController.AddAbility(ability);
 
-        public void AddAbility(AbilityUnit ability)
-        {
-            if (ability == null) return;
-            EnsureRuntimeAbilities();
-            _runtimeAbilities.Add(ability);
-            entityController?.abbilitiesController?.MarkDirty();
-        }
+        public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
-        public bool RemoveAbility(AbilityUnit ability)
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
         {
-            EnsureRuntimeAbilities();
-            bool removed = _runtimeAbilities.Remove(ability);
-            if (removed) entityController?.abbilitiesController?.MarkDirty();
-            return removed;
-        }
-
-        public void Activate(Vector3 targetPos, AbilityUnit abilityUnit, InterractionContext context)
-        {
-            var action = abilityUnit.action;
-            if (action == null) return;
-            if (CanActivate(targetPos, abilityUnit))
-            {
-                action.Execute(context, targetPos);
-                return;
-            }
-            if (!IsAimedAtTarget(targetPos, abilityUnit.delay, out Vector3 targetPosEq)) return;
-            if (!IsWithinActivationSector()) return;
-            action.Execute(context, targetPosEq);
-        }
-
-        private bool IsAimedAtTarget(Vector3 targetPos, float delay, out Vector3 targetPosEq)
-        {
-            float distance = Vector2.Distance(transform.position, targetPos);
-            targetPosEq = MathFuncHandler.GetAngleDistancePoint(transform.position, transform.eulerAngles.z + _basicAngle, distance);
-
-            float targetWorldAngle = Mathf.Atan2(targetPos.y - transform.position.y, targetPos.x - transform.position.x) * Mathf.Rad2Deg;
-            float currentAngle = Mathf.Repeat(transform.eulerAngles.z + _basicAngle, 360f);
-            float angleDiff = Mathf.DeltaAngle(currentAngle, targetWorldAngle);
-            return Mathf.Abs(angleDiff) < 12.5f / delay;
-        }
-
-        private bool IsWithinActivationSector()
-        {
-            if (EquipmentAnchor.activationSectors.Length == 0) return true;
-            float currentAngle = Mathf.Abs(Mathf.DeltaAngle(
-                Mathf.Repeat(transform.eulerAngles.z + _basicAngle, 360f),
-                EquipmentAnchor.transform.eulerAngles.z));
-            return EquipmentAnchor.activationSectors.Any(sector => currentAngle >= sector.x && currentAngle <= sector.y);
-        }
-
-        public bool CanActivate(Vector3 targetPos, AbilityUnit abilityUnit)
-        {
-            float time = Time.time;
-            float delay = abilityUnit.delay;
-            if (delay <= 0 || abilityUnit.isPassive) return true;
-            _abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);
-            if (time - lastActivationTime < delay) return false;
-            _abilityCooldowns[abilityUnit] = time;
-            return true;
+            abilitiesController.Activate(targetPos, abilityUnit, context);
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using Assets.Entity.Controllers.AI;
 using Assets.Entity.Hull;
+using Assets.Scripts.Actions;
 using Entity.Controllers;
 using UnityEngine;
 
@@ -12,10 +13,7 @@ namespace Assets.Handlers.SceneHandlers
         public static void SetRenderLayerOrder(GameObject parent, int value)
         {
             var renderers = parent.GetComponentsInChildren<SpriteRenderer>();
-            foreach (var spriteRenderer in renderers)
-            {
-                spriteRenderer.sortingOrder += value;
-            }
+            foreach (var spriteRenderer in renderers) spriteRenderer.sortingOrder += value;
         }
 
         public static void Clone(GameObject main, GameObject obj)
@@ -64,6 +62,18 @@ namespace Assets.Handlers.SceneHandlers
         }
         #endregion
 
+        #region Id generators
+
         public static string GenerateUniqueId(string name) => $"{name}_{System.Guid.NewGuid().ToString("N").Substring(0, 8)}";
+
+        public static string GenerateContextSourceId(InterractionContext context)
+        {
+            if (context == null) return "Unknown";
+            if (!string.IsNullOrEmpty(context.AbilityId)) return context.AbilityId;
+            if (context.SourceObject != null) return context.SourceObject.name;
+            return context.SourceSnapshot?.Id ?? "System";
+        }
+
+        #endregion
     }
 }

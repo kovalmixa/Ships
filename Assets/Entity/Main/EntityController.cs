@@ -1,4 +1,3 @@
-using Actions;
 using Assets.Common;
 using Assets.Entity;
 using Assets.Entity.Controllers;
@@ -17,7 +16,10 @@ namespace Entity.Controllers
     public class EntityController : MonoBehaviour, IObject, IAbbility
     {
         public EntityDataContainer data;
-        public AbbilitiesController abbilitiesController;
+        public TotalAbbilitiesController abbilitiesController;
+        public EntityAssembler Assembler { get; private set; }
+        public TotalAbbilitiesController totalAbbilitiesController { get; private set; }
+        public StatModController Buffs { get; private set; }
         private IDriver _driver;
         [SerializeField] private GameObject _despawnPrefab;
         public string Id { get; set; }
@@ -27,6 +29,9 @@ namespace Entity.Controllers
 
         private void Awake()
         {
+            Assembler = new EntityAssembler(this);
+            abilitiesController = new(totalAbbilitiesController);
+
             Id = GameObjectHandler.GenerateUniqueId(name);
             if (GameObjectHandler.GetAI(this) == null) GameObjectHandler.RegisterPlayer(this);
         }
@@ -159,40 +164,16 @@ namespace Entity.Controllers
         }
 
         #region IAbbility
-        public AbilityUnit[] Abilities = System.Array.Empty<AbilityUnit>();
-        private List<AbilityUnit> _runtimeAbilities;
-        private readonly Dictionary<AbilityUnit, float> _abilityCooldowns = new();
-        public IReadOnlyList<AbilityUnit> RuntimeAbilities
-        {
-            get
-            {
-                _runtimeAbilities ??= new List<AbilityUnit>(Abilities ?? System.Array.Empty<AbilityUnit>());
-                return _runtimeAbilities;
-            }
-        }
+        public AbilitiesController abilitiesController;
+        public IReadOnlyList<AbilityUnit> RuntimeAbilities => abilitiesController.RuntimeAbilities;
 
-        public void AddAbility(AbilityUnit ability)
-        {
-            if (ability == null) return;
-            ((List<AbilityUnit>)RuntimeAbilities).Add(ability);
-        }
+        public void AddAbility(AbilityUnit ability) => abilitiesController.AddAbility(ability);
 
-        public bool RemoveAbility(AbilityUnit ability) => ((List<AbilityUnit>)RuntimeAbilities).Remove(ability);
+        public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
-        public void Activate(Vector3 targetPos, AbilityUnit abilityUnit, InterractionContext context)
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public bool CanActivate(Vector3 targetPos, AbilityUnit abilityUnit)
-        {
-            float time = Time.time;
-            float delay = abilityUnit.delay;
-            if (delay <= 0) return true;
-            _abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);
-            if (time - lastActivationTime < delay) return false;
-            _abilityCooldowns[abilityUnit] = time;
-            return true;
+            abilitiesController.Activate(targetPos, abilityUnit, context);
         }
 
         #endregion

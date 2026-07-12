@@ -33,6 +33,7 @@ namespace Assets.Entity.Hull
         {
             Id = GameObjectHandler.GenerateUniqueId(name);
             entityController = GetComponentInParent<EntityController>();
+            abilitiesController = new(entityController.totalAbbilitiesController);
             rigidBody2D = GetComponent<Rigidbody2D>();
             data = GetComponent<HullContainer>();
             BuffController.SetupStatsMods(data.statOptions.Stats.ToDictionary(s => (s.Type, s.StatLayer), s => s.Value),
@@ -116,20 +117,12 @@ namespace Assets.Entity.Hull
             throw new System.NotImplementedException();
         }
 
-        private string GenerateSourceId(InterractionContext context)
-        {
-            if (context == null) return "Unknown";
-            if (!string.IsNullOrEmpty(context.AbilityId)) return context.AbilityId;
-            if (context.SourceObject != null) return context.SourceObject.name;
-            return context.SourceSnapshot?.Id ?? "System";
-        }
-
         #endregion
 
         #region IBuffable
 
-        [SerializeField] private BuffStatController _buffController;
-        public BuffStatController BuffController => _buffController;
+        [SerializeField] private StatModController _buffController;
+        public StatModController BuffController => _buffController;
 
         private Dictionary<StatType, float> _lifetimeStats = new();
         public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
@@ -154,30 +147,22 @@ namespace Assets.Entity.Hull
         public void AddBuff(InterractionContext context, params BuffStatus[] buffs)
         {
             if (_buffController == null || buffs == null) return;
-
-            string sourceId = GenerateSourceId(context);
-
-            foreach (var template in buffs)
+            foreach (var buff in buffs)
             {
-                if (template == null) continue;
-                var instance = Instantiate(template, _buffController.transform);
-                instance.Initialize(
-                    buffId: template.name,
-                    sourceId: sourceId,
-                    duration: template.IsPermanent ? -1f : template.Duration
+                if (buff == null) continue;
+                buff.Initialize(
+                    buffId: buff.name,
+                    sourceId: GameObjectHandler.GenerateContextSourceId(context),
+                    duration: buff.IsPermanent ? -1f : buff.Duration
                 );
-
-                if (context != null && string.IsNullOrEmpty(instance.SourceId))
-                    instance.SourceId = sourceId;
-
-                _buffController.AddBuff(instance, context?.SourceSnapshot);
+                _buffController.AddBuff(buff, context?.SourceSnapshot);
             }
         }
 
         public void RemoveBuff(InterractionContext context, params BuffStatus[] buffs)
         {
             if (_buffController == null) return;
-            string sourceId = GenerateSourceId(context);
+            string sourceId = GameObjectHandler.GenerateContextSourceId(context);
             if (buffs == null || buffs.Length == 0)
             {
                 _buffController.RemoveBuffBySource(sourceId);
@@ -185,49 +170,21 @@ namespace Assets.Entity.Hull
             }
 
             foreach (var buff in buffs)
-            {
-                if (buff == null) continue;
-                _buffController.RemoveBuff(buff.BuffId, sourceId);
-            }
+                if (buff != null) _buffController.RemoveBuff(buff.BuffId, sourceId);
         }
 
         #endregion
 
         #region IAbbility
-        public AbilityUnit[] Abilities = System.Array.Empty<AbilityUnit>();
-        private List<AbilityUnit> _runtimeAbilities;
-        private readonly Dictionary<AbilityUnit, float> _abilityCooldowns = new();
-        public IReadOnlyList<AbilityUnit> RuntimeAbilities
-        {
-            get
-            {
-                _runtimeAbilities ??= new List<AbilityUnit>(Abilities ?? System.Array.Empty<AbilityUnit>());
-                return _runtimeAbilities;
-            }
-        }
+        public AbilitiesController abilitiesController;
+        public IReadOnlyList<AbilityUnit> RuntimeAbilities => abilitiesController.RuntimeAbilities;
 
-        public void AddAbility(AbilityUnit ability)
-        {
-            if (ability == null) return;
-            ((List<AbilityUnit>)RuntimeAbilities).Add(ability);
-        }
+        public void AddAbility(AbilityUnit ability) => abilitiesController.AddAbility(ability);
 
-        public bool RemoveAbility(AbilityUnit ability) => ((List<AbilityUnit>)RuntimeAbilities).Remove(ability);
-       
-        public void Activate(Vector3 targetPos, AbilityUnit abilityUnit, InterractionContext context)
-        {
-            throw new System.NotImplementedException();
-        }
+        public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
-        public bool CanActivate(Vector3 targetPos, AbilityUnit abilityUnit)
-        {
-            float time = Time.time;
-            float delay = abilityUnit.delay;
-            if (delay <= 0 || abilityUnit.isPassive) return true;
-            _abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);
-            if (time - lastActivationTime < delay) return false;
-            _abilityCooldowns[abilityUnit] = time;
-            return true;
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context) {
+            abilitiesController.Activate(targetPos, abilityUnit, context);
         }
 
         #endregion

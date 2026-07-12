@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Controllers
 {
-    public class AbbilitiesController : MonoBehaviour
+    public class TotalAbbilitiesController : MonoBehaviour
     {
         private EntityController _entityController;
 

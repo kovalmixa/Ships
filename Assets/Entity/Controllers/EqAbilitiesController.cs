@@ -1,0 +1,58 @@
+﻿using Assets.Common;
+using Assets.Entity.Equipment;
+using Assets.Handlers;
+using Assets.Scripts.Actions;
+using System.Linq;
+using UnityEngine;
+
+namespace Assets.Entity.Controllers
+{
+    public class EqAbilitiesController : AbilitiesController
+    {
+        private readonly Transform _equipmentTransform;
+        private readonly EquipmentAnchor _equipmentAnchor;
+        private readonly float _basicAngle;
+
+        public EqAbilitiesController(TotalAbbilitiesController totalAbbilities, Transform transform, float basicAngle, EquipmentAnchor equipmentAnchor)
+            : base(totalAbbilities)
+        {
+            _equipmentTransform = transform;
+            _basicAngle = basicAngle;
+            _equipmentAnchor = equipmentAnchor;
+        }
+
+        public override void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
+        {
+            var action = abilityUnit.action;
+            if (action == null) return;
+            if (CanActivate(targetPos, abilityUnit))
+            {
+                action.Execute(context, targetPos);
+                return;
+            }
+            if (!IsAimedAtTarget(targetPos, abilityUnit.delay, out Vector2 targetPosEq)) return;
+            if (!IsWithinActivationSector()) return;
+            action.Execute(context, targetPosEq);
+        }
+
+        private bool IsAimedAtTarget(Vector3 targetPos, float delay, out Vector2 targetPosEq)
+        {
+            float distance = Vector2.Distance(_equipmentTransform.position, targetPos);
+            targetPosEq = MathFuncHandler.GetAngleDistancePoint(_equipmentTransform.position, _equipmentTransform.eulerAngles.z + _basicAngle, distance);
+
+            float targetWorldAngle = Mathf.Atan2(targetPos.y - _equipmentTransform.position.y, targetPos.x - _equipmentTransform.position.x) * Mathf.Rad2Deg;
+            float currentAngle = Mathf.Repeat(_equipmentTransform.eulerAngles.z + _basicAngle, 360f);
+            float angleDiff = Mathf.DeltaAngle(currentAngle, targetWorldAngle);
+            return Mathf.Abs(angleDiff) < 12.5f / delay;
+        }
+
+        private bool IsWithinActivationSector()
+        {
+            if (_equipmentAnchor.activationSectors.Length == 0) return true;
+            float currentAngle = Mathf.Abs(Mathf.DeltaAngle(
+                Mathf.Repeat(_equipmentTransform.eulerAngles.z + _basicAngle, 360f),
+                _equipmentAnchor.transform.eulerAngles.z));
+            return _equipmentAnchor.activationSectors.Any(sector => currentAngle >= sector.x && currentAngle <= sector.y);
+        }
+    }
+}

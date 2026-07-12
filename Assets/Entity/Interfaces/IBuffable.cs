@@ -7,7 +7,7 @@ namespace Assets.Entity
 {
     public interface IBuffable
     {
-        public BuffStatController BuffController { get; }
+        public StatModController BuffController { get; }
         public Dictionary<StatType, float> LifetimeStats { get; }
 
         public void ResetLifetimeStats();
