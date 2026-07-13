@@ -21,18 +21,14 @@ namespace Assets.Entity.Controllers
             _equipmentAnchor = equipmentAnchor;
         }
 
-        public override void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
+        public override bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
         {
             var action = abilityUnit.action;
-            if (action == null) return;
-            if (CanActivate(targetPos, abilityUnit))
-            {
-                action.Execute(context, targetPos);
-                return;
-            }
-            if (!IsAimedAtTarget(targetPos, abilityUnit.delay, out Vector2 targetPosEq)) return;
-            if (!IsWithinActivationSector()) return;
+            if (action == null || !CanActivate(targetPos, abilityUnit)) return false;
+            if (!IsAimedAtTarget(targetPos, abilityUnit.delay, out Vector2 targetPosEq)) return false;
+            if (!IsWithinActivationSector()) return false;
             action.Execute(context, targetPosEq);
+            return true;
         }
 
         private bool IsAimedAtTarget(Vector3 targetPos, float delay, out Vector2 targetPosEq)

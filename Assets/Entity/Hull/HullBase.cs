@@ -1,4 +1,4 @@
-﻿using Actions;
+﻿using GameplayActions;
 using Assets.Common;
 using Assets.DataContainers;
 using Assets.Entity.Controllers;
@@ -15,7 +15,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
-    public abstract class HullBase : MonoBehaviour, IHull, IInteractive, IBuffable, IAbbility
+    public abstract class HullBase : MonoBehaviour, IHull, IInteractive, IStats, IAbbility
     {
         public HullContainer data;
         public List<EquipmentAnchor> equipmentAnchors;
@@ -184,7 +184,8 @@ namespace Assets.Entity.Hull
         public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
         public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context) {
-            abilitiesController.Activate(targetPos, abilityUnit, context);
+            if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) 
+                EventBrocker.Raise(new EntityInterractionEvent(context));
         }
 
         #endregion

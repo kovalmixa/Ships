@@ -1,4 +1,4 @@
-﻿using Actions;
+﻿using GameplayActions;
 using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using System;
@@ -17,7 +17,7 @@ namespace Assets.Common
     public class AbilityUnit
     {
         public AbilityType type;
-        public TemplateActionBase action;
+        public GameplayAction action;
         public AbilityActivationMode mode;
         public float delay;
         public bool isPassive;

@@ -2,13 +2,12 @@
 using Entity.Controllers;
 using System;
 using System.Collections.Generic;
-using TreeEditor;
 
 namespace Assets.Entity.Controllers
 {
     public enum TriggerType
     {
-        None, OnDamage, OnHeal, OnShoot
+        None, OnDamage, OnHeal, OnBuffed, OnShoot, OnActivate
     }
 
     public class TriggerController

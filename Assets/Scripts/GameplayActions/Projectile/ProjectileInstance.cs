@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Actions;
+using GameplayActions;
 using UnityEngine;
 
 namespace Assets.Entity.Projectile

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Assets.Entity.Controllers.AI.AITypes
 {
-    internal class Attacker
+    internal class Source
     {
     }
 }

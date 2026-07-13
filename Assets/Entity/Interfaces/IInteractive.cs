@@ -1,4 +1,4 @@
-﻿using Actions;
+﻿using GameplayActions;
 using Assets.Scripts.Actions;
 
 namespace Assets.Common

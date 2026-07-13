@@ -3,15 +3,20 @@ using Assets.Scripts.Actions;
 
 namespace Assets.Entity.BuffStatuses.Tick
 {
-    public class BurnStatus : TickStatus
-    {
-        private readonly float damage;
 
-        public BurnStatus(float duration,float tickInterval,float damage)
+    public enum BurnType{
+        Flame, BlackNapalm
+    }
+
+    public class Burn : TickStatus
+    {
+        public float Damage { get; }
+
+        public Burn(float duration,float tickInterval,float damage)
         {
             Duration = duration;
             TickInterval = tickInterval;
-            this.damage = damage;
+            Damage = damage;
         }
 
         protected override void OnTick(InterractionContext interractionContext)
@@ -20,7 +25,7 @@ namespace Assets.Entity.BuffStatuses.Tick
             //    interractionContext,
             //    new Damage
             //    {
-            //        Value = damage,
+            //        Value = Damage,
             //        Type = DamageType.Fire
             //    });
         }

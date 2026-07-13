@@ -41,7 +41,7 @@ namespace Assets.Entity.Controllers
 
         public virtual bool RemoveAbility(AbilityUnit ability) => ((List<AbilityUnit>)RuntimeAbilities).Remove(ability);
 
-        public virtual void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
+        public virtual bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
         {
             throw new System.NotImplementedException();
         }

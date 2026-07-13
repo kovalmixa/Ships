@@ -2,9 +2,9 @@
 using Assets.Scripts.Actions;
 using UnityEngine;
 
-namespace Actions
+namespace GameplayActions
 {
-    public class VisualAction : TemplateActionBase
+    public class VisualAction : GameplayAction
     {
         private ObjectPoolHandler _effectPool;
         [SerializeField] private string[] _ids;

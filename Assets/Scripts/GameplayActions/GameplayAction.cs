@@ -3,9 +3,11 @@ using Assets.Scripts.Actions;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Actions
+namespace GameplayActions
 {
-    public abstract class TemplateActionBase : MonoBehaviour
+    public interface IActionStruct { }
+
+    public abstract class GameplayAction : MonoBehaviour
     {
         public virtual void Execute(InterractionContext interractionContext, Vector3 targetPos) { }
 

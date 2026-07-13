@@ -1,6 +1,4 @@
 ﻿namespace Assets.Handlers.Events
 {
-    public class IEvent
-    {
-    }
+    public interface IGameplayEvent { }
 }

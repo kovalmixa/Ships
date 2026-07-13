@@ -1,4 +1,4 @@
-﻿using Actions;
+﻿using GameplayActions;
 using Assets.Entity.Modifiers;
 
 namespace Assets.UI.SkillTree
@@ -6,7 +6,7 @@ namespace Assets.UI.SkillTree
     public class SkillNode
     {
         public string skillName;
-        public TemplateActionBase[] actions;
+        public GameplayAction[] actions;
         public BuffStatus[] statuses;
 
         public uint level;

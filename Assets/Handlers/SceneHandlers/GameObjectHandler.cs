@@ -58,7 +58,7 @@ namespace Assets.Handlers.SceneHandlers
 
         public static void RegisterPlayer(EntityController entityController)
         {
-            entityController.SetController(entityController.gameObject.AddComponent<PlayerController>());
+            entityController.SetDriver(entityController.gameObject.AddComponent<PlayerController>());
         }
         #endregion
 

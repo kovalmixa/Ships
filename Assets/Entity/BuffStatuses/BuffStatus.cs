@@ -1,4 +1,5 @@
-﻿using Assets.Entity.Modifiers;
+﻿using Assets.Common;
+using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
 using UnityEngine;
 using UnityEngine.Events;
@@ -18,10 +19,12 @@ public abstract class BuffStatus : MonoBehaviour
     public float Duration { get; set; } = -1f;
     public bool IsPermanent => Duration < 0;
 
-    public Modifiers modifiers;
+    public Modifiers modifiers = new();
     public UnityEvent onRemove;
     public UnityEvent onRefresh;
     private float _lifetime = 0f;
+
+    protected IInteractive Owner { get; private set; }
 
     public BuffApplicationPolicy Policy { get; set; } = BuffApplicationPolicy.Replace;
 
@@ -31,6 +34,10 @@ public abstract class BuffStatus : MonoBehaviour
         SourceId = sourceId;
         Duration = duration;
     }
+
+    public virtual void OnApply(IInteractive owner) => Owner = owner;
+
+    public virtual void OnRemove() => onRemove?.Invoke();
 
     public virtual bool Tick(InterractionContext interractionContext)
     {

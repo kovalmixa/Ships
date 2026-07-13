@@ -1,4 +1,4 @@
-using Actions;
+using GameplayActions;
 using Assets.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Equipment
 {
-    public class Equipment : MonoBehaviour, IInteractive, IBuffable, IAbbility
+    public class Equipment : MonoBehaviour, IInteractive, IStats, IAbbility
     {
         public EntityController entityController;
         [SerializeField] private EquipmentContainer _equipmentContainer;
@@ -116,7 +116,8 @@ namespace Assets.Entity.Equipment
 
         public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
         {
-            abilitiesController.Activate(targetPos, abilityUnit, context);
+            if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) 
+                EventBrocker.Raise(new EntityInterractionEvent(context));
         }
 
         #endregion

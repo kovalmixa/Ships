@@ -5,9 +5,8 @@ using System.Collections.Generic;
 
 namespace Assets.Entity
 {
-    public interface IBuffable
+    public interface IStats
     {
-        public StatModController BuffController { get; }
         public Dictionary<StatType, float> LifetimeStats { get; }
 
         public void ResetLifetimeStats();
