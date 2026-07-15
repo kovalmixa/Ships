@@ -18,14 +18,13 @@ namespace Entity.Controllers
         public TotalAbbilitiesController abbilitiesController;
         public EntityAssembler Assembler { get; private set; }
         public TotalAbbilitiesController totalAbbilitiesController { get; private set; }
-        public StatModController Buffs { get; private set; }
+        public StatModController statModController { get; private set; }
+        public BuffStatusesController Buffs { get; private set; }
         public IDriver Driver { get; set; }
         [SerializeField] private GameObject _despawnPrefab;
         public string Id { get; set; }
         public HullBase hull;
 
-
-  
         public EntitySnapshot GetSnapshot() => new EntitySnapshot(this, data);
 
         private void Update()
@@ -76,10 +75,10 @@ namespace Entity.Controllers
 
         public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
-        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
         {
             if (abilitiesController.TryActivate(targetPos, abilityUnit, context))
-                EventBrocker.Raise(new EntityInterractionEvent(context));
+                EventBrocker.Raise(new EntityInteractionEvent(context));
         }
 
         #endregion

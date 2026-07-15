@@ -13,12 +13,12 @@ namespace Assets.Entity.Controllers
     public class TriggerController
     {
         private readonly EntityController _entityController;
-        private Dictionary<TriggerType, List<Action<InterractionContext>>> _triggers = new();
+        private Dictionary<TriggerType, List<Action<InteractionContext>>> _triggers = new();
         public TriggerController(EntityController entityController) => _entityController = entityController;
 
-        public InterractionContext OnTrigger(TriggerType type, InterractionContext context)
+        public InteractionContext OnTrigger(TriggerType type, InteractionContext context)
         {
-            InterractionContext newContext = new(context);
+            InteractionContext newContext = new(context);
             if (_triggers.TryGetValue(type, out var actions))
                 foreach (var action in actions) action?.Invoke(context);
             return newContext;

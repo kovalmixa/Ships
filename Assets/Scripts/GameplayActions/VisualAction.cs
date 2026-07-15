@@ -14,7 +14,7 @@ namespace GameplayActions
             _effectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
         }
 
-        public override void Execute(InterractionContext interractionContext, Vector3 targetPos){
+        public override void Execute(InteractionContext interractionContext, Vector3 targetPos){
             if (_effectPool == null) return;
             _effectPool = _effectPool.gameObject.GetComponent<ObjectPoolHandler>();
             foreach (var id in _ids) SetupEffect(targetPos, id);

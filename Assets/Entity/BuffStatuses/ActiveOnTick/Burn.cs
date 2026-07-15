@@ -19,7 +19,7 @@ namespace Assets.Entity.BuffStatuses.Tick
             Damage = damage;
         }
 
-        protected override void OnTick(InterractionContext interractionContext)
+        protected override void OnTick(InteractionContext interractionContext)
         {
             //context.Target.TakeDamage(
             //    interractionContext,

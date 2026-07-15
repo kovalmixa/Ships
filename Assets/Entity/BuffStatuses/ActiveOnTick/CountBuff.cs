@@ -2,6 +2,7 @@
 using GameplayActions;
 using Assets.Common;
 using Assets.Scripts.Actions;
+using Assets.Handlers.Events;
 
 namespace Assets.Entity.BuffStatuses.ActiveOnTick
 {
@@ -22,28 +23,28 @@ namespace Assets.Entity.BuffStatuses.ActiveOnTick
         {
             base.OnApply(owner);
             _counter = 0;
-            EventBrocker.Subscribe<EntityInterractionEvent>(OnActionRegistered);
+            EventBrocker.Subscribe<EntityInteractionEvent>(OnActionRegistered);
         }
 
         public override void OnRemove()
         {
-            EventBrocker.Unsubscribe<EntityInterractionEvent>(OnActionRegistered);
+            EventBrocker.Unsubscribe<EntityInteractionEvent>(OnActionRegistered);
             base.OnRemove();
         }
 
-        private void OnActionRegistered(InterractionContext context)
+        private void OnActionRegistered(EntityInteractionEvent data)
         {
             foreach (var criterion in criteria)
-                if (criterion != null && !criterion.Matches(context, Owner)) return;
+                if (criterion != null && !criterion.Matches(data.Context, Owner)) return;
             _counter++;
             if (_counter >= quantity)
             {
                 _counter = 0;
-                ExecuteResult(context);
+                ExecuteResult(data.Context);
             }
         }
 
-        private void ExecuteResult(InterractionContext context)
+        private void ExecuteResult(InteractionContext context)
         {
             GameObject targetObj = executeOnSource ? context.SourceObject : context.TargetObject;
             if (targetObj == null) return;

@@ -11,7 +11,7 @@ namespace Assets.Scripts.Actions
         None, Damage, FireProjectile, Heal, SetBuff
     }
 
-    public class InterractionContext
+    public class InteractionContext
     {
         public EntitySnapshot SourceSnapshot { get; set; }
         public IInteractive SourceInterractive { get; set; }
@@ -36,8 +36,8 @@ namespace Assets.Scripts.Actions
 
         public IActionStruct ActionStruct { get; set; }
 
-        public InterractionContext() { }
-        public InterractionContext(InterractionContext interractionContext)
+        public InteractionContext() { }
+        public InteractionContext(InteractionContext interractionContext)
         {
             SourceSnapshot = interractionContext.SourceSnapshot;
             SourceInterractive = interractionContext.SourceInterractive;

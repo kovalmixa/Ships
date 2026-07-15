@@ -6,7 +6,7 @@ public abstract class TickStatus : BuffStatus
     public float TickInterval { get; set; }
     private float _timer = 0f;
 
-    public override bool Tick(InterractionContext interractionContext)
+    public override bool Tick(InteractionContext interractionContext)
     {
         if (base.Tick(interractionContext)) return true;
         _timer += Time.deltaTime;
@@ -18,5 +18,5 @@ public abstract class TickStatus : BuffStatus
         return false;
     }
 
-    protected abstract void OnTick(InterractionContext interractionContext);
+    protected abstract void OnTick(InteractionContext interractionContext);
 }

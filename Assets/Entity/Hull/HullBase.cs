@@ -1,5 +1,4 @@
-﻿using GameplayActions;
-using Assets.Common;
+﻿using Assets.Common;
 using Assets.DataContainers;
 using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
@@ -8,16 +7,19 @@ using Assets.Entity.Modifiers;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
+using GameplayActions;
 using Scripts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
     public abstract class HullBase : MonoBehaviour, IHull, IInteractive, IStats, IAbbility
     {
-        public HullContainer data;
+        [field: SerializeField] public HullContainer Data { get; private set; }
         public List<EquipmentAnchor> equipmentAnchors;
         public List<Equipment.Equipment> equipments;
         public Transform root;
@@ -34,11 +36,21 @@ namespace Assets.Entity.Hull
             Id = GameObjectHandler.GenerateUniqueId(name);
             entityController = GetComponentInParent<EntityController>();
             abilitiesController = new(entityController.totalAbbilitiesController);
+            _statModController = new(entityController.statModController);
             rigidBody2D = GetComponent<Rigidbody2D>();
-            data = GetComponent<HullContainer>();
-            BuffController.SetupStatsMods(data.statOptions.Stats.ToDictionary(s => (s.Type, s.StatLayer), s => s.Value),
-                new Modifiers.Modifiers(data.statOptions.mods));
+            Data = GetComponent<HullContainer>();
+            SetupPropertiesByData();
             CollectAnchors(transform);
+        }
+        private void SetupPropertiesByData()
+        {
+
+            var snapshot = entityController.GetSnapshot();
+            var statOptions = Data.statOptions;
+            foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);
+            foreach (var ability in statOptions.abilities) abilitiesController.AddAbility(ability);
+            StatModController.SetupBaseStats(statOptions.stats, statOptions.mods);
+            entityController.statModController.RegisterExternalModifiers(new Modifiers.Modifiers(statOptions.mods));
         }
 
         private void CollectAnchors(Transform parent)
@@ -86,7 +98,7 @@ namespace Assets.Entity.Hull
         {
             Rigidbody2D otherRb = collision.rigidbody;
             if (otherRb == null) return;
-            if (collision.gameObject.layer != LayerMask.NameToLayer(data.general.layer.ToString())
+            if (collision.gameObject.layer != LayerMask.NameToLayer(Data.general.layer.ToString())
                 && collision.gameObject.layer != LayerMask.NameToLayer("Markers"))
             {
                 currentSpeed = 0;
@@ -107,22 +119,30 @@ namespace Assets.Entity.Hull
         #endregion
 
         #region IInteractive
-        public void TakeDamage(InterractionContext interractionContext, Damage damage)
+
+        public void AddBuff(InteractionContext context)
+        {
+            var buff = context.ActionStruct as BuffStatus;
+            if (buff == null) return;
+            entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
+        }
+
+        public void TakeDamage(InteractionContext interractionContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+        public void TakeHeal(InteractionContext interractionContext)
         {
             throw new System.NotImplementedException();
         }
 
         #endregion
 
-        #region IBuffable
+        #region IStats
 
-        [SerializeField] private StatModController _buffController;
-        public StatModController BuffController => _buffController;
+        [SerializeField] private StatModController _statModController;
+        public StatModController StatModController => _statModController;
 
         private Dictionary<StatType, float> _lifetimeStats = new();
         public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
@@ -132,45 +152,16 @@ namespace Assets.Entity.Hull
         public void ResetLifetimeStats()
         {
             _lifetimeStats.Clear();
-            _lifetimeStats[StatType.MaxMoveSpeed] = _buffController.GetStat((StatType.MaxMoveSpeed, _statLayer));
-            _lifetimeStats[StatType.RotationSpeed] = _buffController.GetStat((StatType.RotationSpeed, _statLayer));
-            _lifetimeStats[StatType.Acceleration] = _buffController.GetStat((StatType.Acceleration, _statLayer));
+            _lifetimeStats[StatType.MaxMoveSpeed] = _statModController.GetStat(StatType.MaxMoveSpeed, _statLayer);
+            _lifetimeStats[StatType.RotationSpeed] = _statModController.GetStat(StatType.RotationSpeed, _statLayer);
+            _lifetimeStats[StatType.Acceleration] = _statModController.GetStat(StatType.Acceleration, _statLayer);
         }
 
         public float GetLifetimeStat(StatType type)
         {
-            if (BuffController.IsDirty) ResetLifetimeStats();
+            if (StatModController.IsDirty) ResetLifetimeStats();
             if (LifetimeStats.TryGetValue(type, out float value)) return value;
             return 0f;
-        }
-
-        public void AddBuff(InterractionContext context, params BuffStatus[] buffs)
-        {
-            if (_buffController == null || buffs == null) return;
-            foreach (var buff in buffs)
-            {
-                if (buff == null) continue;
-                buff.Initialize(
-                    buffId: buff.name,
-                    sourceId: GameObjectHandler.GenerateContextSourceId(context),
-                    duration: buff.IsPermanent ? -1f : buff.Duration
-                );
-                _buffController.AddBuff(buff, context?.SourceSnapshot);
-            }
-        }
-
-        public void RemoveBuff(InterractionContext context, params BuffStatus[] buffs)
-        {
-            if (_buffController == null) return;
-            string sourceId = GameObjectHandler.GenerateContextSourceId(context);
-            if (buffs == null || buffs.Length == 0)
-            {
-                _buffController.RemoveBuffBySource(sourceId);
-                return;
-            }
-
-            foreach (var buff in buffs)
-                if (buff != null) _buffController.RemoveBuff(buff.BuffId, sourceId);
         }
 
         #endregion
@@ -183,9 +174,9 @@ namespace Assets.Entity.Hull
 
         public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
-        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context) {
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context) {
             if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) 
-                EventBrocker.Raise(new EntityInterractionEvent(context));
+                EventBrocker.Raise(new EntityInteractionEvent(context));
         }
 
         #endregion

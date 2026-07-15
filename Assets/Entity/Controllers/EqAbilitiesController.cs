@@ -21,7 +21,7 @@ namespace Assets.Entity.Controllers
             _equipmentAnchor = equipmentAnchor;
         }
 
-        public override bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
+        public override bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
         {
             var action = abilityUnit.action;
             if (action == null || !CanActivate(targetPos, abilityUnit)) return false;

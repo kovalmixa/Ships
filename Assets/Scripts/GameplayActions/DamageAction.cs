@@ -21,7 +21,7 @@ namespace GameplayActions
 
         [SerializeField] public LayerMask[] filterLayers;
 
-        public Damage(DamageType type, float penetration, float value, float range = 1f, LayerMask[] filterLayers)
+        public Damage(DamageType type, float penetration, float value, LayerMask[] filterLayers, float range = 1f)
         {
             this.type = type;
             this.penetration = penetration;
@@ -33,7 +33,7 @@ namespace GameplayActions
 
     public class DamageAction : GameplayAction
     {
-        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
+        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
         {
             var damage = (Damage) interractionContext.ActionStruct;
             int combinedMask = 0;
@@ -46,7 +46,7 @@ namespace GameplayActions
             //todo add extra damage options with types
         }
 
-        public override void Execute(InterractionContext interractionContext, IInteractive target)
+        public override void Execute(InteractionContext interractionContext, IInteractive target)
         {
             var damage = (Damage)interractionContext.ActionStruct;
             target.TakeDamage(interractionContext, damage);

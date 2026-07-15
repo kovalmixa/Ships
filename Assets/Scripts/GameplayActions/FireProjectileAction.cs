@@ -33,7 +33,7 @@ namespace GameplayActions
             poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilePool");
         }
 
-        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
+        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
         {
             Debug.Log("Pew");
             ProjectileController.Instance.Launch(interractionContext);

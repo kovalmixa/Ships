@@ -8,7 +8,7 @@ namespace GameplayActions
     {
         [SerializeField] public Vector2 Position;
         [SerializeField] public Vector2 Rotation;
-        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
+        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
         {
         }
     }

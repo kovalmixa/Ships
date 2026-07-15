@@ -9,21 +9,21 @@ public class LifestealBuff : BuffStatus
     public override void OnApply(IInteractive owner)
     {
         base.OnApply(owner);
-        EventBrocker.Subscribe<EntityInterractionEvent>(OnDamageDealt);
+        EventBrocker.Subscribe<EntityInteractionEvent>(OnDamageDealt);
     }
 
     public override void OnRemove()
     {
-        EventBrocker.Unsubscribe<EntityInterractionEvent>(OnDamageDealt);
+        EventBrocker.Unsubscribe<EntityInteractionEvent>(OnDamageDealt);
         base.OnRemove();
     }
 
-    private void OnDamageDealt(EntityInterractionEvent data)
+    private void OnDamageDealt(EntityInteractionEvent data)
     {
         // Если урон нанес не владелец этого баффа — игнорируем событие
         if (data.Source != Owner) return;
 
-        float healAmount = data.FinalValue * lifestealPercentage;
+        float healAmount = (float)data.FinalValue * lifestealPercentage;
 
         // Вызываем лечение на владельце баффа
         // Примечание: Убедись, что твоя система лечения не генерирует DamageDealtEvent, 

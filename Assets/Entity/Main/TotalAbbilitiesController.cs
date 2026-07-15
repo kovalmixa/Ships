@@ -11,8 +11,8 @@ namespace Assets.Entity.Controllers
     {
         private EntityController _entityController;
 
-        private readonly Dictionary<AbilityType, Action<InterractionContext, Vector3>> _equipmentAbilities = new();
-        private readonly Dictionary<AbilityType, Action<InterractionContext, Vector3>> _entityAbilities = new();
+        private readonly Dictionary<AbilityType, Action<InteractionContext, Vector3>> _equipmentAbilities = new();
+        private readonly Dictionary<AbilityType, Action<InteractionContext, Vector3>> _entityAbilities = new();
         private bool _dirty = true;
 
         private void Awake()
@@ -59,7 +59,7 @@ namespace Assets.Entity.Controllers
             if (_entityAbilities.TryGetValue(key, out var entityAction)) entityAction?.Invoke(context, targetPos);
         }
 
-        public void RegisterEntityAbility(AbilityType key, Action<InterractionContext, Vector3> action)
+        public void RegisterEntityAbility(AbilityType key, Action<InteractionContext, Vector3> action)
         {
             if (key == AbilityType.None || action == null) return;
 
@@ -67,7 +67,7 @@ namespace Assets.Entity.Controllers
             _entityAbilities[key] += action;
         }
 
-        public void UnregisterEntityAbility(AbilityType key, Action<InterractionContext, Vector3> action)
+        public void UnregisterEntityAbility(AbilityType key, Action<InteractionContext, Vector3> action)
         {
             if (_entityAbilities.ContainsKey(key)) _entityAbilities[key] -= action;
         }
@@ -98,9 +98,9 @@ namespace Assets.Entity.Controllers
             return false;
         }
 
-        private InterractionContext CreateInteractionContext(AbilityType key)
+        private InteractionContext CreateInteractionContext(AbilityType key)
         {
-            return new InterractionContext
+            return new InteractionContext
             {
                 SourceObject = gameObject,
                 SourceSnapshot = _entityController != null ? _entityController.GetSnapshot() : null,

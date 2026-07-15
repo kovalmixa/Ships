@@ -18,7 +18,7 @@ namespace GameplayActions
 
     public class ExplosionAction : GameplayAction
     {
-        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
+        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
         {
             var explosion = (Esplosion)interractionContext.ActionStruct;
             explosion.VisualAction?.Execute(interractionContext, targetPos);

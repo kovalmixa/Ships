@@ -23,7 +23,7 @@ public struct BuffDefinition : IActionStruct
 
 public class SetBuffAction : GameplayAction, IScalableAction
 {
-    public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
+    public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
     {
         var buffDef = (BuffDefinition) interractionContext.ActionStruct;
         buffDef.visualAction?.Execute(interractionContext, targetPos);
@@ -31,29 +31,20 @@ public class SetBuffAction : GameplayAction, IScalableAction
         foreach (var target in targets.Values) Execute(interractionContext, target);
     }
 
-    public override void Execute(InterractionContext interractionContext, IInteractive target)
+    public override void Execute(InteractionContext interractionContext, IInteractive target)
     {
-        var buffDef = interractionContext.ActionStruct;
-        foreach (var template in buffDef.buffs)
-        {
-            var instance = Instantiate(template);
-
-            instance.Initialize(
-                buffId: template.name,
-                sourceId: interractionContext?.AbilityId ?? SourceId,
-                duration: template.IsPermanent ? -1f : template.Duration
-            );
-
-            target.AddBuff(interractionContext, instance);
-        }
+        var buff = interractionContext.ActionStruct as BuffStatus;
+        buff.SourceId = interractionContext?.AbilityId ?? interractionContext.SourceSnapshot.Id;
+        buff.Duration = buff.IsPermanent ? -1f : buff.Duration;
+        target.AddBuffs(interractionContext, buff);
     }
 
-    public void ScaleExecute(InterractionContext interractionContext, Vector3 targetPos, float scale)
+    public void ScaleExecute(InteractionContext interractionContext, Vector3 targetPos, float scale)
     {
         throw new System.NotImplementedException();
     }
 
-    public void ScaleExecute(InterractionContext interractionContext, IInteractive target, float scale)
+    public void ScaleExecute(InteractionContext interractionContext, IInteractive target, float scale)
     {
         throw new System.NotImplementedException();
     }

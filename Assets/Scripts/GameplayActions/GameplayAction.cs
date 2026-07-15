@@ -9,9 +9,9 @@ namespace GameplayActions
 
     public abstract class GameplayAction : MonoBehaviour
     {
-        public virtual void Execute(InterractionContext interractionContext, Vector3 targetPos) { }
+        public virtual void Execute(InteractionContext interractionContext, Vector3 targetPos) { }
 
-        public virtual void Execute(InterractionContext interractionContext, IInteractive target) { }
+        public virtual void Execute(InteractionContext interractionContext, IInteractive target) { }
 
         #region Additional
         

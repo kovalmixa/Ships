@@ -58,7 +58,7 @@ namespace Assets.Handlers.SceneHandlers
 
         public static void RegisterPlayer(EntityController entityController)
         {
-            entityController.SetDriver(entityController.gameObject.AddComponent<PlayerController>());
+            entityController.Driver = entityController.gameObject.AddComponent<PlayerController>();
         }
         #endregion
 
@@ -66,7 +66,7 @@ namespace Assets.Handlers.SceneHandlers
 
         public static string GenerateUniqueId(string name) => $"{name}_{System.Guid.NewGuid().ToString("N").Substring(0, 8)}";
 
-        public static string GenerateContextSourceId(InterractionContext context)
+        public static string GenerateContextSourceId(InteractionContext context)
         {
             if (context == null) return "Unknown";
             if (!string.IsNullOrEmpty(context.AbilityId)) return context.AbilityId;

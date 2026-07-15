@@ -3,7 +3,6 @@ using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Assets.Common
 {
@@ -14,7 +13,7 @@ namespace Assets.Common
     }
 
     [Serializable]
-    public class AbilityUnit
+    public struct AbilityUnit
     {
         public AbilityType type;
         public GameplayAction action;
@@ -24,11 +23,11 @@ namespace Assets.Common
     }
 
     [System.Serializable]
-    public class StatOptions
+    public struct StatOptions
     {
-        [field: SerializeField] public List<StatUnit> Stats { get; private set; }
-
+        public List<StatUnit> stats;
         public List<ModUnit> mods;
+        public List<BuffStatus> buffs;
         public List<AbilityUnit> abilities;
     }
 }

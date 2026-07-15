@@ -1,16 +1,13 @@
-﻿using GameplayActions;
-using Assets.Scripts.Actions;
+﻿using Assets.Scripts.Actions;
 
 namespace Assets.Common
 {
     public interface IInteractive : IObject
     {
-        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs);
+        public void AddBuff(InteractionContext interractionContext);
 
-        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs);
+        public void TakeDamage(InteractionContext interractionContext);
 
-        public void TakeDamage(InterractionContext interractionContext, Damage damage);
-
-        public void TakeHeal(InterractionContext interractionContext, Heal heal);
+        public void TakeHeal(InteractionContext interractionContext);
     }
 }

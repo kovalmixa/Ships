@@ -1,23 +1,47 @@
-﻿using Assets.Entity.Modifiers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Assets.Entity.Modifiers;
 
 namespace Assets.Entity.Controllers
 {
+    public static class StatCalculator
+    {
+        public static float Calculate(float baseValue, Modifiers.Modifiers.CompactMod mod)
+        {
+            if (mod == null || mod.IsEmpty) return baseValue;
+            float result = mod.SetValue ?? baseValue;
+            result += mod.Addition;
+            result += result * (mod.Percentage / 100f);
+            return result;
+        }
+    }
+
     public class StatModController
     {
-        private bool _isDirty { get; set; } = true;
+        private bool _isDirty = true;
         public bool IsDirty => _isDirty;
 
-        private Modifiers.Modifiers _localModifiers;
+        private Dictionary<(StatType Type, StatLayer Layer), float> _baseStats = new();
+
+        private readonly Dictionary<(StatType Type, StatLayer Layer), float> _cachedCombinedStats = new();
+
+        private readonly Modifiers.Modifiers _localModifiers = new();
         public Modifiers.Modifiers LocalModifiers => _localModifiers;
 
-        private List<Modifiers.Modifiers> _externalModifiers = new();
-        private Dictionary<(StatType Type, StatLayer Layer), float> _cachedCombinedStats = new();
+        private readonly List<Modifiers.Modifiers> _externalModifiers = new();
+        private readonly StatModController _totalController;
+        public StatModController(StatModController totalModStatController) => _totalController = totalModStatController;
 
-        public void SetupStatsMods(Dictionary<(StatType Type, StatLayer Layer), float> baseStats, 
-            Modifiers.Modifiers modifiers) => _localModifiers = modifiers;
+        public void SetupBaseStats(IEnumerable<StatUnit> baseStats, IEnumerable<ModUnit> localMods = null)
+        {
+            _baseStats = baseStats.GroupBy(unit => (unit.Type, unit.StatLayer))
+                .ToDictionary(g => g.Key, g => g.Sum(unit => unit.Value));
+
+            _localModifiers.Clear();
+            if (localMods != null) _localModifiers.Add(localMods);
+
+            _isDirty = true;
+        }
 
         public void RegisterExternalModifiers(Modifiers.Modifiers mods)
         {
@@ -33,22 +57,32 @@ namespace Assets.Entity.Controllers
             _isDirty = true;
         }
 
-        public float GetStat((StatType Type, StatLayer Layer) key)
+        public float GetStat(StatType type, StatLayer layer)
         {
+            var key = (type, layer);
             if (_isDirty) RebuildCachedStats();
-            return _cachedCombinedStats.TryGetValue(key, out float value) ? value : 1f;
+
+            if (_cachedCombinedStats.TryGetValue(key, out float value)) return value;
+            return _baseStats.TryGetValue(key, out float baseValue) ? baseValue : 0f;
         }
 
         private void RebuildCachedStats()
         {
             _cachedCombinedStats.Clear();
-            var finalMods = new Modifiers.Modifiers();
-            finalMods.Add(LocalModifiers);
 
-            foreach (var extMod in _externalModifiers) finalMods.Add(extMod);
-            var keys = new List<(StatType Type, StatLayer Layer)>(_cachedCombinedStats.Keys);
-            foreach (var key in keys) _cachedCombinedStats[key] = finalMods.ApplyModByType(key.Type, key.Layer, _cachedCombinedStats[key]);
+            var totalActiveModifiers = new Modifiers.Modifiers();
+            totalActiveModifiers.Add(_localModifiers);
 
+            foreach (var extMod in _externalModifiers) totalActiveModifiers.Add(extMod);
+
+            foreach (var kvp in _baseStats)
+            {
+                var key = kvp.Key;
+                float baseValue = kvp.Value;
+                var activeMod = totalActiveModifiers.GetMod(key.Type, key.Layer);
+                float finalValue = StatCalculator.Calculate(baseValue, activeMod);
+                _cachedCombinedStats[key] = finalValue;
+            }
             _isDirty = false;
         }
     }

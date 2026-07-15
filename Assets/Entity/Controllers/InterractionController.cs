@@ -8,27 +8,27 @@ namespace Assets.Entity.Controllers
         private TriggerController _triggerController;
         InterractionController(TriggerController triggerController) => _triggerController = triggerController; 
 
-        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+        public void AddBuff(InteractionContext interractionContext, params BuffStatus[] buffs)
         {
             _triggerController.OnTrigger(TriggerType.OnBuffed, interractionContext);
         }
 
-        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+        public void RemoveBuff(InteractionContext interractionContext, params BuffStatus[] buffs)
         {
 
         }
 
-        public void TakeDamage(InterractionContext interractionContext, Damage damage)
+        public void TakeDamage(InteractionContext interractionContext, Damage damage)
         {
             _triggerController.OnTrigger(TriggerType.OnDamage, interractionContext);
         }
 
-        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+        public void TakeHeal(InteractionContext interractionContext, Heal heal)
         {
             _triggerController.OnTrigger(TriggerType.OnHeal, interractionContext);
         }
 
-        public void OnActivate(InterractionContext interractionContext)
+        public void OnActivate(InteractionContext interractionContext)
         {
             _triggerController.OnTrigger(TriggerType.OnActivate, interractionContext);
         }

@@ -18,29 +18,27 @@ namespace GameplayActions
     {
         [SerializeField] public Heal heal;
 
-        public override void Execute(InterractionContext interractionContext, Vector3 targetPos)
+        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
         {
             Debug.Log($"Healed:{heal.value}");
-            interractionContext.Type = InterractionType.Heal;
             //var stats = context.Target.GetComponent<CharacterStats>();
             //if (stats != null)
             //{
             //    stats.Heal(context.HealAmount.Value);
             //}
         }
-        public override void Execute(InterractionContext interractionContext, IInteractive target)
+        public override void Execute(InteractionContext interractionContext, IInteractive target)
         {
-            interractionContext.Type = InterractionType.Heal;
             target.TakeHeal(interractionContext, heal);
         }
 
         #region IScalableAction
-        public void ScaleExecute(InterractionContext interractionContext, Vector3 targetPos, float scale)
+        public void ScaleExecute(InteractionContext interractionContext, Vector3 targetPos, float scale)
         {
             throw new System.NotImplementedException();
         }
 
-        public void ScaleExecute(InterractionContext interractionContext, IInteractive target, float scale)
+        public void ScaleExecute(InteractionContext interractionContext, IInteractive target, float scale)
         {
             throw new System.NotImplementedException();
         }

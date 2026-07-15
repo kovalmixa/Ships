@@ -14,8 +14,7 @@ namespace Assets.Entity.Equipment
     public class Equipment : MonoBehaviour, IInteractive, IStats, IAbbility
     {
         public EntityController entityController;
-        [SerializeField] private EquipmentContainer _equipmentContainer;
-        public EquipmentContainer EquipmentContainer => _equipmentContainer;
+        [field: SerializeField] public EquipmentContainer Data { get; private set; }
 
         public EquipmentAnchor EquipmentAnchor { get; set; }
 
@@ -37,7 +36,7 @@ namespace Assets.Entity.Equipment
         {
             var rotationSpeed = GetLifetimeStat(StatType.RotationSpeed);
 
-            if (_equipmentContainer == null || !CanRotate()) return;
+            if (Data == null || !CanRotate()) return;
             Vector3 localTarget = EquipmentAnchor.transform.InverseTransformPoint(targetPos);
             float localAngle = Mathf.Atan2(localTarget.y, localTarget.x) * Mathf.Rad2Deg;
             float min = EquipmentAnchor.rotationSector.x;
@@ -60,22 +59,29 @@ namespace Assets.Entity.Equipment
 
         #region IInteractive
 
-        public void TakeDamage(InterractionContext interractionContext, Damage damage)
+        public void AddBuff(InteractionContext context)
+        {
+            var buff = context.ActionStruct as BuffStatus;
+            if (buff == null) return;
+            entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
+        }
+
+        public void TakeDamage(InteractionContext interractionContext)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+        public void TakeHeal(InteractionContext interractionContext)
         {
             throw new System.NotImplementedException();
         }
 
         #endregion
 
-        #region IBuffable
+        #region IStats
 
-        [SerializeField] private StatModController _buffController;
-        public StatModController BuffController => _buffController;
+        [SerializeField] private StatModController _statModController;
+        public StatModController StatModController => _statModController;
         private Dictionary<StatType, float> _lifetimeStats = new();
         public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
 
@@ -83,24 +89,14 @@ namespace Assets.Entity.Equipment
         public void ResetLifetimeStats()
         {
             _lifetimeStats.Clear();
-            _lifetimeStats[StatType.RotationSpeed] = _buffController.GetStat((StatType.RotationSpeed, _statLayer));
+            _lifetimeStats[StatType.RotationSpeed] = _statModController.GetStat(StatType.RotationSpeed, _statLayer);
         }
 
         public float GetLifetimeStat(StatType type)
         {
-            if (BuffController.IsDirty) ResetLifetimeStats();
+            if (StatModController.IsDirty) ResetLifetimeStats();
             if (LifetimeStats.TryGetValue(type, out float value)) return value;
             return 0f;
-        }
-
-        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
-        {
-            throw new System.NotImplementedException();
         }
 
         #endregion
@@ -114,10 +110,10 @@ namespace Assets.Entity.Equipment
 
         public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
-        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InterractionContext context)
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
         {
             if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) 
-                EventBrocker.Raise(new EntityInterractionEvent(context));
+                EventBrocker.Raise(new EntityInteractionEvent(context));
         }
 
         #endregion

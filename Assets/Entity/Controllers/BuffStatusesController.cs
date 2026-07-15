@@ -1,4 +1,5 @@
 ﻿using Assets.Entity.Modifiers;
+using Assets.Scripts.Actions;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,6 +20,11 @@ namespace Assets.Entity.Controllers
         private GameObject _source;
 
         public BuffStatusesController(GameObject source) => _source = source;
+
+        public void AddBuffs(InteractionContext context, params BuffStatus[] buffs)
+        {
+            foreach (var buff in buffs) AddBuff(buff, context.SourceSnapshot);
+        }
 
         public void AddBuff(BuffStatus newBuff, EntitySnapshot source)
         {
@@ -46,6 +52,11 @@ namespace Assets.Entity.Controllers
             ActiveBuffs[key] = (newBuff, source);
             newBuff.transform.SetParent(_source.transform, false);
             _isDirty = true;
+        }
+
+        public void RemoveBuffs(params BuffStatus[] buffs)
+        {
+            foreach (var buff in buffs) RemoveBuff(buff.BuffId, buff.SourceId);
         }
 
         public bool RemoveBuff(string buffId, string sourceId = null)

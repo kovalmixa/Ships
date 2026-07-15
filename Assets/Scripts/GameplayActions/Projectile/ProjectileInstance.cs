@@ -8,9 +8,9 @@ namespace Assets.Entity.Projectile
     {
         private ProjectileDefinition _definition;
         private Vector2 _direction;
-        private InterractionContext _context;
+        private InteractionContext _context;
 
-        public void Setup(InterractionContext interractionContext)
+        public void Setup(InteractionContext interractionContext)
         {
             _context = interractionContext;
             Vector3 direction = (_definition.targetPosition - _definition.startPosition).normalized;

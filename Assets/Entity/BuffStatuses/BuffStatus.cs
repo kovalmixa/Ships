@@ -1,6 +1,7 @@
 ﻿using Assets.Common;
 using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -28,18 +29,11 @@ public abstract class BuffStatus : MonoBehaviour
 
     public BuffApplicationPolicy Policy { get; set; } = BuffApplicationPolicy.Replace;
 
-    public void Initialize(string buffId, string sourceId, float duration = -1f)
-    {
-        BuffId = buffId;
-        SourceId = sourceId;
-        Duration = duration;
-    }
-
     public virtual void OnApply(IInteractive owner) => Owner = owner;
 
     public virtual void OnRemove() => onRemove?.Invoke();
 
-    public virtual bool Tick(InterractionContext interractionContext)
+    public virtual bool Tick(InteractionContext interractionContext)
     {
         if (Duration < 0) return false;
         _lifetime += Time.deltaTime;

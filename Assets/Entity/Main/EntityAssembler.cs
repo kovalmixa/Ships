@@ -1,6 +1,10 @@
-﻿using Assets.Entity.Hull;
+﻿using Assets.Common;
+using Assets.Entity.Hull;
+using Assets.Entity.Modifiers;
 using Entity.Controllers;
+using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Controllers
@@ -16,15 +20,13 @@ namespace Assets.Entity.Controllers
             if (data == null) return false;
 
             _entity.data = data;
-
             if (!SetHull(data.hullId)) return false;
 
             foreach (var equipment in data.equipmentIds.ToList())
                 if (!AddEquipment(equipment.Key, equipment.Value))
                     data.equipmentIds.Remove(equipment);
 
-            if (data.position != Vector2.zero)
-                _entity.transform.position = data.position;
+            if (data.position != Vector2.zero) _entity.transform.position = data.position;
 
             return true;
         }
@@ -34,7 +36,6 @@ namespace Assets.Entity.Controllers
             if (string.IsNullOrEmpty(hullId)) return false;
 
             if (_entity.hull != null) Object.Destroy(_entity.hull.gameObject);
-
             var hullObj = PrefabLoader.Instance.InstantiatePrefab(
                 hullId,
                 _entity.transform.position,
@@ -42,14 +43,10 @@ namespace Assets.Entity.Controllers
                 _entity.transform);
 
             if (hullObj == null) return false;
-
             var hull = hullObj.GetComponent<HullBase>();
-
             if (hull == null) return false;
-
             hull.root = _entity.transform;
             _entity.hull = hull;
-            _entity.Buffs.Register(hull.BuffController);
 
             return true;
         }
@@ -62,32 +59,37 @@ namespace Assets.Entity.Controllers
                 equipmentId,
                 Vector3.zero,
                 Quaternion.identity);
-
             if (obj == null) return false;
 
             var equipment = obj.GetComponentInChildren<Equipment.Equipment>();
-
             if (equipment == null)
             {
                 Object.Destroy(obj);
                 return false;
             }
-
             equipment.entityController = _entity;
 
+            uint quantity = 0;
+            bool success = false;
             foreach (var anchor in _entity.hull.equipmentAnchors)
             {
                 if (!anchor.CanBePlaced(equipment, index)) continue;
-
                 anchor.SetTransform(equipment);
                 _entity.hull.equipments.Add(equipment);
-                _entity.Buffs.Register(equipment.BuffController);
-                _entity.Abilities.Register(equipment);
-                return true;
+                quantity++;
+                success = true;
             }
 
-            Object.Destroy(obj);
-            return false;
+            var snapshot = _entity.GetSnapshot();
+            var statOptions = equipment.Data.statOptions;
+            foreach (var buff in statOptions.buffs) _entity.Buffs.AddBuff(buff, snapshot);
+            equipment.StatModController.SetupBaseStats(statOptions.stats, statOptions.mods);
+            foreach (var anchor in _entity.hull.equipmentAnchors)
+            {
+                _entity.statModController.SetupStatsMods(equipment.StatModController.LocalModifiers);
+                _entity.Abilities.Register(equipment);
+            }
+            return success;
         }
     }
 }
