@@ -7,12 +7,8 @@ using Assets.Entity.Modifiers;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
-using GameplayActions;
 using Scripts;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Hull
@@ -31,12 +27,11 @@ namespace Assets.Entity.Hull
 
         #region Setup
 
-        private void Awake()
+        public void Setup(EntityController entityController) 
         {
             Id = GameObjectHandler.GenerateUniqueId(name);
-            entityController = GetComponentInParent<EntityController>();
+            this.entityController = entityController;
             abilitiesController = new(entityController.totalAbbilitiesController);
-            _statModController = new(entityController.statModController);
             rigidBody2D = GetComponent<Rigidbody2D>();
             Data = GetComponent<HullContainer>();
             SetupPropertiesByData();
@@ -44,13 +39,11 @@ namespace Assets.Entity.Hull
         }
         private void SetupPropertiesByData()
         {
-
             var snapshot = entityController.GetSnapshot();
             var statOptions = Data.statOptions;
+            _statModController = new(entityController.statModController, statOptions);
             foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);
             foreach (var ability in statOptions.abilities) abilitiesController.AddAbility(ability);
-            StatModController.SetupBaseStats(statOptions.stats, statOptions.mods);
-            entityController.statModController.RegisterExternalModifiers(new Modifiers.Modifiers(statOptions.mods));
         }
 
         private void CollectAnchors(Transform parent)
@@ -119,6 +112,8 @@ namespace Assets.Entity.Hull
         #endregion
 
         #region IInteractive
+
+        public GameObject GameObject => gameObject;
 
         public void AddBuff(InteractionContext context)
         {

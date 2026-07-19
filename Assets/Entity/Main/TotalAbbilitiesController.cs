@@ -35,7 +35,6 @@ namespace Assets.Entity.Controllers
                     if (equipment == null) continue;
                     foreach (var ability in equipment.RuntimeAbilities)
                     {
-                        if (ability == null) continue;
                         if (!_equipmentAbilities.ContainsKey(ability.type))
                             _equipmentAbilities[ability.type] = null;
 
@@ -100,12 +99,11 @@ namespace Assets.Entity.Controllers
 
         private InteractionContext CreateInteractionContext(AbilityType key)
         {
-            return new InteractionContext
-            {
-                SourceObject = gameObject,
-                SourceSnapshot = _entityController != null ? _entityController.GetSnapshot() : null,
-                AbilityId = key.ToString()
-            };
+            var context = new InteractionContext();
+            context.SourceSnapshot = _entityController != null ? _entityController.GetSnapshot() : null;
+            context.AbilityId = key.ToString();
+            context.SetSource(gameObject);
+            return context;
         }
     }
 }

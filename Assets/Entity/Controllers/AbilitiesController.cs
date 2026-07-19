@@ -31,11 +31,8 @@ namespace Assets.Entity.Controllers
 
         public virtual void AddAbility(AbilityUnit ability)
         {
-            if (ability == null) return;
             _runtimeAbilities.Add(ability);
             _totalAbbilitiesCtr.MarkDirty();
-
-            if (ability == null) return;
             ((List<AbilityUnit>)RuntimeAbilities).Add(ability);
         }
 

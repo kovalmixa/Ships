@@ -28,6 +28,9 @@ public class LifestealBuff : BuffStatus
         // Вызываем лечение на владельце баффа
         // Примечание: Убедись, что твоя система лечения не генерирует DamageDealtEvent, 
         // иначе получится бесконечная рекурсия. Либо создай отдельное событие HealEvent.
-        Owner.TakeHeal(null, new Heal(healAmount));
+        var context = data.Context;
+        context.ActionStruct = new Heal(healAmount);
+        context.SetTarget(data.Source.GameObject);
+        Owner.TakeHeal(context);
     }
 }

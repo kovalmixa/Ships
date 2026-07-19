@@ -23,7 +23,13 @@ namespace Assets.Entity.Projectile
 
         public void Tick()
         {
+            Move();
+        }
 
+        private void Move()
+        {
+            //transform.position += (Vector3)(_direction * (speed * Time.deltaTime));
+            //_timer += Time.deltaTime;
         }
     }
 }

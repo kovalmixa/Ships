@@ -29,7 +29,7 @@ namespace GameplayActions
         }
         public override void Execute(InteractionContext interractionContext, IInteractive target)
         {
-            target.TakeHeal(interractionContext, heal);
+            target.TakeHeal(interractionContext);
         }
 
         #region IScalableAction

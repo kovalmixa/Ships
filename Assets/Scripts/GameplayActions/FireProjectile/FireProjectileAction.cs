@@ -26,13 +26,6 @@ namespace GameplayActions
 
     public class FireProjectileAction : GameplayAction
     {
-        private ObjectPoolHandler poolHandler;
-
-        private void Awake()
-        {
-            poolHandler = SceneNodesHandler.GetPoolHandler("ProjectilePool");
-        }
-
         public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
         {
             Debug.Log("Pew");

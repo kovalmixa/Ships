@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Assets.Common;
 using Assets.Entity.Modifiers;
 
 namespace Assets.Entity.Controllers
@@ -30,15 +31,17 @@ namespace Assets.Entity.Controllers
 
         private readonly List<Modifiers.Modifiers> _externalModifiers = new();
         private readonly StatModController _totalController;
-        public StatModController(StatModController totalModStatController) => _totalController = totalModStatController;
-
-        public void SetupBaseStats(IEnumerable<StatUnit> baseStats, IEnumerable<ModUnit> localMods = null)
+        public StatModController(StatModController totalModStatController, StatOptions statOptions)
         {
-            _baseStats = baseStats.GroupBy(unit => (unit.Type, unit.StatLayer))
+            _totalController = totalModStatController;
+
+            _baseStats = statOptions.stats.GroupBy(unit => (unit.Type, unit.StatLayer))
                 .ToDictionary(g => g.Key, g => g.Sum(unit => unit.Value));
 
             _localModifiers.Clear();
-            if (localMods != null) _localModifiers.Add(localMods);
+            if (statOptions.mods != null) _localModifiers.Add(statOptions.mods);
+
+            _totalController.RegisterExternalModifiers(_localModifiers);
 
             _isDirty = true;
         }
@@ -46,6 +49,7 @@ namespace Assets.Entity.Controllers
         public void RegisterExternalModifiers(Modifiers.Modifiers mods)
         {
             if (mods == null || _externalModifiers.Contains(mods)) return;
+
             _externalModifiers.Add(mods);
             _isDirty = true;
         }

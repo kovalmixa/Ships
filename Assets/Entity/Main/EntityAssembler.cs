@@ -1,11 +1,9 @@
-﻿using Assets.Common;
-using Assets.Entity.Hull;
-using Assets.Entity.Modifiers;
+﻿using Assets.Entity.Hull;
 using Entity.Controllers;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Assets.Entity.Controllers
 {
@@ -47,7 +45,7 @@ namespace Assets.Entity.Controllers
             if (hull == null) return false;
             hull.root = _entity.transform;
             _entity.hull = hull;
-
+            hull.Setup(_entity);
             return true;
         }
 
@@ -61,34 +59,28 @@ namespace Assets.Entity.Controllers
                 Quaternion.identity);
             if (obj == null) return false;
 
-            var equipment = obj.GetComponentInChildren<Equipment.Equipment>();
-            if (equipment == null)
+            var equipmentTemplate = obj.GetComponentInChildren<Equipment.Equipment>();
+            if (equipmentTemplate == null)
             {
                 Object.Destroy(obj);
                 return false;
             }
-            equipment.entityController = _entity;
 
             uint quantity = 0;
             bool success = false;
+            var newEquipments = new List<Equipment.Equipment>();
             foreach (var anchor in _entity.hull.equipmentAnchors)
             {
-                if (!anchor.CanBePlaced(equipment, index)) continue;
-                anchor.SetTransform(equipment);
-                _entity.hull.equipments.Add(equipment);
+                if (!anchor.CanBePlaced(equipmentTemplate, index)) continue;
+                anchor.SetTransform(equipmentTemplate);
+                newEquipments.Add(equipmentTemplate);
                 quantity++;
                 success = true;
             }
+            _entity.hull.equipments.AddRange(newEquipments);
 
-            var snapshot = _entity.GetSnapshot();
-            var statOptions = equipment.Data.statOptions;
-            foreach (var buff in statOptions.buffs) _entity.Buffs.AddBuff(buff, snapshot);
-            equipment.StatModController.SetupBaseStats(statOptions.stats, statOptions.mods);
-            foreach (var anchor in _entity.hull.equipmentAnchors)
-            {
-                _entity.statModController.SetupStatsMods(equipment.StatModController.LocalModifiers);
-                _entity.Abilities.Register(equipment);
-            }
+            foreach (var equipment in newEquipments) equipment.Setup(_entity);
+
             return success;
         }
     }

@@ -41,7 +41,7 @@ namespace GameplayActions
             Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, damage.range, combinedMask);
             foreach (var target in targets)
                 if (target.TryGetComponent(out IInteractive interactive))
-                    interactive.TakeDamage(interractionContext, damage);
+                    interactive.TakeDamage(interractionContext);
 
             //todo add extra damage options with types
         }
@@ -49,7 +49,7 @@ namespace GameplayActions
         public override void Execute(InteractionContext interractionContext, IInteractive target)
         {
             var damage = (Damage)interractionContext.ActionStruct;
-            target.TakeDamage(interractionContext, damage);
+            target.TakeDamage(interractionContext);
         }
     }
 }

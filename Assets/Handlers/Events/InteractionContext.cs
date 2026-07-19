@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Assets.Scripts.Actions
 {
-
     public enum InterractionType
     {
         None, Damage, FireProjectile, Heal, SetBuff
@@ -14,11 +13,22 @@ namespace Assets.Scripts.Actions
     public class InteractionContext
     {
         public EntitySnapshot SourceSnapshot { get; set; }
-        public IInteractive SourceInterractive { get; set; }
-        public IInteractive TargetInterractive { get; set; }
+
+        private GameObject _sourceObject;
+        private GameObject _targetObject;
+
+        public GameObject SourceObject => _sourceObject;
+        public GameObject TargetObject => _targetObject;
+
+
+        private IInteractive _sourceInteractive;
+        private IInteractive _targetInteractive;
+
+        public IInteractive SourceInterractive => _sourceInteractive;
+        public IInteractive TargetInterractive => TargetInterractive;
+
         public string AbilityId { get; set; }
-        public GameObject SourceObject { get; set; }
-        public GameObject TargetObject { get; set; }
+
         public InterractionType Type
         {
             get
@@ -33,19 +43,29 @@ namespace Assets.Scripts.Actions
                 }
             }
         }
-
         public IActionStruct ActionStruct { get; set; }
 
         public InteractionContext() { }
+        
         public InteractionContext(InteractionContext interractionContext)
         {
             SourceSnapshot = interractionContext.SourceSnapshot;
-            SourceInterractive = interractionContext.SourceInterractive;
-            TargetInterractive = interractionContext.TargetInterractive;
+            SetTarget(interractionContext.TargetObject);
+            SetSource(interractionContext.SourceObject);
             AbilityId = interractionContext.AbilityId;
-            SourceObject = interractionContext.SourceObject;
-            TargetObject = interractionContext.TargetObject;
             ActionStruct = interractionContext.ActionStruct;
+        }
+    
+        public void SetTarget(GameObject gameObject)
+        {
+            _targetObject = gameObject;
+            _targetInteractive = gameObject.GetComponent<IInteractive>();
+        }
+
+        public void SetSource(GameObject gameObject)
+        {
+            _sourceObject = gameObject;
+            _sourceInteractive = gameObject.GetComponent<IInteractive>();
         }
     }
 }

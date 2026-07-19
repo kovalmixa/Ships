@@ -1,4 +1,3 @@
-using GameplayActions;
 using Assets.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
@@ -13,7 +12,7 @@ namespace Assets.Entity.Equipment
 {
     public class Equipment : MonoBehaviour, IInteractive, IStats, IAbbility
     {
-        public EntityController entityController;
+        private EntityController _entityController;
         [field: SerializeField] public EquipmentContainer Data { get; private set; }
 
         public EquipmentAnchor EquipmentAnchor { get; set; }
@@ -21,16 +20,35 @@ namespace Assets.Entity.Equipment
         private const float _basicAngle = 90;
         public Vector2 Position
         {
-            get => transform.position + entityController.transform.position;
+            get => transform.position + _entityController.transform.position;
             set { }
         }
         public string Id { get; set; }
 
-        private void Awake()
+        #region Setup
+
+        public void Setup(EntityController entityController)
         {
+            _entityController = entityController;
             Id = GameObjectHandler.GenerateUniqueId(name);
-            abilitiesController = new(entityController.totalAbbilitiesController, transform, _basicAngle, EquipmentAnchor);
+            var snapshot = entityController.GetSnapshot();
+            var statOptions = Data.statOptions;
+            _statModController = new(entityController.statModController, statOptions);
+            foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);
+
+            abilitiesController = new(
+                _entityController.totalAbbilitiesController,
+                transform,
+                _basicAngle,
+                EquipmentAnchor
+                );
+            foreach (var ability in statOptions.abilities) abilitiesController.AddAbility(ability);
+
         }
+
+        #endregion
+
+        #region Rotation
 
         public void Rotate(Vector3 targetPos)
         {
@@ -57,13 +75,17 @@ namespace Assets.Entity.Equipment
             return EquipmentAnchor.rotationSector != Vector2.zero;
         }
 
+        #endregion
+
         #region IInteractive
+
+        public GameObject GameObject => gameObject;
 
         public void AddBuff(InteractionContext context)
         {
             var buff = context.ActionStruct as BuffStatus;
             if (buff == null) return;
-            entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
+            _entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
         }
 
         public void TakeDamage(InteractionContext interractionContext)

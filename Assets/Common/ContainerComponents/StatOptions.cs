@@ -19,6 +19,7 @@ namespace Assets.Common
         public GameplayAction action;
         public AbilityActivationMode mode;
         public float delay;
+        public float globalUsageDelay;
         public bool isPassive;
     }
 

@@ -36,7 +36,7 @@ public class SetBuffAction : GameplayAction, IScalableAction
         var buff = interractionContext.ActionStruct as BuffStatus;
         buff.SourceId = interractionContext?.AbilityId ?? interractionContext.SourceSnapshot.Id;
         buff.Duration = buff.IsPermanent ? -1f : buff.Duration;
-        target.AddBuffs(interractionContext, buff);
+        target.AddBuff(interractionContext);
     }
 
     public void ScaleExecute(InteractionContext interractionContext, Vector3 targetPos, float scale)
