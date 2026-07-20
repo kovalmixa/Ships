@@ -1,5 +1,7 @@
 ﻿using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
+using System.Linq;
+using UnityEngine;
 
 namespace Assets.Entity.Projectile
 {
@@ -10,7 +12,12 @@ namespace Assets.Entity.Projectile
         public void Launch(InteractionContext interractionContext)
         {
             var projectile = _projectilePool.Get();
-            projectile.GetComponent<ProjectileInstance>().Setup(interractionContext);
+            var sourceTransform = interractionContext.SourceObject.transform;
+            projectile.GetComponent<ProjectileInstance>().Setup(
+                interractionContext, 
+                () => _projectilePool.Return(projectile), 
+                sourceTransform
+                );
         }
 
         protected override void Awake()
@@ -21,11 +28,11 @@ namespace Assets.Entity.Projectile
 
         private void Update()
         {
-            var projectiles = _projectilePool.GetAllActive();
-            foreach (var proj in projectiles)
-            {
-                
-            }
+            var projectiles = _projectilePool.GetAllActive()
+                .Select(go => go.GetComponent<ProjectileInstance>())
+                .Where(instance => instance != null)
+                .ToArray();
+            foreach (var proj in projectiles) proj.Tick(Time.deltaTime);
         }
     }
 }

@@ -15,15 +15,29 @@ namespace Assets.Entity.Hull
 {
     public abstract class HullBase : MonoBehaviour, IHull, IInteractive, IStats, IAbbility
     {
-        [field: SerializeField] public HullContainer Data { get; private set; }
-        public List<EquipmentAnchor> equipmentAnchors;
-        public List<Equipment.Equipment> equipments;
-        public Transform root;
-        public float currentSpeed;
+        public HullContainer Data { get; private set; }
+        [HideInInspector] public List<EquipmentAnchor> equipmentAnchors;
+        [HideInInspector] public List<Equipment.Equipment> equipments;
+        [HideInInspector] public Transform root;
+        [HideInInspector] public float currentSpeed;
         public string Id { get; set; }
 
         protected EntityController entityController;
         protected Rigidbody2D rigidBody2D;
+
+        #region Editor
+
+        private void OnValidate()
+        {
+            if (Data == null) Data = GetComponent<HullContainer>();
+            if (Data == null) return;
+
+            var statOptions = Data.statOptions;
+            if (statOptions.stats != null) foreach (var stat in statOptions.stats) stat?.UpdateInspectorName();
+            if (statOptions.mods != null)foreach (var mod in statOptions.mods) mod?.UpdateInspectorName();
+        }
+
+        #endregion
 
         #region Setup
 
@@ -33,6 +47,7 @@ namespace Assets.Entity.Hull
             this.entityController = entityController;
             abilitiesController = new(entityController.totalAbbilitiesController);
             rigidBody2D = GetComponent<Rigidbody2D>();
+
             Data = GetComponent<HullContainer>();
             SetupPropertiesByData();
             CollectAnchors(transform);

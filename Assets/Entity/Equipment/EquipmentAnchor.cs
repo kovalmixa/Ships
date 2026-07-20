@@ -52,6 +52,8 @@ namespace Assets.Entity.Equipment
             GameObjectHandler.SetRenderLayerOrder(gameObject, orderLayer);
         }
 
+        #region Editor
+
         private void OnDrawGizmos()
         {
             Vector3 origin = transform.position;
@@ -90,5 +92,7 @@ namespace Assets.Entity.Equipment
             float rad = (angleDeg + transform.eulerAngles.z) * Mathf.Deg2Rad;
             return new Vector3(Mathf.Cos(rad), Mathf.Sin(rad), 0);
         }
+
+        #endregion
     }
 }

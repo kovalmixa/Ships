@@ -1,6 +1,4 @@
-﻿using GameplayActions;
-using Assets.Handlers.Enums;
-using Assets.Scripts.Actions;
+﻿using Assets.Handlers.Enums;
 using System;
 using System.Collections.Generic;
 
@@ -47,7 +45,7 @@ namespace Assets.Handlers.Enums
     public enum VehicleSubType
     {
         None,
-        Boat, Destroyer, LightCruiser, Cruiser, HeavyCruiser, Battleship, SuperBattleship,
+        Boat, GunBoat, Corvette, Fregate, Destroyer, LightCruiser, Cruiser, HeavyCruiser, Battleship, SuperBattleship,
         AircraftCarrier, HelicopterCarrier, LightAircraftCarrier, SuperAircraftCarrier,
         Submarine, SubmarineCruiser, NuclearSubmarine, SubmarineBattleship, SubmarineAircraftCarrier
     }

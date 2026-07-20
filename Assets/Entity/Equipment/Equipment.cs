@@ -1,4 +1,5 @@
 using Assets.Common;
+using Assets.DataContainers;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
@@ -24,6 +25,20 @@ namespace Assets.Entity.Equipment
             set { }
         }
         public string Id { get; set; }
+
+        #region Editor
+
+        private void OnValidate()
+        {
+            if (Data == null) Data = GetComponent<EquipmentContainer>();
+            if (Data == null) return;
+
+            var statOptions = Data.statOptions;
+            if (statOptions.stats != null) foreach (var stat in statOptions.stats) stat?.UpdateInspectorName();
+            if (statOptions.mods != null) foreach (var mod in statOptions.mods) mod?.UpdateInspectorName();
+        }
+
+        #endregion
 
         #region Setup
 

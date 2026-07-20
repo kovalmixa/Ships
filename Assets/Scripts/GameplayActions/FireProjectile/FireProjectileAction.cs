@@ -11,7 +11,7 @@ namespace GameplayActions
         public string Id { get; set; }
         [field: SerializeField] public ProjectileType Type { get; set; }
 
-        public Vector2 targetPosition;
+        public Vector2? targetPosition;
         public Vector2 startPosition;
 
         public Damage damage;

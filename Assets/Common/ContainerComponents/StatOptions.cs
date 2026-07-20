@@ -20,6 +20,7 @@ namespace Assets.Common
         public AbilityActivationMode mode;
         public float delay;
         public float globalUsageDelay;
+        public uint charges;
         public bool isPassive;
     }
 
