@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 9
+  serializedVersion: 10
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -42,8 +42,8 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
-  m_GIWorkflowMode: 1
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -66,9 +66,6 @@ LightmapSettings:
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
-    m_FinalGather: 0
-    m_FinalGatherFiltering: 1
-    m_FinalGatherRayCount: 256
     m_ReflectionCompression: 2
     m_MixedBakeMode: 2
     m_BakeBackend: 1
@@ -166,8 +163,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a15ae1a684168ba43bc544f43ed77da7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  poolType: 4
   prefab: {fileID: 6289611174622183227, guid: e9e9aae8bdcd93f428eef0e33baa0914, type: 3}
-  initialSize: 100
+  defaultCapacity: 100
+  maxSize: 1000
 --- !u!1 &634284858
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,10 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305937c1bc9b54842a7cb20469253bb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DontDestroyOnLoadObj:
-  - {fileID: 8625279402674570549}
-  - {fileID: 649772205}
-  - {fileID: 515741640332060687}
+  _dontDestroyOnLoadObj: []
 --- !u!4 &634284860
 Transform:
   m_ObjectHideFlags: 0
@@ -344,8 +340,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7e8ef654ec5e34ea523ef8ec838274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  poolType: 0
   prefab: {fileID: 1795083864419907268, guid: 902ac850bc821c440b2d97c6c432d8dc, type: 3}
-  initialSize: 100
+  defaultCapacity: 100
+  maxSize: 1000
 --- !u!4 &760845635502950977
 Transform:
   m_ObjectHideFlags: 0
@@ -409,11 +407,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34b5d82a619e2a7488cbc4f3ddfabadc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  virtualCamera: {fileID: 469054670094725340}
-  sensitivity: 4
-  MinZoom: 1
-  MaxZoom: 50
-  SmoothSpeed: 5
+  _virtualCamera: {fileID: 0}
+  _sensitivity: 0
+  minZoom: 0
+  maxZoom: 0
 --- !u!1001 &2912457315036530571
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -467,19 +464,19 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
-      propertyPath: WeaponIds.Array.data[0]
+      propertyPath: 'WeaponIds.Array.data[0]'
       value: USA_e_mg45
       objectReference: {fileID: 0}
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
-      propertyPath: EquipmentIds.Array.data[0]
+      propertyPath: 'EquipmentIds.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
-      propertyPath: EquipmentIds.Array.data[1]
+      propertyPath: 'EquipmentIds.Array.data[1]'
       value: GER/mg45
       objectReference: {fileID: 0}
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
-      propertyPath: EquipmentIds.Array.data[2]
+      propertyPath: 'EquipmentIds.Array.data[2]'
       value: GER/mg45
       objectReference: {fileID: 0}
     - target: {fileID: 2939312566082401126, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
@@ -590,8 +587,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7e8ef654ec5e34ea523ef8ec838274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  poolType: 0
   prefab: {fileID: 2367944767525619843, guid: f7773edf65da1274598f909c98d51cea, type: 3}
-  initialSize: 100
+  defaultCapacity: 100
+  maxSize: 1500
 --- !u!81 &3553349722862297165
 AudioListener:
   m_ObjectHideFlags: 0
@@ -646,8 +645,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7e8ef654ec5e34ea523ef8ec838274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  poolType: 1
   prefab: {fileID: 1043631210884575351, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
-  initialSize: 20
+  defaultCapacity: 50
+  maxSize: 150
 --- !u!1 &6144063009926188650
 GameObject:
   m_ObjectHideFlags: 0
@@ -981,7 +982,6 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
-  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -989,6 +989,7 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

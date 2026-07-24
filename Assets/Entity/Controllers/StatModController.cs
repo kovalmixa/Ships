@@ -31,6 +31,9 @@ namespace Assets.Entity.Controllers
 
         private readonly List<Modifiers.Modifiers> _externalModifiers = new();
         private readonly StatModController _totalController;
+
+        public StatModController() { }
+
         public StatModController(StatModController totalModStatController, StatOptions statOptions)
         {
             _totalController = totalModStatController;

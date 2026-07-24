@@ -4,15 +4,12 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    public class VisualAction : GameplayAction
+    public class EffectAction : GameplayAction
     {
         private ObjectPoolHandler _effectPool;
         [SerializeField] private string[] _ids;
 
-        private void Awake()
-        {
-            _effectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
-        }
+        private void Awake() => _effectPool = ObjectPoolHandler.GetInstance(PoolType.Effect);
 
         public override void Execute(InteractionContext interractionContext, Vector3 targetPos){
             if (_effectPool == null) return;

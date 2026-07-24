@@ -26,66 +26,58 @@ namespace Effects
 
     public class GameEffect : MonoBehaviour
     {
-        [SerializeField] private List<ParticleEffectData> particles;
-        [SerializeField] private List<SoundEffectData> sounds;
-        [SerializeField] private Animator animator;
+        private ParticleSystem[] _particles;
+        private AudioSource _audioSource;
+        private SpriteRenderer _spriteRenderer;
+        private Animator _animator;
 
-        [SerializeField] private bool isLoopedAnimation;
-        [SerializeField] private bool isLoopedSound;
+        [SerializeField] private bool _isLoopedAnimation;
+        [SerializeField] private bool _isLoopedSound;
+        public float duration;
+        public float volume;
 
         private bool isPlayedSound;
-        private string layerStateName = " ";
-        private ObjectPoolHandler objectPool;
-        private AudioSourcePool audioSourcePool;
-        private AudioSource currentAudioSource;
+        private ObjectPoolHandler _effectsPool;
 
-        public float Duration;
-        public float Volume;
+        private AudioSourcePool _audioSourcePool;
+        private AudioSource _currentAudioSource;
+
         private void Start()
         {
-            objectPool = SceneNodesHandler.GetPoolHandler("EffectPool");
-            audioSourcePool = SceneNodesHandler.GetPoolHandler("AudioSourcePool") as AudioSourcePool;
-            layerStateName = GetHitLayerName();
+            _effectsPool = SceneNodesHandler.GetPoolHandler("EffectPool");
+            _audioSourcePool = SceneNodesHandler.GetPoolHandler("AudioSourcePool") as AudioSourcePool;
+            _particles = gameObject.GetComponentsInChildren<ParticleSystem>();
+            _audioSource = gameObject.GetComponentInChildren<AudioSource>();
+            _spriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
+            _animator = gameObject.GetComponentInChildren<Animator>();
             Play();
         }
 
-        private string GetHitLayerName()
-        {
-            Collider2D hitCollider = Physics2D.OverlapPoint(transform.position);
-            int layer = 0;
-            if (hitCollider != null)
-            {
-                GameObject hitObject = hitCollider.gameObject;
-                layer = hitObject.layer;
-            }
-            return LayerMask.LayerToName(layer);
-        }
+
 
         public void Play()
         {
             //Debug.Log($"Effect: {name}, layer {layerStateName}");
-            if (animator == null)
+            if (_animator == null)
             {
                 Debug.LogError("animator is null and cant play");
                 return;
             }
 
-            if (animator.HasState(0, Animator.StringToHash(layerStateName)))
-                animator?.Play(layerStateName);
             //Debug.Log(GetAnimationLength(animator));
             StartCoroutine(DestroyAfterEffect());
         }
 
         private IEnumerator DestroyAfterEffect()
         {
-            float animDuration = Duration > 0 ? Duration : GetAnimationLength();
-            float soundDuration = currentAudioSource != null ? currentAudioSource.clip.length : 0f;
+            float animDuration = duration > 0 ? duration : GetAnimationLength();
+            float soundDuration = _currentAudioSource != null ? _currentAudioSource.clip.length : 0f;
             float totalWait = Mathf.Max(animDuration, soundDuration);
             // ∆дЄм всю длительность анимации
             yield return new WaitForSeconds(animDuration);
-            if (!isLoopedAnimation)
+            if (!_isLoopedAnimation)
             {
-                if (animator != null) animator.enabled = false;
+                if (_animator != null) _animator.enabled = false;
                 // ¬ажно! —брасываем спрайт вручную
                 var spriteRenderer = GetComponent<SpriteRenderer>();
                 if (spriteRenderer != null) spriteRenderer.sprite = null;
@@ -94,19 +86,17 @@ namespace Effects
             float remaining = totalWait - animDuration;
             if (remaining > 0.01f) yield return new WaitForSeconds(remaining);
 
-            if (objectPool != null)
-                objectPool.Return(gameObject);
+            if (_effectsPool != null)
+                _effectsPool.Return(gameObject);
             else
                 gameObject.SetActive(false);
         }
 
         protected float GetAnimationLength()
         {
-            if (animator == null 
-                || !animator.HasState(0, Animator.StringToHash(layerStateName))) return 0f;
-            animator.Play(layerStateName, 0, 0f);
-            animator.Update(0f);
-            var info = animator.GetCurrentAnimatorStateInfo(0);
+            //_animator.Play(layerStateName, 0, 0f);
+            _animator.Update(0f);
+            var info = _animator.GetCurrentAnimatorStateInfo(0);
             return info.length;
         }
 
@@ -114,19 +104,16 @@ namespace Effects
 
         public void PlaySound()
         {
-            if (!isLoopedSound && isPlayedSound) return;
-            var soundData = sounds.FirstOrDefault(x => x.LayerName == layerStateName);
-            if (soundData?.AudioSource == null || soundData.AudioSource.clip == null) return;
-            currentAudioSource = soundData.AudioSource;
-            audioSourcePool.PlaySound(currentAudioSource.clip, transform.position, Volume);
+            if (!_isLoopedSound && isPlayedSound) return;
+            if (_audioSource == null || _audioSource.clip == null) return;
+            _audioSourcePool.PlaySound(_currentAudioSource.clip, transform.position, volume);
             isPlayedSound = true;
         }
 
         public void PlayParticles()
         {
-            var particle = particles.First(x => x.LayerName == layerStateName);
-            if (!particle?.ParticleSystem == null) return;
-            particle.ParticleSystem.Play();
+            if (_particles == null || _particles.Length == 0) return;
+            foreach (var particle in _particles) particle.Play();
         }
         #endregion
     }

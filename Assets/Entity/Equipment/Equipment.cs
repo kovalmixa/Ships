@@ -1,5 +1,4 @@
 using Assets.Common;
-using Assets.DataContainers;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
@@ -14,10 +13,8 @@ namespace Assets.Entity.Equipment
     public class Equipment : MonoBehaviour, IInteractive, IStats, IAbbility
     {
         private EntityController _entityController;
-        [field: SerializeField] public EquipmentContainer Data { get; private set; }
-
+        public EquipmentContainer Data { get; private set; }
         public EquipmentAnchor EquipmentAnchor { get; set; }
-
         private const float _basicAngle = 90;
         public Vector2 Position
         {

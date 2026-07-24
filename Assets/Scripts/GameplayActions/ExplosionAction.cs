@@ -13,7 +13,7 @@ namespace GameplayActions
 
         [SerializeField][CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
 
-        [SerializeField][CanBeNull] public VisualAction VisualAction;
+        [SerializeField][CanBeNull] public EffectAction VisualAction;
     }
 
     public class ExplosionAction : GameplayAction

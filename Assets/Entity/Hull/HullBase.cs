@@ -106,7 +106,7 @@ namespace Assets.Entity.Hull
         {
             Rigidbody2D otherRb = collision.rigidbody;
             if (otherRb == null) return;
-            if (collision.gameObject.layer != LayerMask.NameToLayer(Data.general.layer.ToString())
+            if (collision.gameObject.layer != LayerMask.NameToLayer(Data.general.Layer.ToString())
                 && collision.gameObject.layer != LayerMask.NameToLayer("Markers"))
             {
                 currentSpeed = 0;

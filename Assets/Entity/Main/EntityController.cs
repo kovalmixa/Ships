@@ -18,7 +18,7 @@ namespace Entity.Controllers
         public TotalAbbilitiesController abbilitiesController;
         public EntityAssembler Assembler { get; private set; }
         public TotalAbbilitiesController totalAbbilitiesController { get; private set; }
-        public StatModController statModController { get; private set; }
+        public StatModController statModController { get; private set; } = new();
         public BuffStatusesController Buffs { get; private set; }
         public IDriver Driver { get; set; }
         [SerializeField] private GameObject _despawnPrefab;

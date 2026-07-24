@@ -7,14 +7,16 @@ namespace Assets.Entity.Projectile
 {
     public class ProjectileInstance : MonoBehaviour
     {
-        [SerializeField] private GameplayAction[] onExplosionActions;
-
+        private EffectAction _effectAction;
+        private GameplayAction[] onExplosionActions;
         private ProjectileDefinition _definition;
         private Vector2 _direction;
         private InteractionContext _context;
         private Transform _targetTransform;
         private event Action _onDeactivate;
         private float _timer;
+        
+        #region Setup
 
         public void Setup(InteractionContext interactionContext, Action onDeactivate, Transform targetTransform = null)
         {
@@ -36,9 +38,17 @@ namespace Assets.Entity.Projectile
             transform.SetPositionAndRotation(_definition.startPosition, Quaternion.Euler(0, 0, angle - 90f));
 
             IgnoreShooterCollision(true);
+            SetupEffect();
 
             gameObject.SetActive(true);
         }
+
+        private void SetupEffect()
+        {
+
+        }
+
+        #endregion
 
         public void Tick(float deltaTime)
         {

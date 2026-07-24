@@ -7,10 +7,10 @@ namespace Assets.Common
     public class GeneralOptions
     {
         public string name;
-        public SizeType sizeType;
-        public LayerType layer;
-        public int slotHeight = 1;
-        public int slotWidth = 1;
+        [field: SerializeField] public SizeType SizeType { get; private set; }
+        public LayerType Layer;
+        [field: SerializeField] public int SlotHeight { get; private set; } = 1;
+        [field: SerializeField] public int SlotWidth { get; private set; } = 1;
         public Texture icon;
     }
 }

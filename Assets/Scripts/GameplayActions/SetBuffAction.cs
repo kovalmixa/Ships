@@ -10,9 +10,9 @@ public struct BuffDefinition : IActionStruct
     //public string SourceId { get; set; } = "Ability_XXX";
     [SerializeField] public uint range;
     [SerializeField] public int[] layers;
-    [SerializeField][CanBeNull] public VisualAction visualAction;
+    [SerializeField][CanBeNull] public EffectAction visualAction;
 
-    public BuffDefinition(BuffStatus[] buffs, uint range, int[] layers, VisualAction visualAction = null){
+    public BuffDefinition(BuffStatus[] buffs, uint range, int[] layers, EffectAction visualAction = null){
         this.buffs = buffs;
         this.range = range;
         this.layers = layers;

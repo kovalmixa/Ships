@@ -8,7 +8,8 @@ namespace Assets.Entity.Equipment
     {
         public GeneralOptions general;
         public string Id { get; set; }
-        public EquipmentSubType Type { get; }
+        [field: SerializeField] public EquipmentType Type { get; private set; }
+        [field: SerializeField] public ProjectileType ProjectileType { get; private set; }
 
         public StatOptions statOptions;
     }

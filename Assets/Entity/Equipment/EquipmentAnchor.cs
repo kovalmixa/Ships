@@ -1,4 +1,3 @@
-using Assets.Handlers;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
@@ -8,13 +7,10 @@ namespace Assets.Entity.Equipment
     [ExecuteInEditMode]
     public class EquipmentAnchor : MonoBehaviour
     {
-        public enum AnchorFilterMode { ByMasterType, BySubType }
-
         public int index;
 
-        public AnchorFilterMode filterMode;
-        public EquipmentMasterType masterClassType;
-        public EquipmentSubType subClassType;
+        public EquipmentType equipmentType = EquipmentType.None;
+        public ProjectileType projectileType = ProjectileType.None;
 
         public SizeType sizeType;
 
@@ -29,14 +25,10 @@ namespace Assets.Entity.Equipment
             if (this.index != index) return false;
 
             EquipmentContainer equipmentContainer = equipment.Data;
-            if (sizeType != equipmentContainer.general.sizeType) return false;
-            EquipmentSubType eqSubType = equipmentContainer.Type;
-            if (filterMode == AnchorFilterMode.BySubType) return eqSubType == subClassType;
-            else
-            {
-                EquipmentMasterType eqMasterType = EquipmentHandler.TryGetMasterType(eqSubType);
-                return eqMasterType == masterClassType;
-            }
+            if (sizeType != equipmentContainer.general.SizeType) return false;
+            bool equipmentMatch = equipmentType == EquipmentType.None || equipmentType == equipmentContainer.Type;
+            bool projectileMatch = projectileType == ProjectileType.None || projectileType == equipmentContainer.ProjectileType;
+            return equipmentMatch && projectileMatch;
         }
 
         public void SetTransform(Equipment equipment)

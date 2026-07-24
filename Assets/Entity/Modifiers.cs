@@ -10,9 +10,9 @@ namespace Assets.Entity.Modifiers
 
     public enum StatType
     {
-        // ==========================================
-        // 1. БАЗОВЫЕ И РЕСУРСЫ (0 - 49)
-        // ==========================================
+        // ==============================================
+        // 1. BASIC AND RESOURCES (0 - 49)
+        // =============================================
         Hp = 0,
         MaxHp = 1,
         HpRegen = 2,
@@ -23,42 +23,40 @@ namespace Assets.Entity.Modifiers
         Shield = 7,
         MaxShield = 8,
         ShieldRegen = 9,
-        ShieldDelay = 10, // Задержка перед началом восстановления щита
-
-        // Люфт 11-49 под будущие ресурсы (например, Ярость, Мана, Стамина)
+        ShieldDelay = 10, // Delay before shield recovery starts
 
 
-        // ==========================================
-        // 2. ДВИЖЕНИЕ И ФИЗИКА (50 - 99)
-        // ==========================================
+        // ==============================================
+        // 2. MOVEMENT AND PHYSICS (50 - 99)
+        // ==============================================
         MaxMoveSpeed = 50,
         RotationSpeed = 51,
         Mass = 52,
         Acceleration = 53,
-        KnockbackResist = 54, // Сопротивление отбрасыванию
-        CollisionDamageReduction = 55, // Снижение урона от столкновений/тарана
-
-        // Люфт 56-99 (например, Дальность рывка, Скорость каста рывка)
+        KnockbackResist = 54, // Knockback Resistance
+        CollisionDamageReduction = 55, // Damage Reduction from Collisions/Rambling
 
 
-        // ==========================================
-        // 3. БОЕВЫЕ ОБЩИЕ / АТАКА (100 - 149)
-        // ==========================================
-        Damage = 100, // Базовый общий урон
-        DamageMultiplier = 101, // Множитель всего урона (%)
-        FireRate = 102, // Скорость атаки / стрельбы
-        Penetration = 103, // Пробитие брони (Armor Penetration)
-        ElementalChance = 104, // Общий шанс наложения стихийного эффекта
-        CritChance = 105, // Общий шанс крита
-        CritMultiplier = 106, // Урон крита (например, 150%)
-        MaxRange = 107, // Дальность атаки / обзора
-        AreaOfEffect = 108, // Радиус взрыва / поражения (AoE)
-        CooldownReduction = 109, // Перезарядка способностей (%)
-        Vampirism = 110, // Вампиризм / Похищение здоровья (%)
-        LifeStealOnKill = 111, // Здоровье за убийство
-        EnergyOnKill = 112, // Энергия за убийство
-
-        // Люфт 113-149
+        // ==============================================
+        // 3. COMBAT GENERAL / ATTACK (100 - 149)
+        // ==============================================
+        Damage = 100, // Base total damage
+        DamageMultiplier = 101, // Total damage multiplier (%)
+        FireRate = 102, // Attack / Fire Speed
+        Penetration = 103, // Armor Penetration
+        ElementalChance = 104, // Total chance of applying an elemental effect
+        CritChance = 105, // Total critical hit chance
+        CritMultiplier = 106, // Critical strike damage (e.g., 150%)
+        MaxRange = 107, // Attack/vision range
+        AreaOfEffect = 108, // Explosion/damage radius (AoE)
+        CooldownReduction = 109, // Ability cooldown (%)
+        HPSteal = 110, // Health steal (%)
+        EnergySteal = 111, // Energy steal (%)
+        ShieldSteal = 112, // Shield steal (%)
+        LifeStealOnKill = 113, // Health per kill
+        EnergyOnKill = 114, // Energy per kill
+        ShieldOnKill = 115, // Shield per kill
+        ShootDispersion = 116, // Accuracy of shooting
 
 
         // ==========================================
@@ -69,60 +67,48 @@ namespace Assets.Entity.Modifiers
         BlockChance = 152, // Шанс блока
         DamageReflection = 153, // Отражение урона (Шипы)
 
-        // Люфт 154-199
 
-
-        // ==========================================
-        // 5. ТИПЫ УРОНА СТИХИЙ (200 - 249)
-        // ==========================================
+        // ==============================================
+        // 5. ELEMENTAL DAMAGE TYPES (200 - 249)
+        // =============================================
         PhysicalDamage = 200,
-        FireDamage = 201, // Огонь
-        ExplosiveDamage = 202, // Взрыв
-        AcidDamage = 203, // Кислота
-        UltrasoundDamage = 204, // Ультразвук
-        ElectricityDamage = 205, // Электричество
-        PlasmaDamage = 206, // Плазма
-        SlowDamage = 207, // Замедление (если наносит урон)
-        FreezeDamage = 208, // Заморозка
-        PsiDamage = 209, // Пси
-        RadiationDamage = 210, // Радиация
-        EMPDamage = 211, // Электромагнетизм
-        SpatialAnomalyDamage = 212, // Пространственная аномалия
-        FloodingDamage = 213, // Затопление
+        FireDamage = 201, // Fire
+        ExplosiveDamage = 202, // Explosion
+        AcidDamage = 203, // Acid
+        UltrasoundDamage = 204, // Ultrasound
+        ElectricityDamage = 205, // Electricity
+        PlasmaDamage = 206, // Plasma
+        SlowDamage = 207, // Slow (if inflicts Damage)
+        FreezeDamage = 208, // Freeze
+        PsiDamage = 209, // Psi
+        RadiationDamage = 210, // Radiation
+        EMPDamage = 211, // Electromagnetism
+        SpatialAnomalyDamage = 212, // Spatial Anomaly
+        FloodingDamage = 213, // Flooding
 
-        // Люфт 214-249
-
-
-        // ==========================================
-        // 6. СОПРОТИВЛЕНИЯ / РЕСИСТЫ (250 - 299)
-        // ==========================================
+        // ==================================================
+        // 6. RESISTANCES (250 - 299)
+        // =================================================
         PhysicalResistance = 250,
-        FireResistance = 251, // Огнейстойкость
-        ExplosiveResistance = 252, // Взрывоустойчивость
-        AcidResistance = 253, // Кислотостойкость
-        UltrasoundResistance = 254, // Ультразвукоустойчивость
-        ElectricityResistance = 255, // Сопротивление электричеству
-        PlasmaResistance = 256, // Сопротивление плазме
-        SlowResistance = 257, // Сопротивление замедлению
-        FreezeResistance = 258, // Сопротивление заморозке / Оглушению
-        PsiResistance = 259, // Пси-защита
-        RadiationResistance = 260, // Сопротивление радиации
-        EMPResistance = 261, // Электромагнитная защита
-        SpatialAnomalyResistance = 262, // Устойчивость к аномалиям
-        FloodingResistance = 263, // Защита от затопления / гидроизоляция
+        FireResistance = 251, // Fire Resistance
+        ExplosiveResistance = 252, // Explosion Resistance
+        AcidResistance = 253, // Acid Resistance
+        UltrasoundResistance = 254, // Ultrasound Resistance
+        ElectricityResistance = 255, // Electricity Resistance
+        PlasmaResistance = 256, // Plasma Resistance
+        SlowResistance = 257, // Slow Resistance
+        FreezeResistance = 258, // Freeze/Stun Resistance
+        PsiResistance = 259, // Psi Protection
+        RadiationResistance = 260, // Radiation Resistance
+        EMPResistance = 261, // Electromagnetic Protection
+        SpatialAnomalyResistance = 262, // Anomaly Resistance
+        FloodingResistance = 263, // Flooding Protection/Waterproofing
+        ShockResistance = 264, // Shock Protection
+        StealResistance = 265, // HP/Energy/Shield Steal Protection
 
-        // Уязвимость / Дебаффы к стихиям (Взрывоопасность и т.д.)
-        ExplosiveVulnerability = 270, // Взрывоопасность (увеличивает входящий урон от взрывов)
-        FireVulnerability = 271, // Легковоспламеняемость
-        ConductivityVulnerability = 272, // Электропроводность (уязвимость к току)
-
-        // Люфт 273-299
-
-
-        // ==========================================
-        // 7. КРИТИЧЕСКИЙ УРОН И ШАНС КРИТА СТИХИЙ (300 - 349)
-        // ==========================================
-        // Шансы крита по стихиям
+        // ===============================================
+        // 7. CRITICAL DAMAGE AND ELEMENTAL CRIT CHANCE (300 - 349)
+        // ==================================================
         FireCritChance = 300,
         ExplosiveCritChance = 301,
         AcidCritChance = 302,
@@ -136,8 +122,10 @@ namespace Assets.Entity.Modifiers
         EMPCritChance = 310,
         SpatialAnomalyCritChance = 311,
         FloodingCritChance = 312,
+        ShockChance = 313,
+        StealChance = 314,
 
-        // Множители крита по стихиям (Крит. урон)
+        // Elemental Crit Multipliers (Crit Damage) 
         FireCritMultiplier = 320,
         ExplosiveCritMultiplier = 321,
         AcidCritMultiplier = 322,
@@ -151,36 +139,31 @@ namespace Assets.Entity.Modifiers
         EMPCritMultiplier = 330,
         SpatialAnomalyCritMultiplier = 331,
         FloodingCritMultiplier = 332,
+        ShockCritMultiplier = 333,
+        StealCritMultiplier = 334,
 
-        // Люфт 333-349
 
-
-        // ==========================================
-        // 8. ДАТА / ПРАМЕТРЫ СНАРЯДОВ (350 - 399)
-        // ==========================================
+        // ===================================================
+        // 8. DATE / PROJECTILE PARAMETERS (350 - 399)
+        // ================================================
         PrSpeed = 350,
         PrMoveType = 351,
         PrIsHoming = 352,
         PrLifeTime = 353,
-        PrPiercingCount = 354, // Сколько врагов насквозь пробивает снаряд
-        PrRicochetCount = 355, // Количество отскоков от стен/врагов
-        PrCount = 356, // Количество вылетающих снарядов за выстрел (Multishot)
-        PrSpreadAngle = 357, // Разброс снарядов
-
-        // Люфт 358-399
+        PrPiercingCount = 354, // Number of enemies a projectile pierces
+        PrRicochetCount = 355, // Number of wall/enemy bounces
+        PrCount = 356, // Number of projectiles fired per shot (Multishot)
 
 
-        // ==========================================
-        // 9. DIABLO-LIKE / НАГРАДЫ / ЭКОНОМИКА (400 - 449)
-        // ==========================================
-        ItemFind = 400, // Magic Find / Шанс выпадения редкого лута (%)
-        GoldFind = 401, // Избыток добычи ресурсов / кредитов (%)
-        ExpGain = 402, // Бонус к получаемому опыту (%)
-        PickupRadius = 403, // Радиус подбора предметов/сфер
-        BuildingSpeed = 404, // Скорость постройки / ремонта (для построек/турелей)
-        RepairEfficiency = 405  // Эффективность ремонта (%)
-
-        // Люфт 406-500+
+        // ===================================================
+        // 9. DIABLO-LIKE / REWARDS / ECONOMY (400 - 449)
+        // =============================================
+        ItemFind = 400, // Magic Find / Rare Loot Chance (%)
+        GoldFind = 401, // Resource/Credit Mining Surplus (%)
+        ExpGain = 402, // Experience Bonus (%)
+        PickupRadius = 403, // Item/Orb Pickup Radius
+        BuildingSpeed = 404, // Construction/Repair Speed ​​(for buildings/turrets)
+        RepairEfficiency = 405 // Repair Efficiency (%)
     }
 
     public enum ModApplyType { Single, Multiple }

@@ -8,13 +8,15 @@ namespace Assets.Handlers.SceneHandlers
     public enum PoolType
     {
         None,
+        Entity,
         Projectile,
         Effect,
+        Audio
     }
 
     public class ObjectPoolHandler : MonoBehaviour
     {
-        private static Dictionary<PoolType, ObjectPoolHandler> _poolInstances;
+        private static Dictionary<PoolType, ObjectPoolHandler> _poolInstances = new();
 
         [SerializeField] public PoolType poolType = PoolType.None;
         [SerializeField] private GameObject prefab;

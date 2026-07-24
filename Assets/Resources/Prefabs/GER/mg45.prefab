@@ -130,10 +130,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 124669368259897105}
-  - component: {fileID: 8548426167314115192}
   - component: {fileID: 736988907336248827}
   - component: {fileID: 1531360328655141274}
   - component: {fileID: 5626699735981393471}
+  - component: {fileID: 8548426167314115192}
   m_Layer: 0
   m_Name: mg45
   m_TagString: Untagged
@@ -158,6 +158,95 @@ Transform:
   - {fileID: 2912151450467240726}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &736988907336248827
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0267dd645a67f7146b446c099529af0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1531360328655141274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e206eddd8f1db3f4c8dadef40bac1ba0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  general:
+    name: mg45
+    <SizeType>k__BackingField: 1
+    Layer: 0
+    <SlotHeight>k__BackingField: 1
+    <SlotWidth>k__BackingField: 1
+    icon: {fileID: 0}
+  <Type>k__BackingField: 1
+  <ProjectileType>k__BackingField: 1
+  statOptions:
+    stats:
+    - name: 'Damage: 1'
+      _type: 100
+      _statLayer: 1
+      _value: 1
+    - name: 'Penetration: 1'
+      _type: 103
+      _statLayer: 1
+      _value: 1
+    - name: 'FireRate: 4'
+      _type: 102
+      _statLayer: 1
+      _value: 4
+    - name: 'MaxHp: 1'
+      _type: 1
+      _statLayer: 1
+      _value: 1
+    - name: 'RotationSpeed: 50'
+      _type: 51
+      _statLayer: 1
+      _value: 50
+    - name: 'Mass: 0,2'
+      _type: 52
+      _statLayer: 1
+      _value: 0.2
+    - name: 'ShootDispersion: 0,2'
+      _type: 116
+      _statLayer: 1
+      _value: 0.2
+    - name: 'PrSpeed: 10'
+      _type: 350
+      _statLayer: 1
+      _value: 10
+    mods: []
+    buffs: []
+    abilities:
+    - type: 0
+      action: {fileID: 0}
+      mode: 0
+      delay: 0
+      globalUsageDelay: 0
+      charges: 0
+      isPassive: 0
+--- !u!114 &5626699735981393471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8122809092557298440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00474b4455def4449acc2631260f7812, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!61 &8548426167314115192
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -204,62 +293,3 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.03, y: 0.12}
   m_EdgeRadius: 0
---- !u!114 &736988907336248827
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0267dd645a67f7146b446c099529af0e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  entityController: {fileID: 0}
-  _equipmentContainer: {fileID: 1531360328655141274}
-  Type: 1
-  Abilities: []
-  _buffController: {fileID: 0}
---- !u!114 &1531360328655141274
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e206eddd8f1db3f4c8dadef40bac1ba0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  general:
-    name: mg45
-    sizeType: 1
-    layer: 0
-    slotHeight: 1
-    slotWidth: 1
-    icon: {fileID: 0}
-  statOptions:
-    <Stats>k__BackingField: []
-    mods: []
-    abilities:
-    - Ability: 16
-      Mode: 0
-      Action: {fileID: 0}
---- !u!114 &5626699735981393471
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00474b4455def4449acc2631260f7812, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  name: 
-  delay: 0
-  ProjectilePrefab: {fileID: 759412284934268011, guid: b9186e77b3831cb42baef91ffe90dc90, type: 3}
-  FirePosition: {fileID: 2912151450467240726}
