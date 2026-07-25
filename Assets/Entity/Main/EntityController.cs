@@ -41,7 +41,7 @@ namespace Entity.Controllers
             abilitiesController = new(totalAbbilitiesController);
 
             Id = GameObjectHandler.GenerateUniqueId(name);
-            if (GameObjectHandler.GetAI(this) == null) GameObjectHandler.RegisterPlayer(this);
+            if (GameObjectHandler.GetAI(this) == null) gameObject.AddComponent<PlayerController>();
         }
 
         public void Setup(EntityDataContainer data)

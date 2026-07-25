@@ -56,10 +56,6 @@ namespace Assets.Handlers.SceneHandlers
 
         public static bool IsPlayer(EntityController entityController) => GetAI(entityController) == null;
 
-        public static void RegisterPlayer(EntityController entityController)
-        {
-            entityController.Driver = entityController.gameObject.AddComponent<PlayerController>();
-        }
         #endregion
 
         #region Id generators

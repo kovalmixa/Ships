@@ -1,9 +1,6 @@
 using System.Collections;
 using Assets.Handlers.SceneHandlers;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
-using Handlers.SceneHandlers;
 
 namespace Effects
 {
@@ -39,13 +36,13 @@ namespace Effects
         private bool isPlayedSound;
         private ObjectPoolHandler _effectsPool;
 
-        private AudioSourcePool _audioSourcePool;
+        //private AudioSourcePool _audioSourcePool;
         private AudioSource _currentAudioSource;
 
         private void Start()
         {
-            _effectsPool = SceneNodesHandler.GetPoolHandler("EffectPool");
-            _audioSourcePool = SceneNodesHandler.GetPoolHandler("AudioSourcePool") as AudioSourcePool;
+            _effectsPool = SceneController.GetPoolHandler("EffectPool");
+            //_audioSourcePool = SceneNodesHandler.GetPoolHandler("AudioSourcePool") as AudioSourcePool;
             _particles = gameObject.GetComponentsInChildren<ParticleSystem>();
             _audioSource = gameObject.GetComponentInChildren<AudioSource>();
             _spriteRenderer = gameObject.GetComponentInChildren<SpriteRenderer>();
@@ -106,7 +103,7 @@ namespace Effects
         {
             if (!_isLoopedSound && isPlayedSound) return;
             if (_audioSource == null || _audioSource.clip == null) return;
-            _audioSourcePool.PlaySound(_currentAudioSource.clip, transform.position, volume);
+            //_audioSourcePool.PlaySound(_currentAudioSource.clip, transform.position, volume);
             isPlayedSound = true;
         }
 

@@ -1,4 +1,5 @@
 using Assets.Handlers.Enums;
+using Assets.Handlers.SceneHandlers;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,16 +7,16 @@ namespace Entity.Controllers
 {
     public class PlayerController : MonoBehaviour, IDriver
     {
-        private Camera _camera;
-        public Camera Camera
+        private CameraController _cameraController;
+        public CameraController CameraController
         {
             get
             {
-                if (_camera != null) return _camera;
-                _camera = FindMainCamera();
-                return _camera;
+                if (_cameraController != null) return _cameraController;
+                _cameraController = SceneController.GetNodeByType<CameraController>();
+                return _cameraController;
             }
-            set => _camera = value;
+            private set => _cameraController = value;
         }
 
         private readonly Dictionary<KeyCode, AbilityType> _keyCodeActivations = new()
@@ -23,6 +24,8 @@ namespace Entity.Controllers
             { KeyCode.Mouse0, AbilityType.FirePrimary },
             { KeyCode.Mouse1, AbilityType.FireSecondary },
         };
+
+        #region Setup
 
         private void Awake()
         {
@@ -33,39 +36,44 @@ namespace Entity.Controllers
             }
         }
 
-        private Camera FindMainCamera()
+        public void SetupControl()
         {
-            Camera[] cameras = FindObjectsOfType<Camera>();
-            foreach (Camera cam in cameras)
-            {
-                if (cam.enabled && cam.gameObject.activeInHierarchy)
-                    return cam;
-            }
-            Debug.LogWarning("No active camera found.");
-            return null;
+
         }
+
+        #endregion
+
+        #region Update Control
 
         public void UpdateControl(EntityController controller)
         {
             if (!controller) return;
+            Vector2 worldPos = CameraController.CursorPosition;
+
+            CameraControl(controller, worldPos);
             MoveControl(controller);
-            Vector3 worldPos = Camera.ScreenToWorldPoint(Input.mousePosition);
+
             controller.hull.RotateEquipment(worldPos);
             KeyWordControls(controller, worldPos);
+        }
+        
+        private void CameraControl(EntityController controller, Vector2 position)
+        {
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (Mathf.Abs(scroll) > 0.01f) CameraController.Instance.ZoomTo(scroll);
+            CameraController.ManualMove(Input.GetMouseButtonDown(2), Input.GetMouseButton(2));
         }
 
         private void MoveControl(EntityController controller)
         {
             Assets.Entity.Hull.HullBase hullBase = controller.hull;
-            if (Input.GetKeyDown(KeyCode.W))
-                hullBase.AddSpeed(true);
-            else if (Input.GetKeyDown(KeyCode.S))
-                hullBase.AddSpeed(false);
+            if (Input.GetKeyDown(KeyCode.W)) hullBase.AddSpeed(true);
+            else if (Input.GetKeyDown(KeyCode.S)) hullBase.AddSpeed(false);
             float rotationInput = Input.GetAxis("Horizontal");
             hullBase.Movement(-rotationInput);
         }
 
-        private void KeyWordControls(EntityController controller, Vector3 position)
+        private void KeyWordControls(EntityController controller, Vector2 position)
         {
             foreach (var entry in _keyCodeActivations)
             {
@@ -80,5 +88,6 @@ namespace Entity.Controllers
                 controller.abbilitiesController.Invoke(position, entry.Value);
             }
         }
+        #endregion
     }
 }

@@ -18,7 +18,7 @@ namespace EntityMarkers.Spawner
 
         private void Awake()
         {
-            entityPool = SceneNodesHandler.GetPoolHandler("EntityPool");
+            entityPool = SceneController.GetPoolHandler("EntityPool");
         }
 
         private void OnTriggerEnter2D(Collider2D other)

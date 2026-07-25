@@ -14,7 +14,7 @@ namespace Entity.Controllers.AI
         [SerializeField] private GameObject _entity;
         private void Awake()
         {
-            _objectPool = SceneNodesHandler.GetPoolHandler("EntityPool");
+            _objectPool = SceneController.GetPoolHandler("EntityPool");
         }
 
         private void OnTriggerExit2D(Collider2D other)

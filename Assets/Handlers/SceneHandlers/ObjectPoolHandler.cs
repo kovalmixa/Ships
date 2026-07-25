@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -7,18 +6,16 @@ namespace Assets.Handlers.SceneHandlers
 {
     public enum PoolType
     {
-        None,
         Entity,
         Projectile,
-        Effect,
-        Audio
+        Effect
     }
 
     public class ObjectPoolHandler : MonoBehaviour
     {
         private static Dictionary<PoolType, ObjectPoolHandler> _poolInstances = new();
 
-        [SerializeField] public PoolType poolType = PoolType.None;
+        [SerializeField] public PoolType poolType;
         [SerializeField] private GameObject prefab;
         [SerializeField] private int defaultCapacity = 100;
         [SerializeField] private int maxSize = 200;
