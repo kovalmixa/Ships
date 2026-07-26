@@ -150,9 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 305937c1bc9b54842a7cb20469253bb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dontDestroyOnLoadObj:
-  - {fileID: 6144063009926188650}
-  - {fileID: 515741640332060687}
+  _dontDestroyOnLoadObj: []
 --- !u!4 &634284860
 Transform:
   m_ObjectHideFlags: 0
@@ -194,7 +192,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84c9c414a460c33499fb158edc74ce37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fileName: save.txt
+  FileName: save.txt
+  Player: {fileID: 649772205}
+--- !u!1 &649772205 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1043631210884575351, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+  m_PrefabInstance: {fileID: 2912457315036530571}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &465315436381439269
 Transform:
   m_ObjectHideFlags: 0

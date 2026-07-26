@@ -85,7 +85,7 @@ namespace Entity.Controllers
 
                 if (!held) continue;
 
-                controller.abbilitiesController.Invoke(position, entry.Value);
+                controller.totalAbbilitiesController.Invoke(position, entry.Value);
             }
         }
         #endregion

@@ -8,15 +8,16 @@ namespace Assets.Handlers.SceneHandlers
 {
     public class SaveLoadData : SingletonMonoBehaviour<SaveLoadData>
     {
-        public string FileName;
-        public GameObject Player;
+        public string fileName;
+        private GameObject _player;
 
         protected override void Awake()
         {
             base.Awake();
             try
             {
-                string path = Application.streamingAssetsPath + "/Saves/" + FileName;
+                _player = GameObjectHandler.playerController.gameObject;
+                string path = Application.streamingAssetsPath + "/Saves/" + fileName;
                 var data = LoadData(path);
                 if (data == null) throw new Exception("Data file is not loaded");
                 ExtractData(data);
@@ -33,7 +34,7 @@ namespace Assets.Handlers.SceneHandlers
 
         private void ExtractData(DataBundle data)
         {
-            var entityController = Player.GetComponent<EntityController>();
+            var entityController = _player.GetComponent<EntityController>();
             entityController.Setup(data.EntityDataContainer);
         }
     }

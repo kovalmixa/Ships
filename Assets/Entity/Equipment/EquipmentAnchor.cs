@@ -17,21 +17,21 @@ namespace Assets.Entity.Equipment
         public Vector2 rotationSector;
         public Vector2[] activationSectors;
         public int orderLayer;
-        public const bool isStatic = false;
+
+        private bool _isPlaced = false;
 
         public bool CanBePlaced(Equipment equipment, int index)
         {
-            if (isStatic) return false;
-            if (this.index != index) return false;
+            if (this.index != index || _isPlaced) return false;
 
             EquipmentContainer equipmentContainer = equipment.Data;
-            if (sizeType != equipmentContainer.general.SizeType) return false;
+            if (equipmentContainer == null || sizeType != equipmentContainer.general.SizeType) return false;
             bool equipmentMatch = equipmentType == EquipmentType.None || equipmentType == equipmentContainer.Type;
             bool projectileMatch = projectileType == ProjectileType.None || projectileType == equipmentContainer.ProjectileType;
             return equipmentMatch && projectileMatch;
         }
 
-        public void SetTransform(Equipment equipment)
+        public void Place(Equipment equipment)
         {
             if (equipment == null) return;
             var eqTransform = equipment.transform;
@@ -42,6 +42,7 @@ namespace Assets.Entity.Equipment
             eqTransform.localScale = scale;
             equipment.EquipmentAnchor = this;
             GameObjectHandler.SetRenderLayerOrder(gameObject, orderLayer);
+            _isPlaced = true;
         }
 
         #region Editor

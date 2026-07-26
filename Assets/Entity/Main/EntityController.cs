@@ -15,7 +15,6 @@ namespace Entity.Controllers
     public class EntityController : MonoBehaviour, IObject, IAbbility
     {
         public EntityDataContainer data;
-        public TotalAbbilitiesController abbilitiesController;
         public EntityAssembler Assembler { get; private set; }
         public TotalAbbilitiesController totalAbbilitiesController { get; private set; }
         public StatModController statModController { get; private set; } = new();
@@ -27,7 +26,7 @@ namespace Entity.Controllers
 
         public EntitySnapshot GetSnapshot() => new EntitySnapshot(this, data);
 
-        private void LateUpdate()
+        private void Update()
         {
             if (hull == null) return;
             Driver?.UpdateControl(this);
@@ -38,7 +37,7 @@ namespace Entity.Controllers
         private void Awake()
         {
             Assembler = new EntityAssembler(this);
-            abilitiesController = new(totalAbbilitiesController);
+            totalAbbilitiesController = new();
 
             Id = GameObjectHandler.GenerateUniqueId(name);
             if (GameObjectHandler.GetAI(this) == null)
@@ -54,9 +53,8 @@ namespace Entity.Controllers
         public void Setup(EntityDataContainer data)
         {
             if (data == null) return;
-
-            this.data.equipmentIds = data.equipmentIds;
-            Assembler.SetHull(data.hullId);
+            this.data = data;
+            Assembler.Build(data);
         }
 
         public void SetupAi(params ScriptBase[] scripts)

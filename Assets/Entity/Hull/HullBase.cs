@@ -41,24 +41,25 @@ namespace Assets.Entity.Hull
 
         #region Setup
 
-        public void Setup(EntityController entityController) 
+        private void Awake()
         {
             Id = GameObjectHandler.GenerateUniqueId(name);
+            rigidBody2D = GetComponent<Rigidbody2D>();
+            Data = GetComponent<HullContainer>();
+        }
+
+        public void Setup(EntityController entityController) 
+        {
             this.entityController = entityController;
             abilitiesController = new(entityController.totalAbbilitiesController);
-            rigidBody2D = GetComponent<Rigidbody2D>();
 
-            Data = GetComponent<HullContainer>();
-            SetupPropertiesByData();
-            CollectAnchors(transform);
-        }
-        private void SetupPropertiesByData()
-        {
             var snapshot = entityController.GetSnapshot();
             var statOptions = Data.statOptions;
             _statModController = new(entityController.statModController, statOptions);
             foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);
             foreach (var ability in statOptions.abilities) abilitiesController.AddAbility(ability);
+
+            CollectAnchors(transform);
         }
 
         private void CollectAnchors(Transform parent)
@@ -77,9 +78,7 @@ namespace Assets.Entity.Hull
         #region Movement
 
         public void RotateEquipment(Vector3 target)
-        {
-            foreach (var eq in equipments) eq.GetComponent<Equipment.Equipment>().Rotate(target);
-        }
+        { foreach (var eq in equipments) eq.GetComponent<Equipment.Equipment>().Rotate(target); }
 
         public abstract void AddSpeed(bool isAddition);
 

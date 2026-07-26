@@ -1,4 +1,5 @@
 ﻿using Assets.Entity.Hull;
+using Assets.Handlers.SceneHandlers;
 using Entity.Controllers;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace Assets.Entity.Controllers
         public EntityAssembler(EntityController entity) => _entity = entity;
         public event Action<HullBase> onSetHull;
         public event Action<Equipment.Equipment> onSetEquipment;
+
         public bool Build(EntityDataContainer data)
         {
             if (data == null) return false;
@@ -23,7 +25,7 @@ namespace Assets.Entity.Controllers
 
             foreach (var equipment in data.equipmentIds.ToList())
                 if (!AddEquipment(equipment.Key, equipment.Value))
-                    data.equipmentIds.Remove(equipment);
+                    data.equipmentIds.Remove(equipment); //code for placing it to inventory
 
             if (data.position != Vector2.zero) _entity.transform.position = data.position;
 
@@ -59,6 +61,7 @@ namespace Assets.Entity.Controllers
                 equipmentId,
                 Vector3.zero,
                 Quaternion.identity);
+
             if (obj == null) return false;
 
             var equipmentTemplate = obj.GetComponentInChildren<Equipment.Equipment>();
@@ -68,24 +71,21 @@ namespace Assets.Entity.Controllers
                 return false;
             }
 
-            uint quantity = 0;
             bool success = false;
-            var newEquipments = new List<Equipment.Equipment>();
             foreach (var anchor in _entity.hull.equipmentAnchors)
             {
                 if (!anchor.CanBePlaced(equipmentTemplate, index)) continue;
-                anchor.SetTransform(equipmentTemplate);
-                newEquipments.Add(equipmentTemplate);
-                quantity++;
-                success = true;
-            }
-            _entity.hull.equipments.AddRange(newEquipments);
-
-            foreach (var equipment in newEquipments)
-            {
+                var gameobjectClone = GameObjectHandler.Clone(equipmentTemplate.gameObject);
+                var equipment = gameobjectClone.GetComponent<Equipment.Equipment>();
+                anchor.Place(equipment);
                 equipment.Setup(_entity);
                 onSetEquipment?.Invoke(equipment);
+                _entity.hull.equipments.Add(equipment);
+
+                success = true;
             }
+
+            if (!success) UnityEngine.Object.Destroy(obj);
             return success;
         }
     }

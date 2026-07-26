@@ -1,4 +1,5 @@
 using Assets.Common;
+using Assets.DataContainers;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
@@ -39,10 +40,15 @@ namespace Assets.Entity.Equipment
 
         #region Setup
 
+        private void Awake()
+        {
+            Id = GameObjectHandler.GenerateUniqueId(name);
+            Data = GetComponent<EquipmentContainer>();
+        }
+
         public void Setup(EntityController entityController)
         {
             _entityController = entityController;
-            Id = GameObjectHandler.GenerateUniqueId(name);
             var snapshot = entityController.GetSnapshot();
             var statOptions = Data.statOptions;
             _statModController = new(entityController.statModController, statOptions);
@@ -55,30 +61,70 @@ namespace Assets.Entity.Equipment
                 EquipmentAnchor
                 );
             foreach (var ability in statOptions.abilities) abilitiesController.AddAbility(ability);
-
         }
 
         #endregion
 
         #region Rotation
 
+        private float _currentLocalAngle = 0f;
+        private bool _isLocalAngleInitialized = false;
+
         public void Rotate(Vector3 targetPos)
         {
+            if (Data == null || !CanRotate()) return;
+
             var rotationSpeed = GetLifetimeStat(StatType.RotationSpeed);
 
-            if (Data == null || !CanRotate()) return;
             Vector3 localTarget = EquipmentAnchor.transform.InverseTransformPoint(targetPos);
-            float localAngle = Mathf.Atan2(localTarget.y, localTarget.x) * Mathf.Rad2Deg;
+            float targetAngle = Mathf.Atan2(localTarget.y, localTarget.x) * Mathf.Rad2Deg;
+
             float min = EquipmentAnchor.rotationSector.x;
             float max = EquipmentAnchor.rotationSector.y;
-            float clampedLocal = Mathf.Clamp(localAngle, min, max);
-            float finalWorldAngle = EquipmentAnchor.transform.eulerAngles.z + clampedLocal;
-            float rotationSpeedDelta = rotationSpeed * Time.deltaTime;
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                Quaternion.Euler(0f, 0f, finalWorldAngle - _basicAngle),
-                rotationSpeedDelta
-            );
+
+            if (!_isLocalAngleInitialized)
+            {
+                _currentLocalAngle = transform.localEulerAngles.z + _basicAngle;
+                _isLocalAngleInitialized = true;
+            }
+
+            if (Mathf.Abs(max - min) >= 360f)
+            {
+                Quaternion targetLocalRot = Quaternion.Euler(0f, 0f, targetAngle - _basicAngle);
+                transform.localRotation = Quaternion.RotateTowards(
+                    transform.localRotation,
+                    targetLocalRot,
+                    rotationSpeed * Time.deltaTime
+                );
+                _currentLocalAngle = transform.localEulerAngles.z + _basicAngle;
+                return;
+            }
+
+            float sectorWidth = max - min;
+
+            float currentOffset = NormalizeAngle(_currentLocalAngle - min);
+            float targetOffset = NormalizeAngle(targetAngle - min);
+
+            float desiredOffset;
+            if (targetOffset <= sectorWidth) desiredOffset = targetOffset;
+            else
+            {
+                float distToMin = 360f - targetOffset;
+                float distToMax = targetOffset - sectorWidth;
+                desiredOffset = (distToMin < distToMax) ? 0f : sectorWidth;
+            }
+
+            float newOffset = Mathf.MoveTowards(currentOffset, desiredOffset, rotationSpeed * Time.deltaTime);
+            newOffset = Mathf.Clamp(newOffset, 0f, sectorWidth);
+
+            _currentLocalAngle = min + newOffset;
+            transform.localRotation = Quaternion.Euler(0f, 0f, _currentLocalAngle - _basicAngle);
+        }
+        private float NormalizeAngle(float angle)
+        {
+            float result = angle % 360f;
+            if (result < 0) result += 360f;
+            return result;
         }
 
         public bool CanRotate()

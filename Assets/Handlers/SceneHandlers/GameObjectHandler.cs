@@ -16,17 +16,12 @@ namespace Assets.Handlers.SceneHandlers
             foreach (var spriteRenderer in renderers) spriteRenderer.sortingOrder += value;
         }
 
-        public static void Clone(GameObject main, GameObject obj)
+        public static GameObject Clone(GameObject main)
         {
-            if (main == null || obj == null) return;
-            {
-                foreach (var component in main.GetComponents<Component>())
-                {
-                    if (component is Transform) continue;
-                    UnityEditorInternal.ComponentUtility.CopyComponent(component);
-                    UnityEditorInternal.ComponentUtility.PasteComponentAsNew(obj);
-                }
-            }
+            if (main == null) return null;
+            GameObject clone = Instantiate(main);
+            clone.name = main.name;
+            return clone;
         }
 
         public static void ClearComponents(GameObject obj)

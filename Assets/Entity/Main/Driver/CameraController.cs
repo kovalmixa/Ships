@@ -90,7 +90,7 @@ namespace Entity.Controllers
                 _virtualCamera.Follow = _panningTarget;
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             ZoomUpdate();
             MoveUpdate();
