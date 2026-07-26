@@ -39,7 +39,7 @@ namespace EntityMarkers.Spawner
             {
                 //entityController.Nation = Nation;
                 SetupEntity(entityController);
-                entityController.SetupScripts(ScriptList.ToArray());
+                entityController.SetupAi(ScriptList.ToArray());
             }
         }
 

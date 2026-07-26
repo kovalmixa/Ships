@@ -1,9 +1,9 @@
 ﻿using Assets.Entity.Hull;
 using Entity.Controllers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Assets.Entity.Controllers
 {
@@ -12,7 +12,8 @@ namespace Assets.Entity.Controllers
         private readonly EntityController _entity;
 
         public EntityAssembler(EntityController entity) => _entity = entity;
-
+        public event Action<HullBase> onSetHull;
+        public event Action<Equipment.Equipment> onSetEquipment;
         public bool Build(EntityDataContainer data)
         {
             if (data == null) return false;
@@ -33,7 +34,7 @@ namespace Assets.Entity.Controllers
         {
             if (string.IsNullOrEmpty(hullId)) return false;
 
-            if (_entity.hull != null) Object.Destroy(_entity.hull.gameObject);
+            if (_entity.hull != null) UnityEngine.Object.Destroy(_entity.hull.gameObject);
             var hullObj = PrefabLoader.Instance.InstantiatePrefab(
                 hullId,
                 _entity.transform.position,
@@ -46,6 +47,7 @@ namespace Assets.Entity.Controllers
             hull.root = _entity.transform;
             _entity.hull = hull;
             hull.Setup(_entity);
+            onSetHull?.Invoke(hull);
             return true;
         }
 
@@ -62,7 +64,7 @@ namespace Assets.Entity.Controllers
             var equipmentTemplate = obj.GetComponentInChildren<Equipment.Equipment>();
             if (equipmentTemplate == null)
             {
-                Object.Destroy(obj);
+                UnityEngine.Object.Destroy(obj);
                 return false;
             }
 
@@ -79,8 +81,11 @@ namespace Assets.Entity.Controllers
             }
             _entity.hull.equipments.AddRange(newEquipments);
 
-            foreach (var equipment in newEquipments) equipment.Setup(_entity);
-
+            foreach (var equipment in newEquipments)
+            {
+                equipment.Setup(_entity);
+                onSetEquipment?.Invoke(equipment);
+            }
             return success;
         }
     }

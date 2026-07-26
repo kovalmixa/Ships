@@ -23,11 +23,11 @@ namespace Entity.Controllers
         public IDriver Driver { get; set; }
         [SerializeField] private GameObject _despawnPrefab;
         public string Id { get; set; }
-        public HullBase hull;
+        [HideInInspector] public HullBase hull;
 
         public EntitySnapshot GetSnapshot() => new EntitySnapshot(this, data);
 
-        private void Update()
+        private void LateUpdate()
         {
             if (hull == null) return;
             Driver?.UpdateControl(this);
@@ -41,7 +41,14 @@ namespace Entity.Controllers
             abilitiesController = new(totalAbbilitiesController);
 
             Id = GameObjectHandler.GenerateUniqueId(name);
-            if (GameObjectHandler.GetAI(this) == null) gameObject.AddComponent<PlayerController>();
+            if (GameObjectHandler.GetAI(this) == null)
+            {
+                Driver = gameObject.AddComponent<PlayerController>();
+                GameObjectHandler.playerController = this;
+                Assembler.onSetHull += (HullBase hull) => {
+                    if (hull != null) CameraController.Instance.Follow(hull.transform);
+                };
+            }
         }
 
         public void Setup(EntityDataContainer data)
@@ -50,14 +57,11 @@ namespace Entity.Controllers
 
             this.data.equipmentIds = data.equipmentIds;
             Assembler.SetHull(data.hullId);
-
-            var dPosition = data.position;
-            if (dPosition != Vector2.zero)
-                transform.position = dPosition;
         }
 
-        public void SetupScripts(params ScriptBase[] scripts)
+        public void SetupAi(params ScriptBase[] scripts)
         {
+            if (Driver is PlayerController) return;
             Driver = gameObject.AddComponent<AiController>();
             if (Driver is AiController aiController)
             {

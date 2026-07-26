@@ -195,10 +195,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   general:
     name: 
-    sizeType: 0
-    layer: 0
-    slotHeight: 1
-    slotWidth: 1
+    <SizeType>k__BackingField: 0
+    Layer: 0
+    <SlotHeight>k__BackingField: 1
+    <SlotWidth>k__BackingField: 1
     icon: {fileID: 0}
   <VehicleType>k__BackingField: 1
   statOptions:
@@ -223,10 +223,10 @@ MonoBehaviour:
       _type: 50
       _statLayer: 0
       _value: 5
-    - name: 'Acceleration: 1'
+    - name: 'Acceleration: 0,2'
       _type: 53
       _statLayer: 0
-      _value: 1
+      _value: 0.2
     - name: 'RotationSpeed: 50'
       _type: 51
       _statLayer: 0
@@ -257,7 +257,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
