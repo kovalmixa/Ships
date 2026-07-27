@@ -8,11 +8,18 @@ namespace Assets.Handlers.Enums
 {
     public enum AbilityType
     {
-        None, AllTurrets,
-        FirePrimary, FireSecondary, LaunchAircraft, LaunchMissile,
-        DropBomb, FireLaser, LaunchTorpedo,
-        Heal, Regeneration, Shield, RadarPulse, Smoke,
-        Dash, Teleport, Repair, SummonDrone
+        None,
+        FireWeapon,
+        LaunchAircraft, LaunchMissile, DropBomb, FireLaser, LaunchTorpedo, SummonDrone,
+        Heal, Regeneration, Shield, RadarPulse, Smoke, Dash, Teleport, Repair,
+        AllTurrets
+    }
+
+    public enum AbilityActivationMode
+    {
+        WeaponGroup, // Activated along with the weapon group (Primary/Secondary/Tertiary)
+        ActiveAbility, // Activated by a separate button (ship skill, such as Radar or Dash)
+        AutoCast, // Air defense, auto-turrets, etc.
     }
 
     public enum WeaponType
@@ -91,24 +98,13 @@ namespace Assets.Handlers
 {
     public static class EquipmentHandler
     {
-        /// <summary>
-        /// Проверяет, является ли оборудование оружием.
-        /// </summary>
         public static bool IsWeaponEquipment(EquipmentType type) =>
             type == EquipmentType.Turret || type == EquipmentType.Aircraft;
 
-        /// <summary>
-        /// Проверяет контейнер оборудования на принадлежность к оружию.
-        /// </summary>
-        public static bool IsWeaponEquipment(EquipmentContainer container) =>
-            container != null && IsWeaponEquipment(container.Type);
+        public static bool IsWeaponEquipment(Equipment equipment) =>
+            equipment != null && IsWeaponEquipment(equipment.Data.Type);
 
-        /// <summary>
-        /// Динамически распределяет имеющиеся размеры оружия по тирам (Primary, Secondary, Tertiary).
-        /// </summary>
-        /// <param name="equipments">Массив оборудования (например, установленного на корабле).</param>
-        /// <returns>Словарь тиров. Если тир отсутствует, его значение равен null.</returns>
-        public static Dictionary<WeaponType, SizeType[]> GetWeaponTiers(IEnumerable<EquipmentContainer> equipments)
+        public static Dictionary<WeaponType, SizeType[]> GetWeaponTiers(IEnumerable<Equipment> equipments)
         {
             var result = new Dictionary<WeaponType, SizeType[]>
             {
@@ -121,8 +117,8 @@ namespace Assets.Handlers
 
             var availableSizes = equipments
                 .Where(IsWeaponEquipment)
-                .Where(e => e.general != null && e.general.SizeType != SizeType.None)
-                .Select(e => e.general.SizeType)
+                .Where(e => e.Data.general != null && e.Data.general.SizeType != SizeType.None)
+                .Select(e => e.Data.general.SizeType)
                 .Distinct()
                 .OrderByDescending(size => (int)size)
                 .ToList();
@@ -141,25 +137,24 @@ namespace Assets.Handlers
             return result;
         }
 
-        public static Dictionary<WeaponType, List<EquipmentContainer>> GroupWeaponsByTier(IEnumerable<EquipmentContainer> equipments)
+        public static Dictionary<WeaponType, List<Equipment>> GroupWeaponsByTier(IEnumerable<Equipment> equipments)
         {
-            var tierSizes = GetWeaponTiers(equipments);
-            var result = new Dictionary<WeaponType, List<EquipmentContainer>>
+            var result = new Dictionary<WeaponType, List<Equipment>>
             {
-                { WeaponType.Primary, new List<EquipmentContainer>() },
-                { WeaponType.Secondary, new List<EquipmentContainer>() },
-                { WeaponType.Tertiary, new List<EquipmentContainer>() }
+                { WeaponType.Primary, new List<Equipment>() },
+                { WeaponType.Secondary, new List<Equipment>() },
+                { WeaponType.Tertiary, new List<Equipment>() }
             };
 
             if (equipments == null) return result;
-
+            var tierSizes = GetWeaponTiers(equipments);
             var weapons = equipments.Where(IsWeaponEquipment).ToList();
 
             foreach (var weapon in weapons)
             {
-                if (weapon.general == null) continue;
+                if (weapon?.Data?.general == null) continue;
 
-                var size = weapon.general.SizeType;
+                var size = weapon.Data.general.SizeType;
 
                 if (tierSizes[WeaponType.Primary]?.Contains(size) == true)
                     result[WeaponType.Primary].Add(weapon);
@@ -168,7 +163,6 @@ namespace Assets.Handlers
                 else if (tierSizes[WeaponType.Tertiary]?.Contains(size) == true)
                     result[WeaponType.Tertiary].Add(weapon);
             }
-
             return result;
         }
     }
@@ -213,7 +207,7 @@ namespace Assets.Handlers
     {
         private static readonly Dictionary<EquipmentType, AbilityType[]> EquipmentAbilities = new()
         {
-            { EquipmentType.Turret, new[] { AbilityType.FirePrimary } },
+            { EquipmentType.Turret, new[] { AbilityType.FireWeapon } },
             { EquipmentType.Aircraft, new[] { AbilityType.LaunchAircraft } },
             { EquipmentType.Radar, new[] { AbilityType.RadarPulse } },
             { EquipmentType.Shield, new[] { AbilityType.Shield } },
@@ -229,7 +223,7 @@ namespace Assets.Handlers
             { ProjectileType.Missile, new[] { AbilityType.LaunchMissile } },
             { ProjectileType.Swarm, new[] { AbilityType.LaunchMissile } },
             { ProjectileType.KamikazeDrone, new[] { AbilityType.SummonDrone } },
-            { ProjectileType.Flame, new[] { AbilityType.FireSecondary } },
+            { ProjectileType.Flame, new[] { AbilityType.FireWeapon } },
             { ProjectileType.Gas, new[] { AbilityType.Smoke } }
         };
 
@@ -247,9 +241,7 @@ namespace Assets.Handlers
             equipAbilities ??= Array.Empty<AbilityType>();
             projAbilities ??= Array.Empty<AbilityType>();
 
-            if (equipAbilities.Length == 0 && projAbilities.Length == 0)
-                return Array.Empty<AbilityType>();
-
+            if (equipAbilities.Length == 0 && projAbilities.Length == 0) return Array.Empty<AbilityType>();
             return equipAbilities.Union(projAbilities).ToArray();
         }
     }

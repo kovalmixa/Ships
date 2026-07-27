@@ -6,12 +6,6 @@ using System.Collections.Generic;
 
 namespace Assets.Common
 {
-    public enum AbilityActivationMode
-    {
-        Primary,
-        Ability,
-    }
-
     [Serializable]
     public struct AbilityUnit
     {

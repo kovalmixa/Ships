@@ -5,6 +5,26 @@ using UnityEngine;
 
 namespace Entity.Controllers
 {
+    public enum ActionCategory { None, Weapon, Ability }
+
+    public struct KeyAction
+    {
+        public ActionCategory Category;
+        public int ActionId;
+
+        public KeyAction(WeaponType weapon)
+        {
+            Category = ActionCategory.Weapon;
+            ActionId = (int)weapon;
+        }
+
+        public KeyAction(AbilityType ability)
+        {
+            Category = ActionCategory.Ability;
+            ActionId = (int)ability;
+        }
+    }
+
     public class PlayerController : MonoBehaviour, IDriver
     {
         private CameraController _cameraController;
@@ -19,10 +39,10 @@ namespace Entity.Controllers
             private set => _cameraController = value;
         }
 
-        private readonly Dictionary<KeyCode, AbilityType> _keyCodeActivations = new()
+        private readonly Dictionary<KeyCode, KeyAction> _keyBinds = new()
         {
-            { KeyCode.Mouse0, AbilityType.FirePrimary },
-            { KeyCode.Mouse1, AbilityType.FireSecondary },
+            { KeyCode.Mouse0, new KeyAction(WeaponType.Primary) },
+            { KeyCode.Mouse1, new KeyAction(WeaponType.Secondary) },
         };
 
         #region Setup
@@ -32,7 +52,7 @@ namespace Entity.Controllers
             for (int i = 0; i <= 9; i++)
             {
                 KeyCode key = (KeyCode)((int)KeyCode.Alpha0 + i);
-                _keyCodeActivations[key] = i == 1 ? AbilityType.Heal : AbilityType.None;
+                //_keyCodeActivations[key] = i == 1 ? AbilityType.Heal : AbilityType.None;
             }
         }
 
@@ -75,17 +95,21 @@ namespace Entity.Controllers
 
         private void KeyWordControls(EntityController controller, Vector2 position)
         {
-            foreach (var entry in _keyCodeActivations)
+
+            foreach (var entry in _keyBinds)
             {
-                if (entry.Value == AbilityType.None) continue;
+                if (Input.GetKey(entry.Key))
+                {
+                    if (entry.Value.Category == ActionCategory.Weapon)
+                        controller.totalAbbilitiesController.Invoke(position, (WeaponType)entry.Value.ActionId);
+                    else if (entry.Value.Category == ActionCategory.Ability)
+                        controller.totalAbbilitiesController.Invoke(position, (AbilityType)entry.Value.ActionId);
+                }
 
                 bool held = entry.Key == KeyCode.Mouse0 ? Input.GetMouseButton(0)
                     : entry.Key == KeyCode.Mouse1 ? Input.GetMouseButton(1)
                     : Input.GetKey(entry.Key);
-
                 if (!held) continue;
-
-                controller.totalAbbilitiesController.Invoke(position, entry.Value);
             }
         }
         #endregion

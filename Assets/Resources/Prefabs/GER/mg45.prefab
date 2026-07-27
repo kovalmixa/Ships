@@ -109,9 +109,9 @@ MonoBehaviour:
     - type: 0
       action: {fileID: 0}
       mode: 0
-      delay: 0
+      delay: 1
       globalUsageDelay: 0
-      charges: 0
+      charges: 1
       isPassive: 0
 --- !u!114 &4711494648378866683
 MonoBehaviour:

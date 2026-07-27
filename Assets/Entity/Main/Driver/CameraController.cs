@@ -1,7 +1,5 @@
-using Assets.Handlers.SceneHandlers;
 using Cinemachine;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Entity.Controllers
 {
@@ -11,7 +9,6 @@ namespace Entity.Controllers
         {
             if (camera == null) return Vector3.zero;
 
-            // Задаем Z равным расстоянию до нулевой плоскости (Z=0 в мире)
             float depth = Mathf.Abs(camera.transform.position.z);
             startScreenPos.z = depth;
             endScreenPos.z = depth;
@@ -20,7 +17,7 @@ namespace Entity.Controllers
             Vector3 endWorld = camera.ScreenToWorldPoint(endScreenPos);
 
             Vector3 delta = endWorld - startWorld;
-            delta.z = 0; // Игнорируем Z для 2D
+            delta.z = 0;
             return delta;
         }
     }
@@ -56,7 +53,7 @@ namespace Entity.Controllers
 
         private Vector3 _lastInputPosition;
         private Vector3 _panVelocity;
-        private Vector3 _panOffset; // Смещение камеры относительно объекта следования
+        private Vector3 _panOffset;
 
         private bool _isDragging;
         private float _distancePassed = 0f;
@@ -86,8 +83,7 @@ namespace Entity.Controllers
             startPos.z = 0;
             _panningTarget.position = startPos;
 
-            if (_virtualCamera != null)
-                _virtualCamera.Follow = _panningTarget;
+            if (_virtualCamera != null) _virtualCamera.Follow = _panningTarget;
         }
 
         private void LateUpdate()
@@ -158,8 +154,7 @@ namespace Entity.Controllers
             else if (_isDragging)
             {
                 _isDragging = false;
-                if (_distancePassed < _clickThreshold * _currentZoom)
-                    _panOffset = _panVelocity = Vector3.zero;
+                if (_distancePassed < _clickThreshold * _currentZoom) _panOffset = _panVelocity = Vector3.zero;
             }
         }
 
@@ -171,7 +166,6 @@ namespace Entity.Controllers
                 _panOffset += _panVelocity * Time.deltaTime;
                 _panVelocity = Vector3.Lerp(_panVelocity, Vector3.zero, inertiaDamping * Time.deltaTime);
             }
-            //Debug.Log(_followTransform.position);
             Vector3 basePosition = _followTransform != null ? _followTransform.position : Vector3.zero;
             basePosition.z = 0;
 

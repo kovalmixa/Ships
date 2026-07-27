@@ -11,9 +11,10 @@ using UnityEngine;
 
 namespace Assets.Entity.Equipment
 {
-    public class Equipment : MonoBehaviour, IInteractive, IStats, IAbbility
+    public class Equipment : MonoBehaviour, IInteractive, IStats, IAbbility, IBuffable
     {
         private EntityController _entityController;
+        public BuffStatusesController Buffs { get; private set; }
         public EquipmentContainer Data { get; private set; }
         public EquipmentAnchor EquipmentAnchor { get; set; }
         private const float _basicAngle = 90;
@@ -49,9 +50,17 @@ namespace Assets.Entity.Equipment
         public void Setup(EntityController entityController)
         {
             _entityController = entityController;
+            Buffs = new BuffStatusesController(gameObject, _statModController);
             var snapshot = entityController.GetSnapshot();
             var statOptions = Data.statOptions;
             _statModController = new(entityController.statModController, statOptions);
+
+            foreach (var buff in statOptions.buffs)
+            {
+                if (buff.Scope == BuffScope.Global)entityController.Buffs.AddBuff(buff, snapshot);
+                else Buffs.AddBuff(buff, snapshot);
+            }
+
             foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);
 
             abilitiesController = new(
@@ -143,7 +152,8 @@ namespace Assets.Entity.Equipment
         {
             var buff = context.ActionStruct as BuffStatus;
             if (buff == null) return;
-            _entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
+            if (buff.Scope == BuffScope.Global) _entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
+            else Buffs.AddBuff(buff, context.SourceSnapshot);
         }
 
         public void TakeDamage(InteractionContext interractionContext)

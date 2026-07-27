@@ -1,7 +1,6 @@
 ﻿using Assets.Common;
 using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -13,6 +12,12 @@ public enum BuffApplicationPolicy
     UniquePerSource, // только один от конкретного source
 }
 
+public enum BuffScope
+{
+    Local,  // действует только на владельца (конкретное снаряжение/корпус)
+    Global  // действует на всю сущность
+}
+
 public abstract class BuffStatus : MonoBehaviour
 {
     public string BuffId { get; private set; }
@@ -20,6 +25,7 @@ public abstract class BuffStatus : MonoBehaviour
     public float Duration { get; set; } = -1f;
     public bool IsPermanent => Duration < 0;
 
+    [field: SerializeField] public BuffScope Scope { get; set; } = BuffScope.Local;
     public Modifiers modifiers = new();
     public UnityEvent onRemove;
     public UnityEvent onRefresh;

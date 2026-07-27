@@ -37,7 +37,7 @@ namespace Entity.Controllers
         private void Awake()
         {
             Assembler = new EntityAssembler(this);
-            totalAbbilitiesController = new();
+            totalAbbilitiesController = new(this);
 
             Id = GameObjectHandler.GenerateUniqueId(name);
             if (GameObjectHandler.GetAI(this) == null)

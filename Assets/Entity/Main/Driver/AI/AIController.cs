@@ -28,7 +28,7 @@ namespace Entity.Controllers.AI
         private void AttackControl(EntityController entityController)
         {
             if (_targetPoint == null) return;
-            entityController.totalAbbilitiesController.Invoke(_targetPoint.position, AbilityType.FirePrimary);
+            //entityController.totalAbbilitiesController.Invoke(_targetPoint.position, AbilityType.FirePrimary);
         }
 
         private void RotateControl(EntityController entityController)

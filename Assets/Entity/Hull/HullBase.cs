@@ -13,9 +13,11 @@ using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
-    public abstract class HullBase : MonoBehaviour, IHull, IInteractive, IStats, IAbbility
+    public abstract class HullBase : MonoBehaviour, IHull, IInteractive, IStats, IAbbility, IBuffable
     {
         public HullContainer Data { get; private set; }
+        public BuffStatusesController Buffs { get; private set; }
+
         [HideInInspector] public List<EquipmentAnchor> equipmentAnchors;
         [HideInInspector] public List<Equipment.Equipment> equipments;
         [HideInInspector] public Transform root;
@@ -133,7 +135,8 @@ namespace Assets.Entity.Hull
         {
             var buff = context.ActionStruct as BuffStatus;
             if (buff == null) return;
-            entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
+            if (buff.Scope == BuffScope.Global) entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
+            else Buffs.AddBuff(buff, context.SourceSnapshot);
         }
 
         public void TakeDamage(InteractionContext interractionContext)

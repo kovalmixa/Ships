@@ -18,13 +18,16 @@ namespace Assets.Entity.Controllers
         public ILookup<string, BuffStatus> BuffsById => ActiveBuffs.Values.Select(v => v.status).ToLookup(b => b.BuffId);
 
         private GameObject _source;
+        private StatModController _statMods;
 
-        public BuffStatusesController(GameObject source) => _source = source;
+        public BuffStatusesController(GameObject source, StatModController statMods)
+        {
+            _source = source;
+            _statMods = statMods;
+        }
 
         public void AddBuffs(InteractionContext context, params BuffStatus[] buffs)
-        {
-            foreach (var buff in buffs) AddBuff(buff, context.SourceSnapshot);
-        }
+        { foreach (var buff in buffs) AddBuff(buff, context.SourceSnapshot); }
 
         public void AddBuff(BuffStatus newBuff, EntitySnapshot source)
         {
@@ -55,9 +58,7 @@ namespace Assets.Entity.Controllers
         }
 
         public void RemoveBuffs(params BuffStatus[] buffs)
-        {
-            foreach (var buff in buffs) RemoveBuff(buff.BuffId, buff.SourceId);
-        }
+        { foreach (var buff in buffs) RemoveBuff(buff.BuffId, buff.SourceId); }
 
         public bool RemoveBuff(string buffId, string sourceId = null)
         {
@@ -102,8 +103,7 @@ namespace Assets.Entity.Controllers
 
         public void ClearAllBuffs()
         {
-            foreach (var entry in ActiveBuffs.ToList())
-                RemoveBuffInternal(entry.Value.status);
+            foreach (var entry in ActiveBuffs.ToList()) RemoveBuffInternal(entry.Value.status);
             _isDirty = true;
         }
 
@@ -111,6 +111,7 @@ namespace Assets.Entity.Controllers
         {
             var finalMods = new Modifiers.Modifiers();
             foreach (var buff in ActiveBuffs.Values) finalMods.Add(buff.status.modifiers);
+            _statMods.RegisterExternalModifiers(finalMods);
             _isDirty = false;
         }
 

@@ -2,7 +2,6 @@
 using Assets.Handlers.SceneHandlers;
 using Entity.Controllers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -24,9 +23,12 @@ namespace Assets.Entity.Controllers
             if (!SetHull(data.hullId)) return false;
 
             foreach (var equipment in data.equipmentIds.ToList())
-                if (!AddEquipment(equipment.Key, equipment.Value))
-                    data.equipmentIds.Remove(equipment); //code for placing it to inventory
-
+            {
+                bool isSuccess = false;
+                while (AddEquipment(equipment.Key, equipment.Value)) isSuccess = true;
+                if (!isSuccess) data.equipmentIds.Remove(equipment); 
+                //code for placing it to inventory
+            }
             if (data.position != Vector2.zero) _entity.transform.position = data.position;
 
             return true;
@@ -64,29 +66,27 @@ namespace Assets.Entity.Controllers
 
             if (obj == null) return false;
 
-            var equipmentTemplate = obj.GetComponentInChildren<Equipment.Equipment>();
-            if (equipmentTemplate == null)
+            var equipment = obj.GetComponentInChildren<Equipment.Equipment>();
+            if (equipment == null)
             {
                 UnityEngine.Object.Destroy(obj);
                 return false;
             }
 
-            bool success = false;
             foreach (var anchor in _entity.hull.equipmentAnchors)
             {
-                if (!anchor.CanBePlaced(equipmentTemplate, index)) continue;
-                var gameobjectClone = GameObjectHandler.Clone(equipmentTemplate.gameObject);
-                var equipment = gameobjectClone.GetComponent<Equipment.Equipment>();
+                if (!anchor.CanBePlaced(equipment, index)) continue;
+
                 anchor.Place(equipment);
                 equipment.Setup(_entity);
                 onSetEquipment?.Invoke(equipment);
                 _entity.hull.equipments.Add(equipment);
 
-                success = true;
+                return true;
             }
 
-            if (!success) UnityEngine.Object.Destroy(obj);
-            return success;
+            UnityEngine.Object.Destroy(obj);
+            return false;
         }
     }
 }
