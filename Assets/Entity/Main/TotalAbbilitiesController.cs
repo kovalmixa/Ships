@@ -34,6 +34,23 @@ namespace Assets.Entity.Controllers
             var hull = _entityController != null ? _entityController.hull : null;
             if (hull != null && hull.equipments != null)
             {
+                void RegisterAbility<TKey>(
+                    Dictionary<TKey, Action<InteractionContext, Vector3>> dictionary,
+                    TKey key,
+                    Action<InteractionContext, Vector3> action)
+                {
+                    if (!dictionary.ContainsKey(key)) dictionary[key] = null;
+                    dictionary[key] += action;
+                }
+
+                // 1. Hull abilities
+                foreach (var ability in hull.RuntimeAbilities)
+                {
+                    RegisterAbility(_activeAbilities, ability.type,
+                        (context, targetPos) => hull.Activate(targetPos, ability, context));
+                }
+
+                // 2. Group weapon abilities
                 var weaponGroups = EquipmentHandler.GroupWeaponsByTier(hull.equipments);
                 foreach (var kvp in weaponGroups)
                 {
@@ -41,34 +58,33 @@ namespace Assets.Entity.Controllers
                     foreach (var equipment in kvp.Value)
                     {
                         if (equipment == null) continue;
-
                         var groupAbilities = equipment.RuntimeAbilities
                             .Where(a => a.mode == AbilityActivationMode.WeaponGroup);
 
                         foreach (var ability in groupAbilities)
                         {
-                            if (!_weaponAbilities.ContainsKey(weaponType))
-                                _weaponAbilities[weaponType] = null;
+                            var currentEquipment = equipment;
+                            var currentAbility = ability;
 
-                            _weaponAbilities[weaponType] += (context, targetPos) =>
-                                { equipment.Activate(targetPos, ability, context); };
+                            RegisterAbility(_weaponAbilities, weaponType,
+                                (context, targetPos) => currentEquipment.Activate(targetPos, currentAbility, context));
                         }
                     }
                 }
 
+                // 3. Active equipment abilities
                 foreach (var equipment in hull.equipments)
                 {
                     if (equipment == null) continue;
-
                     var activeAbilities = equipment.RuntimeAbilities
                         .Where(a => a.mode == AbilityActivationMode.ActiveAbility);
 
                     foreach (var ability in activeAbilities)
                     {
-                        if (!_activeAbilities.ContainsKey(ability.type)) _activeAbilities[ability.type] = null;
-
-                        _activeAbilities[ability.type] += (context, targetPos) =>
-                            { equipment.Activate(targetPos, ability, context);};
+                        var currentEquipment = equipment;
+                        var currentAbility = ability;
+                        RegisterAbility(_activeAbilities, ability.type,
+                            (context, targetPos) => currentEquipment.Activate(targetPos, currentAbility, context));
                     }
                 }
             }

@@ -235,7 +235,13 @@ MonoBehaviour:
       _calcType: 0
       _applyType: 0
     buffs: []
-    abilities: []
+    abilities:
+    - type: 8
+      mode: 1
+      delay: 1
+      globalUsageDelay: 0
+      charges: 1
+      isPassive: 0
 --- !u!50 &1691923692890103079
 Rigidbody2D:
   serializedVersion: 5

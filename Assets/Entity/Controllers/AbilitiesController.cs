@@ -1,46 +1,80 @@
 ﻿using Assets.Common;
 using Assets.Scripts.Actions;
+using GameplayActions;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Entity.Controllers
 {
     public class AbilitiesController
     {
-        public AbilityUnit[] Abilities = System.Array.Empty<AbilityUnit>();
+        private bool _isDirty { get; set; } = true;
+
+        public AbilityUnit[] abilities = System.Array.Empty<AbilityUnit>();
         private List<AbilityUnit> _runtimeAbilities = new();
+        private List<AbilityUnit> _addedAbilities = new();
+        private List<AbilityUnit> _setupAbilities = new();
+
         private readonly Dictionary<AbilityUnit, float> _abilityCooldowns = new();
         private TotalAbbilitiesController _totalAbbilitiesCtr;
-        public AbilitiesController(TotalAbbilitiesController totalAbbilities) => _totalAbbilitiesCtr = totalAbbilities;
+        public AbilitiesController(IEnumerable<AbilityUnit> setupAbilities, TotalAbbilitiesController totalAbbilities)
+        {
+            _setupAbilities = (List<AbilityUnit>)setupAbilities;
+            _totalAbbilitiesCtr = totalAbbilities;
+        }
 
-        public void Rebuild(StatOptions statOptions)
+        public void Rebuild()
         {
             _runtimeAbilities.Clear();
-            if (statOptions.abilities != null)
-                _runtimeAbilities.AddRange(statOptions.abilities);
+            _runtimeAbilities.AddRange(_setupAbilities ?? Enumerable.Empty<AbilityUnit>());
+            _runtimeAbilities.AddRange(_addedAbilities);
         }
 
         public IReadOnlyList<AbilityUnit> RuntimeAbilities
         {
             get
             {
-                _runtimeAbilities ??= new List<AbilityUnit>(Abilities ?? System.Array.Empty<AbilityUnit>());
+                if (_isDirty) Rebuild();
                 return _runtimeAbilities;
             }
         }
 
         public virtual void AddAbility(AbilityUnit ability)
         {
-            _runtimeAbilities.Add(ability);
+            _addedAbilities.Add(ability);
+            _isDirty = true;
             _totalAbbilitiesCtr.MarkDirty();
             ((List<AbilityUnit>)RuntimeAbilities).Add(ability);
         }
 
-        public virtual bool RemoveAbility(AbilityUnit ability) => ((List<AbilityUnit>)RuntimeAbilities).Remove(ability);
+        public virtual bool RemoveAbility(AbilityUnit ability)
+        {
+            bool removedFromAdded = _addedAbilities.Remove(ability);
+            bool removedFromRuntime = ((List<AbilityUnit>)RuntimeAbilities).Remove(ability);
+
+            if (removedFromAdded || removedFromRuntime)
+            {
+                _isDirty = true;
+                _totalAbbilitiesCtr.MarkDirty();
+                return true;
+            }
+            return false;
+        }
+
+        public virtual void RemoveAbilities()
+        {
+            _runtimeAbilities.Clear();
+            _isDirty = true;
+            _totalAbbilitiesCtr.MarkDirty();
+        }
 
         public virtual bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
         {
-            throw new System.NotImplementedException();
+            var action = ActionProvider.GetAction(abilityUnit.type);
+            if (action == null || !CanActivate(targetPos, abilityUnit)) return false;
+            action.Execute(context, targetPos);
+            return true;
         }
 
         public virtual bool CanActivate(Vector2 targetPos, AbilityUnit abilityUnit)

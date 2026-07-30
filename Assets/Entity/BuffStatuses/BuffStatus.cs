@@ -20,7 +20,7 @@ public enum BuffScope
 
 public abstract class BuffStatus : MonoBehaviour
 {
-    public string BuffId { get; private set; }
+    public string Id { get; private set; }
     public string SourceId { get; set; }
     public float Duration { get; set; } = -1f;
     public bool IsPermanent => Duration < 0;

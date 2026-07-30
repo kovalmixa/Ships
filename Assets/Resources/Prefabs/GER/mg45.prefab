@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6406805436692875470}
   - component: {fileID: 298030220984534453}
   - component: {fileID: 5120178576895215162}
-  - component: {fileID: 4711494648378866683}
   - component: {fileID: 4896362911937036758}
   m_Layer: 0
   m_Name: mg45
@@ -106,25 +105,12 @@ MonoBehaviour:
     mods: []
     buffs: []
     abilities:
-    - type: 0
-      action: {fileID: 0}
+    - type: 1
       mode: 0
       delay: 1
       globalUsageDelay: 0
       charges: 1
       isPassive: 0
---- !u!114 &4711494648378866683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1657047564673204508}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00474b4455def4449acc2631260f7812, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!61 &4896362911937036758
 BoxCollider2D:
   m_ObjectHideFlags: 0

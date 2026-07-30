@@ -10,7 +10,6 @@ namespace Assets.Common
     public struct AbilityUnit
     {
         public AbilityType type;
-        public GameplayAction action;
         public AbilityActivationMode mode;
         public float delay;
         public float globalUsageDelay;

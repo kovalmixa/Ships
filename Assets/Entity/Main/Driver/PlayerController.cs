@@ -52,7 +52,7 @@ namespace Entity.Controllers
             for (int i = 0; i <= 9; i++)
             {
                 KeyCode key = (KeyCode)((int)KeyCode.Alpha0 + i);
-                //_keyCodeActivations[key] = i == 1 ? AbilityType.Heal : AbilityType.None;
+                _keyBinds[key] = i == 1 ? new KeyAction(AbilityType.Heal) : new KeyAction(AbilityType.None);
             }
         }
 

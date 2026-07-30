@@ -8,6 +8,7 @@ using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
 using Scripts;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,6 +24,7 @@ namespace Assets.Entity.Hull
         [HideInInspector] public Transform root;
         [HideInInspector] public float currentSpeed;
         public string Id { get; set; }
+        public event Action OnGameObjectDestroyed;
 
         protected EntityController entityController;
         protected Rigidbody2D rigidBody2D;
@@ -50,19 +52,24 @@ namespace Assets.Entity.Hull
             Data = GetComponent<HullContainer>();
         }
 
-        public void Setup(EntityController entityController) 
+        public void Setup(EntityController entityController)
         {
             this.entityController = entityController;
-            abilitiesController = new(entityController.totalAbbilitiesController);
+            var statOptions = Data.statOptions;
+
+            abilitiesController = new(statOptions.abilities, entityController.totalAbbilitiesController);
+            OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
 
             var snapshot = entityController.GetSnapshot();
-            var statOptions = Data.statOptions;
             _statModController = new(entityController.statModController, statOptions);
             foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);
-            foreach (var ability in statOptions.abilities) abilitiesController.AddAbility(ability);
 
             CollectAnchors(transform);
+            Debug.Log(RuntimeAbilities.Count);
+
         }
+
+        private void OnDestroy() => OnGameObjectDestroyed?.Invoke();
 
         private void CollectAnchors(Transform parent)
         {

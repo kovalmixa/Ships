@@ -15,7 +15,7 @@ namespace Assets.Entity.Controllers
         public Dictionary<(StatType Type, StatLayer Layer), float> BaseStats => _baseStats;
 
         public Dictionary<(string buffId, string sourceId), (BuffStatus status, EntitySnapshot source)> ActiveBuffs { get; private set; } = new();
-        public ILookup<string, BuffStatus> BuffsById => ActiveBuffs.Values.Select(v => v.status).ToLookup(b => b.BuffId);
+        public ILookup<string, BuffStatus> BuffsById => ActiveBuffs.Values.Select(v => v.status).ToLookup(b => b.Id);
 
         private GameObject _source;
         private StatModController _statMods;
@@ -32,7 +32,7 @@ namespace Assets.Entity.Controllers
         public void AddBuff(BuffStatus newBuff, EntitySnapshot source)
         {
             if (newBuff == null) return;
-            var key = (newBuff.BuffId, newBuff.SourceId);
+            var key = (newBuff.Id, newBuff.SourceId);
             if (ActiveBuffs.TryGetValue(key, out var existing))
             {
                 switch (newBuff.Policy)
@@ -58,7 +58,7 @@ namespace Assets.Entity.Controllers
         }
 
         public void RemoveBuffs(params BuffStatus[] buffs)
-        { foreach (var buff in buffs) RemoveBuff(buff.BuffId, buff.SourceId); }
+        { foreach (var buff in buffs) RemoveBuff(buff.Id, buff.SourceId); }
 
         public bool RemoveBuff(string buffId, string sourceId = null)
         {
@@ -88,7 +88,7 @@ namespace Assets.Entity.Controllers
         private void RemoveBuffInternal(BuffStatus buff)
         {
             buff.onRemove?.Invoke();
-            ActiveBuffs.Remove((buff.BuffId, buff.SourceId));
+            ActiveBuffs.Remove((buff.Id, buff.SourceId));
             GameObject.Destroy(buff);
         }
 

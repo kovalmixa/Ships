@@ -6,6 +6,7 @@ using Assets.Entity.Modifiers;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,7 +25,7 @@ namespace Assets.Entity.Equipment
             set { }
         }
         public string Id { get; set; }
-
+        public event Action OnGameObjectDestroyed;
         #region Editor
 
         private void OnValidate()
@@ -57,20 +58,25 @@ namespace Assets.Entity.Equipment
 
             foreach (var buff in statOptions.buffs)
             {
-                if (buff.Scope == BuffScope.Global)entityController.Buffs.AddBuff(buff, snapshot);
+                if (buff.Scope == BuffScope.Global)
+                {
+                    entityController.Buffs.AddBuff(buff, snapshot);
+                    OnGameObjectDestroyed += () => entityController.Buffs.RemoveBuff(buff.Id);
+                }
                 else Buffs.AddBuff(buff, snapshot);
             }
 
-            foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);
-
             abilitiesController = new(
+                statOptions.abilities,
                 _entityController.totalAbbilitiesController,
                 transform,
                 _basicAngle,
                 EquipmentAnchor
                 );
-            foreach (var ability in statOptions.abilities) abilitiesController.AddAbility(ability);
+            OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
         }
+
+        private void OnDestroy() => OnGameObjectDestroyed?.Invoke();
 
         #endregion
 

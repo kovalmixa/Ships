@@ -25,7 +25,7 @@ namespace GameplayActions
                 Debug.LogWarning($"unable to load {id}");
                 return;
             }
-            var spawnedEffect = Instantiate(effectPrefab, targetPos, Quaternion.identity);
+            var spawnedEffect = GameObject.Instantiate(effectPrefab, targetPos, Quaternion.identity);
         }
     }
 }

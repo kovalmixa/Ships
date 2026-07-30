@@ -25,7 +25,7 @@ namespace Assets.Scripts.Actions
         private IInteractive _targetInteractive;
 
         public IInteractive SourceInterractive => _sourceInteractive;
-        public IInteractive TargetInterractive => TargetInterractive;
+        public IInteractive TargetInterractive => _targetInteractive;
 
         public string AbilityId { get; set; }
 

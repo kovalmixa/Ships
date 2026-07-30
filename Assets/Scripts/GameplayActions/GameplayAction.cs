@@ -7,7 +7,7 @@ namespace GameplayActions
 {
     public interface IActionStruct { }
 
-    public abstract class GameplayAction : MonoBehaviour
+    public abstract class GameplayAction
     {
         public virtual void Execute(InteractionContext interractionContext, Vector3 targetPos) { }
 

@@ -2,6 +2,8 @@
 using Assets.Entity.Equipment;
 using Assets.Handlers;
 using Assets.Scripts.Actions;
+using GameplayActions;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -13,8 +15,9 @@ namespace Assets.Entity.Controllers
         private readonly EquipmentAnchor _equipmentAnchor;
         private readonly float _basicAngle;
 
-        public EqAbilitiesController(TotalAbbilitiesController totalAbbilities, Transform transform, float basicAngle, EquipmentAnchor equipmentAnchor)
-            : base(totalAbbilities)
+        public EqAbilitiesController(IEnumerable<AbilityUnit> abilities, TotalAbbilitiesController totalAbbilities, 
+            Transform transform, float basicAngle, EquipmentAnchor equipmentAnchor)
+            : base(abilities, totalAbbilities)
         {
             _equipmentTransform = transform;
             _basicAngle = basicAngle;
@@ -23,7 +26,7 @@ namespace Assets.Entity.Controllers
 
         public override bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
         {
-            var action = abilityUnit.action;
+            var action = ActionProvider.GetAction(abilityUnit.type);
             if (action == null || !CanActivate(targetPos, abilityUnit)) return false;
             if (!IsAimedAtTarget(targetPos, abilityUnit.delay, out Vector2 targetPosEq)) return false;
             if (!IsWithinActivationSector()) return false;

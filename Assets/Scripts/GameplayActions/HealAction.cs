@@ -20,16 +20,14 @@ namespace GameplayActions
 
         public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
         {
-            Debug.Log($"Healed:{heal.value}");
-            //var stats = context.Target.GetComponent<CharacterStats>();
-            //if (stats != null)
-            //{
-            //    stats.Heal(context.HealAmount.Value);
-            //}
+            //var healData = (Heal)interractionContext.ActionStruct; // doesnt work
+            //Debug.Log($"Healed: {healData.value}");
+            Debug.Log($"Healed");
         }
+
         public override void Execute(InteractionContext interractionContext, IInteractive target)
         {
-            target.TakeHeal(interractionContext);
+            //target.TakeHeal(interractionContext);
         }
 
         #region IScalableAction
