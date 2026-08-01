@@ -1,3 +1,4 @@
+using Assets.Common;
 using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
 using Assets.Scripts.Actions.Projectile;
@@ -5,30 +6,25 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    public struct ProjectileDefinition : IActionStruct
+    public class ProjectileDataSO : ActionDataSO
     {
-        public string Id { get; set; }
-        [field: SerializeField] public ProjectileType Type { get; set; }
-
-        public Vector2? targetPosition;
+        public string id;
         public Vector2 startPosition;
-
-        public Damage damage;
+        public ProjectileType type;
+        public DamageDataSO damageData;
         public float speed;
-        public float penetration;
-        public float critChance;
-
-        public int lifeTime;
+        public float lifeTime;
         public bool isHoming;
         public bool isBallistic;
     }
 
-    public class FireProjectileAction : GameplayAction
+    public class FireProjectileAction : GameplayAction<ProjectileDataSO>
     {
-        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
+        protected override void ExecuteAction(InteractionContext context, ProjectileDataSO data, Vector2 targetPos)
         {
-            //Debug.Log("Pew");
-            ProjectileController.Instance.Launch(interractionContext);
+            ProjectileController.Instance.Launch(context, data, targetPos);
         }
+
+        protected override void ExecuteAction(InteractionContext context, ProjectileDataSO data, IInteractive target) { }
     }
 }

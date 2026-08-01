@@ -1,25 +1,24 @@
 ﻿using Assets.Common;
-using Assets.Handlers.Events;
 using Assets.Scripts.Actions;
 using GameplayActions;
 
-public struct EntityInteractionEvent : IGameplayEvent
+namespace Assets.Handlers.Events
 {
-    public InteractionContext Context { get; }
-
-    public IInteractive Source { get; }
-    public IInteractive Target { get; }
-    public IActionStruct ActionStruct { get; }
-    public float? FinalValue { get; }
-    public InterractionType Type { get; }
-
-    public EntityInteractionEvent(InteractionContext interractionContext, float? finalValue = null)
+    public struct EntityInteractionEvent : IGameplayEvent
     {
-        Context = interractionContext;
-        Source = interractionContext.SourceInterractive;
-        Target = interractionContext.TargetInterractive;
-        ActionStruct = interractionContext.ActionStruct;
-        FinalValue = finalValue;
-        Type = interractionContext.Type;
+        public InteractionContext Context { get; }
+        public ActionDataSO ActionData { get; }
+
+        public IInteractive Source => Context?.SourceInteractive;
+        public IInteractive Target => Context?.TargetInteractive;
+
+        public float FinalValue { get; set; }
+
+        public EntityInteractionEvent(InteractionContext context, ActionDataSO actionData, float initialValue = 0f)
+        {
+            Context = context;
+            ActionData = actionData;
+            FinalValue = initialValue;
+        }
     }
 }

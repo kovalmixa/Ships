@@ -1,11 +1,13 @@
 using Assets.Common;
-using Assets.DataContainers;
+using Assets.Entity.BuffStatuses;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
+using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
+using GameplayActions;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -152,22 +154,22 @@ namespace Assets.Entity.Equipment
 
         #region IInteractive
 
+        public LayerType Layer => (LayerType)gameObject.layer;
         public GameObject GameObject => gameObject;
 
-        public void AddBuff(InteractionContext context)
+        public void AddBuff(InteractionContext context, BuffStatus buff)
         {
-            var buff = context.ActionStruct as BuffStatus;
             if (buff == null) return;
             if (buff.Scope == BuffScope.Global) _entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
             else Buffs.AddBuff(buff, context.SourceSnapshot);
         }
 
-        public void TakeDamage(InteractionContext interractionContext)
+        public void TakeDamage(InteractionContext context, DamageDataSO data)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(InteractionContext interractionContext)
+        public void TakeHeal(InteractionContext context, HealDataSO data)
         {
             throw new System.NotImplementedException();
         }
@@ -208,8 +210,8 @@ namespace Assets.Entity.Equipment
 
         public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
         {
-            if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) 
-                EventBrocker.Raise(new EntityInteractionEvent(context));
+            if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) ;
+                //EventBrocker.Raise(new EntityInteractionEvent(context));
         }
 
         #endregion

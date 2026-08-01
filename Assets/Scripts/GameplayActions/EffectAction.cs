@@ -1,21 +1,33 @@
-﻿using Assets.Handlers.FileHandlers;
+﻿using Assets.Common;
+using Assets.Handlers.FileHandlers;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using UnityEngine;
 
 namespace GameplayActions
 {
-    public class EffectAction : GameplayAction
+    public class EffectDataSO : ActionDataSO
     {
-        private ObjectPoolHandler _effectPool;
-        [SerializeField] private string[] _ids;
+        public string[] prefabIds;
+    }
 
-        private void Awake() => _effectPool = ObjectPoolHandler.GetInstance(PoolType.Effect);
+    public class EffectAction : GameplayAction<EffectDataSO>
+    {
+        protected override void ExecuteAction(InteractionContext context, EffectDataSO data, Vector2 targetPos)
+        {
+            var effectPool = ObjectPoolHandler.GetInstance(PoolType.Effect);
+            if (effectPool == null) return;
+            effectPool = effectPool.gameObject.GetComponent<ObjectPoolHandler>();
+            foreach (var id in data.prefabIds) SetupEffect(targetPos, id);
+        }
 
-        public override void Execute(InteractionContext interractionContext, Vector3 targetPos){
-            if (_effectPool == null) return;
-            _effectPool = _effectPool.gameObject.GetComponent<ObjectPoolHandler>();
-            foreach (var id in _ids) SetupEffect(targetPos, id);
+        protected override void ExecuteAction(InteractionContext context, EffectDataSO data, IInteractive target)
+        {
+            if (target is MonoBehaviour monoBehaviour)
+            {
+                GameObject go = monoBehaviour.gameObject;
+                ExecuteAction(context, data, go.transform.position);
+            }
         }
 
         protected void SetupEffect(Vector3 targetPos, string id)

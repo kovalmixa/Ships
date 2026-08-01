@@ -1,15 +1,26 @@
-﻿using Assets.Scripts.Actions;
+﻿using Assets.Common;
+using Assets.Scripts.Actions;
 using System;
 using UnityEngine;
 
 namespace GameplayActions
 {
-    public class PositionAction : GameplayAction
+    public class PositionDataSO : ActionDataSO
     {
-        [SerializeField] public Vector2 Position;
-        [SerializeField] public Vector2 Rotation;
-        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
+        public Vector2 Position;
+        public Vector2 Rotation;
+    }
+
+    public class PositionAction : GameplayAction<PositionDataSO>
+    {
+        protected override void ExecuteAction(InteractionContext context, PositionDataSO data, Vector2 targetPos)
         {
+            throw new NotImplementedException();
+        }
+
+        protected override void ExecuteAction(InteractionContext context, PositionDataSO data, IInteractive target)
+        {
+            throw new NotImplementedException();
         }
     }
 }

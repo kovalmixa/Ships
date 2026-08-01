@@ -4,42 +4,22 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    public struct Heal : IActionStruct
+    [CreateAssetMenu(menuName = "Gameplay/Actions/Heal Data")]
+    public class HealDataSO : ActionDataSO
     {
-        [SerializeField] public float value;
-
-        public Heal(float value)
-        {
-            this.value = value;
-        }
+        public float value;
     }
 
-    public class HealAction : GameplayAction, IScalableAction
+    public class HealAction : GameplayAction<HealDataSO>
     {
-        [SerializeField] public Heal heal;
-
-        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
+        protected override void ExecuteAction(InteractionContext context, HealDataSO data, Vector2 targetPos)
         {
-            //var healData = (Heal)interractionContext.ActionStruct; // doesnt work
-            //Debug.Log($"Healed: {healData.value}");
-            Debug.Log($"Healed");
+            Debug.Log($"Healed for {data.value} at position {targetPos}");
         }
 
-        public override void Execute(InteractionContext interractionContext, IInteractive target)
+        protected override void ExecuteAction(InteractionContext context, HealDataSO data, IInteractive target)
         {
-            //target.TakeHeal(interractionContext);
+            // target.TakeHeal(context, data.value);
         }
-
-        #region IScalableAction
-        public void ScaleExecute(InteractionContext interractionContext, Vector3 targetPos, float scale)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void ScaleExecute(InteractionContext interractionContext, IInteractive target, float scale)
-        {
-            throw new System.NotImplementedException();
-        }
-        #endregion
     }
 }

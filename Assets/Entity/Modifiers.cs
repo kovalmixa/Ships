@@ -57,15 +57,16 @@ namespace Assets.Entity.Modifiers
         EnergyOnKill = 114, // Energy per kill
         ShieldOnKill = 115, // Shield per kill
         ShootDispersion = 116, // Accuracy of shooting
-
-
-        // ==========================================
-        // 4. ЗАЩИТА И БРОНЯ (150 - 199)
-        // ==========================================
-        Armor = 150, // Базовая физическая броня
-        Evasion = 151, // Уклонение (%)
-        BlockChance = 152, // Шанс блока
-        DamageReflection = 153, // Отражение урона (Шипы)
+        Heal = 117, // Heal from projectile to target or by item to host
+        DamageLayer = 118, //Damage layers by index of enum of it
+        
+        // ==============================================
+        // 4. PROTECTION AND ARMOR (150 - 199)
+        // =============================================
+        Armor = 150, // Base Physical Armor
+        Evasion = 151, // Evasion (%)
+        BlockChance = 152, // Block Chance
+        DamageReflection = 153, // Damage Reflection (Spikes)
 
 
         // ==============================================
@@ -153,7 +154,7 @@ namespace Assets.Entity.Modifiers
         PrPiercingCount = 354, // Number of enemies a projectile pierces
         PrRicochetCount = 355, // Number of wall/enemy bounces
         PrCount = 356, // Number of projectiles fired per shot (Multishot)
-
+        PrType = 357, //Type of projectile (0 - Bullet, 1 - Projectile, etc)
 
         // ===================================================
         // 9. DIABLO-LIKE / REWARDS / ECONOMY (400 - 449)

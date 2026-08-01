@@ -90,9 +90,15 @@ namespace Assets.Handlers.Enums
         None, S, M, L, XL, XXL, X
     }
 
+    [Flags]
     public enum LayerType
     {
-        None, Sea, Land, Air
+        None = 0,
+        Land = 6 << 0, // 2
+        Sea = 7 << 1,  // 1
+        Air = 8 << 2,  // 4
+
+        All = Land | Sea | Air
     }
 }
 

@@ -79,8 +79,8 @@ namespace Entity.Controllers
 
         public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
         {
-            if (abilitiesController.TryActivate(targetPos, abilityUnit, context))
-                EventBrocker.Raise(new EntityInteractionEvent(context));
+            if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) ;
+                //EventBrocker.Raise(new EntityInteractionEvent(context));
         }
 
         #endregion

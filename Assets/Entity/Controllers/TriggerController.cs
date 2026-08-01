@@ -7,7 +7,7 @@ namespace Assets.Entity.Controllers
 {
     public enum TriggerType
     {
-        None, OnDamage, OnHeal, OnBuffed, OnShoot, OnActivate
+        None, OnDamage, OnHeal, OnBuffed, OnBuffRemoved, OnShoot, OnActivate
     }
 
     public class TriggerController
@@ -16,12 +16,10 @@ namespace Assets.Entity.Controllers
         private Dictionary<TriggerType, List<Action<InteractionContext>>> _triggers = new();
         public TriggerController(EntityController entityController) => _entityController = entityController;
 
-        public InteractionContext OnTrigger(TriggerType type, InteractionContext context)
+        public void OnTrigger(TriggerType type, InteractionContext context)
         {
-            InteractionContext newContext = new(context);
             if (_triggers.TryGetValue(type, out var actions))
                 foreach (var action in actions) action?.Invoke(context);
-            return newContext;
         } 
 
         public void AddTrigger() { }

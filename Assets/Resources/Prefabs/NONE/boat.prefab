@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1328403097879313759}
   - component: {fileID: 6936527153698304451}
   - component: {fileID: 7147388965222040153}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Layer1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -142,7 +142,7 @@ GameObject:
   - component: {fileID: 8767162370263654451}
   - component: {fileID: 6679228126235773454}
   - component: {fileID: 6141477231020090577}
-  m_Layer: 4
+  m_Layer: 7
   m_Name: boat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -340,7 +340,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8296754573792745974, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8661486173044409718, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_LocalPosition.x

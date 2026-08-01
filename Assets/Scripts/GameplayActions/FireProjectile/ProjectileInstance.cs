@@ -6,34 +6,49 @@ namespace Assets.Scripts.Actions.Projectile
 {
     public class ProjectileInstance : MonoBehaviour
     {
-        private EffectAction _effectAction;
-        private GameplayAction[] onExplosionActions;
-        private ProjectileDefinition _definition;
-        private Vector2 _direction;
+        private readonly EffectAction _effectAction;
+        private readonly GameplayAction[] _onExplosionActions;
+        private event Action OnDeactivate;
+
+        private readonly ProjectileDataSO _data;
         private InteractionContext _context;
+
         private Transform _targetTransform;
-        private event Action _onDeactivate;
+        private Vector2 _targetPosition;
+        private Vector2 _direction;
+
         private float _timer;
-        
+
         #region Setup
 
-        public void Setup(InteractionContext interactionContext, ProjectileDefinition projectileDef, Action onDeactivate, Transform targetTransform = null)
+        public void Setup(
+            InteractionContext interactionContext, 
+            ProjectileDataSO projectileDef, 
+            Action onDeactivate,
+            Transform targetTransform)
         {
-
-            _context = interactionContext;
             _targetTransform = targetTransform;
+            Setup(interactionContext, projectileDef, onDeactivate, targetTransform.position);
+        }
+
+        public void Setup(
+            InteractionContext interactionContext,
+            ProjectileDataSO projectileDef,
+            Action onDeactivate,
+            Vector2 targetPosition)
+        {
+            _context = interactionContext;
 
             _timer = 0f;
-            _onDeactivate = onDeactivate;
+            OnDeactivate = onDeactivate;
 
-            if (_targetTransform != null)
-                _direction = ((Vector2)_targetTransform.position - _definition.startPosition).normalized;
-            else if (_definition.targetPosition.HasValue)
-                _direction = (_definition.targetPosition.Value - _definition.startPosition).normalized;
-            else _direction = transform.up;
+            //if (_targetTransform != null)
+            //    _direction = ((Vector2)_targetTransform.position - _definition.startPosition).normalized;
+            _targetPosition = targetPosition;
+            _direction = (_targetPosition - _data.startPosition).normalized;
 
             float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
-            transform.SetPositionAndRotation(_definition.startPosition, Quaternion.Euler(0, 0, angle - 90f));
+            transform.SetPositionAndRotation(_data.startPosition, Quaternion.Euler(0, 0, angle - 90f));
 
             IgnoreShooterCollision(true);
             SetupEffect();
@@ -56,7 +71,7 @@ namespace Assets.Scripts.Actions.Projectile
 
         private void Move(float deltaTime)
         {
-            if (_definition.isHoming && _targetTransform != null)
+            if (_data.isHoming && _targetTransform != null)
             {
                 Vector2 toTarget = (_targetTransform.position - transform.position).normalized;
                 _direction = Vector2.Lerp(_direction, toTarget, deltaTime * 5f);
@@ -65,29 +80,34 @@ namespace Assets.Scripts.Actions.Projectile
                 transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
             }
 
-            transform.position += (Vector3)(_direction * (_definition.speed * deltaTime));
+            transform.position += (Vector3)(_direction * (_data.speed * deltaTime));
 
-            if (_definition.targetPosition.HasValue)
-            {
-                float distToTarget = Vector2.Distance(transform.position, _definition.targetPosition.Value);
-                if (distToTarget <= 0.2f) Explode();
-            }
+            float distToTarget = Vector2.Distance(transform.position, _targetPosition);
+            if (distToTarget <= 0.2f) Explode();
         }
 
         private void CheckLifetime(float deltaTime)
         {
             _timer += deltaTime;
-            if (_timer >= _definition.lifeTime) Explode();
+            if (_timer >= _data.lifeTime) Explode();
         }
 
         public void Explode()
         {
-            if (onExplosionActions != null)
+            if (_onExplosionActions != null)
             {
                 Vector3 explodePos = transform.position;
-                foreach (var action in onExplosionActions) action?.Execute(_context, explodePos);
+                var explosionAction = ActionProvider.Explosion;
+                var data = ActionDataFactory.CreateDynamicData(explosionAction.GetType(), _context);
+                explosionAction.Execute(_context, data, explodePos);
+
+                foreach (var action in _onExplosionActions)
+                {
+                    data = ActionDataFactory.CreateDynamicData(action.GetType(), _context);
+                    action?.Execute(_context, data, explodePos);
+                }
             }
-            _onDeactivate?.Invoke();
+            OnDeactivate?.Invoke();
         }
 
         private void IgnoreShooterCollision(bool ignore)

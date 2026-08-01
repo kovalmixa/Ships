@@ -1,55 +1,61 @@
 ﻿using Assets.Common;
+using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameplayActions
 {
     public enum DamageType
     {
-        None, Explosive, Corrosion, Energy, Fire, Radiation
+        Physical, Fire, Explosive, Acid, Ultrasound, Electricity, Plasma,
+        Slow, Freeze, Psi, Radiation, EMP, SpatialAnomaly, Flooding
     }
 
-    public struct Damage : IActionStruct
+    [Serializable]
+    public struct ElementalDamageData
     {
-        [SerializeField] public DamageType type;
-
-        [SerializeField] public float penetration;
-
-        [SerializeField] public float value;
-
-        [SerializeField] public float range;
-
-        [SerializeField] public LayerMask[] filterLayers;
-
-        public Damage(DamageType type, float penetration, float value, LayerMask[] filterLayers, float range = 1f)
-        {
-            this.type = type;
-            this.penetration = penetration;
-            this.value = value;
-            this.range = range;
-            this.filterLayers = filterLayers;
-        }
+        public DamageType type;
+        public float damage;
+        public float critChance;
+        public float critMultiplier;
     }
 
-    public class DamageAction : GameplayAction
+    public class DamageDataSO : ActionDataSO
     {
-        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
+        public float value;
+        public float penetration;
+        public float critChance;
+        public float critMultiplier;
+        public LayerType targetLayers;
+        public float range;
+        public LayerMask[] filterLayers;
+        public List<ElementalDamageData> elements = new();
+    }
+
+    public class DamageAction : GameplayAction<DamageDataSO>
+    {
+        protected override void ExecuteAction(InteractionContext context, DamageDataSO data, Vector2 targetPos)
         {
-            var damage = (Damage) interractionContext.ActionStruct;
             int combinedMask = 0;
-            foreach (var mask in damage.filterLayers) combinedMask |= mask.value;
-            Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, damage.range, combinedMask);
-            foreach (var target in targets)
-                if (target.TryGetComponent(out IInteractive interactive))
-                    interactive.TakeDamage(interractionContext);
+            if (data.filterLayers != null)
+                foreach (var mask in data.filterLayers)
+                    combinedMask |= mask.value;
 
-            //todo add extra damage options with types
+            Collider2D[] targets = Physics2D.OverlapCircleAll(targetPos, data.range, combinedMask);
+
+            foreach (var targetCollider in targets)
+                if (targetCollider.TryGetComponent(out IInteractive interactive))
+                    if (CanDamageLayer(data.targetLayers, interactive.Layer))
+                        interactive.TakeDamage(context, data);
         }
 
-        public override void Execute(InteractionContext interractionContext, IInteractive target)
+        protected override void ExecuteAction(InteractionContext context, DamageDataSO data, IInteractive target)
         {
-            var damage = (Damage)interractionContext.ActionStruct;
-            target.TakeDamage(interractionContext);
+            if (CanDamageLayer(data.targetLayers, target.Layer)) target.TakeDamage(context, data);
         }
+
+        private bool CanDamageLayer(LayerType attackLayers, LayerType targetLayer) => (attackLayers & targetLayer) != 0;
     }
 }

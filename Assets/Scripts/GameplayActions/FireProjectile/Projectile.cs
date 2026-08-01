@@ -21,7 +21,7 @@
 //        public string Id { get; set; }
 
 //        private Transform _target;
-//        private InterractionContext _interractionContext;
+//        private context _context;
 //        private Vector2 _direction;
 //        public Vector3? targetPosition;
 //        private float _timer;
@@ -44,17 +44,17 @@
 //            GetComponent<SpriteRenderer>().sprite = prefab.GetComponent<SpriteRenderer>().sprite;
 //        }
 
-//        public void Launch(Vector2 dir, Vector3? targetPos = null, InterractionContext interractionContext = null)
+//        public void Launch(Vector2 dir, Vector3? targetPos = null, context context = null)
 //        {
-//            this._interractionContext = interractionContext;
+//            this._context = context;
 //            targetPosition = targetPos;
 //            _direction = dir;
 //            _timer = 0f;
 
-//            if (_interractionContext != null)
+//            if (_context != null)
 //            {
 //                var projectileCollider = GetComponent<Collider2D>();
-//                var shooterCollider = _interractionContext.SourceObject.GetComponent<Collider2D>();
+//                var shooterCollider = _context.SourceObject.GetComponent<Collider2D>();
 //                if (projectileCollider != null && shooterCollider != null)
 //                    Physics2D.IgnoreCollision(projectileCollider, shooterCollider, true);
 //            }
@@ -113,16 +113,16 @@
 //            var objectPool = SceneNodesHandler.GetPoolHandler("ProjectilePool");
 //            if (_objectPool != null) _objectPool.Return(gameObject);
 //            else gameObject.SetActive(false);
-//            if (_interractionContext == null) return;
+//            if (_context == null) return;
 //            var projectileCollider = GetComponent<Collider2D>();
-//            var shooterCollider = _interractionContext.SourceObject.GetComponent<Collider2D>();
+//            var shooterCollider = _context.SourceObject.GetComponent<Collider2D>();
 //            if (projectileCollider != null && shooterCollider != null)
 //                Physics2D.IgnoreCollision(projectileCollider, shooterCollider, false);
 //        }
 
 //        public void Activate(Vector3 targetPos, TemplateActionBase[] actions)
 //        {
-//            foreach (var activation in actions) activation.Execute(_interractionContext, targetPos);
+//            foreach (var activation in actions) activation.Execute(_context, targetPos);
 //        }
 
 //        public void AddAbility(AbilityUnit ability)
@@ -177,21 +177,21 @@
 //            if (LifetimeStats.TryGetValue(type, out float value)) return value;
 //            return 0f;
 //        }
-//        public void TakeDamage(InterractionContext interractionContext, Damage damage)
+//        public void TakeDamage(context context, Damage damage)
 //        {
 //            throw new System.NotImplementedException();
 //        }
 
-//        public void TakeHeal(InterractionContext interractionContext, Heal heal)
+//        public void TakeHeal(context context, Heal heal)
 //        {
 //            throw new System.NotImplementedException();
 //        }
-//        public void AddBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+//        public void AddBuff(context context, params BuffStatus[] buffs)
 //        {
 //            throw new System.NotImplementedException();
 //        }
 
-//        public void RemoveBuff(InterractionContext interractionContext, params BuffStatus[] buffs)
+//        public void RemoveBuff(context context, params BuffStatus[] buffs)
 //        {
 //            throw new System.NotImplementedException();
 //        }

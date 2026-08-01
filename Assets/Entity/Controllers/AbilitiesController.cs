@@ -71,9 +71,11 @@ namespace Assets.Entity.Controllers
 
         public virtual bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
         {
-            var action = ActionProvider.GetAction(abilityUnit.type);
+            var action = ActionProvider.GetActionByAbility(abilityUnit.type);
             if (action == null || !CanActivate(targetPos, abilityUnit)) return false;
-            action.Execute(context, targetPos);
+            var data = ActionDataFactory.CreateDynamicData(abilityUnit.type, context);
+            if (data == null) return false;
+            action.Execute(context, data, targetPos);
             return true;
         }
 

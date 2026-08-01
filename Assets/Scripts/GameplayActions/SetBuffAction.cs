@@ -3,49 +3,52 @@ using Assets.Common;
 using Assets.Scripts.Actions;
 using JetBrains.Annotations;
 using UnityEngine;
+using Assets.Entity.BuffStatuses;
 
-public struct BuffDefinition : IActionStruct
+public class BuffDataSO : ActionDataSO
 {
     public BuffStatus[] buffs;
-    //public string SourceId { get; set; } = "Ability_XXX";
-    [SerializeField] public uint range;
-    [SerializeField] public int[] layers;
-    [SerializeField][CanBeNull] public EffectAction visualAction;
-
-    public BuffDefinition(BuffStatus[] buffs, uint range, int[] layers, EffectAction visualAction = null){
-        this.buffs = buffs;
-        this.range = range;
-        this.layers = layers;
-        this.visualAction = visualAction;
-    }
-
+    public float range;
+    public LayerMask[] filterLayers;
+    [CanBeNull] public EffectDataSO visualData;
 }
 
-public class SetBuffAction : GameplayAction, IScalableAction
+public class SetBuffAction : GameplayAction<BuffDataSO>
 {
-    public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
+    protected override void ExecuteAction(InteractionContext context, BuffDataSO data, Vector2 targetPos)
     {
-        var buffDef = (BuffDefinition) interractionContext.ActionStruct;
-        buffDef.visualAction?.Execute(interractionContext, targetPos);
-        var targets = GetTargetsToExecuteInRange(targetPos, buffDef.range, buffDef.layers);
-        foreach (var target in targets.Values) Execute(interractionContext, target);
+        if (data.visualData != null) ActionProvider.Effect.Execute(context, data.visualData, targetPos);
+
+        int combinedMask = 0;
+        if (data.filterLayers != null)
+            foreach (var layer in data.filterLayers) combinedMask |= layer.value;
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(targetPos, data.range, combinedMask);
+        foreach (var col in colliders)
+            if (col.TryGetComponent(out IInteractive target))
+                ApplyBuffsToTarget(context, data, target);
     }
 
-    public override void Execute(InteractionContext interractionContext, IInteractive target)
+    protected override void ExecuteAction(InteractionContext context, BuffDataSO data, IInteractive target)
     {
-        var buff = interractionContext.ActionStruct as BuffStatus;
-        buff.SourceId = interractionContext?.AbilityId ?? interractionContext.SourceSnapshot.Id;
-        buff.Duration = buff.IsPermanent ? -1f : buff.Duration;
-        target.AddBuff(interractionContext);
+        ApplyBuffsToTarget(context, data, target);
     }
 
-    public void ScaleExecute(InteractionContext interractionContext, Vector3 targetPos, float scale)
+    private void ApplyBuffsToTarget(InteractionContext context, BuffDataSO data, IInteractive target)
     {
-        throw new System.NotImplementedException();
-    }
+        if (data.buffs == null) return;
 
-    public void ScaleExecute(InteractionContext interractionContext, IInteractive target, float scale)
-    {
-        throw new System.NotImplementedException();
+        foreach (var buffTemplate in data.buffs)
+        {
+            var instance = new BuffStatus
+            {
+                Id = buffTemplate.Id,
+                SourceId = context?.AbilityId ?? context?.SourceSnapshot?.Id,
+                Duration = buffTemplate.Duration,
+                Scope = buffTemplate.Scope,
+                Policy = buffTemplate.Policy,
+                modifiers = buffTemplate.modifiers
+            };
+            target.AddBuff(context, instance);
+        }
     }
 }

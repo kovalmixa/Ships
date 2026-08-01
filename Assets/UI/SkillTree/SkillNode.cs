@@ -1,5 +1,5 @@
 ﻿using GameplayActions;
-using Assets.Entity.Modifiers;
+using Assets.Entity.BuffStatuses;
 
 namespace Assets.UI.SkillTree
 {

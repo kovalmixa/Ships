@@ -1,27 +1,30 @@
-﻿using UnityEngine;
-using GameplayActions;
-using Assets.Common;
-using Assets.Scripts.Actions;
+﻿using Assets.Common;
 using Assets.Handlers.Events;
+using Assets.Scripts.Actions;
+using FMODUnity;
+using GameplayActions;
+using System;
+using UnityEngine;
 
 namespace Assets.Entity.BuffStatuses.ActiveOnTick
 {
+    [Serializable]
     public class CountBuff : BuffStatus
     {
-        [Header("Счетчик")]
+        [Header("Counter")]
         [SerializeField] private int quantity = 5;
         private int _counter = 0;
 
-        [Header("Фильтры (Должны совпасть ВСЕ)")]
+        [Header("Filters (Must all match)")]
         [SerializeField] private InteractionCriterion[] criteria;
 
-        [Header("Результат")]
-        [SerializeField] private GameplayAction[] resultActions;
+        [Header("Result")]
+        [SerializeField] private ActionConfig[] resultActions;
         [SerializeField] private bool executeOnSource = false;
 
-        public override void OnApply(IInteractive owner)
+        public override void OnApply(IInteractive owner, InteractionContext context)
         {
-            base.OnApply(owner);
+            base.OnApply(owner, context);
             _counter = 0;
             EventBrocker.Subscribe<EntityInteractionEvent>(OnActionRegistered);
         }
@@ -35,7 +38,7 @@ namespace Assets.Entity.BuffStatuses.ActiveOnTick
         private void OnActionRegistered(EntityInteractionEvent data)
         {
             foreach (var criterion in criteria)
-                if (criterion != null && !criterion.Matches(data.Context, Owner)) return;
+                if (criterion != null && !criterion.Matches(data, Owner)) return;
             _counter++;
             if (_counter >= quantity)
             {
@@ -46,11 +49,15 @@ namespace Assets.Entity.BuffStatuses.ActiveOnTick
 
         private void ExecuteResult(InteractionContext context)
         {
-            GameObject targetObj = executeOnSource ? context.SourceObject : context.TargetObject;
-            if (targetObj == null) return;
-            Vector3 targetPosition = targetObj.transform.position;
-            foreach (var action in resultActions)
-                if (action != null) action.Execute(context, targetPosition);
+            IInteractive target = executeOnSource ? context.SourceInteractive : context.TargetInteractive;
+            if (target == null) return;
+
+            foreach (var config in resultActions)
+            {
+                var action = ActionProvider.GetActionByAbility(config.ActionType);
+                if (action != null && config.ActionData != null) action.Execute(context, config.ActionData, target);
+                else Debug.LogWarning($"[CountBuff] No action or data configured for {config.ActionType}");
+            }
         }
     }
 }

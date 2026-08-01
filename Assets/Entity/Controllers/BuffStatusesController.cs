@@ -1,5 +1,7 @@
-﻿using Assets.Entity.Modifiers;
+﻿using Assets.Entity.BuffStatuses;
+using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
+using GameplayActions;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -42,9 +44,7 @@ namespace Assets.Entity.Controllers
                         RemoveBuffInternal(existing.status);
                         break;
                     case BuffApplicationPolicy.Refresh:
-                        existing.status.Duration = newBuff.Duration;
-                        existing.status.onRefresh?.Invoke();
-                        GameObject.Destroy(newBuff);
+                        existing.status.OnRefresh(newBuff.Duration);
                         _isDirty = true;
                         return;
 
@@ -53,7 +53,6 @@ namespace Assets.Entity.Controllers
                 }
             }
             ActiveBuffs[key] = (newBuff, source);
-            newBuff.transform.SetParent(_source.transform, false);
             _isDirty = true;
         }
 
@@ -87,9 +86,8 @@ namespace Assets.Entity.Controllers
 
         private void RemoveBuffInternal(BuffStatus buff)
         {
-            buff.onRemove?.Invoke();
+            buff.OnRemove();
             ActiveBuffs.Remove((buff.Id, buff.SourceId));
-            GameObject.Destroy(buff);
         }
 
         public void RemoveBuffBySource(string sourceId)
@@ -121,7 +119,7 @@ namespace Assets.Entity.Controllers
             foreach (var kv in ActiveBuffs.ToList())
             {
                 var buff = kv.Value.status;
-                if (buff == null || buff.Tick(null)) //add real interraction context of buff
+                if (buff == null || buff.Tick(Time.deltaTime))
                 {
                     RemoveBuffInternal(buff);
                     needsRebuild = true;

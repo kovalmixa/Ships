@@ -1,15 +1,19 @@
-﻿using Assets.Scripts.Actions;
+﻿using Assets.Entity.BuffStatuses;
+using Assets.Handlers.Enums;
+using Assets.Scripts.Actions;
+using GameplayActions;
 using UnityEngine;
 
 namespace Assets.Common
 {
     public interface IInteractive : IObject
     {
+        LayerType Layer { get; }
         public GameObject GameObject { get; }
-        public void AddBuff(InteractionContext interractionContext);
+        public void AddBuff(InteractionContext context, BuffStatus buff);
 
-        public void TakeDamage(InteractionContext interractionContext);
+        public void TakeDamage(InteractionContext context, DamageDataSO data);
 
-        public void TakeHeal(InteractionContext interractionContext);
+        public void TakeHeal(InteractionContext context, HealDataSO data);
     }
 }

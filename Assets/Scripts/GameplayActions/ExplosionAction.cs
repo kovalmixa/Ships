@@ -1,38 +1,43 @@
-﻿using Assets.Scripts.Actions;
+﻿using Assets.Common;
+using Assets.Scripts.Actions;
 using JetBrains.Annotations;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameplayActions
 {
-    struct Esplosion : IActionStruct
+    public class EsplosionDataSO : ActionDataSO
     {
-        [SerializeField] public uint Range;
+        public uint range;
 
-        [SerializeField] public int[] Layers;
+        public int[] layers;
 
-        [SerializeField][CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
+        //[CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
 
-        [SerializeField][CanBeNull] public EffectAction VisualAction;
+        [CanBeNull] public EffectDataSO visualData;
     }
 
-    public class ExplosionAction : GameplayAction
+    public class ExplosionAction : GameplayAction<EsplosionDataSO>
     {
-        public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
+        protected override void ExecuteAction(InteractionContext context, EsplosionDataSO data, Vector2 targetPos)
         {
-            var explosion = (Esplosion)interractionContext.ActionStruct;
-            explosion.VisualAction?.Execute(interractionContext, targetPos);
+            ActionProvider.Effect.Execute(context, data.visualData, targetPos);
 
-            var targetsToExecute = GetTargetsToExecuteInRange(targetPos, explosion.Range, explosion.Layers);
+            var targetsToExecute = GetTargetsToExecuteInRange(targetPos, data.range, data.layers);
 
-            foreach (var target in targetsToExecute)
-                foreach (var zone in explosion.ActionZones)
-                {
-                    float rangeProp = Vector2.Distance(target.Value, targetPos) / explosion.Range;
-                    if (zone.Key <= rangeProp)
-                        foreach (var action in zone.Value)
-                            action?.ScaleExecute(interractionContext, target.Key, 1 - rangeProp / zone.Key);
-                }
+            foreach (var target in targetsToExecute) { }
+                //foreach (var zone in data.ActionZones)
+                //{
+                //    float rangeProp = Vector2.Distance(target.Value, targetPos) / data.range;
+                //    if (zone.Key <= rangeProp)
+                //        foreach (var action in zone.Value)
+                //            action?.ScaleExecute(context, target.Key, 1 - rangeProp / zone.Key);
+                //}
+        }
+
+        protected override void ExecuteAction(InteractionContext context, EsplosionDataSO data, IInteractive target)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

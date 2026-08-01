@@ -27,22 +27,19 @@ namespace Assets.Scripts.Actions.Projectile
             }
         }
 
-        public void Launch(InteractionContext interactionContext)
+        public void Launch(InteractionContext interactionContext, ProjectileDataSO data, Vector2 targetPosition)
         {
-            if (interactionContext.ActionStruct is ProjectileDefinition projectileDef)
+            if (!_prefabDict.TryGetValue(data.type, out var prefab) || prefab == null) return;
+            GameObject projectileGO = ObjectPoolHandler.Get(prefab, data.startPosition, Quaternion.identity);
+            if (projectileGO.TryGetComponent<ProjectileInstance>(out var instance))
             {
-                if (!_prefabDict.TryGetValue(projectileDef.Type, out var prefab) || prefab == null) return;
-                GameObject projectileGO = ObjectPoolHandler.Get(prefab, projectileDef.startPosition, Quaternion.identity);
-                if (projectileGO.TryGetComponent<ProjectileInstance>(out var instance))
-                {
-                    var sourceTransform = interactionContext.SourceObject?.transform;
-                    instance.Setup(
-                        interactionContext,
-                        projectileDef,
-                        () => ObjectPoolHandler.Release(prefab, projectileGO),
-                        sourceTransform
-                    );
-                }
+                var sourceTransform = interactionContext.SourceObject?.transform;
+                instance.Setup(
+                    interactionContext,
+                    data,
+                    () => ObjectPoolHandler.Release(prefab, projectileGO),
+                    sourceTransform
+                );
             }
         }
 
