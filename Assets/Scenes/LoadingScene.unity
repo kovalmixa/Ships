@@ -163,6 +163,7 @@ GameObject:
   - component: {fileID: 634284859}
   - component: {fileID: 634284861}
   - component: {fileID: 634284862}
+  - component: {fileID: 634284863}
   m_Layer: 0
   m_Name: Handlers
   m_TagString: Untagged
@@ -212,8 +213,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a7e0996208091f489428efce7787322, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resourcesPath: Prefabs/
-  cacheLimit: 20
+  _resourcesPath: Prefabs/
+  _cacheLimit: 40
 --- !u!114 &634284862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,6 +228,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: save.txt
+--- !u!114 &634284863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634284858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4801dd89ab74dc34388854c0a5476345, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Actions.Projectile.ProjectileController
+  _projectilePrefabFolder: PRJT
 --- !u!4 &465315436381439269
 Transform:
   m_ObjectHideFlags: 0
@@ -236,7 +250,7 @@ Transform:
   m_GameObject: {fileID: 6126528859594663019}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.2592432, y: 4.873827, z: 10.020395}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -310,9 +324,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolType: 0
-  prefab: {fileID: 759412284934268011, guid: b9186e77b3831cb42baef91ffe90dc90, type: 3}
-  defaultCapacity: 100
-  maxSize: 1000
+  _prefab: {fileID: 759412284934268011, guid: b9186e77b3831cb42baef91ffe90dc90, type: 3}
+  _defaultCapacity: 100
+  _maxSize: 200
 --- !u!4 &760845635502950977
 Transform:
   m_ObjectHideFlags: 0
@@ -561,9 +575,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolType: 2
-  prefab: {fileID: 2367944767525619843, guid: f7773edf65da1274598f909c98d51cea, type: 3}
-  defaultCapacity: 100
-  maxSize: 1500
+  _prefab: {fileID: 2367944767525619843, guid: f7773edf65da1274598f909c98d51cea, type: 3}
+  _defaultCapacity: 100
+  _maxSize: 200
 --- !u!1 &4064160922607515861
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,9 +625,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   poolType: 1
-  prefab: {fileID: 1043631210884575351, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
-  defaultCapacity: 50
-  maxSize: 150
+  _prefab: {fileID: 1043631210884575351, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
+  _defaultCapacity: 100
+  _maxSize: 200
 --- !u!1 &6144063009926188650
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,21 +13,22 @@ namespace Assets.Handlers.SceneHandlers
 
     public class ObjectPoolHandler : MonoBehaviour
     {
-        private static Dictionary<PoolType, ObjectPoolHandler> _poolInstances = new();
+        private static readonly Dictionary<PoolType, ObjectPoolHandler> _poolInstances = new();
+        private static readonly Dictionary<GameObject, IObjectPool<GameObject>> _prefabPools = new();
 
         [SerializeField] public PoolType poolType;
-        [SerializeField] private GameObject prefab;
-        [SerializeField] private int defaultCapacity = 100;
-        [SerializeField] private int maxSize = 200;
+        [SerializeField] private GameObject _prefab;
+        [SerializeField] private int _defaultCapacity = 100;
+        [SerializeField] private int _maxSize = 200;
 
         private List<GameObject> _activeObjects = new();
         private IObjectPool<GameObject> pool;
-        
+
         public static void RealeasePools()
         {
             foreach (var pool in _poolInstances.Values)
                 foreach (Transform child in pool.transform)
-                    if (child.gameObject.activeSelf) pool.Return(child.gameObject);
+                    if (child.gameObject.activeSelf) pool.Release(child.gameObject);
         }
 
         public static ObjectPoolHandler GetInstance(PoolType type)
@@ -44,17 +45,17 @@ namespace Assets.Handlers.SceneHandlers
                 actionOnRelease: OnReleaseToPool,
                 actionOnDestroy: OnDestroyPoolObject,
                 collectionCheck: true,
-                defaultCapacity: defaultCapacity,
-                maxSize: maxSize
+                defaultCapacity: _defaultCapacity,
+                maxSize: _maxSize
             );
 
             List<GameObject> tempList = new List<GameObject>();
-            for (int i = 0; i < defaultCapacity; i++) tempList.Add(pool.Get());
+            for (int i = 0; i < _defaultCapacity; i++) tempList.Add(pool.Get());
             foreach (var obj in tempList) pool.Release(obj);
             _poolInstances.Add(poolType, this);
         }
 
-        private GameObject CreateInstance() => Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+        private GameObject CreateInstance() => Instantiate(_prefab, Vector3.zero, Quaternion.identity, transform);
 
         private void OnGetFromPool(GameObject obj)
         {
@@ -72,8 +73,32 @@ namespace Assets.Handlers.SceneHandlers
 
         public GameObject Get() => pool.Get();
 
+        public static GameObject Get(GameObject prefab, Vector3 position, Quaternion rotation)
+        {
+            if (!_prefabPools.TryGetValue(prefab, out var pool))
+            {
+                pool = new ObjectPool<GameObject>(
+                    createFunc: () => Instantiate(prefab),
+                    actionOnGet: go => go.SetActive(true),
+                    actionOnRelease: go => go.SetActive(false),
+                    actionOnDestroy: Destroy
+                );
+                _prefabPools[prefab] = pool;
+            }
+
+            var instance = pool.Get();
+            instance.transform.SetPositionAndRotation(position, rotation);
+            return instance;
+        }
+
         public GameObject[] GetAllActive() => _activeObjects.ToArray();
 
-        public void Return(GameObject obj) => pool.Release(obj);
+        public void Release(GameObject obj) => pool.Release(obj);
+
+        public static void Release(GameObject prefab, GameObject instance)
+        {
+            if (_prefabPools.TryGetValue(prefab, out var pool)) pool.Release(instance);
+            else Destroy(instance);
+        }
     }
 }

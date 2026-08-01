@@ -1,6 +1,5 @@
 ﻿using Assets.Entity.Equipment;
 using Assets.Handlers.Enums;
-using GameplayActions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +62,7 @@ namespace Assets.Handlers.Enums
     {
         None = 0,
 
+        Bullet,
         Projectile, // Standard machine gun/projectile
         Shot, // Shotgun / Volley
 
@@ -245,69 +245,6 @@ namespace Assets.Handlers
 
             if (equipAbilities.Length == 0 && projAbilities.Length == 0) return Array.Empty<AbilityType>();
             return equipAbilities.Union(projAbilities).ToArray();
-        }
-
-        public static GameplayAction BuildAbilityAction(AbilityType type)
-        {
-            GameplayAction action = null;
-
-            switch (type)
-            {
-                case AbilityType.None:
-                    break;
-                case AbilityType.FireWeapon:
-                    action = new FireProjectileAction();
-                    break;
-                case AbilityType.LaunchAircraft:
-                    //action = new LaunchAircraftAction();
-                    break;
-                case AbilityType.LaunchMissile:
-                    action = new FireProjectileAction();
-                    break;
-                case AbilityType.DropBomb:
-                    //action = new DropBombAction();
-                    break;
-                case AbilityType.FireLaser:
-                    action = new FireProjectileAction();
-                    break;
-                case AbilityType.LaunchTorpedo:
-                    action = new FireProjectileAction();
-                    break;
-                case AbilityType.SummonDrone:
-                    //action = new SummonDroneAction();
-                    break;
-                case AbilityType.Heal:
-                    action = new HealAction();
-                    break;
-                case AbilityType.Regeneration:
-                    //action = new RegenerationAction();
-                    break;
-                case AbilityType.Shield:
-                    //action = new ShieldAction();
-                    break;
-                case AbilityType.RadarPulse:
-                    //action = new RadarPulseAction();
-                    break;
-                case AbilityType.Smoke:
-                    //action = new SmokeAction();
-                    break;
-                case AbilityType.Dash:
-                    //action = new DashAction();
-                    break;
-                case AbilityType.Teleport:
-                    //action = new TeleportAction();
-                    break;
-                case AbilityType.Repair:
-                    //action = new RepairAction();
-                    break;
-                case AbilityType.AllTurrets:
-                    //action = new AllTurretsAction();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-
-            return action;
         }
     }
 }

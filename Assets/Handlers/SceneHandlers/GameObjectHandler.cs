@@ -2,6 +2,8 @@
 using Assets.Entity.Hull;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
+using System;
+using System.Reflection;
 using UnityEngine;
 
 namespace Assets.Handlers.SceneHandlers
@@ -22,6 +24,19 @@ namespace Assets.Handlers.SceneHandlers
             GameObject clone = Instantiate(main);
             clone.name = main.name;
             return clone;
+        }
+
+        public static void CopyComponentsTo(GameObject source, GameObject target)
+        {
+            Component[] components = source.GetComponents<Component>();
+            foreach (Component sourceComp in components)
+            {
+                if (sourceComp is Transform) continue;
+                Type type = sourceComp.GetType();
+                Component targetComp = target.AddComponent(type);
+                FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                foreach (FieldInfo field in fields) field.SetValue(targetComp, field.GetValue(sourceComp));
+            }
         }
 
         public static void ClearComponents(GameObject obj)

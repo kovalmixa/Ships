@@ -1,5 +1,6 @@
 using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
+using Assets.Scripts.Actions.Projectile;
 using UnityEngine;
 
 namespace GameplayActions
@@ -26,8 +27,8 @@ namespace GameplayActions
     {
         public override void Execute(InteractionContext interractionContext, Vector3 targetPos)
         {
-            Debug.Log("Pew");
-            //ProjectileController.Instance.Launch(interractionContext);
+            //Debug.Log("Pew");
+            ProjectileController.Instance.Launch(interractionContext);
         }
     }
 }

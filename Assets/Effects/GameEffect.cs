@@ -84,7 +84,7 @@ namespace Effects
             if (remaining > 0.01f) yield return new WaitForSeconds(remaining);
 
             if (_effectsPool != null)
-                _effectsPool.Return(gameObject);
+                _effectsPool.Release(gameObject);
             else
                 gameObject.SetActive(false);
         }

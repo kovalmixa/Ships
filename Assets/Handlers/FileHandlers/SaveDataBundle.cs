@@ -1,9 +1,8 @@
 ﻿using Assets.Entity;
-using System.Numerics;
 
 namespace Assets.DataContainers
 {
-    public class DataBundle
+    public class SaveDataBundle
     {
         public EntityDataContainer EntityDataContainer;
         

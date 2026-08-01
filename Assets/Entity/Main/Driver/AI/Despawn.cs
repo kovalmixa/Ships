@@ -22,7 +22,7 @@ namespace Entity.Controllers.AI
             var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController != null && entityController != null && GameObjectHandler.IsPlayer(entityController))
             {
-                _objectPool.Return(_entity);
+                _objectPool.Release(_entity);
             }
         }
 

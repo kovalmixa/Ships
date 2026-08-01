@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Handlers.SceneHandlers
 {
-    public class SaveLoadData : SingletonMonoBehaviour<SaveLoadData>
+    public class SaveLoadScene : SingletonMonoBehaviour<SaveLoadScene>
     {
         public string fileName;
         private GameObject _player;
@@ -30,9 +30,9 @@ namespace Assets.Handlers.SceneHandlers
             
         }
 
-        private DataBundle LoadData(string path) => DataFileHandler.LoadFromJson<DataBundle>(path);
+        private SaveDataBundle LoadData(string path) => DataFileHandler.LoadFromJson<SaveDataBundle>(path);
 
-        private void ExtractData(DataBundle data)
+        private void ExtractData(SaveDataBundle data)
         {
             var entityController = _player.GetComponent<EntityController>();
             entityController.Setup(data.EntityDataContainer);

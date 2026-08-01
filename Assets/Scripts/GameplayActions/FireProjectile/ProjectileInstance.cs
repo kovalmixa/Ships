@@ -1,9 +1,8 @@
-﻿using Assets.Scripts.Actions;
-using GameplayActions;
+﻿using GameplayActions;
 using System;
 using UnityEngine;
 
-namespace Assets.Entity.Projectile
+namespace Assets.Scripts.Actions.Projectile
 {
     public class ProjectileInstance : MonoBehaviour
     {
@@ -18,10 +17,9 @@ namespace Assets.Entity.Projectile
         
         #region Setup
 
-        public void Setup(InteractionContext interactionContext, Action onDeactivate, Transform targetTransform = null)
+        public void Setup(InteractionContext interactionContext, ProjectileDefinition projectileDef, Action onDeactivate, Transform targetTransform = null)
         {
-            if (interactionContext.ActionStruct is ProjectileDefinition projectileDef) _definition = projectileDef;
-            else return;
+
             _context = interactionContext;
             _targetTransform = targetTransform;
 

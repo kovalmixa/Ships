@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Handlers.FileHandlers
 {
-    public static class FilesExtractor
+    public static class FilesPathExtractor
     {
         public static string[] GetFilesPaths(string[] folderPaths, string[] excludedFolders)
         {
