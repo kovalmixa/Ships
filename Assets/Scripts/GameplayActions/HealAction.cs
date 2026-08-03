@@ -1,5 +1,7 @@
 ﻿using Assets.Common;
+using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameplayActions
@@ -8,6 +10,16 @@ namespace GameplayActions
     public class HealDataSO : ActionDataSO
     {
         public float value;
+
+        public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override Dictionary<StatType, float> ToStatTypeDict()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class HealAction : GameplayAction<HealDataSO>

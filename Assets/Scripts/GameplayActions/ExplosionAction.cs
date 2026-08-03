@@ -1,4 +1,5 @@
 ﻿using Assets.Common;
+using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
 using JetBrains.Annotations;
 using System.Collections.Generic;
@@ -14,7 +15,19 @@ namespace GameplayActions
 
         //[CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
 
+        public DamageDataSO damageData;
+
         [CanBeNull] public EffectDataSO visualData;
+
+        public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override Dictionary<StatType, float> ToStatTypeDict()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class ExplosionAction : GameplayAction<EsplosionDataSO>

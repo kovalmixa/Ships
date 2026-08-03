@@ -1,6 +1,5 @@
 using Assets.Common;
 using Assets.Scripts.Actions;
-using GameplayActions;
 using UnityEngine;
 
 public interface IScalableAction<TData>

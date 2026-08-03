@@ -77,16 +77,15 @@ namespace Entity.Controllers
 
         public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
-        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
-            if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) ;
-                //EventBrocker.Raise(new EntityInteractionEvent(context));
+            if (abilitiesController.TryActivate(targetPos, abilityUnit)) ;
         }
 
         #endregion
 
         #region Buffs
-            
+
 
         #endregion
     }

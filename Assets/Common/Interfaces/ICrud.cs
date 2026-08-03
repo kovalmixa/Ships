@@ -1,11 +1,13 @@
-﻿namespace Assets.Common.Interfaces
+﻿using System;
+
+namespace Assets.Common.Interfaces
 {
     public interface ICrud
     {
-        public void OnChange();
+        public event Action OnChange;
         
-        public void OnDelete();
+        public event Action OnDelete;
 
-        public void OnInsert();
+        public event Action OnInsert;
     }
 }

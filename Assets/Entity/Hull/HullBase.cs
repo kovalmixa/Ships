@@ -59,12 +59,15 @@ namespace Assets.Entity.Hull
         {
             this.entityController = entityController;
             var statOptions = Data.statOptions;
+            var snapshot = entityController.GetSnapshot();
 
-            abilitiesController = new(statOptions.abilities, entityController.totalAbbilitiesController);
+            abilitiesController = new(statOptions.abilities, 
+                entityController.totalAbbilitiesController, _actionDataController, this);
             OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
 
-            var snapshot = entityController.GetSnapshot();
             _statModController = new(entityController.statModController, statOptions);
+            _statModController.OnChange += () => _actionDataController.MarkDirty();
+
             foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);
 
             CollectAnchors(transform);
@@ -190,15 +193,18 @@ namespace Assets.Entity.Hull
         #region IAbbility
         public AbilitiesController abilitiesController;
         public IReadOnlyList<AbilityUnit> RuntimeAbilities => abilitiesController.RuntimeAbilities;
+        private readonly ActionDataController _actionDataController = new();
 
         public void AddAbility(AbilityUnit ability) => abilitiesController.AddAbility(ability);
 
         public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
-        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context) {
-            if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) ;
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit) {
+            if (abilitiesController.TryActivate(targetPos, abilityUnit)) ;
                 //EventBrocker.Raise(new EntityInteractionEvent(context));
         }
+
+        public EntitySnapshot GetSnapshot() => entityController.GetSnapshot();
 
         #endregion
     }

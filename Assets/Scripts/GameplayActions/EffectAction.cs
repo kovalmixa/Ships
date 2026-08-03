@@ -1,7 +1,9 @@
 ﻿using Assets.Common;
+using Assets.Entity.Modifiers;
 using Assets.Handlers.FileHandlers;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameplayActions
@@ -9,6 +11,16 @@ namespace GameplayActions
     public class EffectDataSO : ActionDataSO
     {
         public string[] prefabIds;
+
+        public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override Dictionary<StatType, float> ToStatTypeDict()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class EffectAction : GameplayAction<EffectDataSO>

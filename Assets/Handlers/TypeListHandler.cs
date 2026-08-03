@@ -1,5 +1,7 @@
 ﻿using Assets.Entity.Equipment;
+using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
+using GameplayActions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -252,5 +254,26 @@ namespace Assets.Handlers
             if (equipAbilities.Length == 0 && projAbilities.Length == 0) return Array.Empty<AbilityType>();
             return equipAbilities.Union(projAbilities).ToArray();
         }
+    }
+
+    public static class StatModHandler
+    {
+        public static readonly (DamageType type, StatType dmg, StatType critC, StatType critM)[] elementalMap =
+        {
+            (DamageType.Physical, StatType.PhysicalDamage, StatType.CritChance, StatType.CritMultiplier),
+            (DamageType.Fire, StatType.FireDamage, StatType.FireCritChance, StatType.FireCritMultiplier),
+            (DamageType.Explosive, StatType.ExplosiveDamage, StatType.ExplosiveCritChance, StatType.ExplosiveCritMultiplier),
+            (DamageType.Acid, StatType.AcidDamage, StatType.AcidCritChance, StatType.AcidCritMultiplier),
+            (DamageType.Ultrasound, StatType.UltrasoundDamage, StatType.UltrasoundCritChance, StatType.UltrasoundCritMultiplier),
+            (DamageType.Electricity, StatType.ElectricityDamage, StatType.ElectricityCritChance, StatType.ElectricityCritMultiplier),
+            (DamageType.Plasma, StatType.PlasmaDamage, StatType.PlasmaCritChance, StatType.PlasmaCritMultiplier),
+            (DamageType.Slow, StatType.SlowDamage, StatType.SlowCritChance, StatType.SlowCritMultiplier),
+            (DamageType.Freeze, StatType.FreezeDamage, StatType.FreezeCritChance, StatType.FreezeCritMultiplier),
+            (DamageType.Psi, StatType.PsiDamage, StatType.PsiCritChance, StatType.PsiCritMultiplier),
+            (DamageType.Radiation, StatType.RadiationDamage, StatType.RadiationCritChance, StatType.RadiationCritMultiplier),
+            (DamageType.EMP, StatType.EMPDamage, StatType.EMPCritChance, StatType.EMPCritMultiplier),
+            (DamageType.SpatialAnomaly, StatType.SpatialAnomalyDamage, StatType.SpatialAnomalyCritChance, StatType.SpatialAnomalyCritMultiplier),
+            (DamageType.Flooding, StatType.FloodingDamage, StatType.FloodingCritChance, StatType.FloodingCritMultiplier)
+        };
     }
 }

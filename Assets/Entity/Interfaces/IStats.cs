@@ -1,6 +1,4 @@
-﻿using Assets.Entity.Controllers;
-using Assets.Entity.Modifiers;
-using Assets.Scripts.Actions;
+﻿using Assets.Entity.Modifiers;
 using System.Collections.Generic;
 
 namespace Assets.Entity

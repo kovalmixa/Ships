@@ -4,6 +4,8 @@ using Assets.Scripts.Actions;
 using JetBrains.Annotations;
 using UnityEngine;
 using Assets.Entity.BuffStatuses;
+using System.Collections.Generic;
+using Assets.Entity.Modifiers;
 
 public class BuffDataSO : ActionDataSO
 {
@@ -11,6 +13,16 @@ public class BuffDataSO : ActionDataSO
     public float range;
     public LayerMask[] filterLayers;
     [CanBeNull] public EffectDataSO visualData;
+
+    public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override Dictionary<StatType, float> ToStatTypeDict()
+    {
+        throw new System.NotImplementedException();
+    }
 }
 
 public class SetBuffAction : GameplayAction<BuffDataSO>

@@ -1,18 +1,16 @@
-﻿using Assets.Entity.BuffStatuses;
+﻿using Assets.Common.Interfaces;
+using Assets.Entity.BuffStatuses;
 using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
-using GameplayActions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace Assets.Entity.Controllers
 {
-    public class BuffStatusesController
+    public class BuffStatusesController : ICrud, IDirty
     {
-        private bool _isDirty { get; set; } = true;
-        public bool IsDirty => _isDirty;
-
         private Dictionary<(StatType Type, StatLayer Layer), float> _baseStats = new();
         public Dictionary<(StatType Type, StatLayer Layer), float> BaseStats => _baseStats;
 
@@ -21,6 +19,10 @@ namespace Assets.Entity.Controllers
 
         private GameObject _source;
         private StatModController _statMods;
+
+        public event Action OnChange;
+        public event Action OnDelete;
+        public event Action OnInsert;
 
         public BuffStatusesController(GameObject source, StatModController statMods)
         {
@@ -127,5 +129,15 @@ namespace Assets.Entity.Controllers
             }
             if (needsRebuild) _isDirty = true;
         }
+
+        #region IDirty
+
+        private bool _isDirty = false;
+
+        public bool IsDirty => _isDirty;
+
+        public void MarkDirty() => _isDirty = true;
+
+        #endregion
     }
 }

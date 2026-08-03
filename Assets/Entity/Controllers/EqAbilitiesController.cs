@@ -1,5 +1,6 @@
 ﻿using Assets.Common;
 using Assets.Entity.Equipment;
+using Assets.Entity.Interfaces;
 using Assets.Handlers;
 using Assets.Scripts.Actions;
 using GameplayActions;
@@ -15,24 +16,27 @@ namespace Assets.Entity.Controllers
         private readonly EquipmentAnchor _equipmentAnchor;
         private readonly float _basicAngle;
 
-        public EqAbilitiesController(IEnumerable<AbilityUnit> abilities, TotalAbbilitiesController totalAbbilities, 
-            Transform transform, float basicAngle, EquipmentAnchor equipmentAnchor)
-            : base(abilities, totalAbbilities)
+        public EqAbilitiesController(IEnumerable<AbilityUnit> abilities, TotalAbbilitiesController totalAbbilities,
+            ActionDataController actionDataController, IAbbility source, float basicAngle, EquipmentAnchor equipmentAnchor)
+            : base(abilities, totalAbbilities, actionDataController, source)
         {
-            _equipmentTransform = transform;
+            _equipmentTransform = (source as IInteractive).GameObject.transform;
             _basicAngle = basicAngle;
             _equipmentAnchor = equipmentAnchor;
         }
 
-        public override bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
+        public override bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
+            var gameobject = (source as IInteractive).GameObject;
+            var context = new InteractionContext(abilityUnit.type, source.GetSnapshot(), gameobject, actionDataController);
             var action = ActionProvider.GetActionByAbility(abilityUnit.type);
             if (action == null || !CanActivate(targetPos, abilityUnit)) return false;
             if (!IsAimedAtTarget(targetPos, abilityUnit.delay, out Vector2 targetPosEq)) return false;
             if (!IsWithinActivationSector()) return false;
-            var data = ActionDataFactory.CreateDynamicData(abilityUnit.type, context);
+            var data = actionDataController.GetActionData(abilityUnit.type, context);
             if (data == null) return false;
             action.Execute(context, data, targetPosEq);
+            //EventBrocker.Raise(new EntityInteractionEvent(context));
             return true;
         }
 

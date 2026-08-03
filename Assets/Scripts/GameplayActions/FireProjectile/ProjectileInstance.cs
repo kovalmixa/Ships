@@ -98,12 +98,13 @@ namespace Assets.Scripts.Actions.Projectile
             {
                 Vector3 explodePos = transform.position;
                 var explosionAction = ActionProvider.Explosion;
-                var data = ActionDataFactory.CreateDynamicData(explosionAction.GetType(), _context);
+                var dataController = _context.ActionDataController;
+                var data = dataController.GetActionData(explosionAction.GetType(), _context);
                 explosionAction.Execute(_context, data, explodePos);
 
                 foreach (var action in _onExplosionActions)
                 {
-                    data = ActionDataFactory.CreateDynamicData(action.GetType(), _context);
+                    data = dataController.GetActionData(action.GetType(), _context);
                     action?.Execute(_context, data, explodePos);
                 }
             }

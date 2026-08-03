@@ -1,27 +1,39 @@
 ﻿using Assets.Common;
+using Assets.Common.Interfaces;
+using Assets.Entity.Controllers.AI.AITypes;
+using Assets.Entity.Interfaces;
 using Assets.Scripts.Actions;
 using GameplayActions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace Assets.Entity.Controllers
 {
-    public class AbilitiesController
+    public class AbilitiesController : ICrud, IDirty
     {
-        private bool _isDirty { get; set; } = true;
+        public AbilityUnit[] abilities = Array.Empty<AbilityUnit>();
+        private readonly List<AbilityUnit> _runtimeAbilities = new();
+        private readonly List<AbilityUnit> _addedAbilities = new();
+        private readonly List<AbilityUnit> _setupAbilities = new();
 
-        public AbilityUnit[] abilities = System.Array.Empty<AbilityUnit>();
-        private List<AbilityUnit> _runtimeAbilities = new();
-        private List<AbilityUnit> _addedAbilities = new();
-        private List<AbilityUnit> _setupAbilities = new();
+        protected readonly Dictionary<AbilityUnit, float> abilityCooldowns = new();
+        protected readonly TotalAbbilitiesController totalAbbilitiesCtr;
+        protected readonly ActionDataController actionDataController;
+        protected readonly IAbbility source;
 
-        private readonly Dictionary<AbilityUnit, float> _abilityCooldowns = new();
-        private TotalAbbilitiesController _totalAbbilitiesCtr;
-        public AbilitiesController(IEnumerable<AbilityUnit> setupAbilities, TotalAbbilitiesController totalAbbilities)
+        public event Action OnChange;
+        public event Action OnDelete;
+        public event Action OnInsert;
+
+        public AbilitiesController(IEnumerable<AbilityUnit> setupAbilities, TotalAbbilitiesController totalAbbilities,
+            ActionDataController actionDataController, IAbbility source)
         {
             _setupAbilities = (List<AbilityUnit>)setupAbilities;
-            _totalAbbilitiesCtr = totalAbbilities;
+            totalAbbilitiesCtr = totalAbbilities;
+            this.actionDataController = actionDataController;
+            this.source = source;
         }
 
         public void Rebuild()
@@ -40,11 +52,12 @@ namespace Assets.Entity.Controllers
             }
         }
 
+
         public virtual void AddAbility(AbilityUnit ability)
         {
             _addedAbilities.Add(ability);
             _isDirty = true;
-            _totalAbbilitiesCtr.MarkDirty();
+            totalAbbilitiesCtr.MarkDirty();
             ((List<AbilityUnit>)RuntimeAbilities).Add(ability);
         }
 
@@ -56,7 +69,7 @@ namespace Assets.Entity.Controllers
             if (removedFromAdded || removedFromRuntime)
             {
                 _isDirty = true;
-                _totalAbbilitiesCtr.MarkDirty();
+                totalAbbilitiesCtr.MarkDirty();
                 return true;
             }
             return false;
@@ -66,16 +79,19 @@ namespace Assets.Entity.Controllers
         {
             _runtimeAbilities.Clear();
             _isDirty = true;
-            _totalAbbilitiesCtr.MarkDirty();
+            totalAbbilitiesCtr.MarkDirty();
         }
 
-        public virtual bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
+        public virtual bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
+            var gameobject = (source as IInteractive).GameObject;
+            var context = new InteractionContext(abilityUnit.type, source.GetSnapshot(), gameobject, actionDataController);
             var action = ActionProvider.GetActionByAbility(abilityUnit.type);
             if (action == null || !CanActivate(targetPos, abilityUnit)) return false;
-            var data = ActionDataFactory.CreateDynamicData(abilityUnit.type, context);
+            var data = context.ActionDataController.GetActionData(abilityUnit.type, context);
             if (data == null) return false;
             action.Execute(context, data, targetPos);
+            //EventBrocker.Raise(new EntityInteractionEvent(context));
             return true;
         }
 
@@ -84,10 +100,20 @@ namespace Assets.Entity.Controllers
             float time = Time.time;
             float delay = abilityUnit.delay;
             if (delay <= 0 || abilityUnit.isPassive) return true;
-            _abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);
+            abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);
             if (time - lastActivationTime < delay) return false;
-            _abilityCooldowns[abilityUnit] = time;
+            abilityCooldowns[abilityUnit] = time;
             return true;
         }
+
+        #region IDirty
+
+        private bool _isDirty = false;
+
+        public bool IsDirty => _isDirty;
+
+        public void MarkDirty() => _isDirty = true;
+
+        #endregion
     }
 }

@@ -13,10 +13,10 @@ namespace Assets.Entity.Controllers
     {
         private EntityController _entityController;
 
-        private readonly Dictionary<AbilityType, Action<InteractionContext, Vector3>> _activeAbilities = new();
-        private readonly Dictionary<WeaponType, Action<InteractionContext, Vector3>> _weaponAbilities = new();
+        private readonly Dictionary<AbilityType, Action<Vector3>> _activeAbilities = new();
+        private readonly Dictionary<WeaponType, Action<Vector3>> _weaponAbilities = new();
 
-        private readonly Dictionary<AbilityType, Action<InteractionContext, Vector3>> _entityAbilities = new();
+        private readonly Dictionary<AbilityType, Action<Vector3>> _entityAbilities = new();
 
         private bool _dirty = true;
 
@@ -35,9 +35,9 @@ namespace Assets.Entity.Controllers
             if (hull != null && hull.equipments != null)
             {
                 void RegisterAbility<TKey>(
-                    Dictionary<TKey, Action<InteractionContext, Vector3>> dictionary,
+                    Dictionary<TKey, Action<Vector3>> dictionary,
                     TKey key,
-                    Action<InteractionContext, Vector3> action)
+                    Action<Vector3> action)
                 {
                     if (!dictionary.ContainsKey(key)) dictionary[key] = null;
                     dictionary[key] += action;
@@ -47,7 +47,7 @@ namespace Assets.Entity.Controllers
                 foreach (var ability in hull.RuntimeAbilities)
                 {
                     RegisterAbility(_activeAbilities, ability.type,
-                        (context, targetPos) => hull.Activate(targetPos, ability, context));
+                        (targetPos) => hull.Activate(targetPos, ability));
                 }
 
                 // 2. Group weapon abilities
@@ -67,7 +67,7 @@ namespace Assets.Entity.Controllers
                             var currentAbility = ability;
 
                             RegisterAbility(_weaponAbilities, weaponType,
-                                (context, targetPos) => currentEquipment.Activate(targetPos, currentAbility, context));
+                                (targetPos) => currentEquipment.Activate(targetPos, currentAbility));
                         }
                     }
                 }
@@ -84,7 +84,7 @@ namespace Assets.Entity.Controllers
                         var currentEquipment = equipment;
                         var currentAbility = ability;
                         RegisterAbility(_activeAbilities, ability.type,
-                            (context, targetPos) => currentEquipment.Activate(targetPos, currentAbility, context));
+                            (targetPos) => currentEquipment.Activate(targetPos, currentAbility));
                     }
                 }
             }
@@ -98,11 +98,7 @@ namespace Assets.Entity.Controllers
 
             RebuildIfNeeded();
 
-            if (_weaponAbilities.TryGetValue(weaponType, out var weaponAction))
-            {
-                var context = CreateInteractionContext(AbilityType.FireWeapon);
-                weaponAction?.Invoke(context, targetPos);
-            }
+            if (_weaponAbilities.TryGetValue(weaponType, out var weaponAction)) weaponAction?.Invoke(targetPos);
         }
 
         public void Invoke(Vector3 targetPos, AbilityType abilityType)
@@ -111,23 +107,18 @@ namespace Assets.Entity.Controllers
             if (IsAttackAbility(abilityType) && IsPositionBlocked(targetPos)) return;
 
             RebuildIfNeeded();
-            var context = CreateInteractionContext(abilityType);
-
-            if (_activeAbilities.TryGetValue(abilityType, out var equipAction))
-                equipAction?.Invoke(context, targetPos);
-
-            if (_entityAbilities.TryGetValue(abilityType, out var entityAction))
-                entityAction?.Invoke(context, targetPos);
+            if (_activeAbilities.TryGetValue(abilityType, out var equipAction)) equipAction?.Invoke(targetPos);
+            if (_entityAbilities.TryGetValue(abilityType, out var entityAction)) entityAction?.Invoke(targetPos);
         }
 
-        public void RegisterEntityAbility(AbilityType key, Action<InteractionContext, Vector3> action)
+        public void RegisterEntityAbility(AbilityType key, Action<Vector3> action)
         {
             if (key == AbilityType.None || action == null) return;
             if (!_entityAbilities.ContainsKey(key)) _entityAbilities[key] = null;
             _entityAbilities[key] += action;
         }
 
-        public void UnregisterEntityAbility(AbilityType key, Action<InteractionContext, Vector3> action)
+        public void UnregisterEntityAbility(AbilityType key, Action<Vector3> action)
             { if (_entityAbilities.ContainsKey(key)) _entityAbilities[key] -= action; }
 
         private static bool IsAttackAbility(AbilityType type) => type switch
@@ -154,17 +145,6 @@ namespace Assets.Entity.Controllers
                         if (equipment != null && hitCollider.gameObject == equipment.gameObject) return false;
             }
             return true;
-        }
-
-        private InteractionContext CreateInteractionContext(AbilityType key)
-        {
-            var context = new InteractionContext();
-            context.SourceSnapshot = _entityController != null ? _entityController.GetSnapshot() : null;
-            context.AbilityId = key.ToString();
-
-            if (_entityController != null) context.SetSource(_entityController.gameObject);
-
-            return context;
         }
     }
 }

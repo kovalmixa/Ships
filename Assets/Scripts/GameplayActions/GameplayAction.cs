@@ -1,4 +1,5 @@
 ﻿using Assets.Common;
+using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
 using System;
@@ -7,7 +8,19 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    public abstract class ActionDataSO : ScriptableObject { }
+    public abstract class ActionDataSO
+    {
+        /// <summary>
+        /// Returns a dictionary of the object's current stats.
+        /// Note: Creates a new Dictionary (use for UI/debugging, but not in a hot loop).
+        /// </summary>
+        public abstract Dictionary<StatType, float> ToStatTypeDict();
+
+        /// <summary>
+        /// Fills the passed dictionary without allocating new memory.
+        /// </summary>
+        public abstract void PopulateStatDict(Dictionary<StatType, float> targetDict);
+    }
 
     [Serializable]
     public struct ActionConfig

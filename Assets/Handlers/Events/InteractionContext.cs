@@ -1,6 +1,8 @@
 ﻿using Assets.Common;
 using Assets.Entity;
-using GameplayActions;
+using Assets.Entity.Controllers;
+using Assets.Handlers.Enums;
+using Entity.Controllers;
 using UnityEngine;
 
 namespace Assets.Scripts.Actions
@@ -12,6 +14,7 @@ namespace Assets.Scripts.Actions
 
     public class InteractionContext
     {
+        public ActionDataController ActionDataController { get; }
         public EntitySnapshot SourceSnapshot { get; set; }
         public GameObject SourceObject { get; private set; }
         public GameObject TargetObject { get; private set; }
@@ -32,12 +35,16 @@ namespace Assets.Scripts.Actions
             SourceObject = gameObject;
             SourceInteractive = gameObject?.GetComponent<IInteractive>();
         }
-    }
 
-    public class ProjectileInteractionContext : InteractionContext
-    {
-        public ProjectileDataSO Definition { get; set; }
-        public Vector2 StartPosition { get; set; }
-        public Vector2? TargetPosition { get; set; }
+        public InteractionContext() { }
+
+        public InteractionContext(AbilityType key, EntitySnapshot snapshot, 
+            GameObject source, ActionDataController dataController)
+        {
+            var context = new InteractionContext();
+            SourceSnapshot = snapshot;
+            context.AbilityId = key.ToString();
+            context.SetSource(source);
+        }
     }
 }

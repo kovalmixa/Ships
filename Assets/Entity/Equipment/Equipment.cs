@@ -28,6 +28,7 @@ namespace Assets.Entity.Equipment
         }
         public string Id { get; set; }
         public event Action OnGameObjectDestroyed;
+
         #region Editor
 
         private void OnValidate()
@@ -54,9 +55,11 @@ namespace Assets.Entity.Equipment
         {
             _entityController = entityController;
             Buffs = new BuffStatusesController(gameObject, _statModController);
-            var snapshot = entityController.GetSnapshot();
+            var snapshot = GetSnapshot();
             var statOptions = Data.statOptions;
+
             _statModController = new(entityController.statModController, statOptions);
+            _statModController.OnChange += () => _actionDataController.MarkDirty();
 
             foreach (var buff in statOptions.buffs)
             {
@@ -68,13 +71,8 @@ namespace Assets.Entity.Equipment
                 else Buffs.AddBuff(buff, snapshot);
             }
 
-            abilitiesController = new(
-                statOptions.abilities,
-                _entityController.totalAbbilitiesController,
-                transform,
-                _basicAngle,
-                EquipmentAnchor
-                );
+            abilitiesController = new(statOptions.abilities, _entityController.totalAbbilitiesController, 
+                _actionDataController, this, _basicAngle, EquipmentAnchor);
             OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
         }
 
@@ -202,17 +200,21 @@ namespace Assets.Entity.Equipment
         #region IAbbility
 
         public EqAbilitiesController abilitiesController;
+        private readonly ActionDataController _actionDataController = new();
+
         public IReadOnlyList<AbilityUnit> RuntimeAbilities => abilitiesController.RuntimeAbilities;
 
         public void AddAbility(AbilityUnit ability) => abilitiesController.AddAbility(ability);
 
         public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
 
-        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit, InteractionContext context)
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
-            if (abilitiesController.TryActivate(targetPos, abilityUnit, context)) ;
-                //EventBrocker.Raise(new EntityInteractionEvent(context));
+            if (abilitiesController.TryActivate(targetPos, abilityUnit)) ;
+
         }
+
+        public EntitySnapshot GetSnapshot() => _entityController.GetSnapshot();
 
         #endregion
     }

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.Common;
+using Assets.Common.Interfaces;
 using Assets.Entity.Modifiers;
 
 namespace Assets.Entity.Controllers
@@ -17,11 +19,8 @@ namespace Assets.Entity.Controllers
         }
     }
 
-    public class StatModController
+    public class StatModController : ICrud, IDirty
     {
-        private bool _isDirty = true;
-        public bool IsDirty => _isDirty;
-
         private Dictionary<(StatType Type, StatLayer Layer), float> _baseStats = new();
 
         private readonly Dictionary<(StatType Type, StatLayer Layer), float> _cachedCombinedStats = new();
@@ -31,6 +30,10 @@ namespace Assets.Entity.Controllers
 
         private readonly List<Modifiers.Modifiers> _externalModifiers = new();
         private readonly StatModController _totalController;
+
+        public event Action OnChange;
+        public event Action OnDelete;
+        public event Action OnInsert;
 
         public StatModController() { }
 
@@ -92,5 +95,15 @@ namespace Assets.Entity.Controllers
             }
             _isDirty = false;
         }
+
+        #region IDirty
+
+        private bool _isDirty = false;
+
+        public bool IsDirty => _isDirty;
+
+        public void MarkDirty() => _isDirty = true;
+
+        #endregion
     }
 }
