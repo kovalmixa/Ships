@@ -10,7 +10,7 @@ namespace Assets.Scripts.Actions.Projectile
         private readonly GameplayAction[] _onExplosionActions;
         private event Action OnDeactivate;
 
-        private readonly ProjectileDataSO _data;
+        private readonly ProjectileData _data;
         private InteractionContext _context;
 
         private Transform _targetTransform;
@@ -23,7 +23,7 @@ namespace Assets.Scripts.Actions.Projectile
 
         public void Setup(
             InteractionContext interactionContext, 
-            ProjectileDataSO projectileDef, 
+            ProjectileData projectileDef, 
             Action onDeactivate,
             Transform targetTransform)
         {
@@ -33,7 +33,7 @@ namespace Assets.Scripts.Actions.Projectile
 
         public void Setup(
             InteractionContext interactionContext,
-            ProjectileDataSO projectileDef,
+            ProjectileData projectileDef,
             Action onDeactivate,
             Vector2 targetPosition)
         {

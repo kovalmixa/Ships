@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    public class EsplosionDataSO : ActionDataSO
+    public class EsplosionData : ActionData
     {
         public uint range;
 
@@ -15,9 +15,9 @@ namespace GameplayActions
 
         //[CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
 
-        public DamageDataSO damageData;
+        public DamageData damageData;
 
-        [CanBeNull] public EffectDataSO visualData;
+        [CanBeNull] public EffectData visualData;
 
         public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
         {
@@ -30,9 +30,9 @@ namespace GameplayActions
         }
     }
 
-    public class ExplosionAction : GameplayAction<EsplosionDataSO>
+    public class ExplosionAction : GameplayAction<EsplosionData>
     {
-        protected override void ExecuteAction(InteractionContext context, EsplosionDataSO data, Vector2 targetPos)
+        protected override void ExecuteAction(InteractionContext context, EsplosionData data, Vector2 targetPos)
         {
             ActionProvider.Effect.Execute(context, data.visualData, targetPos);
 
@@ -48,7 +48,7 @@ namespace GameplayActions
                 //}
         }
 
-        protected override void ExecuteAction(InteractionContext context, EsplosionDataSO data, IInteractive target)
+        protected override void ExecuteAction(InteractionContext context, EsplosionData data, IInteractive target)
         {
             throw new System.NotImplementedException();
         }

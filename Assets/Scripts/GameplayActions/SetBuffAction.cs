@@ -7,12 +7,12 @@ using Assets.Entity.BuffStatuses;
 using System.Collections.Generic;
 using Assets.Entity.Modifiers;
 
-public class BuffDataSO : ActionDataSO
+public class BuffData : ActionData
 {
     public BuffStatus[] buffs;
     public float range;
     public LayerMask[] filterLayers;
-    [CanBeNull] public EffectDataSO visualData;
+    [CanBeNull] public EffectData visualData;
 
     public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
     {
@@ -25,9 +25,9 @@ public class BuffDataSO : ActionDataSO
     }
 }
 
-public class SetBuffAction : GameplayAction<BuffDataSO>
+public class SetBuffAction : GameplayAction<BuffData>
 {
-    protected override void ExecuteAction(InteractionContext context, BuffDataSO data, Vector2 targetPos)
+    protected override void ExecuteAction(InteractionContext context, BuffData data, Vector2 targetPos)
     {
         if (data.visualData != null) ActionProvider.Effect.Execute(context, data.visualData, targetPos);
 
@@ -40,12 +40,12 @@ public class SetBuffAction : GameplayAction<BuffDataSO>
                 ApplyBuffsToTarget(context, data, target);
     }
 
-    protected override void ExecuteAction(InteractionContext context, BuffDataSO data, IInteractive target)
+    protected override void ExecuteAction(InteractionContext context, BuffData data, IInteractive target)
     {
         ApplyBuffsToTarget(context, data, target);
     }
 
-    private void ApplyBuffsToTarget(InteractionContext context, BuffDataSO data, IInteractive target)
+    private void ApplyBuffsToTarget(InteractionContext context, BuffData data, IInteractive target)
     {
         if (data.buffs == null) return;
 

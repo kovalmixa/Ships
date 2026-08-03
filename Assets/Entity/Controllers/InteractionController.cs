@@ -13,7 +13,7 @@ namespace Assets.Entity.Controllers
             _triggerController = triggerController;
         }
 
-        public void TakeDamage(InteractionContext context, DamageDataSO damageData)
+        public void TakeDamage(InteractionContext context, DamageData damageData)
         {
             var evt = new EntityInteractionEvent(context, damageData, damageData.value);
             _triggerController.OnTrigger(TriggerType.OnDamage, evt.Context);
@@ -22,7 +22,7 @@ namespace Assets.Entity.Controllers
             // healthComponent.ApplyDamage(evt.FinalValue);
         }
 
-        public void TakeHeal(InteractionContext context, HealDataSO healData)
+        public void TakeHeal(InteractionContext context, HealData healData)
         {
             var evt = new EntityInteractionEvent(context, healData, healData.value);
             _triggerController.OnTrigger(TriggerType.OnHeal, evt.Context);
@@ -30,20 +30,20 @@ namespace Assets.Entity.Controllers
             // healthComponent.ApplyHeal(evt.FinalValue);
         }
 
-        public void AddBuff(InteractionContext context, BuffDataSO buffData)
+        public void AddBuff(InteractionContext context, BuffData buffData)
         {
             var evt = new EntityInteractionEvent(context, buffData);
             _triggerController.OnTrigger(TriggerType.OnBuffed, evt.Context);
 
         }
 
-        public void RemoveBuff(InteractionContext context, BuffDataSO buffData)
+        public void RemoveBuff(InteractionContext context, BuffData buffData)
         {
             var evt = new EntityInteractionEvent(context, buffData);
             _triggerController.OnTrigger(TriggerType.OnBuffRemoved, evt.Context);
         }
 
-        public void OnActivate(InteractionContext context, ActionDataSO actionData = null)
+        public void OnActivate(InteractionContext context, ActionData actionData = null)
         {
             var evt = new EntityInteractionEvent(context, actionData);
             _triggerController.OnTrigger(TriggerType.OnActivate, evt.Context);

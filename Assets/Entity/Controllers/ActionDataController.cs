@@ -11,25 +11,25 @@ namespace Assets.Entity.Controllers
 {
     public class ActionDataController : IDirty
     {
-        private readonly Dictionary<Type, ActionDataSO> _dataDictionary = new();
+        private readonly Dictionary<Type, ActionData> _dataDictionary = new();
 
         private static readonly Dictionary<Type, Type> _actionToDataMap = new()
         {
-            { typeof(DamageAction), typeof(DamageDataSO) },
-            { typeof(HealAction), typeof(HealDataSO) },
-            { typeof(FireProjectileAction), typeof(ProjectileDataSO) },
-            { typeof(ExplosionAction), typeof(EsplosionDataSO) },
-            { typeof(SetBuffAction), typeof(BuffDataSO) }
+            { typeof(DamageAction), typeof(DamageData) },
+            { typeof(HealAction), typeof(HealData) },
+            { typeof(FireProjectileAction), typeof(ProjectileData) },
+            { typeof(ExplosionAction), typeof(EsplosionData) },
+            { typeof(SetBuffAction), typeof(BuffData) }
         };
 
-        public ActionDataSO GetActionData(AbilityType abilityType, InteractionContext context)
+        public ActionData GetActionData(AbilityType abilityType, InteractionContext context)
         {
             var action = ActionProvider.GetActionByAbility(abilityType);
             if (action == null) return null;
             return GetActionData(action.GetType(), context);
         }
 
-        public ActionDataSO GetActionData(Type actionType, InteractionContext context)
+        public ActionData GetActionData(Type actionType, InteractionContext context)
         {
             if (context.SourceInteractive is not IStats stats) return null;
 
@@ -48,7 +48,7 @@ namespace Assets.Entity.Controllers
                 return data;
             }
 
-            data = (ActionDataSO)Activator.CreateInstance(dataType);
+            data = (ActionData)Activator.CreateInstance(dataType);
             SetActionData(data, context);
 
             _dataDictionary.Add(dataType, data);
@@ -57,13 +57,13 @@ namespace Assets.Entity.Controllers
 
         #region Action data factory
 
-        private void SetActionData(ActionDataSO data, InteractionContext context)
+        private void SetActionData(ActionData data, InteractionContext context)
         {
             if (context.SourceInteractive is not IStats stats) return;
 
             switch (data)
             {
-                case DamageDataSO damageData:
+                case DamageData damageData:
                     damageData.value = stats.GetLifetimeStat(StatType.Damage);
                     damageData.penetration = stats.GetLifetimeStat(StatType.Penetration);
                     damageData.critChance = stats.GetLifetimeStat(StatType.CritChance);
@@ -75,12 +75,12 @@ namespace Assets.Entity.Controllers
                     PopulateElementalDamage(damageData, stats);
                     break;
 
-                case HealDataSO healData:
+                case HealData healData:
                     healData.value = stats.GetLifetimeStat(StatType.Heal);
                     break;
 
-                case ProjectileDataSO projData:
-                    projData.damageData = (DamageDataSO)GetActionData(typeof(DamageAction), context);
+                case ProjectileData projData:
+                    projData.damageData = (DamageData)GetActionData(typeof(DamageAction), context);
                     projData.speed = stats.GetLifetimeStat(StatType.PrSpeed);
                     projData.lifeTime = stats.GetLifetimeStat(StatType.PrLifeTime);
                     projData.isHoming = stats.GetLifetimeStat(StatType.PrIsHoming) > 0f;
@@ -90,7 +90,7 @@ namespace Assets.Entity.Controllers
             }
         }
 
-        private void PopulateElementalDamage(DamageDataSO damageData, IStats stats)
+        private void PopulateElementalDamage(DamageData damageData, IStats stats)
         {
             damageData.elements.Clear();
             foreach (var element in StatModHandler.elementalMap)

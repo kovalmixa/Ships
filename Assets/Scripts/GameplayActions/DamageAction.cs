@@ -23,7 +23,7 @@ namespace GameplayActions
         public float critMultiplier;
     }
 
-    public class DamageDataSO : ActionDataSO
+    public class DamageData : ActionData
     {
         public float value;
         public float penetration;
@@ -52,9 +52,9 @@ namespace GameplayActions
         }
     }
 
-    public class DamageAction : GameplayAction<DamageDataSO>
+    public class DamageAction : GameplayAction<DamageData>
     {
-        protected override void ExecuteAction(InteractionContext context, DamageDataSO data, Vector2 targetPos)
+        protected override void ExecuteAction(InteractionContext context, DamageData data, Vector2 targetPos)
         {
             int combinedMask = 0;
             if (data.filterLayers != null)
@@ -69,7 +69,7 @@ namespace GameplayActions
                         interactive.TakeDamage(context, data);
         }
 
-        protected override void ExecuteAction(InteractionContext context, DamageDataSO data, IInteractive target)
+        protected override void ExecuteAction(InteractionContext context, DamageData data, IInteractive target)
         {
             if (CanDamageLayer(data.targetLayers, target.Layer)) target.TakeDamage(context, data);
         }

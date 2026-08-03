@@ -12,8 +12,8 @@ namespace Assets.Common
         public GameObject GameObject { get; }
         public void AddBuff(InteractionContext context, BuffStatus buff);
 
-        public void TakeDamage(InteractionContext context, DamageDataSO data);
+        public void TakeDamage(InteractionContext context, DamageData data);
 
-        public void TakeHeal(InteractionContext context, HealDataSO data);
+        public void TakeHeal(InteractionContext context, HealData data);
     }
 }

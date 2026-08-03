@@ -162,12 +162,12 @@ namespace Assets.Entity.Equipment
             else Buffs.AddBuff(buff, context.SourceSnapshot);
         }
 
-        public void TakeDamage(InteractionContext context, DamageDataSO data)
+        public void TakeDamage(InteractionContext context, DamageData data)
         {
             throw new System.NotImplementedException();
         }
 
-        public void TakeHeal(InteractionContext context, HealDataSO data)
+        public void TakeHeal(InteractionContext context, HealData data)
         {
             throw new System.NotImplementedException();
         }

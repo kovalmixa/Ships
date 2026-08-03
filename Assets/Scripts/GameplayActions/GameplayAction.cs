@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    public abstract class ActionDataSO
+    public abstract class ActionData
     {
         /// <summary>
         /// Returns a dictionary of the object's current stats.
@@ -29,14 +29,14 @@ namespace GameplayActions
         public AbilityType ActionType;
 
         [Tooltip("Settings for this action (DamageDataSO, HealDataSO, etc.)")]
-        public ActionDataSO ActionData;
+        public ActionData ActionData;
     }
 
     public abstract class GameplayAction
     {
-        public abstract void Execute(InteractionContext context, ActionDataSO data, Vector2 targetPos);
+        public abstract void Execute(InteractionContext context, ActionData data, Vector2 targetPos);
         
-        public abstract void Execute(InteractionContext context, ActionDataSO data, IInteractive target);
+        public abstract void Execute(InteractionContext context, ActionData data, IInteractive target);
        
         protected virtual Dictionary<IInteractive, Vector2> GetTargetsToExecuteInRange(Vector2 targetPos, float range, int[] layers)
         {
@@ -57,15 +57,15 @@ namespace GameplayActions
         }
     }
 
-    public abstract class GameplayAction<TData> : GameplayAction where TData : ActionDataSO
+    public abstract class GameplayAction<TData> : GameplayAction where TData : ActionData
     {
-        public override void Execute(InteractionContext context, ActionDataSO data, Vector2 targetPos)
+        public override void Execute(InteractionContext context, ActionData data, Vector2 targetPos)
         {
             if (data is TData typedData) ExecuteAction(context, typedData, targetPos);
             else Debug.LogError($"[GameplayAction] Expected {typeof(TData).Name}, received {data?.GetType().Name}");
         }
 
-        public override void Execute(InteractionContext context, ActionDataSO data, IInteractive target)
+        public override void Execute(InteractionContext context, ActionData data, IInteractive target)
         {
             if (data is TData typedData) ExecuteAction(context, typedData, target);
             else Debug.LogError($"[GameplayAction] Expected {typeof(TData).Name}, received {data?.GetType().Name}");

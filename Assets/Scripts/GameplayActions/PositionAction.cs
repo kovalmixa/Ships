@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    public class PositionDataSO : ActionDataSO
+    public class PositionData : ActionData
     {
         public Vector2 Position;
         public Vector2 Rotation;
@@ -23,14 +23,14 @@ namespace GameplayActions
         }
     }
 
-    public class PositionAction : GameplayAction<PositionDataSO>
+    public class PositionAction : GameplayAction<PositionData>
     {
-        protected override void ExecuteAction(InteractionContext context, PositionDataSO data, Vector2 targetPos)
+        protected override void ExecuteAction(InteractionContext context, PositionData data, Vector2 targetPos)
         {
             throw new NotImplementedException();
         }
 
-        protected override void ExecuteAction(InteractionContext context, PositionDataSO data, IInteractive target)
+        protected override void ExecuteAction(InteractionContext context, PositionData data, IInteractive target)
         {
             throw new NotImplementedException();
         }

@@ -27,7 +27,7 @@ namespace Assets.Scripts.Actions.Projectile
             }
         }
 
-        public void Launch(InteractionContext interactionContext, ProjectileDataSO data, Vector2 targetPosition)
+        public void Launch(InteractionContext interactionContext, ProjectileData data, Vector2 targetPosition)
         {
             if (!_prefabDict.TryGetValue(data.type, out var prefab) || prefab == null) return;
             GameObject projectileGO = ObjectPoolHandler.Get(prefab, data.startPosition, Quaternion.identity);

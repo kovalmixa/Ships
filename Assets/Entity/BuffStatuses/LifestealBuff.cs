@@ -33,7 +33,7 @@ public class LifestealBuff : BuffStatus
         // иначе получится бесконечная рекурсия. Либо создай отдельное событие HealEvent.
         var context = data.Context;
         context.SetTarget(data.Source.GameObject);
-        HealDataSO healData = new()
+        HealData healData = new()
         {
             value = healAmount
         };

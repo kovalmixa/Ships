@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    public class EffectDataSO : ActionDataSO
+    public class EffectData : ActionData
     {
         public string[] prefabIds;
 
@@ -23,9 +23,9 @@ namespace GameplayActions
         }
     }
 
-    public class EffectAction : GameplayAction<EffectDataSO>
+    public class EffectAction : GameplayAction<EffectData>
     {
-        protected override void ExecuteAction(InteractionContext context, EffectDataSO data, Vector2 targetPos)
+        protected override void ExecuteAction(InteractionContext context, EffectData data, Vector2 targetPos)
         {
             var effectPool = ObjectPoolHandler.GetInstance(PoolType.Effect);
             if (effectPool == null) return;
@@ -33,7 +33,7 @@ namespace GameplayActions
             foreach (var id in data.prefabIds) SetupEffect(targetPos, id);
         }
 
-        protected override void ExecuteAction(InteractionContext context, EffectDataSO data, IInteractive target)
+        protected override void ExecuteAction(InteractionContext context, EffectData data, IInteractive target)
         {
             if (target is MonoBehaviour monoBehaviour)
             {

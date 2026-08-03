@@ -7,7 +7,7 @@ using UnityEngine;
 namespace GameplayActions
 {
     [CreateAssetMenu(menuName = "Gameplay/Actions/Heal Data")]
-    public class HealDataSO : ActionDataSO
+    public class HealData : ActionData
     {
         public float value;
 
@@ -22,14 +22,14 @@ namespace GameplayActions
         }
     }
 
-    public class HealAction : GameplayAction<HealDataSO>
+    public class HealAction : GameplayAction<HealData>
     {
-        protected override void ExecuteAction(InteractionContext context, HealDataSO data, Vector2 targetPos)
+        protected override void ExecuteAction(InteractionContext context, HealData data, Vector2 targetPos)
         {
             Debug.Log($"Healed for {data.value} at position {targetPos}");
         }
 
-        protected override void ExecuteAction(InteractionContext context, HealDataSO data, IInteractive target)
+        protected override void ExecuteAction(InteractionContext context, HealData data, IInteractive target)
         {
             // target.TakeHeal(context, data.value);
         }

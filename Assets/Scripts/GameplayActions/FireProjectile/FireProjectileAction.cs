@@ -8,12 +8,12 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    public class ProjectileDataSO : ActionDataSO
+    public class ProjectileData : ActionData
     {
         public string id;
         public Vector2 startPosition;
         public ProjectileType type;
-        public DamageDataSO damageData;
+        public DamageData damageData;
         public float speed;
         public float lifeTime;
         public bool isHoming;
@@ -37,13 +37,13 @@ namespace GameplayActions
         }
     }
 
-    public class FireProjectileAction : GameplayAction<ProjectileDataSO>
+    public class FireProjectileAction : GameplayAction<ProjectileData>
     {
-        protected override void ExecuteAction(InteractionContext context, ProjectileDataSO data, Vector2 targetPos)
+        protected override void ExecuteAction(InteractionContext context, ProjectileData data, Vector2 targetPos)
         {
             ProjectileController.Instance.Launch(context, data, targetPos);
         }
 
-        protected override void ExecuteAction(InteractionContext context, ProjectileDataSO data, IInteractive target) { }
+        protected override void ExecuteAction(InteractionContext context, ProjectileData data, IInteractive target) { }
     }
 }
