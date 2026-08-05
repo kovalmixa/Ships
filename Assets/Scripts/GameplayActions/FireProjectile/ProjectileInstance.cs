@@ -108,6 +108,7 @@ namespace Assets.Scripts.Actions.Projectile
                     action?.Execute(_context, data, explodePos);
                 }
             }
+
             OnDeactivate?.Invoke();
         }
 

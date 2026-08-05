@@ -13,16 +13,6 @@ public class BuffData : ActionData
     public float range;
     public LayerMask[] filterLayers;
     [CanBeNull] public EffectData visualData;
-
-    public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public override Dictionary<StatType, float> ToStatTypeDict()
-    {
-        throw new System.NotImplementedException();
-    }
 }
 
 public class SetBuffAction : GameplayAction<BuffData>

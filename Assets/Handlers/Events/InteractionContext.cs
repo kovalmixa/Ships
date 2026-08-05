@@ -45,6 +45,7 @@ namespace Assets.Scripts.Actions
             SourceSnapshot = snapshot;
             context.AbilityId = key.ToString();
             context.SetSource(source);
+            ActionDataController = dataController;
         }
     }
 }

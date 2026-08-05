@@ -34,6 +34,7 @@ namespace Assets.Entity.Controllers
             totalAbbilitiesCtr = totalAbbilities;
             this.actionDataController = actionDataController;
             this.source = source;
+            _isDirty = true;
         }
 
         public void Rebuild()
@@ -41,6 +42,7 @@ namespace Assets.Entity.Controllers
             _runtimeAbilities.Clear();
             _runtimeAbilities.AddRange(_setupAbilities ?? Enumerable.Empty<AbilityUnit>());
             _runtimeAbilities.AddRange(_addedAbilities);
+            _isDirty = false;
         }
 
         public IReadOnlyList<AbilityUnit> RuntimeAbilities

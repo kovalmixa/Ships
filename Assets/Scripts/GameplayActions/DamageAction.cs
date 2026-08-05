@@ -33,23 +33,6 @@ namespace GameplayActions
         public float range;
         public LayerMask[] filterLayers;
         public List<ElementalDamageData> elements = new();
-
-        public override Dictionary<StatType, float> ToStatTypeDict()
-        {
-            var dict = new Dictionary<StatType, float>();
-            PopulateStatDict(dict);
-            return dict;
-        }
-
-        public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
-        {
-            targetDict.Clear();
-            targetDict[StatType.Damage] = value;
-            targetDict[StatType.Penetration] = penetration;
-            targetDict[StatType.CritChance] = critChance;
-            targetDict[StatType.CritMultiplier] = critMultiplier;
-            targetDict[StatType.DamageLayer] = (float)targetLayers;
-        }
     }
 
     public class DamageAction : GameplayAction<DamageData>

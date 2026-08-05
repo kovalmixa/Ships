@@ -11,16 +11,6 @@ namespace GameplayActions
     public class EffectData : ActionData
     {
         public string[] prefabIds;
-
-        public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override Dictionary<StatType, float> ToStatTypeDict()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 
     public class EffectAction : GameplayAction<EffectData>

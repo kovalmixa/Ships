@@ -1,6 +1,5 @@
 ﻿using Assets.Handlers;
 using Assets.Handlers.Enums;
-using Assets.Scripts.Actions;
 using Entity.Controllers;
 using System;
 using System.Collections.Generic;
@@ -15,7 +14,6 @@ namespace Assets.Entity.Controllers
 
         private readonly Dictionary<AbilityType, Action<Vector3>> _activeAbilities = new();
         private readonly Dictionary<WeaponType, Action<Vector3>> _weaponAbilities = new();
-
         private readonly Dictionary<AbilityType, Action<Vector3>> _entityAbilities = new();
 
         private bool _dirty = true;
@@ -43,23 +41,30 @@ namespace Assets.Entity.Controllers
                     dictionary[key] += action;
                 }
 
+                var equipments = hull.equipments.ToList();
+
                 // 1. Hull abilities
-                foreach (var ability in hull.RuntimeAbilities)
+                if (hull.RuntimeAbilities != null)
                 {
-                    RegisterAbility(_activeAbilities, ability.type,
-                        (targetPos) => hull.Activate(targetPos, ability));
+                    foreach (var ability in hull.RuntimeAbilities.ToList())
+                    {
+                        RegisterAbility(_activeAbilities, ability.type,
+                            (targetPos) => hull.Activate(targetPos, ability));
+                    }
                 }
 
                 // 2. Group weapon abilities
-                var weaponGroups = EquipmentHandler.GroupWeaponsByTier(hull.equipments);
+                var weaponGroups = EquipmentHandler.GroupWeaponsByTier(equipments);
                 foreach (var kvp in weaponGroups)
                 {
                     WeaponType weaponType = kvp.Key;
                     foreach (var equipment in kvp.Value)
                     {
-                        if (equipment == null) continue;
+                        if (equipment?.RuntimeAbilities == null) continue;
+
                         var groupAbilities = equipment.RuntimeAbilities
-                            .Where(a => a.mode == AbilityActivationMode.WeaponGroup);
+                            .Where(a => a.mode == AbilityActivationMode.WeaponGroup)
+                            .ToList();
 
                         foreach (var ability in groupAbilities)
                         {
@@ -73,11 +78,13 @@ namespace Assets.Entity.Controllers
                 }
 
                 // 3. Active equipment abilities
-                foreach (var equipment in hull.equipments)
+                foreach (var equipment in equipments)
                 {
-                    if (equipment == null) continue;
+                    if (equipment?.RuntimeAbilities == null) continue;
+
                     var activeAbilities = equipment.RuntimeAbilities
-                        .Where(a => a.mode == AbilityActivationMode.ActiveAbility);
+                        .Where(a => a.mode == AbilityActivationMode.ActiveAbility)
+                        .ToList();
 
                     foreach (var ability in activeAbilities)
                     {

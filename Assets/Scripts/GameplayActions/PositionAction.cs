@@ -11,16 +11,6 @@ namespace GameplayActions
     {
         public Vector2 Position;
         public Vector2 Rotation;
-
-        public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Dictionary<StatType, float> ToStatTypeDict()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public class PositionAction : GameplayAction<PositionData>

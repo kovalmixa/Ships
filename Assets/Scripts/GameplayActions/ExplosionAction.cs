@@ -10,24 +10,10 @@ namespace GameplayActions
     public class EsplosionData : ActionData
     {
         public uint range;
-
         public int[] layers;
-
-        //[CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
-
         public DamageData damageData;
-
         [CanBeNull] public EffectData visualData;
-
-        public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override Dictionary<StatType, float> ToStatTypeDict()
-        {
-            throw new System.NotImplementedException();
-        }
+        //[CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
     }
 
     public class ExplosionAction : GameplayAction<EsplosionData>

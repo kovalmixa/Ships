@@ -6,20 +6,9 @@ using UnityEngine;
 
 namespace GameplayActions
 {
-    [CreateAssetMenu(menuName = "Gameplay/Actions/Heal Data")]
     public class HealData : ActionData
     {
         public float value;
-
-        public override void PopulateStatDict(Dictionary<StatType, float> targetDict)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override Dictionary<StatType, float> ToStatTypeDict()
-        {
-            throw new System.NotImplementedException();
-        }
     }
 
     public class HealAction : GameplayAction<HealData>
