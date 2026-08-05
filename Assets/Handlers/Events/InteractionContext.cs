@@ -41,10 +41,9 @@ namespace Assets.Scripts.Actions
         public InteractionContext(AbilityType key, EntitySnapshot snapshot, 
             GameObject source, ActionDataController dataController)
         {
-            var context = new InteractionContext();
             SourceSnapshot = snapshot;
-            context.AbilityId = key.ToString();
-            context.SetSource(source);
+            AbilityId = key.ToString();
+            SetSource(source);
             ActionDataController = dataController;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Assets.Entity.Modifiers;
 using Assets.Handlers;
 using Assets.Handlers.Enums;
+using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using GameplayActions;
 using System;
@@ -31,14 +32,14 @@ namespace Assets.Entity.Controllers
 
         public ActionData GetActionData(Type actionType, InteractionContext context)
         {
+            //var stats = GameObjectHandler.TryGetStats(context.SourceInteractive);
+            //if (stats == null) return null;
             if (context.SourceInteractive is not IStats stats) return null;
-
             if (!_actionToDataMap.TryGetValue(actionType, out var dataType))
             {
                 Debug.LogWarning($"[ActionDataController] No data mapping for action {actionType.Name}");
                 return null;
             }
-
             if (_dataDictionary.TryGetValue(dataType, out var data))
             {
                 if (!IsDirty) return data;

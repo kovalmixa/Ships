@@ -1,4 +1,5 @@
-﻿using Assets.Entity.Controllers.AI;
+﻿using Assets.Entity;
+using Assets.Entity.Controllers.AI;
 using Assets.Entity.Hull;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
@@ -65,6 +66,16 @@ namespace Assets.Handlers.SceneHandlers
         }
 
         public static bool IsPlayer(EntityController entityController) => GetAI(entityController) == null;
+
+        public static IStats TryGetStats(object source)
+        {
+            if (source == null) return null;
+            if (source is UnityEngine.Object unityObj && unityObj == null) return null;
+            if (source is IStats stats) return stats;
+            if (source is Component component) return component.GetComponent<IStats>();
+            if (source is GameObject gameObject) return gameObject.GetComponent<IStats>();
+            return null;
+        }
 
         #endregion
 
