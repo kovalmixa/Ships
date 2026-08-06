@@ -43,7 +43,7 @@ namespace Assets.Entity.Modifiers
         // ==============================================
         Damage = 100, // Base total damage
         DamageMultiplier = 101, // Total damage multiplier (%)
-        FireRate = 102, // Attack / Fire Speed
+        ActivationRate = 102, // Attack / Fire Speed
         Penetration = 103, // Armor Penetration
         ElementalChance = 104, // Total chance of applying an elemental effect
         CritChance = 105, // Total critical hit chance
@@ -155,7 +155,7 @@ namespace Assets.Entity.Modifiers
         PrPiercingCount = 354, // Number of enemies a projectile pierces
         PrRicochetCount = 355, // Number of wall/enemy bounces
         PrCount = 356, // Number of projectiles fired per shot (Multishot)
-        PrType = 357, //Type of projectile (0 - Bullet, 1 - Projectile, etc)
+
 
         // ===================================================
         // 9. DIABLO-LIKE / REWARDS / ECONOMY (400 - 449)

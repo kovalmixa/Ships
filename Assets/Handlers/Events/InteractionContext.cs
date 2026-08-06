@@ -36,15 +36,18 @@ namespace Assets.Scripts.Actions
             SourceInteractive = gameObject?.GetComponent<IInteractive>();
         }
 
+        public Vector2 actionStartPosition { get; }
+
         public InteractionContext() { }
 
         public InteractionContext(AbilityType key, EntitySnapshot snapshot, 
-            GameObject source, ActionDataController dataController)
+            GameObject source, ActionDataController dataController, Vector2 startTransform)
         {
             SourceSnapshot = snapshot;
             AbilityId = key.ToString();
             SetSource(source);
             ActionDataController = dataController;
+            actionStartPosition = startTransform;
         }
     }
 }

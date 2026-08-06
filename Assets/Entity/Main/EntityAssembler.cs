@@ -3,6 +3,7 @@ using Assets.Handlers.FileHandlers;
 using Entity.Controllers;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Entity.Controllers
@@ -15,17 +16,17 @@ namespace Assets.Entity.Controllers
         public event Action<HullBase> onSetHull;
         public event Action<Equipment.Equipment> onSetEquipment;
 
-        public bool Build(EntityDataContainer data)
+        public async Task<bool> Build(EntityDataContainer data)
         {
             if (data == null) return false;
 
             _entity.data = data;
-            if (!SetHull(data.hullId)) return false;
+            if (! await SetHull(data.hullId)) return false;
 
             foreach (var equipment in data.equipmentIds.ToList())
             {
                 bool isSuccess = false;
-                while (AddEquipment(equipment.Key, equipment.Value)) isSuccess = true;
+                while (await AddEquipment(equipment.Key, equipment.Value)) isSuccess = true;
                 if (!isSuccess) data.equipmentIds.Remove(equipment); 
                 //code for placing it to inventory
             }
@@ -34,12 +35,12 @@ namespace Assets.Entity.Controllers
             return true;
         }
 
-        public bool SetHull(string hullId)
+        public async Task<bool> SetHull(string hullId)
         {
             if (string.IsNullOrEmpty(hullId)) return false;
 
             if (_entity.hull != null) UnityEngine.Object.Destroy(_entity.hull.gameObject);
-            var hullObj = PrefabLoader.Instance.InstantiatePrefab(
+            var hullObj = await PrefabLoader.Instance.InstantiatePrefabAsync(
                 hullId,
                 _entity.transform.position,
                 Quaternion.identity,
@@ -55,11 +56,11 @@ namespace Assets.Entity.Controllers
             return true;
         }
 
-        public bool AddEquipment(string equipmentId, int index)
+        public async Task<bool> AddEquipment(string equipmentId, int index)
         {
             if (_entity.hull == null) return false;
 
-            var obj = PrefabLoader.Instance.InstantiatePrefab(
+            var obj = await PrefabLoader.Instance.InstantiatePrefabAsync(
                 equipmentId,
                 Vector3.zero,
                 Quaternion.identity);

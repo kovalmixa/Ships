@@ -10,11 +10,11 @@ namespace Entity.Controllers.AI
             get => GetComponent<CircleCollider2D>().radius;
             set => GetComponent<CircleCollider2D>().radius = value;
         }
-        private ObjectPoolHandler _objectPool;
+        //private ObjectPoolHandler _objectPool;
         [SerializeField] private GameObject _entity;
         private void Awake()
         {
-            _objectPool = SceneController.GetPoolHandler("EntityPool");
+            //_objectPool = SceneController.GetPoolHandler("EntityPool");
         }
 
         private void OnTriggerExit2D(Collider2D other)
@@ -22,7 +22,7 @@ namespace Entity.Controllers.AI
             var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController != null && entityController != null && GameObjectHandler.IsPlayer(entityController))
             {
-                _objectPool.Release(_entity);
+                //_objectPool.Release(_entity);
             }
         }
 

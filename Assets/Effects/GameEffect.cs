@@ -34,14 +34,14 @@ namespace Effects
         public float volume;
 
         private bool isPlayedSound;
-        private ObjectPoolHandler _effectsPool;
+        //private ObjectPoolHandler _effectsPool;
 
         //private AudioSourcePool _audioSourcePool;
         private AudioSource _currentAudioSource;
 
         private void Start()
         {
-            _effectsPool = SceneController.GetPoolHandler("EffectPool");
+            //_effectsPool = SceneController.GetPoolHandler("EffectPool");
             //_audioSourcePool = SceneNodesHandler.GetPoolHandler("AudioSourcePool") as AudioSourcePool;
             _particles = gameObject.GetComponentsInChildren<ParticleSystem>();
             _audioSource = gameObject.GetComponentInChildren<AudioSource>();
@@ -83,10 +83,10 @@ namespace Effects
             float remaining = totalWait - animDuration;
             if (remaining > 0.01f) yield return new WaitForSeconds(remaining);
 
-            if (_effectsPool != null)
-                _effectsPool.Release(gameObject);
-            else
-                gameObject.SetActive(false);
+            //if (_effectsPool != null)
+            //    _effectsPool.Release(gameObject);
+            //else
+            //    gameObject.SetActive(false);
         }
 
         protected float GetAnimationLength()

@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef452126ba3ace94f87da4ce0c9e448d, type: 3}
+  m_Name: mg45_Data
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Entity.Equipment.EquipmentDataSO
+  general:
+    <SizeType>k__BackingField: 1
+    Layer: 0
+    <SlotHeight>k__BackingField: 1
+    <SlotWidth>k__BackingField: 1
+    icon: {fileID: 0}
+  type: 1
+  projectileType: 1
+  statOptions:
+    stats:
+    - name: 'Damage: 1'
+      _type: 100
+      _statLayer: 1
+      _value: 1
+    - name: 'Penetration: 1'
+      _type: 103
+      _statLayer: 1
+      _value: 1
+    - name: 'ActivationRate: 2'
+      _type: 102
+      _statLayer: 1
+      _value: 2
+    - name: 'MaxHp: 1'
+      _type: 1
+      _statLayer: 1
+      _value: 1
+    - name: 'RotationSpeed: 100'
+      _type: 51
+      _statLayer: 1
+      _value: 100
+    - name: 'Mass: 0,2'
+      _type: 52
+      _statLayer: 1
+      _value: 0.2
+    - name: 'ShootDispersion: 0,2'
+      _type: 116
+      _statLayer: 1
+      _value: 0.2
+    - name: 'PrSpeed: 10'
+      _type: 350
+      _statLayer: 1
+      _value: 10
+    - name: 'PrType: 1'
+      _type: 357
+      _statLayer: 1
+      _value: 1
+    mods: []
+    buffs: []
+    abilities:
+    - abilityPosition: {x: -0.007, y: 0.093200006}
+      type: 1
+      mode: 0
+      delay: 1
+      globalUsageDelay: 0
+      charges: 1
+      isPassive: 0

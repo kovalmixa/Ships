@@ -1,7 +1,7 @@
-﻿using Assets.Entity.Modifiers;
+﻿using Assets.Entity.Equipment;
+using Assets.Entity.Modifiers;
 using Assets.Handlers;
 using Assets.Handlers.Enums;
-using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using GameplayActions;
 using System;
@@ -32,8 +32,6 @@ namespace Assets.Entity.Controllers
 
         public ActionData GetActionData(Type actionType, InteractionContext context)
         {
-            //var stats = GameObjectHandler.TryGetStats(context.SourceInteractive);
-            //if (stats == null) return null;
             if (context.SourceInteractive is not IStats stats) return null;
             if (!_actionToDataMap.TryGetValue(actionType, out var dataType))
             {
@@ -86,7 +84,8 @@ namespace Assets.Entity.Controllers
                     projData.lifeTime = stats.GetLifetimeStat(StatType.PrLifeTime);
                     projData.isHoming = stats.GetLifetimeStat(StatType.PrIsHoming) > 0f;
                     projData.isBallistic = stats.GetLifetimeStat(StatType.PrMoveType) == 1f;
-                    projData.type = (ProjectileType)(int)stats.GetLifetimeStat(StatType.PrType);
+                    var _dataContainer = stats.GetInitialData();
+                    if (_dataContainer is EquipmentDataSO eqData) projData.type = eqData.projectileType;
                     break;
             }
         }

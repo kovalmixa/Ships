@@ -1,7 +1,7 @@
 ﻿using Assets.Common;
 using Assets.Common.Interfaces;
-using Assets.Entity.Controllers.AI.AITypes;
 using Assets.Entity.Interfaces;
+using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
 using GameplayActions;
 using System;
@@ -84,14 +84,27 @@ namespace Assets.Entity.Controllers
             totalAbbilitiesCtr.MarkDirty();
         }
 
+        protected virtual (GameplayAction action, InteractionContext context, ActionData data) 
+            SetupActivationData(AbilityUnit abilityUnit)
+        {
+            var gameobject = source.GameObject;
+            var startTransform = abilityUnit.abilityPosition;
+            var context = new InteractionContext(
+                abilityUnit.type,
+                source.GetSnapshot(),
+                gameobject,
+                actionDataController,
+                startTransform
+            );
+            var action = ActionProvider.GetActionByAbility(abilityUnit.type);
+            var data = actionDataController.GetActionData(abilityUnit.type, context);
+            return (action, context, data);
+        }
+
         public virtual bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
-            var gameobject = (source as IInteractive).GameObject;
-            var context = new InteractionContext(abilityUnit.type, source.GetSnapshot(), gameobject, actionDataController);
-            var action = ActionProvider.GetActionByAbility(abilityUnit.type);
-            if (action == null || !CanActivate(targetPos, abilityUnit)) return false;
-            var data = context.ActionDataController.GetActionData(abilityUnit.type, context);
-            if (data == null) return false;
+            var (action, context, data) = SetupActivationData(abilityUnit);
+            if (action == null || !CanActivate(targetPos, abilityUnit) || data == null) return false;
             action.Execute(context, data, targetPos);
             //EventBrocker.Raise(new EntityInteractionEvent(context));
             return true;
@@ -100,7 +113,8 @@ namespace Assets.Entity.Controllers
         public virtual bool CanActivate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
             float time = Time.time;
-            float delay = abilityUnit.delay;
+            float activationRate = (source as IStats)?.GetLifetimeStat(StatType.ActivationRate) ?? 1f;
+            float delay = abilityUnit.delay / activationRate;
             if (delay <= 0 || abilityUnit.isPassive) return true;
             abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);
             if (time - lastActivationTime < delay) return false;

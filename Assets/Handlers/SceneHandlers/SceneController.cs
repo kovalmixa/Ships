@@ -7,6 +7,7 @@ namespace Assets.Handlers.SceneHandlers
     public class SceneController : SingletonMonoBehaviour<SceneController>
     {
         [SerializeField] private GameObject[] _dontDestroyOnLoadObj;
+        public static event Action OnBeforeSceneLoad;
 
         protected override void Awake()
         {
@@ -24,9 +25,8 @@ namespace Assets.Handlers.SceneHandlers
         {
             if (Application.CanStreamedLevelBeLoaded(locationName))
             {
-                ObjectPoolHandler.RealeasePools();
+                OnBeforeSceneLoad?.Invoke();
                 SceneManager.LoadScene(locationName, LoadSceneMode.Single);
-                //Добавить загрузочный экран
             }
             else Debug.LogWarning($"Scene not found by name {locationName}");
         }
@@ -44,7 +44,7 @@ namespace Assets.Handlers.SceneHandlers
 
         public static T GetNodeByType<T>() where T : Component
         {
-            T node = UnityEngine.Object.FindAnyObjectByType<T>(FindObjectsInactive.Include);
+            T node = FindAnyObjectByType<T>(FindObjectsInactive.Include);
             if (node == null)
             {
                 Transform dontDestroy = GameObject.Find("DontDestroyOnLoad")?.transform;
@@ -53,26 +53,5 @@ namespace Assets.Handlers.SceneHandlers
 
             return node;
         }
-
-        public static ObjectPoolHandler GetPoolHandler(string poolName)
-        {
-            ObjectPoolHandler poolHandler;
-            try
-            {
-                var objectPool = GetNodeByName("ObjectPools");
-                if (objectPool == null) throw new Exception("Master pool node not found");
-                var specifiedPool = objectPool.transform.Find(poolName).gameObject;
-                if (specifiedPool == null) throw new Exception($"Pool: {poolName} node not found");
-                poolHandler = specifiedPool.GetComponent<ObjectPoolHandler>();
-                if (poolHandler == null) throw new Exception("PoolHandler component not found");
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e);
-                throw;
-            }
-            return poolHandler;
-        }
-
     }
 }

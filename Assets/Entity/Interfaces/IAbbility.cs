@@ -1,5 +1,4 @@
 ﻿using Assets.Common;
-using Assets.Scripts.Actions;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +6,7 @@ namespace Assets.Entity.Interfaces
 {
     public interface IAbbility
     {
+        public GameObject GameObject { get; }
         public IReadOnlyList<AbilityUnit> RuntimeAbilities { get; }
         public void AddAbility(AbilityUnit ability);
         public bool RemoveAbility(AbilityUnit ability);

@@ -4,56 +4,117 @@ using Assets.Handlers.SceneHandlers;
 using GameplayActions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Assets.Scripts.Actions.Projectile
 {
     public class ProjectileController : SingletonMonoBehaviour<ProjectileController>
     {
-        private ObjectPoolHandler _projectilePool;
-        [SerializeField] private string _projectilePrefabFolder = "PRJT";
-        private Dictionary<ProjectileType, GameObject> _prefabDict = new();
+        [SerializeField] private GameObject _projectilePoolNode;
+        [SerializeField] private int _initialCapacity = 20;
+        [SerializeField] private int _maxPoolSize = 200;
 
-        protected override void Awake()
+        private Dictionary<ProjectileType, GameObject> _prefabDict = new();
+        private Dictionary<ProjectileType, IObjectPool<ProjectileInstance>> _pools = new();
+        private List<ProjectileInstance> _activeProjectiles = new();
+
+        #region Setup
+
+        public void ClearOnSceneChange()
+        {
+            foreach (var pool in _pools.Values) pool.Clear();
+            for (int i = _activeProjectiles.Count - 1; i >= 0; i--)
+                if (_activeProjectiles[i] != null) Destroy(_activeProjectiles[i].gameObject);
+            _activeProjectiles.Clear();
+        }
+
+        private void OnEnable()
+        {
+            SceneController.OnBeforeSceneLoad += ClearOnSceneChange;
+        }
+
+        private void OnDisable()
+        {
+            SceneController.OnBeforeSceneLoad -= ClearOnSceneChange;
+        }
+
+        async protected override void Awake()
         {
             base.Awake();
-            _projectilePool = ObjectPoolHandler.GetInstance(PoolType.Projectile);
             var prefabLoader = PrefabLoader.Instance;
+
             foreach (ProjectileType type in Enum.GetValues(typeof(ProjectileType)))
             {
-                string id = $"{_projectilePrefabFolder}/{type.ToString()}";
-                _prefabDict[type] = prefabLoader.GetPrefab(id);
+                if (type == ProjectileType.None) continue;
+                var typeName = type.ToString();
+                var id = char.ToLower(typeName[0]) + typeName.Substring(1);
+                GameObject prefab = await prefabLoader.GetPrefabAsync(id);
+                if (prefab != null)
+                {
+                    _prefabDict[type] = prefab;
+                    var pool = CreatePoolForType(prefab);
+                    _pools[type] = pool;
+                    PrewarmPool(pool, _initialCapacity);
+                }
             }
         }
 
+        private IObjectPool<ProjectileInstance> CreatePoolForType(GameObject prefab)
+        {
+            return new ObjectPool<ProjectileInstance>(
+                createFunc: () =>
+                {
+                    Transform parent = _projectilePoolNode != null ? _projectilePoolNode.transform : transform;
+                    var go = Instantiate(prefab, parent);
+                    return go.GetComponent<ProjectileInstance>();
+                },
+                actionOnGet: instance =>
+                {
+                    instance.gameObject.SetActive(true);
+                    _activeProjectiles.Add(instance);
+                },
+                actionOnRelease: instance =>
+                {
+                    instance.gameObject.SetActive(false);
+                    _activeProjectiles.Remove(instance);
+                },
+                actionOnDestroy: instance =>
+                {
+                    if (instance != null && instance.gameObject != null)
+                        Destroy(instance.gameObject);
+                },
+                collectionCheck: true,
+                defaultCapacity: _initialCapacity,
+                maxSize: _maxPoolSize
+            );
+        }
+
+        private void PrewarmPool(IObjectPool<ProjectileInstance> pool, int amount)
+        {
+            var tempList = new List<ProjectileInstance>(amount);
+            for (int i = 0; i < amount; i++) tempList.Add(pool.Get());
+            foreach (var item in tempList) pool.Release(item);
+        }
+
+        #endregion
+
         public void Launch(InteractionContext interactionContext, ProjectileData data, Vector2 targetPosition)
         {
-            if (!_prefabDict.TryGetValue(data.type, out var prefab) || prefab == null) return;
-            GameObject projectileGO = ObjectPoolHandler.Get(prefab, data.startPosition, Quaternion.identity);
-            if (projectileGO.TryGetComponent<ProjectileInstance>(out var instance))
-            {
-                var sourceTransform = interactionContext.SourceObject?.transform;
-                instance.Setup(
-                    interactionContext,
-                    data,
-                    () => ObjectPoolHandler.Release(prefab, projectileGO),
-                    sourceTransform
-                );
-            }
+            if (!_pools.TryGetValue(data.type, out var pool)) return;
+            ProjectileInstance instance = pool.Get();
+            instance.Setup(
+                interactionContext,
+                data,
+                () => pool.Release(instance),
+                targetPosition
+            );
         }
 
         private void Update()
         {
-            if (_projectilePool == null) return;
-            GameObject[] activeObjects = _projectilePool.GetAllActive();
-            if (activeObjects == null) return;
-            for (int i = 0; i < activeObjects.Length; i++)
-            {
-                var go = activeObjects[i];
-                if (go != null && go.TryGetComponent<ProjectileInstance>(out var proj))
-                    proj.Tick(Time.deltaTime);
-            }
+            float dt = Time.deltaTime;
+            for (int i = _activeProjectiles.Count - 1; i >= 0; i--) _activeProjectiles[i].Tick(dt);
         }
     }
 }

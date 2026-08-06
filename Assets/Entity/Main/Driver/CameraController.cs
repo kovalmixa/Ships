@@ -24,8 +24,8 @@ namespace Entity.Controllers
 
     public class CameraController : SingletonMonoBehaviour<CameraController>
     {
-        private Camera _camera;
-        private CinemachineVirtualCamera _virtualCamera;
+        [SerializeField] private Camera _camera;
+        [SerializeField] private CinemachineVirtualCamera _virtualCamera;
 
         public Vector2 CursorPosition
         {
@@ -65,10 +65,6 @@ namespace Entity.Controllers
         protected override void Awake()
         {
             base.Awake();
-            _camera = GetComponent<Camera>();
-            if (_camera == null) _camera = Camera.main;
-
-            _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
 
             if (_virtualCamera != null) _currentZoom = _virtualCamera.m_Lens.OrthographicSize;
             else if (_camera != null) _currentZoom = _camera.orthographicSize;
@@ -76,7 +72,7 @@ namespace Entity.Controllers
             _targetZoom = _currentZoom;
 
             GameObject targetObj = new GameObject("CameraPanTarget");
-            targetObj.transform.parent = transform.parent;
+            targetObj.transform.parent = transform;
             _panningTarget = targetObj.transform;
 
             Vector3 startPos = _followTransform != null ? _followTransform.position : transform.position;

@@ -3,7 +3,6 @@
     public interface IDirty
     {
         public bool IsDirty { get; }
-
         public void MarkDirty();
     }
 }

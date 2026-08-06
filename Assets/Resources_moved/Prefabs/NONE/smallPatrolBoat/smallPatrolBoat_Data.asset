@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07e78b9639657324c94bc14e6a6453a4, type: 3}
+  m_Name: smallPatrolBoat_Data
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.DataContainers.HullDataSO
+  general:
+    <SizeType>k__BackingField: 0
+    Layer: 0
+    <SlotHeight>k__BackingField: 1
+    <SlotWidth>k__BackingField: 1
+    icon: {fileID: 0}
+  vehicleType: 1
+  statOptions:
+    stats:
+    - name: 'MaxHp: 10'
+      _type: 1
+      _statLayer: 0
+      _value: 10
+    - name: 'MaxEnergy: 10'
+      _type: 4
+      _statLayer: 0
+      _value: 10
+    - name: 'Armor: 0,8'
+      _type: 150
+      _statLayer: 0
+      _value: 0.8
+    - name: 'Mass: 5'
+      _type: 52
+      _statLayer: 0
+      _value: 5
+    - name: 'MaxMoveSpeed: 4'
+      _type: 50
+      _statLayer: 0
+      _value: 4
+    - name: 'Acceleration: 0,2'
+      _type: 53
+      _statLayer: 0
+      _value: 0.2
+    - name: 'RotationSpeed: 40'
+      _type: 51
+      _statLayer: 0
+      _value: 40
+    mods:
+    - name: 'Hp: 0'
+      _type: 0
+      _statLayer: 0
+      _value: 0
+      _calcType: 0
+      _applyType: 0
+    buffs: []
+    abilities:
+    - abilityPosition: {x: 0, y: 0}
+      stats: []
+      type: 8
+      mode: 1
+      delay: 1
+      globalUsageDelay: 0
+      charges: 1
+      isPassive: 0

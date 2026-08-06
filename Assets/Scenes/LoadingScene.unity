@@ -128,6 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 17269580}
+  - component: {fileID: 17269581}
   m_Layer: 0
   m_Name: CameraNodes
   m_TagString: Untagged
@@ -144,13 +145,34 @@ Transform:
   m_GameObject: {fileID: 17269579}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.77483, y: -4.72515, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 760845635502950977}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &17269581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 17269579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34b5d82a619e2a7488cbc4f3ddfabadc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _camera: {fileID: 8301157880119096597}
+  _virtualCamera: {fileID: 469054670094725340}
+  minZoom: 0
+  maxZoom: 10
+  zoomSpeed: 5
+  _sensitivity: 2
+  panSpeed: 0.5
+  inertiaDamping: 5
+  _followTransform: {fileID: 0}
 --- !u!1 &634284858
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,7 +217,7 @@ Transform:
   m_GameObject: {fileID: 634284858}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.1917677, y: -3.6223176, z: -10.013625}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -213,8 +235,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a7e0996208091f489428efce7787322, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _resourcesPath: Prefabs/
-  _cacheLimit: 40
 --- !u!114 &634284862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,7 +260,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4801dd89ab74dc34388854c0a5476345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.Actions.Projectile.ProjectileController
-  _projectilePrefabFolder: PRJT
+  _projectilePoolNode: {fileID: 4064160922607515861}
+  _initialCapacity: 20
+  _maxPoolSize: 200
 --- !u!4 &465315436381439269
 Transform:
   m_ObjectHideFlags: 0
@@ -311,22 +333,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &608758766116970313
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4064160922607515861}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf7e8ef654ec5e34ea523ef8ec838274, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  poolType: 0
-  _prefab: {fileID: 759412284934268011, guid: b9186e77b3831cb42baef91ffe90dc90, type: 3}
-  _defaultCapacity: 100
-  _maxSize: 200
 --- !u!4 &760845635502950977
 Transform:
   m_ObjectHideFlags: 0
@@ -336,7 +342,7 @@ Transform:
   m_GameObject: {fileID: 6144063009926188650}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.4851704, y: -2.0348501, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -371,7 +377,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8243672420889868332}
-  - component: {fileID: 3334279553117379792}
   m_Layer: 0
   m_Name: EffectPool
   m_TagString: Untagged
@@ -379,25 +384,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2765923680725895036
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6144063009926188650}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b5d82a619e2a7488cbc4f3ddfabadc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minZoom: 0
-  maxZoom: 10
-  zoomSpeed: 5
-  _sensitivity: 2
-  panSpeed: 0.5
-  inertiaDamping: 5
-  _followTransform: {fileID: 0}
 --- !u!1001 &2912457315036530571
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -512,11 +498,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8954999742390597031, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.26
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8954999742390597031, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.76
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8954999742390597031, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
       propertyPath: m_LocalPosition.z
@@ -562,22 +548,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
---- !u!114 &3334279553117379792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1060540566138194577}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf7e8ef654ec5e34ea523ef8ec838274, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  poolType: 2
-  _prefab: {fileID: 2367944767525619843, guid: f7773edf65da1274598f909c98d51cea, type: 3}
-  _defaultCapacity: 100
-  _maxSize: 200
 --- !u!1 &4064160922607515861
 GameObject:
   m_ObjectHideFlags: 0
@@ -587,7 +557,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7219243278792480531}
-  - component: {fileID: 608758766116970313}
   m_Layer: 0
   m_Name: ProjectilePool
   m_TagString: Untagged
@@ -604,7 +573,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 465315436381439269}
-  - component: {fileID: 6126528859594663020}
   m_Layer: 0
   m_Name: EntityPool
   m_TagString: Untagged
@@ -612,22 +580,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &6126528859594663020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6126528859594663019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf7e8ef654ec5e34ea523ef8ec838274, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  poolType: 1
-  _prefab: {fileID: 1043631210884575351, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
-  _defaultCapacity: 100
-  _maxSize: 200
 --- !u!1 &6144063009926188650
 GameObject:
   m_ObjectHideFlags: 0
@@ -639,7 +591,6 @@ GameObject:
   - component: {fileID: 760845635502950977}
   - component: {fileID: 8301157880119096597}
   - component: {fileID: 8718601098795746317}
-  - component: {fileID: 2765923680725895036}
   - component: {fileID: 8718601098795746318}
   - component: {fileID: 8718601098795746319}
   m_Layer: 0
@@ -729,7 +680,7 @@ Transform:
   m_GameObject: {fileID: 515741640332060687}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.2592432, y: -4.873827, z: -10.020395}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

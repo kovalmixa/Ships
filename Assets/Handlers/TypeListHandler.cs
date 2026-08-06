@@ -112,7 +112,7 @@ namespace Assets.Handlers
             type == EquipmentType.Turret || type == EquipmentType.Aircraft;
 
         public static bool IsWeaponEquipment(Equipment equipment) =>
-            equipment != null && IsWeaponEquipment(equipment.Data.Type);
+            equipment != null && IsWeaponEquipment(equipment.Data.type);
 
         public static Dictionary<WeaponType, SizeType[]> GetWeaponTiers(IEnumerable<Equipment> equipments)
         {
@@ -127,7 +127,7 @@ namespace Assets.Handlers
 
             var availableSizes = equipments
                 .Where(IsWeaponEquipment)
-                .Where(e => e.Data.general != null && e.Data.general.SizeType != SizeType.None)
+                .Where(e => e.Data.general.SizeType != SizeType.None)
                 .Select(e => e.Data.general.SizeType)
                 .Distinct()
                 .OrderByDescending(size => (int)size)
@@ -237,10 +237,10 @@ namespace Assets.Handlers
             { ProjectileType.Gas, new[] { AbilityType.Smoke } }
         };
 
-        public static AbilityType[] GetAbilities(EquipmentContainer container)
+        public static AbilityType[] GetAbilities(EquipmentDataSO container)
         {
             if (container == null) return Array.Empty<AbilityType>();
-            return GetAbilities(container.Type, container.ProjectileType);
+            return GetAbilities(container.type, container.projectileType);
         }
 
         public static AbilityType[] GetAbilities(EquipmentType equipmentType, ProjectileType projectileType)

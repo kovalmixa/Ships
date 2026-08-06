@@ -1,9 +1,7 @@
 using Assets.Common;
-using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
 using Assets.Scripts.Actions.Projectile;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameplayActions
@@ -24,10 +22,13 @@ namespace GameplayActions
     {
         protected override void ExecuteAction(InteractionContext context, ProjectileData data, Vector2 targetPos)
         {
-            Debug.Log("pew");
+            if (context.SourceObject != null) data.startPosition = context.SourceObject.transform.TransformPoint(context.actionStartPosition);
+            else data.startPosition = context.actionStartPosition;
             ProjectileController.Instance.Launch(context, data, targetPos);
         }
-
-        protected override void ExecuteAction(InteractionContext context, ProjectileData data, IInteractive target) { }
+        protected override void ExecuteAction(InteractionContext context, ProjectileData data, IInteractive target) 
+        {
+        
+        }
     }
 }

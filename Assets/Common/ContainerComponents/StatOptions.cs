@@ -1,15 +1,16 @@
-﻿using GameplayActions;
-using Assets.Entity.Modifiers;
+﻿using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using System;
 using System.Collections.Generic;
 using Assets.Entity.BuffStatuses;
+using UnityEngine;
 
 namespace Assets.Common
 {
     [Serializable]
     public struct AbilityUnit
     {
+        public Vector2 abilityPosition;
         public AbilityType type;
         public AbilityActivationMode mode;
         public float delay;

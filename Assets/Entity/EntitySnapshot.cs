@@ -1,11 +1,12 @@
-﻿using Entity.Controllers;
+﻿using Assets.Common.Interfaces;
+using Entity.Controllers;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Entity
 {
     [System.Serializable]
-    public class EntityDataContainer
+    public class EntityDataContainer : IDataContainer
     {
         public string hullId;
         public List<KeyValuePair<string, int>> equipmentIds;

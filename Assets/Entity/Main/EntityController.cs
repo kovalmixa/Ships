@@ -1,10 +1,11 @@
 using Assets.Common;
+using Assets.Common.Interfaces;
 using Assets.Entity;
 using Assets.Entity.Controllers;
 using Assets.Entity.Hull;
 using Assets.Entity.Interfaces;
+using Assets.Entity.Modifiers;
 using Assets.Handlers.SceneHandlers;
-using Assets.Scripts.Actions;
 using Entity.Controllers.AI;
 using Scripts;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using UnityEngine;
 
 namespace Entity.Controllers
 {
-    public class EntityController : MonoBehaviour, IObject, IAbbility
+    public class EntityController : MonoBehaviour, IObject, IAbbility, IStats
     {
         public EntityDataContainer data;
         public EntityAssembler Assembler { get; private set; }
@@ -70,6 +71,7 @@ namespace Entity.Controllers
         #endregion
 
         #region IAbbility
+        public GameObject GameObject => gameObject;
         public AbilitiesController abilitiesController;
         public IReadOnlyList<AbilityUnit> RuntimeAbilities => abilitiesController.RuntimeAbilities;
 
@@ -81,6 +83,17 @@ namespace Entity.Controllers
         {
             if (abilitiesController.TryActivate(targetPos, abilityUnit)) ;
         }
+
+        #endregion
+
+        #region IStats
+
+        [SerializeField] private StatModController _statModController;
+
+        private const StatLayer _statLayer = StatLayer.Hull;
+
+        public float GetLifetimeStat(StatType type) => _statModController.GetStat(type, _statLayer);
+        public IDataContainer GetInitialData() => data;
 
         #endregion
 

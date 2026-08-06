@@ -1,9 +1,9 @@
 {
   "EntityDataContainer": {
-    "HullId": "NONE/smallPatrolBoat",
+    "HullId": "none_smallPatrolBoat",
     "EquipmentIds": [
-      { "Key": "GER/mg45", "Value": 0 },
-      { "Key": "GER/mg45", "Value": 1 }
+      { "Key": "ger_mg45", "Value": 0 },
+      { "Key": "ger_mg45", "Value": 1 }
     ],
   }
 }

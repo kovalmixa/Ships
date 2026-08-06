@@ -10,7 +10,7 @@ namespace Assets.Scripts.Actions.Projectile
         private readonly GameplayAction[] _onExplosionActions;
         private event Action OnDeactivate;
 
-        private readonly ProjectileData _data;
+        private ProjectileData _data;
         private InteractionContext _context;
 
         private Transform _targetTransform;
@@ -31,19 +31,13 @@ namespace Assets.Scripts.Actions.Projectile
             Setup(interactionContext, projectileDef, onDeactivate, targetTransform.position);
         }
 
-        public void Setup(
-            InteractionContext interactionContext,
-            ProjectileData projectileDef,
-            Action onDeactivate,
-            Vector2 targetPosition)
+        public void Setup(InteractionContext interactionContext, ProjectileData data, Action onDeactivate, Vector2 targetPosition)
         {
             _context = interactionContext;
-
+            _data = data;
             _timer = 0f;
             OnDeactivate = onDeactivate;
 
-            //if (_targetTransform != null)
-            //    _direction = ((Vector2)_targetTransform.position - _definition.startPosition).normalized;
             _targetPosition = targetPosition;
             _direction = (_targetPosition - _data.startPosition).normalized;
 
@@ -88,12 +82,16 @@ namespace Assets.Scripts.Actions.Projectile
 
         private void CheckLifetime(float deltaTime)
         {
-            _timer += deltaTime;
-            if (_timer >= _data.lifeTime) Explode();
+            if (_data.lifeTime != 0)
+            {
+                _timer += deltaTime;
+                if (_timer >= _data.lifeTime) Explode();
+            }
         }
 
         public void Explode()
         {
+            Debug.Log("Explode");
             if (_onExplosionActions != null)
             {
                 Vector3 explodePos = transform.position;

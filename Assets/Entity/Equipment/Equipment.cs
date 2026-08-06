@@ -11,6 +11,12 @@ using GameplayActions;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Common.Interfaces;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Assets.Entity.Equipment
 {
@@ -18,9 +24,14 @@ namespace Assets.Entity.Equipment
     {
         private EntityController _entityController;
         public BuffStatusesController Buffs { get; private set; }
-        public EquipmentContainer Data { get; private set; }
+        [field: SerializeField] public EquipmentDataSO Data { get; private set; }
         public EquipmentAnchor EquipmentAnchor { get; set; }
         private const float _basicAngle = 90;
+
+        [Header("Editor Settings")]
+        [Tooltip("Drag shot/ability nodes here directly from the object hierarchy")]
+        [SerializeField] private List<Transform> _abilityNodes = new();
+
         public Vector2 Position
         {
             get => transform.position + _entityController.transform.position;
@@ -33,13 +44,65 @@ namespace Assets.Entity.Equipment
 
         private void OnValidate()
         {
-            if (Data == null) Data = GetComponent<EquipmentContainer>();
             if (Data == null) return;
 
             var statOptions = Data.statOptions;
             if (statOptions.stats != null) foreach (var stat in statOptions.stats) stat?.UpdateInspectorName();
             if (statOptions.mods != null) foreach (var mod in statOptions.mods) mod?.UpdateInspectorName();
         }
+
+#if UNITY_EDITOR
+        [ContextMenu("Bake node coordinates into SO")]
+        public void BakeNodesToSO()
+        {
+            if (Data == null || Data.statOptions.abilities == null)
+            {
+                Debug.LogError($"[{name}] Data or Abilities are not assigned!");
+                return;
+            }
+
+            var abilities = Data.statOptions.abilities;
+            if (abilities.Count == 0)
+            {
+                Debug.LogWarning($"[{name}] There are no abilities in the SO!");
+                return;
+            }
+
+            Undo.RecordObject(Data, "Bake Ability Positions");
+
+            for (int i = 0; i < abilities.Count; i++)
+            {
+                if (i >= _abilityNodes.Count || _abilityNodes[i] == null)
+                {
+                    Debug.LogWarning($"[{name}] No Transform node assigned for ability #{i} in the Ability Nodes array.");
+                    continue;
+                }
+
+                Vector3 localPos = transform.InverseTransformPoint(_abilityNodes[i].position);
+
+                var ability = abilities[i];
+                ability.abilityPosition = new Vector2(localPos.x, localPos.y);
+                abilities[i] = ability;
+            }
+
+            EditorUtility.SetDirty(Data);
+            AssetDatabase.SaveAssets();
+
+            Debug.Log($"<color=green>[Success]</color> Node coordinates baked into SO for {Data.name}!");
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            if (Data == null || Data.statOptions.abilities == null) return;
+
+            Gizmos.color = Color.red;
+            foreach (var ability in Data.statOptions.abilities)
+            {
+                Vector3 worldPos = transform.TransformPoint(ability.abilityPosition);
+                Gizmos.DrawSphere(worldPos, 0.05f);
+            }
+        }
+#endif
 
         #endregion
 
@@ -48,7 +111,6 @@ namespace Assets.Entity.Equipment
         private void Awake()
         {
             Id = GameObjectHandler.GenerateUniqueId(name);
-            Data = GetComponent<EquipmentContainer>();
         }
 
         public void Setup(EntityController entityController)
@@ -57,7 +119,6 @@ namespace Assets.Entity.Equipment
             Buffs = new BuffStatusesController(gameObject, _statModController);
             var snapshot = GetSnapshot();
             var statOptions = Data.statOptions;
-
             _statModController = new(entityController.statModController, statOptions);
             _statModController.OnChange += () => _actionDataController.MarkDirty();
 
@@ -71,7 +132,7 @@ namespace Assets.Entity.Equipment
                 else Buffs.AddBuff(buff, snapshot);
             }
 
-            abilitiesController = new(statOptions.abilities, _entityController.totalAbbilitiesController, 
+            abilitiesController = new(statOptions.abilities, _entityController.totalAbbilitiesController,
                 _actionDataController, this, _basicAngle, EquipmentAnchor);
             OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
         }
@@ -135,6 +196,7 @@ namespace Assets.Entity.Equipment
             _currentLocalAngle = min + newOffset;
             transform.localRotation = Quaternion.Euler(0f, 0f, _currentLocalAngle - _basicAngle);
         }
+
         private float NormalizeAngle(float angle)
         {
             float result = angle % 360f;
@@ -177,23 +239,12 @@ namespace Assets.Entity.Equipment
         #region IStats
 
         [SerializeField] private StatModController _statModController;
-        public StatModController StatModController => _statModController;
-        private Dictionary<StatType, float> _lifetimeStats = new();
-        public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
 
         private const StatLayer _statLayer = StatLayer.Equipment;
-        public void ResetLifetimeStats()
-        {
-            _lifetimeStats.Clear();
-            _lifetimeStats[StatType.RotationSpeed] = _statModController.GetStat(StatType.RotationSpeed, _statLayer);
-        }
 
-        public float GetLifetimeStat(StatType type)
-        {
-            if (StatModController.IsDirty) ResetLifetimeStats();
-            if (LifetimeStats.TryGetValue(type, out float value)) return value;
-            return 0f;
-        }
+        public float GetLifetimeStat(StatType type) => _statModController.GetStat(type, _statLayer);
+
+        public IDataContainer GetInitialData() => Data;
 
         #endregion
 
@@ -211,7 +262,6 @@ namespace Assets.Entity.Equipment
         public void Activate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
             if (abilitiesController.TryActivate(targetPos, abilityUnit)) ;
-
         }
 
         public EntitySnapshot GetSnapshot() => _entityController.GetSnapshot();

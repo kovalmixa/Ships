@@ -11,9 +11,15 @@ namespace Assets.Handlers.SceneHandlers
         public string fileName;
         private GameObject _player;
 
+        #region Setup
+
         protected override void Awake()
         {
             base.Awake();
+        }
+
+        private void Start()
+        {
             try
             {
                 _player = GameObjectHandler.playerController.gameObject;
@@ -29,6 +35,8 @@ namespace Assets.Handlers.SceneHandlers
             }
             
         }
+
+        #endregion
 
         private SaveDataBundle LoadData(string path) => DataFileHandler.LoadFromJson<SaveDataBundle>(path);
 

@@ -1,58 +1,90 @@
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace Assets.Handlers.FileHandlers
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using UnityEngine;
+    using UnityEngine.AddressableAssets;
+    using UnityEngine.ResourceManagement.AsyncOperations;
+    using UnityEngine.ResourceManagement.ResourceLocations;
+
     public class PrefabLoader : SingletonMonoBehaviour<PrefabLoader>
     {
-        [SerializeField] private string _resourcesPath = "Prefabs/";
-        [SerializeField] private int _cacheLimit = 40;
+        private readonly Dictionary<string, AsyncOperationHandle<GameObject>> _loadedPrefabs = new();
 
-        private readonly Dictionary<string, GameObject> _cache = new();
-        private readonly LinkedList<string> _lruOrder = new();
-
-        public GameObject GetPrefab(string id)
+        public async Task<GameObject> GetPrefabAsync(string id)
         {
-            if (_cache.TryGetValue(id, out GameObject prefab))
+            if (_loadedPrefabs.TryGetValue(id, out var existingHandle))
             {
-                TouchLRU(id);
-                return prefab;
+                if (existingHandle.IsDone) return existingHandle.Result;
+                await existingHandle.Task;
+                return existingHandle.Result;
             }
-            prefab = Resources.Load<GameObject>(_resourcesPath + id);
-            if (prefab == null)
+
+            IList<IResourceLocation> locations;
+            var checkHandle = Addressables.LoadResourceLocationsAsync(id);
+            locations = await checkHandle.Task;
+
+            if (locations == null || locations.Count == 0)
             {
-                Debug.LogWarning($"[PrefabManager] Prefab '{id}' not found in Resources/{_resourcesPath}");
+                Debug.LogWarning($"[Addressables] Ключ '{id}' не найден в системе Addressables Groups! Проверьте настройки префаба.");
                 return null;
             }
-            AddToCache(id, prefab);
+
+            // 2. Загружаем префаб, если ключ существует
+            var handle = Addressables.LoadAssetAsync<GameObject>(id);
+            _loadedPrefabs[id] = handle;
+
+            GameObject prefab = await handle.Task;
+
+            if (handle.Status != AsyncOperationStatus.Succeeded)
+            {
+                Debug.LogError($"[Addressables] Ошибка при загрузке префаба '{id}'.");
+                _loadedPrefabs.Remove(id);
+                return null;
+            }
+
             return prefab;
         }
 
-        public GameObject InstantiatePrefab(string id, Vector3 pos, Quaternion rot, Transform parent = null)
+        public GameObject GetPrefabSync(string id)
         {
-            GameObject prefab = GetPrefab(id);
-            if (prefab == null) return null;
-            return Instantiate(prefab, pos, rot, parent);
-        }
-
-        private void AddToCache(string id, GameObject prefab)
-        {
-            if (_cache.Count >= _cacheLimit)
+            if (_loadedPrefabs.TryGetValue(id, out var existingHandle))
             {
-                string oldest = _lruOrder.Last.Value;
-                _lruOrder.RemoveLast();
-                _cache.Remove(oldest);
-                Debug.Log($"[PrefabManager] Removed from cache: {oldest}");
+                return existingHandle.Result;
             }
 
-            _cache[id] = prefab;
-            _lruOrder.AddFirst(id);
+            var handle = Addressables.LoadAssetAsync<GameObject>(id);
+            GameObject prefab = handle.WaitForCompletion();
+
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                _loadedPrefabs[id] = handle;
+                return prefab;
+            }
+
+            Debug.LogError($"[Addressables] Ошибка синхронной загрузки ID: '{id}'");
+            return null;
         }
 
-        private void TouchLRU(string id)
+        public async Task<GameObject> InstantiatePrefabAsync(string id, Vector3 pos, Quaternion rot, Transform parent = null)
         {
-            _lruOrder.Remove(id);
-            _lruOrder.AddFirst(id);
+            var instanceHandle = Addressables.InstantiateAsync(id, pos, rot, parent);
+            return await instanceHandle.Task;
+        }
+
+        public void ReleaseInstance(GameObject instance)
+        {
+            if (instance == null) return;
+            Addressables.ReleaseInstance(instance);
+        }
+
+        public void UnloadPrefab(string id)
+        {
+            if (_loadedPrefabs.TryGetValue(id, out var handle))
+            {
+                Addressables.Release(handle);
+                _loadedPrefabs.Remove(id);
+            }
         }
     }
 }

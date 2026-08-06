@@ -1,4 +1,5 @@
 ﻿using Assets.Common;
+using Assets.Common.Interfaces;
 using Assets.DataContainers;
 using Assets.Entity.BuffStatuses;
 using Assets.Entity.Controllers;
@@ -19,8 +20,8 @@ namespace Assets.Entity.Hull
 {
     public abstract class HullBase : MonoBehaviour, IHull, IInteractive, IStats, IAbbility, IBuffable
     {
-        public HullContainer Data { get; private set; }
-        public BuffStatusesController Buffs { get; private set; }
+        [field: SerializeField] public HullDataSO Data { get; private set; }
+        [field: SerializeField] public BuffStatusesController Buffs { get; private set; }
 
         [HideInInspector] public List<EquipmentAnchor> equipmentAnchors;
         [HideInInspector] public List<Equipment.Equipment> equipments;
@@ -36,9 +37,6 @@ namespace Assets.Entity.Hull
 
         private void OnValidate()
         {
-            if (Data == null) Data = GetComponent<HullContainer>();
-            if (Data == null) return;
-
             var statOptions = Data.statOptions;
             if (statOptions.stats != null) foreach (var stat in statOptions.stats) stat?.UpdateInspectorName();
             if (statOptions.mods != null)foreach (var mod in statOptions.mods) mod?.UpdateInspectorName();
@@ -52,7 +50,6 @@ namespace Assets.Entity.Hull
         {
             Id = GameObjectHandler.GenerateUniqueId(name);
             rigidBody2D = GetComponent<Rigidbody2D>();
-            Data = GetComponent<HullContainer>();
         }
 
         public void Setup(EntityController entityController)
@@ -166,27 +163,11 @@ namespace Assets.Entity.Hull
         #region IStats
 
         [SerializeField] private StatModController _statModController;
-        public StatModController StatModController => _statModController;
-
-        private Dictionary<StatType, float> _lifetimeStats = new();
-        public Dictionary<StatType, float> LifetimeStats => _lifetimeStats;
 
         private const StatLayer _statLayer = StatLayer.Hull;
 
-        public void ResetLifetimeStats()
-        {
-            _lifetimeStats.Clear();
-            _lifetimeStats[StatType.MaxMoveSpeed] = _statModController.GetStat(StatType.MaxMoveSpeed, _statLayer);
-            _lifetimeStats[StatType.RotationSpeed] = _statModController.GetStat(StatType.RotationSpeed, _statLayer);
-            _lifetimeStats[StatType.Acceleration] = _statModController.GetStat(StatType.Acceleration, _statLayer);
-        }
-
-        public float GetLifetimeStat(StatType type)
-        {
-            if (StatModController.IsDirty) ResetLifetimeStats();
-            if (LifetimeStats.TryGetValue(type, out float value)) return value;
-            return 0f;
-        }
+        public float GetLifetimeStat(StatType type) => _statModController.GetStat(type, _statLayer);
+        public IDataContainer GetInitialData() => Data;
 
         #endregion
 

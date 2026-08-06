@@ -1,11 +1,14 @@
 ﻿using Assets.Common;
 using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
+using Assets.Entity.Modifiers;
 using Assets.Handlers;
 using Assets.Scripts.Actions;
 using GameplayActions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Controllers
@@ -27,28 +30,29 @@ namespace Assets.Entity.Controllers
 
         public override bool TryActivate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
-            var gameobject = (source as IInteractive).GameObject;
-            var context = new InteractionContext(abilityUnit.type, source.GetSnapshot(), gameobject, actionDataController);
-            var action = ActionProvider.GetActionByAbility(abilityUnit.type);
-            if (action == null || !CanActivate(targetPos, abilityUnit)) return false;
-            if (!IsAimedAtTarget(targetPos, abilityUnit.delay, out Vector2 targetPosEq)) return false;
+            var (action, context, data) = SetupActivationData(abilityUnit);
+            if (action == null || !CanActivate(targetPos, abilityUnit) || data == null) return false;
+
+            float activationRate = (source as IStats)?.GetLifetimeStat(StatType.ActivationRate) ?? 0f;
+            float activationDelay = abilityUnit.delay / activationRate;
+
+            float distance = Vector2.Distance(_equipmentTransform.position, targetPos);
+            var targetPosEq = MathFuncHandler.GetAngleDistancePoint(
+                _equipmentTransform.position, _equipmentTransform.eulerAngles.z + _basicAngle, distance);
+
+            if (activationRate != 0 && !IsAimedAtTarget(targetPos, activationDelay)) return false;
             if (!IsWithinActivationSector()) return false;
-            var data = actionDataController.GetActionData(abilityUnit.type, context);
-            if (data == null) return false;
             action.Execute(context, data, targetPosEq);
             //EventBrocker.Raise(new EntityInteractionEvent(context));
             return true;
         }
 
-        private bool IsAimedAtTarget(Vector3 targetPos, float delay, out Vector2 targetPosEq)
+        private bool IsAimedAtTarget(Vector3 targetPos, float delay)
         {
-            float distance = Vector2.Distance(_equipmentTransform.position, targetPos);
-            targetPosEq = MathFuncHandler.GetAngleDistancePoint(_equipmentTransform.position, _equipmentTransform.eulerAngles.z + _basicAngle, distance);
-
             float targetWorldAngle = Mathf.Atan2(targetPos.y - _equipmentTransform.position.y, targetPos.x - _equipmentTransform.position.x) * Mathf.Rad2Deg;
             float currentAngle = Mathf.Repeat(_equipmentTransform.eulerAngles.z + _basicAngle, 360f);
             float angleDiff = Mathf.DeltaAngle(currentAngle, targetWorldAngle);
-            return Mathf.Abs(angleDiff) < 12.5f / delay;
+            return Mathf.Abs(angleDiff) < Math.Clamp(12.5f / delay, 0, 45);
         }
 
         private bool IsWithinActivationSector()

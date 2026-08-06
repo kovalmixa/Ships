@@ -24,10 +24,10 @@ namespace Assets.Entity.Equipment
         {
             if (this.index != index || _isPlaced) return false;
 
-            EquipmentContainer equipmentContainer = equipment.Data;
+            var equipmentContainer = equipment.Data;
             if (equipmentContainer == null || sizeType != equipmentContainer.general.SizeType) return false;
-            bool equipmentMatch = equipmentType == EquipmentType.None || equipmentType == equipmentContainer.Type;
-            bool projectileMatch = projectileType == ProjectileType.None || projectileType == equipmentContainer.ProjectileType;
+            bool equipmentMatch = equipmentType == EquipmentType.None || equipmentType == equipmentContainer.type;
+            bool projectileMatch = projectileType == ProjectileType.None || projectileType == equipmentContainer.projectileType;
             return equipmentMatch && projectileMatch;
         }
 
