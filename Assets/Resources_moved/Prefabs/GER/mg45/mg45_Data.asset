@@ -54,10 +54,6 @@ MonoBehaviour:
       _type: 350
       _statLayer: 1
       _value: 10
-    - name: 'PrType: 1'
-      _type: 357
-      _statLayer: 1
-      _value: 1
     mods: []
     buffs: []
     abilities:

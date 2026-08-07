@@ -6,47 +6,76 @@ namespace Assets.Scripts.Actions.Projectile
 {
     public class ProjectileInstance : MonoBehaviour
     {
-        private readonly EffectAction _effectAction;
         private readonly GameplayAction[] _onExplosionActions;
-        private event Action OnDeactivate;
+        protected Action OnExpload;
 
-        private ProjectileData _data;
-        private InteractionContext _context;
+        protected ProjectileData data;
+        protected InteractionContext context;
 
-        private Transform _targetTransform;
-        private Vector2 _targetPosition;
-        private Vector2 _direction;
+        protected Transform targetTransform;
+        protected Vector2 targetPosition;
+        protected Vector2 direction;
 
-        private float _timer;
+        protected float timer;
+
+        #region Private/Default
+
+        public void Tick(float deltaTime)
+        {
+            Move(deltaTime);
+            CheckLifetime(deltaTime);
+        }
+
+        private void CheckLifetime(float deltaTime)
+        {
+            if (data.lifeTime != 0)
+            {
+                timer += deltaTime;
+                if (timer >= data.lifeTime) Explode();
+            }
+        }
+
+        private void IgnoreShooterCollision(bool ignore)
+        {
+            if (context?.SourceObject == null) return;
+
+            var projectileCollider = GetComponent<Collider2D>();
+            var shooterCollider = context.SourceObject.GetComponent<Collider2D>();
+
+            if (projectileCollider != null && shooterCollider != null)
+                Physics2D.IgnoreCollision(projectileCollider, shooterCollider, ignore);
+        }
+
+        #endregion
 
         #region Setup
 
-        public void Setup(
+        public virtual void Setup(
             InteractionContext interactionContext, 
             ProjectileData projectileDef, 
             Action onDeactivate,
             Transform targetTransform)
         {
-            _targetTransform = targetTransform;
+            this.targetTransform = targetTransform;
             Setup(interactionContext, projectileDef, onDeactivate, targetTransform.position);
         }
 
-        public void Setup(InteractionContext interactionContext, ProjectileData data, Action onDeactivate, Vector2 targetPosition)
+        public virtual void Setup(InteractionContext interactionContext, ProjectileData data, Action onExpload, Vector2 targetPosition)
         {
-            _context = interactionContext;
-            _data = data;
-            _timer = 0f;
-            OnDeactivate = onDeactivate;
+            context = interactionContext;
+            this.data = data;
+            timer = 0f;
+            this.targetPosition = targetPosition;
+            direction = (this.targetPosition - this.data.startPosition).normalized;
 
-            _targetPosition = targetPosition;
-            _direction = (_targetPosition - _data.startPosition).normalized;
-
-            float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
-            transform.SetPositionAndRotation(_data.startPosition, Quaternion.Euler(0, 0, angle - 90f));
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            transform.SetPositionAndRotation(this.data.startPosition, Quaternion.Euler(0, 0, angle - 90f));
 
             IgnoreShooterCollision(true);
             SetupEffect();
 
+            isExploded = false;
+            OnExpload = onExpload;
             gameObject.SetActive(true);
         }
 
@@ -57,74 +86,66 @@ namespace Assets.Scripts.Actions.Projectile
 
         #endregion
 
-        public void Tick(float deltaTime)
+        protected virtual void OnTriggerEnter2D(Collider2D other)
         {
-            Move(deltaTime);
-            CheckLifetime(deltaTime);
+            if (context?.SourceObject != null && other.gameObject == context.SourceObject) return;
+            Explode();
         }
 
-        private void Move(float deltaTime)
+        protected virtual void Move(float deltaTime)
         {
-            if (_data.isHoming && _targetTransform != null)
+            if (data.isHoming && targetTransform != null)
             {
-                Vector2 toTarget = (_targetTransform.position - transform.position).normalized;
-                _direction = Vector2.Lerp(_direction, toTarget, deltaTime * 5f);
+                Vector2 toTarget = (targetTransform.position - transform.position).normalized;
+                direction = Vector2.Lerp(direction, toTarget, deltaTime * 5f);
 
-                float angle = Mathf.Atan2(_direction.y, _direction.x) * Mathf.Rad2Deg;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
             }
 
-            transform.position += (Vector3)(_direction * (_data.speed * deltaTime));
+            transform.position += (Vector3)(direction * (data.speed * deltaTime));
 
-            float distToTarget = Vector2.Distance(transform.position, _targetPosition);
+            float distToTarget = Vector2.Distance(transform.position, targetPosition);
             if (distToTarget <= 0.2f) Explode();
         }
 
-        private void CheckLifetime(float deltaTime)
+
+        #region Explosion
+        protected bool isExploded;
+
+        public virtual void Explode()
         {
-            if (_data.lifeTime != 0)
-            {
-                _timer += deltaTime;
-                if (_timer >= _data.lifeTime) Explode();
-            }
+            if (isExploded) return;
+            isExploded = true;
+            Debug.Log("Exploaded");
+
+            ExecuteExplosionActions();
+            ReleaseToPool();
         }
 
-        public void Explode()
+        protected void ExecuteExplosionActions()
         {
-            Debug.Log("Explode");
             if (_onExplosionActions != null)
             {
                 Vector3 explodePos = transform.position;
                 var explosionAction = ActionProvider.Explosion;
-                var dataController = _context.ActionDataController;
-                var data = dataController.GetActionData(explosionAction.GetType(), _context);
-                explosionAction.Execute(_context, data, explodePos);
+                var dataController = context.ActionDataController;
+                var data = dataController.GetActionData(explosionAction.GetType(), context);
+                explosionAction.Execute(context, data, explodePos);
 
                 foreach (var action in _onExplosionActions)
                 {
-                    data = dataController.GetActionData(action.GetType(), _context);
-                    action?.Execute(_context, data, explodePos);
+                    data = dataController.GetActionData(action.GetType(), context);
+                    action?.Execute(context, data, explodePos);
                 }
             }
-
-            OnDeactivate?.Invoke();
         }
 
-        private void IgnoreShooterCollision(bool ignore)
+        protected void ReleaseToPool()
         {
-            if (_context?.SourceObject == null) return;
-
-            var projectileCollider = GetComponent<Collider2D>();
-            var shooterCollider = _context.SourceObject.GetComponent<Collider2D>();
-
-            if (projectileCollider != null && shooterCollider != null)
-                Physics2D.IgnoreCollision(projectileCollider, shooterCollider, ignore);
+            OnExpload?.Invoke();
+            OnExpload = null;
         }
-
-        private void OnTriggerEnter2D(Collider2D other)
-        {
-            if (_context?.SourceObject != null && other.gameObject == _context.SourceObject) return;
-            Explode();
-        }
+        #endregion
     }
 }
