@@ -1,19 +1,17 @@
 ﻿using Assets.Common;
-using Assets.Handlers.FileHandlers;
-using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using UnityEngine;
 
 namespace GameplayActions
 {
-    public class EffectData : ActionData
+    public class VfxData : ActionData
     {
         public string[] prefabIds;
     }
 
-    public class EffectAction : GameplayAction<EffectData>
+    public class VfxAction : GameplayAction<VfxData>
     {
-        protected override void ExecuteAction(InteractionContext context, EffectData data, Vector2 targetPos)
+        protected override void ExecuteAction(InteractionContext context, VfxData data, Vector2 targetPos)
         {
             //var effectPool = ObjectPoolHandler.GetInstance(PoolType.Effect);
             //if (effectPool == null) return;
@@ -21,7 +19,7 @@ namespace GameplayActions
             //foreach (var id in data.prefabIds) SetupEffect(targetPos, id);
         }
 
-        protected override void ExecuteAction(InteractionContext context, EffectData data, IInteractive target)
+        protected override void ExecuteAction(InteractionContext context, VfxData data, IInteractive target)
         {
             if (target is MonoBehaviour monoBehaviour)
             {

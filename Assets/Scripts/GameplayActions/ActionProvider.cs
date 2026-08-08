@@ -12,7 +12,7 @@ namespace GameplayActions
         public static ExplosionAction Explosion { get; } = new();
         public static HealAction Heal { get; } = new();
         public static DamageAction Damage { get; } = new();
-        public static EffectAction Effect { get; } = new();
+        public static VfxAction Effect { get; } = new();
 
         #endregion
 

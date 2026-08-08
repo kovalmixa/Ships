@@ -11,10 +11,14 @@ namespace Assets.Scripts.Actions.Projectile
 
         protected ProjectileData data;
         protected InteractionContext context;
+        
+        [SerializeField] protected VfxAction launchEffect;
+        [SerializeField] protected VfxAction explosionEffect;
 
         protected Transform targetTransform;
         protected Vector2 targetPosition;
         protected Vector2 direction;
+
 
         protected float timer;
 
@@ -72,14 +76,14 @@ namespace Assets.Scripts.Actions.Projectile
             transform.SetPositionAndRotation(this.data.startPosition, Quaternion.Euler(0, 0, angle - 90f));
 
             IgnoreShooterCollision(true);
-            SetupEffect();
+            SetLaunchEffect();
 
             isExploded = false;
             OnExpload = onExpload;
             gameObject.SetActive(true);
         }
 
-        private void SetupEffect()
+        private void SetLaunchEffect()
         {
 
         }
@@ -111,6 +115,7 @@ namespace Assets.Scripts.Actions.Projectile
 
 
         #region Explosion
+        
         protected bool isExploded;
 
         public virtual void Explode()

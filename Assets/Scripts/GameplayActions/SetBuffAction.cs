@@ -12,7 +12,7 @@ public class BuffData : ActionData
     public BuffStatus[] buffs;
     public float range;
     public LayerMask[] filterLayers;
-    [CanBeNull] public EffectData visualData;
+    [CanBeNull] public VfxData visualData;
 }
 
 public class SetBuffAction : GameplayAction<BuffData>

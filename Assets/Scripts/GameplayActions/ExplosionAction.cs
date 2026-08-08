@@ -12,7 +12,7 @@ namespace GameplayActions
         public uint range;
         public int[] layers;
         public DamageData damageData;
-        [CanBeNull] public EffectData visualData;
+        [CanBeNull] public VfxData visualData;
         //[CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
     }
 
