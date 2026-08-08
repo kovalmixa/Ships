@@ -15,10 +15,10 @@ MonoBehaviour:
   Path: Fmod/Build/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 639206086949335258
+  lastModified: 639218314449270825
   FileSizes:
   - Name: Desktop
-    Value: 724
+    Value: 792
   Exists: 1
 --- !u!114 &11400000
 MonoBehaviour:
@@ -35,15 +35,45 @@ MonoBehaviour:
   EditorBanks:
   - {fileID: -233680200965999736}
   - {fileID: 5887888769281146657}
-  EditorEvents: []
+  EditorEvents:
+  - {fileID: 671703563869161700}
   EditorParameters: []
   MasterBanks:
   - {fileID: 5887888769281146657}
   StringsBanks:
   - {fileID: -233680200965999736}
   cacheVersion: 131860
-  cacheTime: 639206086949335258
-  SerializableEventsDict: []
+  cacheTime: 639218314449270825
+  SerializableEventsDict:
+  - key: event:/Sfx/ProjectileLaunch/BulletFire
+    index: 0
+--- !u!114 &671703563869161700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Sfx/ProjectileLaunch/BulletFire
+  m_EditorClassIdentifier: FMODUnityEditor::FMODUnity.EditorEventRef
+  Path: event:/Sfx/ProjectileLaunch/BulletFire
+  Guid:
+    Data1: -658117931
+    Data2: 1118321840
+    Data3: -639409536
+    Data4: 665721738
+  Banks:
+  - {fileID: 5887888769281146657}
+  IsStream: 0
+  Is3D: 1
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &5887888769281146657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,8 +89,8 @@ MonoBehaviour:
   Path: Fmod/Build/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 639206086949325320
+  lastModified: 639218314449260858
   FileSizes:
   - Name: Desktop
-    Value: 1074
+    Value: 100320
   Exists: 1

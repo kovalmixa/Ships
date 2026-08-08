@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{dee0babf-6c26-4ccf-8c26-edb12267883e}">
+		<property name="assetPath">
+			<value>MachineGunFire5.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.5336507936507937</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{5619e506-90f7-4f90-b2db-30b7095ea911}</destination>
+		</relationship>
+	</object>
+</objects>

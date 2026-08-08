@@ -1,4 +1,5 @@
 ﻿using GameplayActions;
+using GameplayActions.GameplayActions;
 using System;
 using UnityEngine;
 
@@ -12,8 +13,8 @@ namespace Assets.Scripts.Actions.Projectile
         protected ProjectileData data;
         protected InteractionContext context;
         
-        [SerializeField] protected VfxAction launchEffect;
-        [SerializeField] protected VfxAction explosionEffect;
+        [SerializeField] protected VfxData launchEffectData;
+        [SerializeField] protected VfxData explosionEffectData;
 
         protected Transform targetTransform;
         protected Vector2 targetPosition;
@@ -55,13 +56,13 @@ namespace Assets.Scripts.Actions.Projectile
         #region Setup
 
         public virtual void Setup(
-            InteractionContext interactionContext, 
+            InteractionContext context, 
             ProjectileData projectileDef, 
             Action onDeactivate,
             Transform targetTransform)
         {
             this.targetTransform = targetTransform;
-            Setup(interactionContext, projectileDef, onDeactivate, targetTransform.position);
+            Setup(context, projectileDef, onDeactivate, targetTransform.position);
         }
 
         public virtual void Setup(InteractionContext interactionContext, ProjectileData data, Action onExpload, Vector2 targetPosition)
@@ -83,10 +84,7 @@ namespace Assets.Scripts.Actions.Projectile
             gameObject.SetActive(true);
         }
 
-        private void SetLaunchEffect()
-        {
-
-        }
+        protected virtual void SetLaunchEffect() => ActionProvider.Effect.Execute(context, launchEffectData, data.startPosition);
 
         #endregion
 
@@ -135,6 +133,15 @@ namespace Assets.Scripts.Actions.Projectile
                 Vector3 explodePos = transform.position;
                 var explosionAction = ActionProvider.Explosion;
                 var dataController = context.ActionDataController;
+
+                var expData = dataController.GetActionData(explosionAction.GetType(), context);
+                explosionAction.Execute(context, expData, explodePos);
+
+                var vfxAction = ActionProvider.Effect;
+                var vfxData = dataController.GetActionData(vfxAction.GetType(), context) as VfxData; // Кастуем к VfxData
+
+                vfxAction.Execute(context, vfxData, explodePos);
+
                 var data = dataController.GetActionData(explosionAction.GetType(), context);
                 explosionAction.Execute(context, data, explodePos);
 

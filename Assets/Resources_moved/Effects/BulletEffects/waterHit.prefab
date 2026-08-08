@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8858777552460179492}
   - component: {fileID: 1437177864922288549}
   m_Layer: 0
-  m_Name: explosion
+  m_Name: waterHit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

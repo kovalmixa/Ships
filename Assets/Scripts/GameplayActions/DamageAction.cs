@@ -1,8 +1,6 @@
 ﻿using Assets.Common;
-using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,7 +12,7 @@ namespace GameplayActions
         Slow, Freeze, Psi, Radiation, EMP, SpatialAnomaly, Flooding
     }
 
-    [Serializable]
+    [System.Serializable]
     public struct ElementalDamageData
     {
         public DamageType type;
@@ -23,6 +21,7 @@ namespace GameplayActions
         public float critMultiplier;
     }
 
+    [System.Serializable]
     public class DamageData : ActionData
     {
         public float value;

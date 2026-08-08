@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.16, y: 0.16, z: 0.16}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -43,13 +43,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 1231515461201410460}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29e9d5b139f34004fb663ab9398c4c9d, type: 3}
+  m_Script: {fileID: 11500000, guid: eb27d34a304ed6144be2cb7ac01e5037, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isLoopedAnimation: 0
-  _isLoopedSound: 0
-  duration: 0
-  volume: 0
+  _particleSystems:
+  - {fileID: 3223716456731635275}
+  _mainSound:
+    Guid:
+      Data1: -658117931
+      Data2: 1118321840
+      Data3: -639409536
+      Data4: 665721738
+    Path: event:/Sfx/ProjectileLaunch/BulletFire
+  _secondarySound:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
 --- !u!198 &3223716456731635275
 ParticleSystem:
   m_ObjectHideFlags: 0

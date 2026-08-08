@@ -1,8 +1,6 @@
 ﻿using Assets.Common;
-using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +10,7 @@ namespace GameplayActions
     {
     }
 
-    [Serializable]
+    [System.Serializable]
     public struct ActionConfig
     {
         [Tooltip("What action to perform")]

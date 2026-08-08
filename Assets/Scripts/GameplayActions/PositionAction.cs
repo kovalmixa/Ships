@@ -1,12 +1,11 @@
 ﻿using Assets.Common;
-using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameplayActions
 {
+    [System.Serializable]
     public class PositionData : ActionData
     {
         public Vector2 Position;

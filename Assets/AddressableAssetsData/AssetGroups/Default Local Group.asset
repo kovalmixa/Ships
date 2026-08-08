@@ -16,7 +16,7 @@ MonoBehaviour:
   m_GUID: 532ecf92f32432143b63f842694b0a57
   m_SerializeEntries:
   - m_GUID: 16524751043a23a42aa6b617189e2a93
-    m_Address: bullet_launch
+    m_Address: bulletLaunch
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -31,7 +31,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: b2c57573c503e1240af56cc0ce48fd01
-    m_Address: bullet_explosiion
+    m_Address: bulletWaterHit
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

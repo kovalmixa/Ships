@@ -1,94 +1,55 @@
-using Assets.Handlers.Enums;
 using Assets.Handlers.FileHandlers;
 using Assets.Handlers.SceneHandlers;
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
 
 namespace Assets.Scripts.Actions.VFX
 {
-    public enum VfxType { None, Explosion, HitMetal, MuzzleFlash }
+    public enum VfxType
+    {
+        None,
+        bulletLaunch, bulletMetalHit, bulletGroundHit, bulletWaterHit, bulletFlashHit, bulletExplosion
+    }
 
     public class VfxController : SingletonMonoBehaviour<VfxController>
     {
         [SerializeField] private GameObject _vfxPoolNode;
-        [SerializeField] private int _initialCapacity = 10;
-        [SerializeField] private int _maxPoolSize = 100;
+        [SerializeField] private int _defaultInitialCapacity = 5;
+        [SerializeField] private int _maxPoolSize = 50;
 
-        private Dictionary<VfxType, GameObject> _prefabDict = new();
-        private Dictionary<VfxType, IObjectPool<VfxInstance>> _pools = new();
-
-        #region Setup
+        private readonly Dictionary<VfxType, IObjectPool<VfxInstance>> _pools = new();
+        private readonly Dictionary<VfxType, Task<IObjectPool<VfxInstance>>> _loadingTasks = new();
 
         public void ClearOnSceneChange()
         {
             foreach (var pool in _pools.Values) pool.Clear();
             _pools.Clear();
+            _loadingTasks.Clear();
         }
 
         private void OnEnable() => SceneController.OnBeforeSceneLoad += ClearOnSceneChange;
         private void OnDisable() => SceneController.OnBeforeSceneLoad -= ClearOnSceneChange;
 
-        async protected override void Awake()
+        public async void PlayEffect(VfxType type, Vector3 position, Quaternion rotation)
         {
-            base.Awake();
-            var prefabLoader = PrefabLoader.Instance;
+            Debug.Log($"[VFX] Вызов {type} в кадре {Time.frameCount} на позиции {position}");
+            if (type == VfxType.None) return;
 
-            foreach (VfxType type in Enum.GetValues(typeof(VfxType)))
-            {
-                if (type == VfxType.None) continue;
-
-                var typeName = type.ToString();
-                var id = char.ToLower(typeName[0]) + typeName.Substring(1);
-
-                GameObject prefab = await prefabLoader.GetPrefabAsync(id);
-                if (prefab != null)
-                {
-                    _prefabDict[type] = prefab;
-                    var pool = CreatePoolForType(prefab);
-                    _pools[type] = pool;
-                    PrewarmPool(pool, _initialCapacity);
-                }
-            }
-        }
-
-        private IObjectPool<VfxInstance> CreatePoolForType(GameObject prefab)
-        {
-            return new ObjectPool<VfxInstance>(
-                createFunc: () =>
-                {
-                    Transform parent = _vfxPoolNode != null ? _vfxPoolNode.transform : transform;
-                    var go = Instantiate(prefab, parent);
-                    return go.GetComponent<VfxInstance>();
-                },
-                actionOnGet: instance => { /* Включение происходит в самом Play */ },
-                actionOnRelease: instance => instance.gameObject.SetActive(false),
-                actionOnDestroy: instance =>
-                {
-                    if (instance != null && instance.gameObject != null) Destroy(instance.gameObject);
-                },
-                collectionCheck: true,
-                defaultCapacity: _initialCapacity,
-                maxSize: _maxPoolSize
-            );
-        }
-
-        private void PrewarmPool(IObjectPool<VfxInstance> pool, int amount)
-        {
-            var tempList = new List<VfxInstance>(amount);
-            for (int i = 0; i < amount; i++) tempList.Add(pool.Get());
-            foreach (var item in tempList) pool.Release(item);
-        }
-
-        #endregion
-
-        public void PlayEffect(VfxType type, Vector3 position, Quaternion rotation)
-        {
             if (!_pools.TryGetValue(type, out var pool))
             {
-                Debug.LogWarning($"[VfxController] Пул для эффекта {type} не найден!");
-                return;
+                if (!_loadingTasks.TryGetValue(type, out var loadTask))
+                {
+                    loadTask = CreatePoolAsync(type);
+                    _loadingTasks[type] = loadTask;
+                }
+
+                pool = await loadTask;
+                _loadingTasks.Remove(type);
+
+                if (pool == null) return;
+                _pools[type] = pool;
             }
 
             VfxInstance instance = pool.Get();
@@ -96,6 +57,38 @@ namespace Assets.Scripts.Actions.VFX
                 position,
                 rotation,
                 onRelease: () => pool.Release(instance)
+            );
+        }
+
+        private async Task<IObjectPool<VfxInstance>> CreatePoolAsync(VfxType type)
+        {
+            var typeName = type.ToString();
+            var id = char.ToLower(typeName[0]) + typeName.Substring(1);
+
+            GameObject prefab = await PrefabLoader.Instance.GetPrefabAsync(id);
+            if (prefab == null)
+            {
+                Debug.LogWarning($"[VfxController] Не удалось загрузить префаб для эффекта: {id}");
+                return null;
+            }
+
+            return new ObjectPool<VfxInstance>(
+                createFunc: () =>
+                {
+                    Transform parent = _vfxPoolNode != null ? _vfxPoolNode.transform : transform;
+                    var go = Instantiate(prefab, parent);
+                    go.SetActive(false);
+                    return go.GetComponent<VfxInstance>();
+                },
+                actionOnGet: instance => { },
+                actionOnRelease: instance => instance.gameObject.SetActive(false),
+                actionOnDestroy: instance =>
+                {
+                    if (instance != null && instance.gameObject != null) Destroy(instance.gameObject);
+                },
+                collectionCheck: true,
+                defaultCapacity: _defaultInitialCapacity,
+                maxSize: _maxPoolSize
             );
         }
     }

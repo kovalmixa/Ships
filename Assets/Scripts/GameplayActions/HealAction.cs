@@ -1,11 +1,10 @@
 ﻿using Assets.Common;
-using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameplayActions
 {
+    [System.Serializable]
     public class HealData : ActionData
     {
         public float value;

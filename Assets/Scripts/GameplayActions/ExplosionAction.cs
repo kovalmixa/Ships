@@ -1,12 +1,12 @@
 ﻿using Assets.Common;
-using Assets.Entity.Modifiers;
 using Assets.Scripts.Actions;
+using GameplayActions.GameplayActions;
 using JetBrains.Annotations;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameplayActions
 {
+    [System.Serializable]
     public class EsplosionData : ActionData
     {
         public uint range;

@@ -4,9 +4,9 @@ using Assets.Scripts.Actions;
 using JetBrains.Annotations;
 using UnityEngine;
 using Assets.Entity.BuffStatuses;
-using System.Collections.Generic;
-using Assets.Entity.Modifiers;
+using GameplayActions.GameplayActions;
 
+[System.Serializable]
 public class BuffData : ActionData
 {
     public BuffStatus[] buffs;

@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace GameplayActions
 {
+    [System.Serializable]
     public class ProjectileData : ActionData
     {
         public string id;

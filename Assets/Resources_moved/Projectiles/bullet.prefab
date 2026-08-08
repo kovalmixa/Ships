@@ -47,6 +47,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ef8cb7e8ee31c24ab3df06533f6f635, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.GameplayActions.FireProjectile.CommonProjectile
+  launchEffectData:
+    type: 1
+    matchSourceRotation: 1
+    pointToTarget: 1
+  explosionEffectData:
+    type: 0
+    matchSourceRotation: 1
+    pointToTarget: 1
   _flameTrail: {fileID: 4231716878364514580}
   _residualTrail: {fileID: 259334172904990644}
 --- !u!114 &3837845653785818405

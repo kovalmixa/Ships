@@ -30,10 +30,10 @@ MonoBehaviour:
       _type: 103
       _statLayer: 1
       _value: 1
-    - name: 'ActivationRate: 2'
+    - name: 'ActivationRate: 15'
       _type: 102
       _statLayer: 1
-      _value: 2
+      _value: 15
     - name: 'MaxHp: 1'
       _type: 1
       _statLayer: 1

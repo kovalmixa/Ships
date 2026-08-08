@@ -22,7 +22,6 @@ namespace Assets.Scripts.Actions.VFX
             _onRelease = onRelease;
             transform.SetPositionAndRotation(position, rotation);
             gameObject.SetActive(true);
-
             float maxDuration = PlayParticles();
             PlaySounds();
 
@@ -37,9 +36,7 @@ namespace Assets.Scripts.Actions.VFX
             foreach (var ps in _particleSystems)
             {
                 if (ps == null) continue;
-
                 ps.Play(true);
-
                 float duration = ps.main.duration + ps.main.startLifetime.constantMax;
                 if (duration > maxDuration) maxDuration = duration;
             }
