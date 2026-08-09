@@ -54,7 +54,7 @@ MonoBehaviour:
       Data2: 1118321840
       Data3: -639409536
       Data4: 665721738
-    Path: event:/Sfx/ProjectileLaunch/BulletFire
+    Path: event:/Sfx/Bullet/Launch
   _secondarySound:
     Guid:
       Data1: 0
@@ -62,6 +62,7 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
+  _loopStopTimeout: 0.21
 --- !u!198 &3223716456731635275
 ParticleSystem:
   m_ObjectHideFlags: 0
