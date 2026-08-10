@@ -11,13 +11,9 @@ namespace Assets.Scripts.GameplayActions.Audio
     [System.Serializable]
     public class AudioData : ActionData
     {
-        [SerializeField] private EventReference _sound;
-        [SerializeField] private bool _isOneShot = false;
-        [SerializeField] private float _loopStopTimeout = 0.15f;
-
-        public EventReference Sound => _sound;
-        public bool IsOneShot => _isOneShot;
-        public float LoopStopTimeout => _loopStopTimeout;
+        public EventReference sound;
+        public bool isOneShot;
+        public float loopStopTimeout;
     }
 
     public class AudioAction : GameplayAction<AudioData>
@@ -38,16 +34,13 @@ namespace Assets.Scripts.GameplayActions.Audio
 
         private void ExecuteAudio(InteractionContext context, AudioData data, Vector3 position, Transform followTarget)
         {
-            if (data.Sound.IsNull) return;
-
-            if (data.IsOneShot)
+            if (data.sound.IsNull) return;
+            if (data.isOneShot)
             {
-                RuntimeManager.PlayOneShot(data.Sound, position);
+                RuntimeManager.PlayOneShot(data.sound, position);
                 return;
             }
-
-            MonoBehaviour runner = context.SourceObject.GetComponent<MonoBehaviour>();
-            if (runner == null)
+            if (!context.SourceObject.TryGetComponent<MonoBehaviour>(out var runner))
             {
                 Debug.LogError("[AudioAction] InteractionContext.Source должен быть MonoBehaviour для запуска корутин!");
                 return;
@@ -56,15 +49,15 @@ namespace Assets.Scripts.GameplayActions.Audio
             if (_activeInstance.isValid() && IsInstancePlaying(_activeInstance))
             {
                 Update3DAttributes(position, followTarget);
-                ResetStopTimer(runner, data.LoopStopTimeout);
+                ResetStopTimer(runner, data.loopStopTimeout);
                 return;
             }
 
-            _activeInstance = RuntimeManager.CreateInstance(data.Sound);
+            _activeInstance = RuntimeManager.CreateInstance(data.sound);
             Update3DAttributes(position, followTarget);
             _activeInstance.start();
 
-            ResetStopTimer(runner, data.LoopStopTimeout);
+            ResetStopTimer(runner, data.loopStopTimeout);
         }
 
         private void ResetStopTimer(MonoBehaviour runner, float timeout)
@@ -76,7 +69,6 @@ namespace Assets.Scripts.GameplayActions.Audio
         private IEnumerator WaitAndStopRoutine(float timeout)
         {
             if (timeout > 0) yield return new WaitForSeconds(timeout);
-
             if (_activeInstance.isValid())
             {
                 _activeInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
@@ -89,17 +81,14 @@ namespace Assets.Scripts.GameplayActions.Audio
                     if (!_activeInstance.isValid()) break;
                     _activeInstance.getPlaybackState(out state);
                 }
-
                 _activeInstance.release();
             }
-
             _stopCoroutine = null;
         }
 
         private void Update3DAttributes(Vector3 position, Transform target)
         {
             if (!_activeInstance.isValid()) return;
-
             if (target != null) _activeInstance.set3DAttributes(RuntimeUtils.To3DAttributes(target.gameObject));
             else _activeInstance.set3DAttributes(RuntimeUtils.To3DAttributes(position));
         }
