@@ -12,13 +12,10 @@ namespace Assets.Scripts.Actions.VFX
         [SerializeField] private ParticleSystem[] _particleSystems;
 
         [Header("Audio (FMOD)")]
-        [Tooltip("Для одиночных выстрелов/взрывов")]
         [SerializeField] private EventReference _mainSound;
-        [Tooltip("Для скорострельного оружия (Timeline 3D с петлей и хвостом)")]
         [SerializeField] private EventReference _secondarySound;
 
         [Header("Timing Settings")]
-        [Tooltip("Пауза между выстрелами, после которой стрельба считается оконченной")]
         [SerializeField] private float _loopStopTimeout = 0.15f;
 
         private Action _onRelease;

@@ -2,20 +2,15 @@
 using UnityEngine;
 using Assets.Scripts.Actions;
 using Assets.Scripts.Actions.VFX;
-using GameplayActions.GameplayActions;
 
 namespace GameplayActions
 {
-    namespace GameplayActions
+    [System.Serializable]
+    public class VfxData : ActionData
     {
-        [System.Serializable]
-        public class VfxData : ActionData
-        {
-            public VfxType type;
-
-            public bool matchSourceRotation = false;
-            public bool pointToTarget = false;
-        }
+        public VfxType type;
+        public bool matchSourceRotation = false;
+        public bool pointToTarget = false;
     }
 
     public class VfxAction : GameplayAction<VfxData>

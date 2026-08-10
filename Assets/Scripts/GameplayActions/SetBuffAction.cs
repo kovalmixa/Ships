@@ -4,7 +4,6 @@ using Assets.Scripts.Actions;
 using JetBrains.Annotations;
 using UnityEngine;
 using Assets.Entity.BuffStatuses;
-using GameplayActions.GameplayActions;
 
 [System.Serializable]
 public class BuffData : ActionData

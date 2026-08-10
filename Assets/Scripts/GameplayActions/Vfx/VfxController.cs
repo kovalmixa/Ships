@@ -34,9 +34,7 @@ namespace Assets.Scripts.Actions.VFX
 
         public async void PlayEffect(VfxType type, Vector3 position, Quaternion rotation)
         {
-            Debug.Log($"[VFX] Вызов {type} в кадре {Time.frameCount} на позиции {position}");
             if (type == VfxType.None) return;
-
             if (!_pools.TryGetValue(type, out var pool))
             {
                 if (!_loadingTasks.TryGetValue(type, out var loadTask))
