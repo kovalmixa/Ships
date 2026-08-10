@@ -1,5 +1,6 @@
 using Assets.Handlers.FileHandlers;
 using Assets.Handlers.SceneHandlers;
+using Assets.Scripts.GameplayActions.Audio;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -9,8 +10,15 @@ namespace Assets.Scripts.Actions.VFX
 {
     public enum VfxType
     {
-        None,
-        bulletLaunch, bulletMetalHit, bulletGroundHit, bulletWaterHit, bulletFlashHit, bulletExplosion
+        None = 0,
+        //Bullet
+        bulletLaunch = 1, 
+        bulletMetalHit = 2, 
+        bulletGroundHit = 3, 
+        bulletWaterHit = 4, 
+        bulletFlashHit = 5, 
+        bulletExplosion = 6,
+        //...
     }
 
     public class VfxController : SingletonMonoBehaviour<VfxController>
@@ -32,7 +40,7 @@ namespace Assets.Scripts.Actions.VFX
         private void OnEnable() => SceneController.OnBeforeSceneLoad += ClearOnSceneChange;
         private void OnDisable() => SceneController.OnBeforeSceneLoad -= ClearOnSceneChange;
 
-        public async void PlayEffect(VfxType type, Vector3 position, Quaternion rotation)
+        public async void PlayEffect(InteractionContext context, VfxType type, Vector3 position, Quaternion rotation)
         {
             if (type == VfxType.None) return;
             if (!_pools.TryGetValue(type, out var pool))
@@ -52,6 +60,7 @@ namespace Assets.Scripts.Actions.VFX
 
             VfxInstance instance = pool.Get();
             instance.Play(
+                context,
                 position,
                 rotation,
                 onRelease: () => pool.Release(instance)

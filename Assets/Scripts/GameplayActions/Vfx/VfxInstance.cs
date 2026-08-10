@@ -1,25 +1,18 @@
+using Assets.Scripts.GameplayActions.Audio;
+using GameplayActions;
 using System;
 using System.Collections;
+using UnityEditor.PackageManager;
 using UnityEngine;
-using FMODUnity;
-using FMOD.Studio;
 
 namespace Assets.Scripts.Actions.VFX
 {
     public class VfxInstance : MonoBehaviour
     {
-        [Header("Visuals")]
         [SerializeField] private ParticleSystem[] _particleSystems;
-
-        [Header("Audio (FMOD)")]
-        [SerializeField] private EventReference _mainSound;
-        [SerializeField] private EventReference _secondarySound;
-
-        [Header("Timing Settings")]
-        [SerializeField] private float _loopStopTimeout = 0.15f;
+        [SerializeField] private AudioData _audioData;
 
         private Action _onRelease;
-        private EventInstance _loopingSoundInstance;
         private Coroutine _releaseCoroutine;
         private float _particlesDuration;
 
@@ -28,84 +21,22 @@ namespace Assets.Scripts.Actions.VFX
             _particlesDuration = CalculateMaxParticleDuration();
         }
 
-        public void Play(Vector3 position, Quaternion rotation, Action onRelease)
+        public void Play(InteractionContext context, Vector3 position, Quaternion rotation, Action onRelease)
         {
             transform.SetPositionAndRotation(position, rotation);
             _onRelease = onRelease;
+            if (_releaseCoroutine != null) StopCoroutine(_releaseCoroutine);
 
-            // --- СЦЕНАРИЙ 1: Продолжение очереди выстрелов ---
-            if (gameObject.activeSelf)
-            {
-                PlayParticles();
-
-                if (_loopingSoundInstance.isValid())
-                {
-                    _loopingSoundInstance.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject));
-                }
-
-                // Продлеваем время жизни цикла
-                ResetReleaseTimer();
-                return;
-            }
-
-            // --- СЦЕНАРИЙ 2: Первый выстрел ---
             gameObject.SetActive(true);
             PlayParticles();
 
-            // Одиночный звук играет ТОЛЬКО если нет зацикленного события
-            if (!_mainSound.IsNull && _secondarySound.IsNull)
-            {
-                RuntimeManager.PlayOneShot(_mainSound, transform.position);
-            }
-
-            // Запускаем 3D-петлю
-            if (!_secondarySound.IsNull)
-            {
-                StartLoopingSound();
-            }
-
-            ResetReleaseTimer();
-        }
-
-        private void StartLoopingSound()
-        {
-            if (_secondarySound.IsNull) return;
-
-            if (!_loopingSoundInstance.isValid()) _loopingSoundInstance = RuntimeManager.CreateInstance(_secondarySound);
-
-            _loopingSoundInstance.set3DAttributes(RuntimeUtils.To3DAttributes(gameObject));
-            _loopingSoundInstance.start();
-        }
-
-        private void ResetReleaseTimer()
-        {
-            if (_releaseCoroutine != null) StopCoroutine(_releaseCoroutine);
-
-            float waitTime = !_secondarySound.IsNull ? _loopStopTimeout : _particlesDuration;
-            _releaseCoroutine = StartCoroutine(WaitAndReleaseRoutine(waitTime));
+            if (_audioData != null && context != null) ActionProvider.Audio.Execute(context, _audioData, position);
+            _releaseCoroutine = StartCoroutine(WaitAndReleaseRoutine(_particlesDuration));
         }
 
         private IEnumerator WaitAndReleaseRoutine(float waitTime)
         {
             if (waitTime > 0) yield return new WaitForSeconds(waitTime);
-
-            if (_loopingSoundInstance.isValid())
-            {
-                _loopingSoundInstance.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-
-                PLAYBACK_STATE playbackState;
-                _loopingSoundInstance.getPlaybackState(out playbackState);
-
-                while (playbackState != PLAYBACK_STATE.STOPPED)
-                {
-                    yield return null;
-                    if (!_loopingSoundInstance.isValid()) break;
-                    _loopingSoundInstance.getPlaybackState(out playbackState);
-                }
-
-                _loopingSoundInstance.release();
-            }
-
             ReleaseToPool();
         }
 
@@ -123,10 +54,10 @@ namespace Assets.Scripts.Actions.VFX
 
         private void OnDisable()
         {
-            if (_loopingSoundInstance.isValid())
+            if (_releaseCoroutine != null)
             {
-                _loopingSoundInstance.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-                _loopingSoundInstance.release();
+                StopCoroutine(_releaseCoroutine);
+                _releaseCoroutine = null;
             }
         }
 
@@ -134,14 +65,12 @@ namespace Assets.Scripts.Actions.VFX
         {
             float maxDuration = 0f;
             if (_particleSystems == null || _particleSystems.Length == 0) return maxDuration;
-
             foreach (var ps in _particleSystems)
             {
                 if (ps == null) continue;
                 float duration = ps.main.duration + ps.main.startLifetime.constantMax;
                 if (duration > maxDuration) maxDuration = duration;
             }
-
             return maxDuration;
         }
 

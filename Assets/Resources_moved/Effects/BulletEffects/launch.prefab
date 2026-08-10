@@ -48,21 +48,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _particleSystems:
   - {fileID: 3223716456731635275}
-  _mainSound:
-    Guid:
-      Data1: -658117931
-      Data2: 1118321840
-      Data3: -639409536
-      Data4: 665721738
-    Path: event:/Sfx/Bullet/Launch
-  _secondarySound:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  _loopStopTimeout: 0.21
+  _audioData:
+    sound:
+      Guid:
+        Data1: -1552281604
+        Data2: 1316443332
+        Data3: -271699815
+        Data4: 1946970023
+      Path: event:/Sfx/Bullet/LoopLaunch
+    isOneShot: 0
+    loopStopTimeout: 0.15
+    parameters:
+    - fmodParameterName: FireRate
+      sourceKey: ActivationRate
+      fallbackValue: 1
+      remapInMin: 0
+      remapInMax: 1000
+      remapOutMin: 0
+      remapOutMax: 1
 --- !u!198 &3223716456731635275
 ParticleSystem:
   m_ObjectHideFlags: 0

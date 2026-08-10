@@ -2,7 +2,7 @@
 using Assets.Entity;
 using Assets.Entity.Controllers;
 using Assets.Handlers.Enums;
-using Entity.Controllers;
+using Assets.Scripts.GameplayActions.Audio;
 using UnityEngine;
 
 namespace Assets.Scripts.Actions
@@ -22,6 +22,7 @@ namespace Assets.Scripts.Actions
         public IInteractive SourceInteractive { get; private set; }
         public IInteractive TargetInteractive { get; private set; }
 
+        public IAudioParameterSource AudioParameterSource { get; private set; }
         public string AbilityId { get; set; }
 
         public void SetTarget(GameObject gameObject)
@@ -48,6 +49,7 @@ namespace Assets.Scripts.Actions
             SetSource(source);
             ActionDataController = dataController;
             actionStartPosition = startTransform;
+            AudioParameterSource = new StatsAudioParameterSource(SourceInteractive as IStats); 
         }
     }
 }

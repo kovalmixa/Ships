@@ -30,7 +30,7 @@ namespace GameplayActions
                     rotation = Quaternion.Euler(0, 0, angle);
                 }
             }
-            VfxController.Instance.PlayEffect(data.type, targetPos, rotation);
+            VfxController.Instance.PlayEffect(context, data.type, targetPos, rotation);
         }
 
         protected override void ExecuteAction(InteractionContext context, VfxData data, IInteractive target)
@@ -43,7 +43,7 @@ namespace GameplayActions
                 Quaternion rot = monoBehaviour.transform.rotation;
                 if (data.matchSourceRotation && context?.SourceObject != null)
                     rot = context.SourceObject.transform.rotation;
-                VfxController.Instance.PlayEffect(data.type, pos, rot);
+                VfxController.Instance.PlayEffect(context, data.type, pos, rot);
             }
         }
     }

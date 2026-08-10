@@ -54,14 +54,10 @@ namespace Assets.Scripts.Actions.Projectile
 
         #region Setup
 
-        public virtual void Setup(
-            InteractionContext context, 
-            ProjectileData projectileDef, 
-            Action onDeactivate,
-            Transform targetTransform)
+        public virtual void Setup(InteractionContext context, ProjectileData data, Action onDeactivate,Transform targetTransform)
         {
             this.targetTransform = targetTransform;
-            Setup(context, projectileDef, onDeactivate, targetTransform.position);
+            Setup(context, data, onDeactivate, targetTransform.position);
         }
 
         public virtual void Setup(InteractionContext interactionContext, ProjectileData data, Action onExpload, Vector2 targetPosition)
