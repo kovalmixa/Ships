@@ -5,10 +5,12 @@ using Assets.Entity.Controllers;
 using Assets.Entity.Hull;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
+using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using Entity.Controllers.AI;
 using Scripts;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Entity.Controllers
@@ -32,6 +34,32 @@ namespace Entity.Controllers
             if (hull == null) return;
             Driver?.UpdateControl(this);
         }
+
+        #region IDriver Facade Methods
+
+        public bool CanMove { get; set; } = true;
+        public bool CanUseAbilities { get; set; } = true;
+
+        public void Move(float acceleration, float rotationInput)
+        {
+            if (!CanMove) return;
+            if (acceleration > 0) hull.AddSpeed(true);
+            else if (acceleration < 0) hull.AddSpeed(false);
+            hull.Movement(rotationInput);
+        }
+
+        public void AimAt(Vector2 worldPosition) => hull.RotateEquipment(worldPosition);
+
+        public void ExecuteAction(KeyAction action, Vector2 targetPosition)
+        {
+            if (!CanUseAbilities) return;
+            if (action.Category == ActionCategory.Weapon)
+                totalAbbilitiesController.Invoke(targetPosition, (WeaponType)action.ActionId);
+            else if (action.Category == ActionCategory.Ability)
+                totalAbbilitiesController.Invoke(targetPosition, (AbilityType)action.ActionId);
+        }
+
+        #endregion
 
         #region Setup
 

@@ -39,8 +39,5 @@ public abstract class SingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBe
         else if (_instance != this) Destroy(gameObject);
     }
 
-    protected virtual void OnApplicationQuit()
-    {
-        _isQuitting = true;
-    }
+    protected virtual void OnApplicationQuit() => _isQuitting = true;
 }

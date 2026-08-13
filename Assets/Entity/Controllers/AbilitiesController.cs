@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Assets.Entity.Controllers
 {
@@ -112,6 +113,7 @@ namespace Assets.Entity.Controllers
 
         public virtual bool CanActivate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
+            if (EventSystem.current.IsPointerOverGameObject()) return false;
             float time = Time.time;
             float activationRate = (source as IStats)?.GetLifetimeStat(StatType.ActivationRate) ?? 1f;
             float delay = abilityUnit.delay / activationRate;

@@ -27,7 +27,9 @@ namespace Entity.Controllers
 
     public class PlayerController : MonoBehaviour, IDriver
     {
+        private bool _isInputBlocked = false;
         private CameraController _cameraController;
+
         public CameraController CameraController
         {
             get
@@ -36,16 +38,13 @@ namespace Entity.Controllers
                 _cameraController = SceneController.GetNodeByType<CameraController>();
                 return _cameraController;
             }
-            private set => _cameraController = value;
         }
 
         private readonly Dictionary<KeyCode, KeyAction> _keyBinds = new()
-        {
-            { KeyCode.Mouse0, new KeyAction(WeaponType.Primary) },
-            { KeyCode.Mouse1, new KeyAction(WeaponType.Secondary) },
-        };
-
-        #region Setup
+    {
+        { KeyCode.Mouse0, new KeyAction(WeaponType.Primary) },
+        { KeyCode.Mouse1, new KeyAction(WeaponType.Secondary) },
+    };
 
         private void Awake()
         {
@@ -54,30 +53,34 @@ namespace Entity.Controllers
                 KeyCode key = (KeyCode)((int)KeyCode.Alpha0 + i);
                 _keyBinds[key] = i == 1 ? new KeyAction(AbilityType.Heal) : new KeyAction(AbilityType.None);
             }
+
+            GUIHandler.OnInputBlockedStateChanged += OnGUIBlocked;
         }
 
-        public void SetupControl()
+        private void OnDestroy()
         {
-
+            GUIHandler.OnInputBlockedStateChanged -= OnGUIBlocked;
         }
 
-        #endregion
-
-        #region Update Control
+        private void OnGUIBlocked(bool isBlocked) => _isInputBlocked = isBlocked;
 
         public void UpdateControl(EntityController controller)
         {
             if (!controller) return;
             Vector2 worldPos = CameraController.CursorPosition;
+            CameraControl();
 
-            CameraControl(controller, worldPos);
+            if (_isInputBlocked)
+            {
+                controller.Move(0, 0);
+                return;
+            }
             MoveControl(controller);
-
-            controller.hull.RotateEquipment(worldPos);
-            KeyWordControls(controller, worldPos);
+            controller.AimAt(worldPos);
+            ActionControls(controller, worldPos);
         }
-        
-        private void CameraControl(EntityController controller, Vector2 position)
+
+        private void CameraControl()
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             if (Mathf.Abs(scroll) > 0.01f) CameraController.Instance.ZoomTo(scroll);
@@ -86,32 +89,29 @@ namespace Entity.Controllers
 
         private void MoveControl(EntityController controller)
         {
-            Assets.Entity.Hull.HullBase hullBase = controller.hull;
-            if (Input.GetKeyDown(KeyCode.W)) hullBase.AddSpeed(true);
-            else if (Input.GetKeyDown(KeyCode.S)) hullBase.AddSpeed(false);
-            float rotationInput = Input.GetAxis("Horizontal");
-            hullBase.Movement(-rotationInput);
+            float rotationInput = 0f;
+            float accel = 0f;
+
+            if (!_isInputBlocked)
+            {
+                if (Input.GetKeyDown(KeyCode.W)) accel = 1f;
+                else if (Input.GetKeyDown(KeyCode.S)) accel = -1f;
+                rotationInput = -Input.GetAxis("Horizontal");
+            }
+            controller.Move(accel, rotationInput);
         }
 
-        private void KeyWordControls(EntityController controller, Vector2 position)
+        private void ActionControls(EntityController controller, Vector2 targetPos)
         {
-
+            if (_isInputBlocked) return;
             foreach (var entry in _keyBinds)
             {
-                if (Input.GetKey(entry.Key))
-                {
-                    if (entry.Value.Category == ActionCategory.Weapon)
-                        controller.totalAbbilitiesController.Invoke(position, (WeaponType)entry.Value.ActionId);
-                    else if (entry.Value.Category == ActionCategory.Ability)
-                        controller.totalAbbilitiesController.Invoke(position, (AbilityType)entry.Value.ActionId);
-                }
-
-                bool held = entry.Key == KeyCode.Mouse0 ? Input.GetMouseButton(0)
+                bool isPressed = entry.Key == KeyCode.Mouse0 ? Input.GetMouseButton(0)
                     : entry.Key == KeyCode.Mouse1 ? Input.GetMouseButton(1)
                     : Input.GetKey(entry.Key);
-                if (!held) continue;
+
+                if (isPressed) controller.ExecuteAction(entry.Value, targetPos);
             }
         }
-        #endregion
     }
 }

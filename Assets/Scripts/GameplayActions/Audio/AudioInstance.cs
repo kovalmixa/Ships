@@ -34,12 +34,7 @@ public sealed class AudioInstance
     {
         UpdatePosition(position, target);
         _event.getPlaybackState(out var state);
-        if (state == PLAYBACK_STATE.STOPPED)
-        {
-            Debug.Log("[AUDIO] Event was stopped. Restarting.");
-            _event.start();
-        }
-
+        if (state == PLAYBACK_STATE.STOPPED) _event.start();
         ResetTimer(timeout);
     }
 
