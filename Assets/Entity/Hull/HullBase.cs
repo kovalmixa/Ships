@@ -30,7 +30,7 @@ namespace Assets.Entity.Hull
         public string Id { get; set; }
         public event Action OnGameObjectDestroyed;
 
-        protected EntityController entityController;
+        protected global::Entity.Controllers.EntityController entityController;
         protected Rigidbody2D rigidBody2D;
 
         #region Editor
@@ -52,7 +52,7 @@ namespace Assets.Entity.Hull
             rigidBody2D = GetComponent<Rigidbody2D>();
         }
 
-        public void Setup(EntityController entityController)
+        public void Setup(global::Entity.Controllers.EntityController entityController)
         {
             this.entityController = entityController;
             var statOptions = Data.statOptions;

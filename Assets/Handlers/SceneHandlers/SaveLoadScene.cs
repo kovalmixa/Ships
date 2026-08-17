@@ -42,7 +42,7 @@ namespace Assets.Handlers.SceneHandlers
 
         private void ExtractData(SaveDataBundle data)
         {
-            var entityController = _player.GetComponent<EntityController>();
+            var entityController = _player.GetComponent<global::Entity.Controllers.EntityController>();
             entityController.Setup(data.EntityDataContainer);
         }
     }

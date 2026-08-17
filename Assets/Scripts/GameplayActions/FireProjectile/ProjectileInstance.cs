@@ -7,7 +7,7 @@ namespace Assets.Scripts.Actions.Projectile
     public class ProjectileInstance : MonoBehaviour
     {
         private readonly GameplayAction[] _onExplosionActions;
-        protected Action OnExpload;
+        protected Action onReturnToPool;
 
         protected ProjectileData data;
         protected InteractionContext context;
@@ -21,6 +21,7 @@ namespace Assets.Scripts.Actions.Projectile
 
 
         protected float timer;
+        protected bool isReturned;
 
         #region Private/Default
 
@@ -35,7 +36,7 @@ namespace Assets.Scripts.Actions.Projectile
             if (data.lifeTime != 0)
             {
                 timer += deltaTime;
-                if (timer >= data.lifeTime) Explode();
+                if (timer >= data.lifeTime) TryExplode();
             }
         }
 
@@ -60,7 +61,7 @@ namespace Assets.Scripts.Actions.Projectile
             Setup(context, data, onDeactivate, targetTransform.position);
         }
 
-        public virtual void Setup(InteractionContext interactionContext, ProjectileData data, Action onExpload, Vector2 targetPosition)
+        public virtual void Setup(InteractionContext interactionContext, ProjectileData data, Action onReturnToPool, Vector2 targetPosition)
         {
             context = interactionContext;
             this.data = data;
@@ -74,8 +75,8 @@ namespace Assets.Scripts.Actions.Projectile
             IgnoreShooterCollision(true);
             SetLaunchEffect();
 
-            isExploded = false;
-            OnExpload = onExpload;
+            isReturned = false;
+            this.onReturnToPool = onReturnToPool;
             gameObject.SetActive(true);
         }
 
@@ -83,14 +84,9 @@ namespace Assets.Scripts.Actions.Projectile
 
         #endregion
 
-        protected virtual void OnTriggerEnter2D(Collider2D other)
-        {
-            if (context?.SourceObject != null && other.gameObject == context.SourceObject) return;
-            Explode();
-        }
-
         protected virtual void Move(float deltaTime)
         {
+            if (isReturned) return;
             if (data.isHoming && targetTransform != null)
             {
                 Vector2 toTarget = (targetTransform.position - transform.position).normalized;
@@ -103,22 +99,20 @@ namespace Assets.Scripts.Actions.Projectile
             transform.position += (Vector3)(direction * (data.speed * deltaTime));
 
             float distToTarget = Vector2.Distance(transform.position, targetPosition);
-            if (distToTarget <= 0.2f) Explode();
+            if (distToTarget <= 0.2f) TryExplode();
         }
 
-
         #region Explosion
-        
-        protected bool isExploded;
 
-        public virtual void Explode()
+        public virtual bool TryExplode(bool isContinuous = false)
         {
-            if (isExploded) return;
-            isExploded = true;
+            if (isReturned) return false;
+            isReturned = !isContinuous;
             Debug.Log("Exploaded");
 
             ExecuteExplosionActions();
-            ReleaseToPool();
+            if (!isContinuous) ReleaseToPool();
+            return true;
         }
 
         protected void ExecuteExplosionActions()
@@ -150,8 +144,8 @@ namespace Assets.Scripts.Actions.Projectile
 
         protected void ReleaseToPool()
         {
-            OnExpload?.Invoke();
-            OnExpload = null;
+            onReturnToPool?.Invoke();
+            onReturnToPool = null;
         }
         #endregion
     }

@@ -12,9 +12,9 @@ namespace Assets.Entity.Controllers
 
     public class TriggerController
     {
-        private readonly EntityController _entityController;
+        private readonly global::Entity.Controllers.EntityController _entityController;
         private Dictionary<TriggerType, List<Action<InteractionContext>>> _triggers = new();
-        public TriggerController(EntityController entityController) => _entityController = entityController;
+        public TriggerController(global::Entity.Controllers.EntityController entityController) => _entityController = entityController;
 
         public void OnTrigger(TriggerType type, InteractionContext context)
         {

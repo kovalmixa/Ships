@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Assets.Entity
 {
     [System.Serializable]
-    public class EntityDataContainer : IDataContainer
+    public class EntityData : IDataContainer
     {
         public string hullId;
         public List<KeyValuePair<string, int>> equipmentIds;
@@ -15,10 +15,10 @@ namespace Assets.Entity
 
     public class EntitySnapshot
     {
-        public EntityController source;
-        public EntityDataContainer entityData;
+        public global::Entity.Controllers.EntityController source;
+        public EntityData entityData;
 
-        public EntitySnapshot(EntityController source, EntityDataContainer entityData)
+        public EntitySnapshot(global::Entity.Controllers.EntityController source, EntityData entityData)
         {
             this.source = source;
             this.entityData = entityData;

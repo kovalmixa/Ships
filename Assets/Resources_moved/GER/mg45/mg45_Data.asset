@@ -30,7 +30,7 @@ MonoBehaviour:
       _type: 103
       _statLayer: 1
       _value: 1
-    - name: 'ActivationRate: 5'
+    - name: 'ActivationRate: 10'
       _type: 102
       _statLayer: 1
       _value: 10
@@ -53,7 +53,7 @@ MonoBehaviour:
     - name: 'PrSpeed: 10'
       _type: 350
       _statLayer: 1
-      _value: 10
+      _value: 30
     mods: []
     buffs: []
     abilities:

@@ -11,7 +11,7 @@ namespace Assets.Handlers.SceneHandlers
 {
     public class GameObjectHandler : SingletonMonoBehaviour<GameObjectHandler>
     {
-        public static EntityController playerController;
+        public static global::Entity.Controllers.EntityController playerController;
         
         public static void SetRenderLayerOrder(GameObject parent, int value)
         {
@@ -52,20 +52,20 @@ namespace Assets.Handlers.SceneHandlers
 
         #region Entity controller
 
-        public static EntityController GetEntityController(Collider2D other)
+        public static global::Entity.Controllers.EntityController GetEntityController(Collider2D other)
         {
             var hull = other.GetComponent<HullBase>();
             if (hull == null) return null;
-            return hull.root.GetComponent<EntityController>();
+            return hull.root.GetComponent<global::Entity.Controllers.EntityController>();
         }
 
-        public static IAIDriver GetAI(EntityController entityController)
+        public static IAIDriver GetAI(global::Entity.Controllers.EntityController entityController)
         {
             if (entityController == null) return null;
             return entityController.TryGetComponent<IAIDriver>(out var ai) ? ai : null;
         }
 
-        public static bool IsPlayer(EntityController entityController) => GetAI(entityController) == null;
+        public static bool IsPlayer(global::Entity.Controllers.EntityController entityController) => GetAI(entityController) == null;
 
         #endregion
 

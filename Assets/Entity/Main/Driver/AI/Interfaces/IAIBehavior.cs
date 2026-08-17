@@ -4,6 +4,6 @@ namespace Assets.Entity.AI.Interfaces
 {
     public interface IAiBehavior
     {
-        void UpdateBehavior(EntityController entityController);
+        void UpdateBehavior(global::Entity.Controllers.EntityController entityController);
     }
 }

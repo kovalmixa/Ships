@@ -34,7 +34,8 @@ public sealed class AudioInstance
     {
         UpdatePosition(position, target);
         _event.getPlaybackState(out var state);
-        if (state == PLAYBACK_STATE.STOPPED) _event.start();
+
+        if (state == PLAYBACK_STATE.STOPPED || state == PLAYBACK_STATE.STOPPING) _event.start();
         ResetTimer(timeout);
     }
 

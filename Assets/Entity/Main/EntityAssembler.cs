@@ -10,13 +10,13 @@ namespace Assets.Entity.Controllers
 {
     public sealed class EntityAssembler
     {
-        private readonly EntityController _entity;
+        private readonly global::Entity.Controllers.EntityController _entity;
 
-        public EntityAssembler(EntityController entity) => _entity = entity;
+        public EntityAssembler(global::Entity.Controllers.EntityController entity) => _entity = entity;
         public event Action<HullBase> onSetHull;
         public event Action<Equipment.Equipment> onSetEquipment;
 
-        public async Task<bool> Build(EntityDataContainer data)
+        public async Task<bool> Build(EntityData data)
         {
             if (data == null) return false;
 

@@ -17,7 +17,7 @@ namespace Entity.Controllers
 {
     public class EntityController : MonoBehaviour, IObject, IAbbility, IStats
     {
-        public EntityDataContainer data;
+        public EntityData data;
         public EntityAssembler Assembler { get; private set; }
         public TotalAbbilitiesController totalAbbilitiesController { get; private set; }
         public StatModController statModController { get; private set; } = new();
@@ -79,7 +79,7 @@ namespace Entity.Controllers
             }
         }
 
-        public void Setup(EntityDataContainer data)
+        public void Setup(EntityData data)
         {
             if (data == null) return;
             this.data = data;

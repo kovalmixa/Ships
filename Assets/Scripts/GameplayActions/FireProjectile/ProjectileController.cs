@@ -1,6 +1,6 @@
-﻿using Assets.Handlers.Enums;
+﻿using Assets.Handlers.CommonParents;
+using Assets.Handlers.Enums;
 using Assets.Handlers.FileHandlers;
-using Assets.Handlers.SceneHandlers;
 using GameplayActions;
 using System;
 using System.Collections.Generic;
@@ -9,19 +9,15 @@ using UnityEngine.Pool;
 
 namespace Assets.Scripts.Actions.Projectile
 {
-    public class ProjectileController : SingletonMonoBehaviour<ProjectileController>
+    public class ProjectileController : SingletonPoolHandler<ProjectileController, ProjectileInstance>
     {
-        [SerializeField] private GameObject _projectilePoolNode;
-        [SerializeField] private int _initialCapacity = 20;
-        [SerializeField] private int _maxPoolSize = 200;
-
         private Dictionary<ProjectileType, GameObject> _prefabDict = new();
         private Dictionary<ProjectileType, IObjectPool<ProjectileInstance>> _pools = new();
         private List<ProjectileInstance> _activeProjectiles = new();
 
         #region Setup
 
-        public void ClearOnSceneChange()
+        protected override void ClearOnSceneChange()
         {
             foreach (var pool in _pools.Values) pool.Clear();
             for (int i = _activeProjectiles.Count - 1; i >= 0; i--)
@@ -29,19 +25,12 @@ namespace Assets.Scripts.Actions.Projectile
             _activeProjectiles.Clear();
         }
 
-        private void OnEnable()
-        {
-            SceneController.OnBeforeSceneLoad += ClearOnSceneChange;
-        }
-
-        private void OnDisable()
-        {
-            SceneController.OnBeforeSceneLoad -= ClearOnSceneChange;
-        }
-
         async protected override void Awake()
         {
             base.Awake();
+            initialCapacity = 20;
+            maxPoolSize = 200;
+
             var prefabLoader = PrefabLoader.Instance;
 
             foreach (ProjectileType type in Enum.GetValues(typeof(ProjectileType)))
@@ -55,7 +44,7 @@ namespace Assets.Scripts.Actions.Projectile
                     _prefabDict[type] = prefab;
                     var pool = CreatePoolForType(prefab);
                     _pools[type] = pool;
-                    PrewarmPool(pool, _initialCapacity);
+                    PrewarmPool(pool, initialCapacity);
                 }
             }
         }
@@ -65,7 +54,7 @@ namespace Assets.Scripts.Actions.Projectile
             return new ObjectPool<ProjectileInstance>(
                 createFunc: () =>
                 {
-                    Transform parent = _projectilePoolNode != null ? _projectilePoolNode.transform : transform;
+                    Transform parent = poolNode != null ? poolNode.transform : transform;
                     var go = Instantiate(prefab, parent);
                     return go.GetComponent<ProjectileInstance>();
                 },
@@ -85,8 +74,8 @@ namespace Assets.Scripts.Actions.Projectile
                         Destroy(instance.gameObject);
                 },
                 collectionCheck: true,
-                defaultCapacity: _initialCapacity,
-                maxSize: _maxPoolSize
+                defaultCapacity: initialCapacity,
+                maxSize: maxPoolSize
             );
         }
 

@@ -13,13 +13,13 @@ namespace Scripts
             this.waitTime = waitTime;
         }
 
-        public override bool Execute(EntityController entityController)
+        public override bool Execute(Entity.Controllers.EntityController entityController)
         {
             timer += Time.deltaTime;
             isExecuted = true;
             return true;
         }
 
-        public override bool IsFinished(EntityController entityController) => timer >= waitTime;
+        public override bool IsFinished(Entity.Controllers.EntityController entityController) => timer >= waitTime;
     }
 }

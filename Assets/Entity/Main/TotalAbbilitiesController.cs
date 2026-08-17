@@ -10,7 +10,7 @@ namespace Assets.Entity.Controllers
 {
     public class TotalAbbilitiesController
     {
-        private EntityController _entityController;
+        private global::Entity.Controllers.EntityController _entityController;
 
         private readonly Dictionary<AbilityType, Action<Vector3>> _activeAbilities = new();
         private readonly Dictionary<WeaponType, Action<Vector3>> _weaponAbilities = new();
@@ -18,7 +18,7 @@ namespace Assets.Entity.Controllers
 
         private bool _dirty = true;
 
-        public TotalAbbilitiesController(EntityController entityController) => _entityController = entityController;
+        public TotalAbbilitiesController(global::Entity.Controllers.EntityController entityController) => _entityController = entityController;
 
         public void MarkDirty() => _dirty = true;
 

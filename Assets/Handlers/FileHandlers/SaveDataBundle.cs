@@ -4,6 +4,6 @@ namespace Assets.DataContainers
 {
     public class SaveDataBundle
     {
-        public EntityDataContainer EntityDataContainer;
+        public EntityData EntityDataContainer;
     }
 }

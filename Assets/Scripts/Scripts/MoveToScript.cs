@@ -9,7 +9,7 @@ namespace Scripts
     public class MoveToScript : ScriptBase
     {
         [SerializeField] protected Transform Target;
-        public override bool Execute(EntityController entityController)
+        public override bool Execute(Entity.Controllers.EntityController entityController)
         {
             if (Target == null) return false;
             var ai = GameObjectHandler.GetAI(entityController);
@@ -23,7 +23,7 @@ namespace Scripts
             return true;
         }
 
-        public override bool IsFinished(EntityController entityController)
+        public override bool IsFinished(Entity.Controllers.EntityController entityController)
         {
             float threshold = 3.5f;
             CircleCollider2D area = Target.GetComponent<CircleCollider2D>();

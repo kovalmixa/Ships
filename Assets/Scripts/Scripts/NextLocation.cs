@@ -13,7 +13,7 @@ namespace Scripts
             sceneController = GameObject.Find("Handlers");
             if (sceneController == null) Debug.LogWarning("SceneController not found");
         }
-        public override bool Execute(EntityController entityController)
+        public override bool Execute(Entity.Controllers.EntityController entityController)
         {
             if (GameObjectHandler.IsPlayer(entityController))
             {
@@ -24,6 +24,6 @@ namespace Scripts
             return false;
         }
 
-        public override bool IsFinished(EntityController entityController) => false;
+        public override bool IsFinished(Entity.Controllers.EntityController entityController) => false;
     }
 }

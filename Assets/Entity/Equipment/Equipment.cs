@@ -22,7 +22,7 @@ namespace Assets.Entity.Equipment
 {
     public class Equipment : MonoBehaviour, IInteractive, IStats, IAbbility, IBuffable
     {
-        private EntityController _entityController;
+        private global::Entity.Controllers.EntityController _entityController;
         public BuffStatusesController Buffs { get; private set; }
         [field: SerializeField] public EquipmentDataSO Data { get; private set; }
         public EquipmentAnchor EquipmentAnchor { get; set; }
@@ -113,7 +113,7 @@ namespace Assets.Entity.Equipment
             Id = GameObjectHandler.GenerateUniqueId(name);
         }
 
-        public void Setup(EntityController entityController)
+        public void Setup(global::Entity.Controllers.EntityController entityController)
         {
             _entityController = entityController;
             Buffs = new BuffStatusesController(gameObject, _statModController);

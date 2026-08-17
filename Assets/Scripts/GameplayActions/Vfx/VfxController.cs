@@ -1,6 +1,5 @@
+using Assets.Handlers.CommonParents;
 using Assets.Handlers.FileHandlers;
-using Assets.Handlers.SceneHandlers;
-using Assets.Scripts.GameplayActions.Audio;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -21,24 +20,28 @@ namespace Assets.Scripts.Actions.VFX
         //...
     }
 
-    public class VfxController : SingletonMonoBehaviour<VfxController>
+    public class VfxController : SingletonPoolHandler<VfxController, VfxInstance>
     {
-        [SerializeField] private GameObject _vfxPoolNode;
-        [SerializeField] private int _defaultInitialCapacity = 5;
-        [SerializeField] private int _maxPoolSize = 50;
-
         private readonly Dictionary<VfxType, IObjectPool<VfxInstance>> _pools = new();
         private readonly Dictionary<VfxType, Task<IObjectPool<VfxInstance>>> _loadingTasks = new();
 
-        public void ClearOnSceneChange()
+        #region Setup
+
+        protected override void ClearOnSceneChange()
         {
             foreach (var pool in _pools.Values) pool.Clear();
             _pools.Clear();
             _loadingTasks.Clear();
         }
 
-        private void OnEnable() => SceneController.OnBeforeSceneLoad += ClearOnSceneChange;
-        private void OnDisable() => SceneController.OnBeforeSceneLoad -= ClearOnSceneChange;
+        protected override void Awake()
+        {
+            base.Awake();
+            initialCapacity = 5;
+            maxPoolSize = 50;
+        }
+
+        #endregion
 
         public async void PlayEffect(InteractionContext context, VfxType type, Vector3 position, Quaternion rotation)
         {
@@ -82,7 +85,7 @@ namespace Assets.Scripts.Actions.VFX
             return new ObjectPool<VfxInstance>(
                 createFunc: () =>
                 {
-                    Transform parent = _vfxPoolNode != null ? _vfxPoolNode.transform : transform;
+                    Transform parent = poolNode != null ? poolNode.transform : transform;
                     var go = Instantiate(prefab, parent);
                     go.SetActive(false);
                     return go.GetComponent<VfxInstance>();
@@ -94,8 +97,8 @@ namespace Assets.Scripts.Actions.VFX
                     if (instance != null && instance.gameObject != null) Destroy(instance.gameObject);
                 },
                 collectionCheck: true,
-                defaultCapacity: _defaultInitialCapacity,
-                maxSize: _maxPoolSize
+                defaultCapacity: initialCapacity,
+                maxSize: maxPoolSize
             );
         }
     }
