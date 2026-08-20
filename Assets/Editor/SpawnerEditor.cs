@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using EntityMarkers.Spawner;
 using System.Collections.Generic;
+using Assets.Handlers.DebugHandlers;
 
 [CustomEditor(typeof(Spawner))]
 public class SpawnerEditor : Editor
@@ -19,34 +20,19 @@ public class SpawnerEditor : Editor
 
     private void UpdatePreview(Spawner spawner)
     {
-        if (spawner.preset == null)
+        if (spawner.data == null)
         {
             spawner.ClearPreview();
             return;
         }
-
-        // Поиск префабов в папках проекта по ID/Имени через AssetDatabase
-        //GameObject hullPrefab = LoadPrefabById(spawner.preset.hullId);
+        var enityData = spawner.data.entityData;
+        GameObject hullPrefab = InspectorHandler.LoadPrefabById(enityData.hullId);
         List<GameObject> eqPrefabs = new();
 
-        //foreach (var eqData in spawner.preset.equipment)
-        //    eqPrefabs.Add(LoadPrefabById(eqData.equipmentId));
+        foreach (var eqData in enityData.equipmentSlots)
+            eqPrefabs.Add(InspectorHandler.LoadPrefabById(eqData.equipmentId));
 
-        //spawner.BuildPreviewInEditor(hullPrefab, eqPrefabs);
-    }
-
-    private GameObject LoadPrefabById(string id)
-    {
-        if (string.IsNullOrEmpty(id)) return null;
-
-        // Поиск по имени файла или пути в проекте
-        string[] guids = AssetDatabase.FindAssets($"{id} t:Prefab");
-        if (guids.Length > 0)
-        {
-            string path = AssetDatabase.GUIDToAssetPath(guids[0]);
-            return AssetDatabase.LoadAssetAtPath<GameObject>(path);
-        }
-        return null;
+        spawner.BuildPreviewInEditor(hullPrefab, eqPrefabs);
     }
 }
 #endif

@@ -1,9 +1,11 @@
 ﻿using Assets.Entity;
+using System.Numerics;
 
-namespace Assets.DataContainers
+namespace Assets.Handlers.FileHandlers
 {
     public class SaveDataBundle
     {
-        public EntityData EntityDataContainer;
+        public EntityData entityDataContainer;
+        public Vector2 respawnPosition;
     }
 }

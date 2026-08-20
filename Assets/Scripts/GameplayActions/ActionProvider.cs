@@ -1,4 +1,5 @@
 ﻿using Assets.Handlers.Enums;
+using Assets.Scripts.GameplayActions;
 using Assets.Scripts.GameplayActions.Audio;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,6 +16,7 @@ namespace GameplayActions
         public static DamageAction Damage { get; } = new();
         public static VfxAction Effect { get; } = new();
         public static AudioAction Audio { get; } = new();
+        public static SpawnAction Spawn { get; } = new();
 
         #endregion
 

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Entity.Controllers.AI
+namespace AI
 {
     public class Detection : MonoBehaviour
     {

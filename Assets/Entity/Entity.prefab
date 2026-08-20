@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8954999742390597031}
-  - component: {fileID: 2939312566082401126}
+  - component: {fileID: 479629053994360685}
   m_Layer: 0
   m_Name: Entity
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2939312566082401126
+--- !u!114 &479629053994360685
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,12 +41,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1043631210884575351}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c16d133dfdd92274798d883044fb39be, type: 3}
+  m_Script: {fileID: 11500000, guid: eda89796c8e62ca4ea0c82da486339af, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Assembly-CSharp::Entity.Controllers.EntityController
   data:
     hullId: 
-    position: {x: 0, y: 0}
-  abbilitiesController: {fileID: 0}
-  _despawnPrefab: {fileID: 0}
+    equipmentSlots: []
   hull: {fileID: 0}

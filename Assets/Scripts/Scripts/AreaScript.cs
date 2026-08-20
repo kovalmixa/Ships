@@ -29,7 +29,7 @@ namespace Scripts
             if (entityController) Execute(entityController);
         }
 
-        public override bool Execute(Entity.Controllers.EntityController entityController)
+        public override bool Execute(EntityController entityController)
         {
             if (scripts.Count == 0)
             {
@@ -44,6 +44,6 @@ namespace Scripts
             return true;
         }
 
-        public override bool IsFinished(Entity.Controllers.EntityController entityController) => true;
+        public override bool IsFinished(EntityController entityController) => true;
     }
 }

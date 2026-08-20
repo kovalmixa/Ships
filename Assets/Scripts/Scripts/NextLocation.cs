@@ -1,4 +1,5 @@
 using Assets.Handlers.SceneHandlers;
+using Cysharp.Threading.Tasks;
 using Entity.Controllers;
 using UnityEngine;
 
@@ -13,17 +14,17 @@ namespace Scripts
             sceneController = GameObject.Find("Handlers");
             if (sceneController == null) Debug.LogWarning("SceneController not found");
         }
-        public override bool Execute(Entity.Controllers.EntityController entityController)
+        public override bool Execute(EntityController entityController)
         {
             if (GameObjectHandler.IsPlayer(entityController))
             {
-                sceneController.GetComponent<SceneController>().NextLocation(LocationName);
-                entityController.transform.position = Vector3.zero;
+                if (sceneController != null) 
+                    sceneController.GetComponent<SceneController>().NextLocation(LocationName).Forget();
                 return true;
             }
             return false;
         }
 
-        public override bool IsFinished(Entity.Controllers.EntityController entityController) => false;
+        public override bool IsFinished(EntityController entityController) => false;
     }
 }

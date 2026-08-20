@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Entity.Controllers.AI
+namespace Assets.AI
 {
-    public class RelationsHandler
+    public class RelationsController
     {
         public enum Relationship
         {

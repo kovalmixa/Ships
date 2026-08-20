@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Entity.Controllers.AI.AITypes
+namespace Assets.AI.AITypes
 {
     internal class Air
     {

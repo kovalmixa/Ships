@@ -1,5 +1,4 @@
-﻿using Assets.Entity;
-using Assets.Entity.Controllers.AI;
+﻿using Assets.AI;
 using Assets.Entity.Hull;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
@@ -9,10 +8,8 @@ using UnityEngine;
 
 namespace Assets.Handlers.SceneHandlers
 {
-    public class GameObjectHandler : SingletonMonoBehaviour<GameObjectHandler>
+    public static class GameObjectHandler
     {
-        public static global::Entity.Controllers.EntityController playerController;
-        
         public static void SetRenderLayerOrder(GameObject parent, int value)
         {
             var renderers = parent.GetComponentsInChildren<SpriteRenderer>();
@@ -22,7 +19,7 @@ namespace Assets.Handlers.SceneHandlers
         public static GameObject Clone(GameObject main)
         {
             if (main == null) return null;
-            GameObject clone = Instantiate(main);
+            GameObject clone = GameObject.Instantiate(main);
             clone.name = main.name;
             return clone;
         }
@@ -46,32 +43,32 @@ namespace Assets.Handlers.SceneHandlers
             foreach (var component in obj.GetComponents<Component>())
             {
                 if (component is Transform) continue;
-                Destroy(component);
+                GameObject.Destroy(component);
             }
         }
 
         #region Entity controller
 
-        public static global::Entity.Controllers.EntityController GetEntityController(Collider2D other)
+        public static EntityController GetEntityController(Collider2D other)
         {
             var hull = other.GetComponent<HullBase>();
             if (hull == null) return null;
-            return hull.root.GetComponent<global::Entity.Controllers.EntityController>();
+            return hull.root.GetComponent<EntityController>();
         }
 
-        public static IAIDriver GetAI(global::Entity.Controllers.EntityController entityController)
+        public static IAiDriver GetAI(EntityController entityController)
         {
             if (entityController == null) return null;
-            return entityController.TryGetComponent<IAIDriver>(out var ai) ? ai : null;
+            return entityController.TryGetComponent<IAiDriver>(out var ai) ? ai : null;
         }
 
-        public static bool IsPlayer(global::Entity.Controllers.EntityController entityController) => GetAI(entityController) == null;
+        public static bool IsPlayer(EntityController entityController) => GetAI(entityController) == null;
 
         #endregion
 
         #region Id generators
 
-        public static string GenerateUniqueId(string name) => $"{name}_{System.Guid.NewGuid().ToString("N").Substring(0, 8)}";
+        public static string GenerateUniqueId(string name) => $"{name}_{Guid.NewGuid().ToString("N").Substring(0, 8)}";
 
         public static string GenerateContextSourceId(InteractionContext context)
         {

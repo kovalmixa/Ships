@@ -40,7 +40,7 @@ MonoBehaviour:
     - name: 'MaxMoveSpeed: 4'
       _type: 50
       _statLayer: 0
-      _value: 4
+      _value: 5
     - name: 'Acceleration: 0,2'
       _type: 53
       _statLayer: 0
@@ -49,17 +49,10 @@ MonoBehaviour:
       _type: 51
       _statLayer: 0
       _value: 40
-    mods:
-    - name: 'Hp: 0'
-      _type: 0
-      _statLayer: 0
-      _value: 0
-      _calcType: 0
-      _applyType: 0
+    mods: []
     buffs: []
     abilities:
     - abilityPosition: {x: 0, y: 0}
-      stats: []
       type: 8
       mode: 1
       delay: 1

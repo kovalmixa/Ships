@@ -1,8 +1,8 @@
 ﻿using Assets.Entity.Hull;
 using Assets.Handlers.FileHandlers;
+using Assets.Handlers.SceneHandlers;
 using Entity.Controllers;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -10,9 +10,9 @@ namespace Assets.Entity.Controllers
 {
     public sealed class EntityAssembler
     {
-        private readonly global::Entity.Controllers.EntityController _entity;
+        private readonly EntityController _entity;
 
-        public EntityAssembler(global::Entity.Controllers.EntityController entity) => _entity = entity;
+        public EntityAssembler(EntityController entity) => _entity = entity;
         public event Action<HullBase> onSetHull;
         public event Action<Equipment.Equipment> onSetEquipment;
 
@@ -21,24 +21,35 @@ namespace Assets.Entity.Controllers
             if (data == null) return false;
 
             _entity.data = data;
-            if (! await SetHull(data.hullId)) return false;
+            if (!await SetHull(data.hullId)) return false;
 
-            foreach (var equipment in data.equipmentIds.ToList())
+            for (int i = data.equipmentSlots.Count - 1; i >= 0; i--)
             {
+                var slot = data.equipmentSlots[i];
                 bool isSuccess = false;
-                while (await AddEquipment(equipment.Key, equipment.Value)) isSuccess = true;
-                if (!isSuccess) data.equipmentIds.Remove(equipment); 
-                //code for placing it to inventory
-            }
-            if (data.position != Vector2.zero) _entity.transform.position = data.position;
 
+                var equipmentObj = await PrefabLoader.Instance.InstantiatePrefabAsync(
+                    slot.equipmentId,
+                    Vector3.zero,
+                    Quaternion.identity);
+                if (equipmentObj == null) data.equipmentSlots.Remove(slot);
+                else
+                {
+                    while (AddEquipment(equipmentObj, slot.number)) isSuccess = true;
+                    if (!isSuccess)
+                    {
+                        data.equipmentSlots.Remove(slot);
+                        // code for placing it to inventory if unsuccessful
+                    }
+                    GameObject.DestroyImmediate(equipmentObj);
+                }
+            }
             return true;
         }
 
         public async Task<bool> SetHull(string hullId)
         {
             if (string.IsNullOrEmpty(hullId)) return false;
-
             if (_entity.hull != null) UnityEngine.Object.Destroy(_entity.hull.gameObject);
             var hullObj = await PrefabLoader.Instance.InstantiatePrefabAsync(
                 hullId,
@@ -56,24 +67,17 @@ namespace Assets.Entity.Controllers
             return true;
         }
 
-        public async Task<bool> AddEquipment(string equipmentId, int index)
+        public bool AddEquipment(GameObject eqObj, int index)
         {
-            if (_entity.hull == null) return false;
+            if (eqObj == null) return false;
+            var clone = GameObjectHandler.Clone(eqObj);
 
-            var obj = await PrefabLoader.Instance.InstantiatePrefabAsync(
-                equipmentId,
-                Vector3.zero,
-                Quaternion.identity);
-
-            if (obj == null) return false;
-
-            var equipment = obj.GetComponentInChildren<Equipment.Equipment>();
+            var equipment = clone.GetComponentInChildren<Equipment.Equipment>();
             if (equipment == null)
             {
-                UnityEngine.Object.Destroy(obj);
+                UnityEngine.Object.Destroy(clone);
                 return false;
             }
-
             foreach (var anchor in _entity.hull.equipmentAnchors)
             {
                 if (!anchor.CanBePlaced(equipment, index)) continue;
@@ -86,7 +90,7 @@ namespace Assets.Entity.Controllers
                 return true;
             }
 
-            UnityEngine.Object.Destroy(obj);
+            UnityEngine.Object.Destroy(clone);
             return false;
         }
     }

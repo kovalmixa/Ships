@@ -7,10 +7,10 @@ namespace Scripts
     {
         protected bool isExecuted;
 
-        public abstract bool Execute(Entity.Controllers.EntityController entityController);
+        public abstract bool Execute(EntityController entityController);
 
-        public bool IsExecuted(Entity.Controllers.EntityController entityController) => isExecuted;
+        public bool IsExecuted(EntityController entityController) => isExecuted;
 
-        public abstract bool IsFinished(Entity.Controllers.EntityController entityController);
+        public abstract bool IsFinished(EntityController entityController);
     }
 }

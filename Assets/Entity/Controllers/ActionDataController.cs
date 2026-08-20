@@ -3,6 +3,7 @@ using Assets.Entity.Modifiers;
 using Assets.Handlers;
 using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
+using Assets.Scripts.GameplayActions;
 using GameplayActions;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace Assets.Entity.Controllers
             { typeof(HealAction), typeof(HealData) },
             { typeof(FireProjectileAction), typeof(ProjectileData) },
             { typeof(ExplosionAction), typeof(EsplosionData) },
+            { typeof(SpawnAction), typeof(SpawnData) },
             { typeof(SetBuffAction), typeof(BuffData) }
         };
 
@@ -86,6 +88,16 @@ namespace Assets.Entity.Controllers
                     projData.isBallistic = stats.GetLifetimeStat(StatType.PrMoveType) == 1f;
                     var _dataContainer = stats.GetInitialData();
                     if (_dataContainer is EquipmentDataSO eqData) projData.type = eqData.projectileType;
+                    break;
+                case SpawnData spawnData:
+                    var initialData = stats.GetInitialData();
+                    if (initialData is ISpawnDataProvider spawnProvider)
+                    {
+                        spawnData.npcData = spawnProvider.NpcData;
+                        spawnData.scripts = spawnProvider.Scripts;
+                        spawnData.offset = spawnProvider.Offset;
+                        spawnData.positionMode = spawnProvider.PositionMode;
+                    }
                     break;
             }
         }

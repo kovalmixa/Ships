@@ -1,61 +1,55 @@
-using Assets.Entity;
 using Assets.Entity.Equipment;
 using Assets.Handlers.SceneHandlers;
-using Entity.Controllers;
+using Assets.Scripts.Actions;
+using Assets.Scripts.GameplayActions;
+using Assets.Scripts.Markers.Spawner;
+using GameplayActions;
 using Scripts;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace EntityMarkers.Spawner
 {
-    [ExecuteInEditMode] // Позволяет скрипту выполнять логику в редакторе
+    [ExecuteInEditMode]
     public class Spawner : MonoBehaviour
     {
         [Header("Configuration")]
-        public NpcPreset preset; // Выбор готового комплекта
-        public List<ScriptBase> ScriptList;
+        [SerializeField] public NpcData data;
+        [SerializeField] private ScriptBase[] _scripts;
 
         [HideInInspector]
         [SerializeField] private GameObject _previewInstance;
 
-        private GameObject _runtimeEntityObj;
+        private SpriteRenderer _defaultSprite;
+
+        private uint _spawnQuantity;
+        private bool _isSpawned = false;
+        private InteractionContext _context = new InteractionContext();
+        private SpawnData _spawnData = new SpawnData();
 
         private void Awake()
         {
+            _defaultSprite = GetComponent<SpriteRenderer>();
             ClearPreview();
+
+            _context.SetSource(gameObject);
+            _spawnData.npcData = data;
+            _spawnData.scripts = _scripts;
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!Application.isPlaying) return;
+            if (!Application.isPlaying || _isSpawned) return;
 
             var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController == null || !GameObjectHandler.IsPlayer(entityController)) return;
-            if (_runtimeEntityObj == null || !_runtimeEntityObj.activeSelf) Spawn();
+            for(int i = 0; i < _spawnQuantity; i++) Spawn(); 
         }
 
-        public void Spawn()
+        private void Spawn()
         {
-            _runtimeEntityObj.transform.position = transform.position;
-
-            var entityController = _runtimeEntityObj.GetComponent<EntityController>();
-            if (entityController != null && preset != null)
-            {
-                EntityData data = new()
-                {
-                    hullId = preset.hullId,
-                    equipmentIds = ConvertEquipmentToDict(preset.equipment)
-                };
-
-                entityController.Setup(data);
-                entityController.SetupAi(ScriptList.ToArray());
-            }
-        }
-
-        private List<KeyValuePair<string, int>> ConvertEquipmentToDict(object equipment)
-        {
-            throw new NotImplementedException();
+            ActionProvider.Spawn.Execute(_context, _spawnData, transform.position);
+            _isSpawned = true;
         }
 
         public void ClearPreview()
@@ -65,13 +59,6 @@ namespace EntityMarkers.Spawner
                 DestroyImmediate(_previewInstance);
                 _previewInstance = null;
             }
-        }
-
-        private Dictionary<string, int> ConvertEquipmentToDict(List<EquipmentSlotData> list)
-        {
-            var dict = new Dictionary<string, int>();
-            //foreach (var item in list) dict[item.equipmentId] = item.slotIndex;
-            return dict;
         }
 
 #if UNITY_EDITOR
@@ -87,7 +74,12 @@ namespace EntityMarkers.Spawner
             _previewInstance.hideFlags = HideFlags.DontSaveInBuild;
 
             var hull = _previewInstance.GetComponent<Assets.Entity.Hull.HullBase>();
-            if (hull == null || equipmentPrefabs == null) return;
+            if (hull == null || equipmentPrefabs == null)
+            {
+                _defaultSprite.enabled = true;
+                return;
+            }
+            _defaultSprite.enabled = false;
 
             for (int i = 0; i < equipmentPrefabs.Count; i++)
             {

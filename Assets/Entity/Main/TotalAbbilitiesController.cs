@@ -10,7 +10,7 @@ namespace Assets.Entity.Controllers
 {
     public class TotalAbbilitiesController
     {
-        private global::Entity.Controllers.EntityController _entityController;
+        private EntityController _entityController;
 
         private readonly Dictionary<AbilityType, Action<Vector3>> _activeAbilities = new();
         private readonly Dictionary<WeaponType, Action<Vector3>> _weaponAbilities = new();
@@ -18,7 +18,7 @@ namespace Assets.Entity.Controllers
 
         private bool _dirty = true;
 
-        public TotalAbbilitiesController(global::Entity.Controllers.EntityController entityController) => _entityController = entityController;
+        public TotalAbbilitiesController(EntityController entityController) => _entityController = entityController;
 
         public void MarkDirty() => _dirty = true;
 
@@ -146,12 +146,12 @@ namespace Assets.Entity.Controllers
 
             if (_entityController != null && _entityController.hull != null)
             {
-                if (hitCollider.gameObject == _entityController.hull.gameObject) return false;
+                if (hitCollider.gameObject == _entityController.hull.gameObject) return true;
                 if (_entityController.hull.equipments != null)
                     foreach (var equipment in _entityController.hull.equipments)
-                        if (equipment != null && hitCollider.gameObject == equipment.gameObject) return false;
+                        if (equipment != null && hitCollider.gameObject == equipment.gameObject) return true;
             }
-            return true;
+            return false;
         }
     }
 }

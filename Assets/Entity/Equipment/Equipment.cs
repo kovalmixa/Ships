@@ -22,7 +22,7 @@ namespace Assets.Entity.Equipment
 {
     public class Equipment : MonoBehaviour, IInteractive, IStats, IAbbility, IBuffable
     {
-        private global::Entity.Controllers.EntityController _entityController;
+        private EntityController _entityController;
         public BuffStatusesController Buffs { get; private set; }
         [field: SerializeField] public EquipmentDataSO Data { get; private set; }
         public EquipmentAnchor EquipmentAnchor { get; set; }
@@ -113,13 +113,13 @@ namespace Assets.Entity.Equipment
             Id = GameObjectHandler.GenerateUniqueId(name);
         }
 
-        public void Setup(global::Entity.Controllers.EntityController entityController)
+        public void Setup(EntityController entityController)
         {
             _entityController = entityController;
             Buffs = new BuffStatusesController(gameObject, _statModController);
             var snapshot = GetSnapshot();
             var statOptions = Data.statOptions;
-            _statModController = new(entityController.statModController, statOptions);
+            _statModController = new(entityController.StatModController, statOptions);
             _statModController.OnChange += () => _actionDataController.MarkDirty();
 
             foreach (var buff in statOptions.buffs)
@@ -132,7 +132,7 @@ namespace Assets.Entity.Equipment
                 else Buffs.AddBuff(buff, snapshot);
             }
 
-            abilitiesController = new(statOptions.abilities, _entityController.totalAbbilitiesController,
+            abilitiesController = new(statOptions.abilities, _entityController.TotalAbbilitiesController,
                 _actionDataController, this, _basicAngle, EquipmentAnchor);
             OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
         }

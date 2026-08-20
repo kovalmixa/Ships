@@ -40,7 +40,8 @@ namespace Assets.Scripts.Actions
         public Vector2 actionStartPosition { get; }
 
         public InteractionContext() { }
-
+        
+        //For entity controller units
         public InteractionContext(AbilityType key, EntitySnapshot snapshot, 
             GameObject source, ActionDataController dataController, Vector2 startTransform)
         {

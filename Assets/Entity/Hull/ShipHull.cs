@@ -39,13 +39,16 @@ namespace Assets.Entity.Hull
             var maxMoveSpeed = GetLifetimeStat(StatType.MaxMoveSpeed);
             var acceleration = GetLifetimeStat(StatType.Acceleration);
             var rotationSpeed = GetLifetimeStat(StatType.RotationSpeed);
-
             _targetSpeed = _speedLevel * (maxMoveSpeed / _maxSpeedLevel);
             currentSpeed = MathF.Min(
                 Mathf.MoveTowards(currentSpeed, _targetSpeed, acceleration * Time.fixedDeltaTime),maxMoveSpeed);
+
             float angle = rotationDirection * rotationSpeed * Time.fixedDeltaTime;
-            rigidBody2D.MoveRotation(rigidBody2D.rotation + angle);
-            Vector2 nextPos = rigidBody2D.position + (Vector2)transform.up * currentSpeed * Time.fixedDeltaTime;
+            float newAngle = rigidBody2D.rotation + (rotationDirection * rotationSpeed * Time.fixedDeltaTime);
+            rigidBody2D.MoveRotation(newAngle);
+
+            Vector2 forwardDirection = Quaternion.Euler(0, 0, newAngle) * Vector2.up;
+            Vector2 nextPos = rigidBody2D.position + forwardDirection * (currentSpeed * Time.fixedDeltaTime);
             rigidBody2D.MovePosition(nextPos);
         }
     }

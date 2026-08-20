@@ -37,8 +37,7 @@ namespace Assets.Entity.Equipment
             var eqTransform = equipment.transform;
             Vector2 scale = eqTransform.localScale;
             eqTransform.SetParent(transform, false);
-            eqTransform.position = transform.position;
-            eqTransform.rotation = transform.rotation;
+            eqTransform.SetPositionAndRotation(transform.position, transform.rotation);
             eqTransform.localScale = scale;
             equipment.EquipmentAnchor = this;
             GameObjectHandler.SetRenderLayerOrder(gameObject, orderLayer);

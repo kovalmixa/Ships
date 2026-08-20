@@ -1,31 +1,102 @@
-using Assets.Entity;
+using Assets.Common.Interfaces;
 using Assets.Handlers.CommonParents;
-using Assets.Scripts.Actions.VFX;
 using Entity.Controllers;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Pool;
 
-public class EntityHandler : SingletonPoolHandler<EntityHandler, EntityController>
+namespace Assets.Handlers.SceneHandlers
 {
-    private readonly IObjectPool<VfxInstance> _pool;
-
-    #region Setup
-
-    protected override void ClearOnSceneChange()
+    public class EntityPoolHandler : SingletonPoolHandler<EntityPoolHandler, EntityController>
     {
-        throw new System.NotImplementedException();
-    }
+        [SerializeField] private GameObject _prefab;
+        private IObjectPool<EntityController> _pool;
+        private readonly List<EntityController> _activeEntities = new();
 
-    protected override void Awake()
-    {
-        base.Awake();
-        initialCapacity = 20;
-        maxPoolSize = 100;
-    }
+        public IReadOnlyList<EntityController> ActiveEntities => _activeEntities;
 
-    #endregion
+        #region Setup
 
-    public void IntantiateEntity(EntityData data)
-    {
+        protected override void ClearOnSceneChange()
+        {
+            foreach (IPoolInstance instance in _activeEntities) instance.ReleaseToPool();
+            _activeEntities.Clear();
+        }
 
+        protected override void Awake()
+        {
+            base.Awake();
+
+            _pool = CreatePool(_prefab);
+            PrewarmPool(_pool, initialCapacity);
+        }
+
+        private IObjectPool<EntityController> CreatePool(GameObject prefab)
+        {
+            return new ObjectPool<EntityController>(
+                createFunc: () =>
+                {
+                    Transform parent = poolNode != null ? poolNode.transform : transform;
+                    var go = Instantiate(prefab, parent);
+                    return go.GetComponent<EntityController>();
+                },
+                actionOnGet: instance =>
+                {
+                    instance.gameObject.SetActive(true);
+                    _activeEntities.Add(instance);
+                },
+                actionOnRelease: instance =>
+                {
+                    CleanUpEntityBeforeRelease(instance);
+                    instance.gameObject.SetActive(false);
+                    _activeEntities.Remove(instance);
+                },
+                actionOnDestroy: instance =>
+                {
+                    if (instance != null && instance.gameObject != null)
+                        Destroy(instance.gameObject);
+                },
+                collectionCheck: true,
+                defaultCapacity: initialCapacity,
+                maxSize: maxPoolSize
+            );
+        }
+
+        private void PrewarmPool(IObjectPool<EntityController> pool, int amount)
+        {
+            var tempList = new List<EntityController>(amount);
+            for (int i = 0; i < amount; i++) tempList.Add(pool.Get());
+            foreach (var item in tempList) pool.Release(item);
+        }
+
+        #endregion
+
+        #region Public API
+
+        public EntityController GetEntity()
+        {
+            if (_pool == null) return null;
+            return _pool.Get();
+        }
+
+        #endregion
+
+        private void CleanUpEntityBeforeRelease(EntityController entity)
+        {
+            if (entity.hull != null)
+            {
+                Destroy(entity.hull.gameObject);
+                entity.hull = null;
+            }
+            if (entity.Driver != null && entity.Driver is MonoBehaviour driverMb)
+            {
+                Destroy(driverMb);
+                entity.Driver = null;
+            }
+            entity.data = null;
+
+            // Если есть баффы или абилки - их тоже нужно сбросить
+            //entity.abilitiesController?.Clear();
+        }
     }
 }

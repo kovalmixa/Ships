@@ -1,7 +1,7 @@
 using Assets.Handlers.SceneHandlers;
 using UnityEngine;
 
-namespace Entity.Controllers.AI
+namespace AI
 {
     public class Despawn : MonoBehaviour
     {

@@ -30,7 +30,7 @@ namespace Assets.Entity.Hull
         public string Id { get; set; }
         public event Action OnGameObjectDestroyed;
 
-        protected global::Entity.Controllers.EntityController entityController;
+        protected EntityController entityController;
         protected Rigidbody2D rigidBody2D;
 
         #region Editor
@@ -52,17 +52,17 @@ namespace Assets.Entity.Hull
             rigidBody2D = GetComponent<Rigidbody2D>();
         }
 
-        public void Setup(global::Entity.Controllers.EntityController entityController)
+        public void Setup(EntityController entityController)
         {
             this.entityController = entityController;
             var statOptions = Data.statOptions;
             var snapshot = entityController.GetSnapshot();
 
             abilitiesController = new(statOptions.abilities, 
-                entityController.totalAbbilitiesController, _actionDataController, this);
+                entityController.TotalAbbilitiesController, _actionDataController, this);
             OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
 
-            _statModController = new(entityController.statModController, statOptions);
+            _statModController = new(entityController.StatModController, statOptions);
             _statModController.OnChange += () => _actionDataController.MarkDirty();
 
             foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);

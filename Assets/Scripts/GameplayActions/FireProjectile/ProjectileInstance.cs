@@ -1,10 +1,11 @@
-﻿using GameplayActions;
+﻿using Assets.Common.Interfaces;
+using GameplayActions;
 using System;
 using UnityEngine;
 
 namespace Assets.Scripts.Actions.Projectile
 {
-    public class ProjectileInstance : MonoBehaviour
+    public class ProjectileInstance : MonoBehaviour, IPoolInstance
     {
         private readonly GameplayAction[] _onExplosionActions;
         protected Action onReturnToPool;
@@ -96,10 +97,10 @@ namespace Assets.Scripts.Actions.Projectile
                 transform.rotation = Quaternion.Euler(0, 0, angle - 90f);
             }
 
-            transform.position += (Vector3)(direction * (data.speed * deltaTime));
-
+            float step = data.speed * deltaTime;
             float distToTarget = Vector2.Distance(transform.position, targetPosition);
-            if (distToTarget <= 0.2f) TryExplode();
+            transform.position += (Vector3)(direction * step);
+            if (distToTarget <= step || distToTarget <= 0.2f) TryExplode();
         }
 
         #region Explosion
@@ -142,7 +143,7 @@ namespace Assets.Scripts.Actions.Projectile
             }
         }
 
-        protected void ReleaseToPool()
+        public void ReleaseToPool()
         {
             onReturnToPool?.Invoke();
             onReturnToPool = null;

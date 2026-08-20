@@ -34,12 +34,7 @@ namespace Assets.Scripts.Actions.VFX
             _loadingTasks.Clear();
         }
 
-        protected override void Awake()
-        {
-            base.Awake();
-            initialCapacity = 5;
-            maxPoolSize = 50;
-        }
+        protected override void Awake() => base.Awake();
 
         #endregion
 

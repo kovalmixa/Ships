@@ -1,14 +1,14 @@
 using Assets.Entity.AI.Interfaces;
-using Assets.Entity.Controllers.AI;
+using Assets.AI;
 using Assets.Entity.Hull;
-using Assets.Handlers.Enums;
 using Scripts;
 using System.Collections.Generic;
 using UnityEngine;
+using Entity.Controllers;
 
-namespace Entity.Controllers.AI
+namespace AI
 {
-    public class AiController : MonoBehaviour, IAIDriver, IAi
+    public class AiDriverController : MonoBehaviour, IAiDriver, IAi
     {
         private Transform _movePoint;
         private Transform _targetPoint;

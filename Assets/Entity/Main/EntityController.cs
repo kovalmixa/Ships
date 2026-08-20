@@ -7,23 +7,25 @@ using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
-using Entity.Controllers.AI;
+using Assets.Scripts.Markers.Spawner;
+using AI;
 using Scripts;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Entity.Controllers
 {
-    public class EntityController : MonoBehaviour, IObject, IAbbility, IStats
+    public class EntityController : MonoBehaviour, IObject, IAbbility, IStats, IPoolInstance
     {
+        [Header("Settings")]
+        [SerializeField] private bool _isPlayerEntity;
         public EntityData data;
         public EntityAssembler Assembler { get; private set; }
-        public TotalAbbilitiesController totalAbbilitiesController { get; private set; }
-        public StatModController statModController { get; private set; } = new();
+        public TotalAbbilitiesController TotalAbbilitiesController { get; private set; }
+        public StatModController StatModController { get; private set; } = new();
         public BuffStatusesController Buffs { get; private set; }
         public IDriver Driver { get; set; }
-        [SerializeField] private GameObject _despawnPrefab;
         public string Id { get; set; }
         [HideInInspector] public HullBase hull;
 
@@ -34,7 +36,43 @@ namespace Entity.Controllers
             if (hull == null) return;
             Driver?.UpdateControl(this);
         }
+        
+        #region Setup
 
+        private void Awake()
+        {
+            Assembler = new EntityAssembler(this);
+            TotalAbbilitiesController = new(this);
+
+            Id = GameObjectHandler.GenerateUniqueId(name);
+            if (_isPlayerEntity)
+            {
+                Driver = gameObject.AddComponent<PlayerController>();
+                SceneController.Instance.playerController = this;
+                Assembler.onSetHull += (HullBase hull) => {
+                    if (hull != null) CameraController.Instance.Follow(hull.transform);
+                };
+            }
+        }
+
+        public async Task Setup(EntityData data)
+        {
+            if (data == null) return;
+            this.data = data;
+            await Assembler.Build(data);
+        }
+
+        public async Task Setup(NpcData data, IEnumerable<ScriptBase> scripts = null)
+        {
+            if (data == null) return;
+            await Setup(data.entityData);
+
+            Driver = new AiDriverController();
+            (Driver as AiDriverController).Scripts = (Queue<ScriptBase>)scripts;
+        }
+
+        #endregion
+       
         #region IDriver Facade Methods
 
         public bool CanMove { get; set; } = true;
@@ -54,46 +92,9 @@ namespace Entity.Controllers
         {
             if (!CanUseAbilities) return;
             if (action.Category == ActionCategory.Weapon)
-                totalAbbilitiesController.Invoke(targetPosition, (WeaponType)action.ActionId);
+                TotalAbbilitiesController.Invoke(targetPosition, (WeaponType)action.ActionId);
             else if (action.Category == ActionCategory.Ability)
-                totalAbbilitiesController.Invoke(targetPosition, (AbilityType)action.ActionId);
-        }
-
-        #endregion
-
-        #region Setup
-
-        private void Awake()
-        {
-            Assembler = new EntityAssembler(this);
-            totalAbbilitiesController = new(this);
-
-            Id = GameObjectHandler.GenerateUniqueId(name);
-            if (GameObjectHandler.GetAI(this) == null)
-            {
-                Driver = gameObject.AddComponent<PlayerController>();
-                GameObjectHandler.playerController = this;
-                Assembler.onSetHull += (HullBase hull) => {
-                    if (hull != null) CameraController.Instance.Follow(hull.transform);
-                };
-            }
-        }
-
-        public void Setup(EntityData data)
-        {
-            if (data == null) return;
-            this.data = data;
-            Assembler.Build(data);
-        }
-
-        public void SetupAi(params ScriptBase[] scripts)
-        {
-            if (Driver is PlayerController) return;
-            Driver = gameObject.AddComponent<AiController>();
-            if (Driver is AiController aiController)
-            {
-                aiController.Scripts = new Queue<ScriptBase>(scripts);
-            }
+                TotalAbbilitiesController.Invoke(targetPosition, (AbilityType)action.ActionId);
         }
 
         #endregion
@@ -127,6 +128,15 @@ namespace Entity.Controllers
 
         #region Buffs
 
+
+        #endregion
+
+        #region IPoolInstance
+
+        public void ReleaseToPool()
+        {
+
+        }
 
         #endregion
     }

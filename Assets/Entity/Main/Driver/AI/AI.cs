@@ -1,6 +1,6 @@
 using Assets.Entity.AI.Interfaces;
 
-namespace Entity.Controllers.AI
+namespace AI
 {
     public class Ai : IAi
     {

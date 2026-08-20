@@ -4,8 +4,8 @@ namespace Scripts
 {
     public interface IScript
     {
-        bool IsExecuted(Entity.Controllers.EntityController entityController);
-        bool Execute(Entity.Controllers.EntityController entityController);
-        bool IsFinished(Entity.Controllers.EntityController entityController);
+        bool IsExecuted(EntityController entityController);
+        bool Execute(EntityController entityController);
+        bool IsFinished(EntityController entityController);
     }
 }

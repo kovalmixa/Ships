@@ -1,4 +1,5 @@
-﻿using Assets.Handlers.CommonParents;
+﻿using Assets.Common.Interfaces;
+using Assets.Handlers.CommonParents;
 using Assets.Handlers.Enums;
 using Assets.Handlers.FileHandlers;
 using GameplayActions;
@@ -19,9 +20,7 @@ namespace Assets.Scripts.Actions.Projectile
 
         protected override void ClearOnSceneChange()
         {
-            foreach (var pool in _pools.Values) pool.Clear();
-            for (int i = _activeProjectiles.Count - 1; i >= 0; i--)
-                if (_activeProjectiles[i] != null) Destroy(_activeProjectiles[i].gameObject);
+            foreach (IPoolInstance instance in _activeProjectiles) instance.ReleaseToPool();
             _activeProjectiles.Clear();
         }
 

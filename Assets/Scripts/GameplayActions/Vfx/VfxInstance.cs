@@ -1,3 +1,4 @@
+using Assets.Common.Interfaces;
 using Assets.Scripts.GameplayActions.Audio;
 using GameplayActions;
 using System;
@@ -7,7 +8,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Assets.Scripts.Actions.VFX
 {
-    public class VfxInstance : MonoBehaviour
+    public class VfxInstance : MonoBehaviour, IPoolInstance
     {
         [SerializeField] private ParticleSystem[] _particleSystems;
         [SerializeField] private AudioData _audioData;
