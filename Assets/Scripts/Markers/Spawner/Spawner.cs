@@ -2,11 +2,16 @@ using Assets.Entity.Equipment;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using Assets.Scripts.GameplayActions;
-using Assets.Scripts.Markers.Spawner;
 using GameplayActions;
 using Scripts;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Entity;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace EntityMarkers.Spawner
 {
@@ -14,36 +19,50 @@ namespace EntityMarkers.Spawner
     public class Spawner : MonoBehaviour
     {
         [Header("Configuration")]
-        [SerializeField] public NpcData data;
+        [SerializeField] public EntityData data;
+        [SerializeField] private uint _spawnQuantity = 1;
         [SerializeField] private ScriptBase[] _scripts;
 
-        [HideInInspector]
-        [SerializeField] private GameObject _previewInstance;
-
-        private SpriteRenderer _defaultSprite;
-
-        private uint _spawnQuantity;
         private bool _isSpawned = false;
-        private InteractionContext _context = new InteractionContext();
-        private SpawnData _spawnData = new SpawnData();
+        private readonly InteractionContext _context = new InteractionContext();
+        private readonly SpawnData _spawnData = new SpawnData();
+
+        #region Setup
 
         private void Awake()
         {
-            _defaultSprite = GetComponent<SpriteRenderer>();
+#if UNITY_EDITOR
             ClearPreview();
+#endif
 
             _context.SetSource(gameObject);
-            _spawnData.npcData = data;
+            _spawnData.entityData = data;
             _spawnData.scripts = _scripts;
         }
+
+#if UNITY_EDITOR
+        private void OnEnable() => EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+
+        private void OnDisable()
+        {
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+            if (!Application.isPlaying) ClearPreview();
+        }
+
+        private void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.ExitingEditMode) ClearPreview();
+        }
+#endif
+
+        #endregion
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (!Application.isPlaying || _isSpawned) return;
-
             var entityController = GameObjectHandler.GetEntityController(other);
             if (entityController == null || !GameObjectHandler.IsPlayer(entityController)) return;
-            for(int i = 0; i < _spawnQuantity; i++) Spawn(); 
+            for (int i = 0; i < _spawnQuantity; i++) Spawn();
         }
 
         private void Spawn()
@@ -52,48 +71,56 @@ namespace EntityMarkers.Spawner
             _isSpawned = true;
         }
 
-        public void ClearPreview()
-        {
-            if (_previewInstance != null)
-            {
-                DestroyImmediate(_previewInstance);
-                _previewInstance = null;
-            }
-        }
+        #region Editor
 
 #if UNITY_EDITOR
+        public void ClearPreview()
+        {
+            for (int i = transform.childCount - 1; i >= 0; i--)
+            {
+                var child = transform.GetChild(i);
+                if (child != null) DestroyImmediate(child.gameObject);
+            }
+
+            var _defaultSprite = GetComponent<SpriteRenderer>();
+            if (_defaultSprite != null) _defaultSprite.enabled = true;
+        }
+
         public void BuildPreviewInEditor(GameObject hullPrefab, List<GameObject> equipmentPrefabs)
         {
             ClearPreview();
 
             if (hullPrefab == null) return;
 
-            _previewInstance = UnityEditor.PrefabUtility.InstantiatePrefab(hullPrefab, transform) as GameObject;
-            _previewInstance.transform.localPosition = Vector3.zero;
-            _previewInstance.transform.localRotation = Quaternion.identity;
-            _previewInstance.hideFlags = HideFlags.DontSaveInBuild;
+            var previewInstance = Instantiate(hullPrefab, transform);
+            previewInstance.name = hullPrefab.name + " (Preview)";
+            previewInstance.transform.localPosition = Vector3.zero;
+            previewInstance.transform.localRotation = Quaternion.identity;
 
-            var hull = _previewInstance.GetComponent<Assets.Entity.Hull.HullBase>();
-            if (hull == null || equipmentPrefabs == null)
-            {
-                _defaultSprite.enabled = true;
-                return;
-            }
-            _defaultSprite.enabled = false;
+            previewInstance.hideFlags = HideFlags.DontSave;
+
+            var hull = previewInstance.GetComponent<Assets.Entity.Hull.HullBase>();
+            if (hull == null || equipmentPrefabs == null) return;
+
+            var _defaultSprite = GetComponent<SpriteRenderer>();
+            if (_defaultSprite != null) _defaultSprite.enabled = false;
 
             for (int i = 0; i < equipmentPrefabs.Count; i++)
             {
                 var eqPrefab = equipmentPrefabs[i];
                 if (eqPrefab == null) continue;
 
-                var eqInstance = UnityEditor.PrefabUtility.InstantiatePrefab(eqPrefab) as GameObject;
-                var equipment = eqInstance.GetComponentInChildren<Equipment>();
+                var eqInstance = Instantiate(eqPrefab);
+                eqInstance.hideFlags = HideFlags.DontSave;
 
+                var equipment = eqInstance.GetComponentInChildren<Equipment>();
                 if (equipment != null && i < hull.equipmentAnchors.Count)
                     hull.equipmentAnchors[i].Place(equipment);
                 else DestroyImmediate(eqInstance);
             }
         }
 #endif
+
+        #endregion
     }
 }

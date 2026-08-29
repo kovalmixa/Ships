@@ -93,7 +93,7 @@ namespace Assets.Entity.Controllers
                     var initialData = stats.GetInitialData();
                     if (initialData is ISpawnDataProvider spawnProvider)
                     {
-                        spawnData.npcData = spawnProvider.NpcData;
+                        spawnData.entityData = spawnProvider.EntityData;
                         spawnData.scripts = spawnProvider.Scripts;
                         spawnData.offset = spawnProvider.Offset;
                         spawnData.positionMode = spawnProvider.PositionMode;

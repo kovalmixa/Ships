@@ -25,7 +25,7 @@ public class SpawnerEditor : Editor
             spawner.ClearPreview();
             return;
         }
-        var enityData = spawner.data.entityData;
+        var enityData = spawner.data;
         GameObject hullPrefab = InspectorHandler.LoadPrefabById(enityData.hullId);
         List<GameObject> eqPrefabs = new();
 

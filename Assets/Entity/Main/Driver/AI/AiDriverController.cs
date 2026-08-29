@@ -12,7 +12,7 @@ namespace AI
     {
         private Transform _movePoint;
         private Transform _targetPoint;
-        public Queue<ScriptBase> Scripts { get; set; }
+        public Queue<ScriptBase> Scripts { get; set; } = new();
         private IAi ai;
         public void SetAiType(string name) { }
 

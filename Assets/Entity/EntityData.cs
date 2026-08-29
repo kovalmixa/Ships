@@ -15,5 +15,8 @@ namespace Assets.Entity
     {
         public string hullId;
         public List<EquipmentSlotData> equipmentSlots;
+
+        public string fraction;
+        public uint level;
     }
 }

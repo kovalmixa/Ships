@@ -51,8 +51,9 @@ namespace Assets.Handlers.SceneHandlers
 
         public static EntityController GetEntityController(Collider2D other)
         {
+            if (other == null) return null;
             var hull = other.GetComponent<HullBase>();
-            if (hull == null) return null;
+            if (hull == null || hull.root == null) return null;
             return hull.root.GetComponent<EntityController>();
         }
 

@@ -7,7 +7,6 @@ using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
-using Assets.Scripts.Markers.Spawner;
 using AI;
 using Scripts;
 using System.Collections.Generic;
@@ -62,17 +61,19 @@ namespace Entity.Controllers
             await Assembler.Build(data);
         }
 
-        public async Task Setup(NpcData data, IEnumerable<ScriptBase> scripts = null)
+        public async Task Setup(EntityData data, IEnumerable<ScriptBase> scripts = null)
         {
             if (data == null) return;
-            await Setup(data.entityData);
+            await Setup(data);
 
-            Driver = new AiDriverController();
-            (Driver as AiDriverController).Scripts = (Queue<ScriptBase>)scripts;
+            var aiDriver = new AiDriverController();
+            if (scripts != null) aiDriver.Scripts = new Queue<ScriptBase>(scripts);
+            else aiDriver.Scripts = new Queue<ScriptBase>();
+            Driver = aiDriver;
         }
 
         #endregion
-       
+
         #region IDriver Facade Methods
 
         public bool CanMove { get; set; } = true;

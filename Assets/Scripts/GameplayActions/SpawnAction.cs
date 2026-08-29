@@ -1,7 +1,8 @@
 ﻿using Assets.Common;
+using Assets.Entity;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
-using Assets.Scripts.Markers.Spawner;
+using Entity.Controllers;
 using GameplayActions;
 using Scripts;
 using UnityEngine;
@@ -17,7 +18,7 @@ namespace Assets.Scripts.GameplayActions
 
     public interface ISpawnDataProvider
     {
-        NpcData NpcData { get; }
+        EntityData EntityData { get; }
         ScriptBase[] Scripts { get; }
         Vector2 Offset { get; }
         SpawnPositionMode PositionMode { get; }
@@ -26,7 +27,7 @@ namespace Assets.Scripts.GameplayActions
     [System.Serializable]
     public class SpawnData : ActionData
     {
-        public NpcData npcData;
+        public EntityData entityData;
         public ScriptBase[] scripts;
         public Vector2 offset;
         public SpawnPositionMode positionMode = SpawnPositionMode.RelativeToSource;
@@ -36,7 +37,7 @@ namespace Assets.Scripts.GameplayActions
     {
         protected override void ExecuteAction(InteractionContext context, SpawnData data, Vector2 targetPos)
         {
-            if (data == null || data.npcData == null) return;
+            if (data == null || data.entityData == null) return;
 
             Vector2 spawnPosition = CalculateSpawnPosition(context, data, targetPos);
             Quaternion spawnRotation = context.SourceObject != null
@@ -47,8 +48,7 @@ namespace Assets.Scripts.GameplayActions
             if (entityController != null)
             {
                 entityController.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
-                if (entityController != null && data != null) 
-                    entityController.Setup(data.npcData, data.scripts).GetAwaiter().GetResult();
+                InitEntityAsync(entityController, data);
             }
         }
 
@@ -69,6 +69,18 @@ namespace Assets.Scripts.GameplayActions
                 case SpawnPositionMode.AtTargetPoint: return targetPos;
                 case SpawnPositionMode.FixedWorldPos: return data.offset;
                 default: return targetPos;
+            }
+        }
+
+        private async void InitEntityAsync(EntityController entityController, SpawnData data)
+        {
+            try
+            {
+                await entityController.Setup(data.entityData, data.scripts);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[SpawnAction] Ошибка при инициализации сущности: {ex.Message}");
             }
         }
     }
