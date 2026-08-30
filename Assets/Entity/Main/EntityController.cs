@@ -1,3 +1,4 @@
+using AI;
 using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.Entity;
@@ -7,9 +8,9 @@ using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
-using AI;
 using Scripts;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -66,9 +67,8 @@ namespace Entity.Controllers
             if (data == null) return;
             await Setup(data);
 
-            var aiDriver = new AiDriverController();
-            if (scripts != null) aiDriver.Scripts = new Queue<ScriptBase>(scripts);
-            else aiDriver.Scripts = new Queue<ScriptBase>();
+            var aiDriver = gameObject.AddComponent<AiDriverController>();
+            aiDriver.AddScripts(scripts?.ToArray() ?? new ScriptBase[0]);
             Driver = aiDriver;
         }
 

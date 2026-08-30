@@ -17,6 +17,7 @@ namespace Assets.Common
         public float globalUsageDelay;
         public uint charges;
         public bool isPassive;
+        public int animationID;
     }
 
     [System.Serializable]

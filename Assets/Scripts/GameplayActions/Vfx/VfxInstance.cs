@@ -8,8 +8,18 @@ using UnityEngine.Rendering.Universal;
 
 namespace Assets.Scripts.Actions.VFX
 {
+    public class ParticleData
+    {
+        public Color color;
+        public float duration;
+        public float speed;
+        public float quantity;
+        public float size;
+    }
+    
     public class VfxInstance : MonoBehaviour, IPoolInstance
     {
+        [Header("Preset")]
         [SerializeField] private ParticleSystem[] _particleSystems;
         [SerializeField] private AudioData _audioData;
 

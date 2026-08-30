@@ -1,25 +1,43 @@
-using Assets.Entity.AI.Interfaces;
 using Assets.AI;
+using Assets.Entity.AI.Interfaces;
 using Assets.Entity.Hull;
-using Scripts;
-using System.Collections.Generic;
-using UnityEngine;
 using Entity.Controllers;
+using Scripts;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace AI
 {
     public class AiDriverController : MonoBehaviour, IAiDriver, IAi
     {
-        private Transform _movePoint;
-        private Transform _targetPoint;
-        public Queue<ScriptBase> Scripts { get; set; } = new();
+        public Transform MovePoint { get; set; }
+        public Transform TargetPoint { get; set; }
+
+        private Queue<ScriptBase> _scriptQueue = new();
+        private Dictionary<ScriptBase, Action> _activeScripts = new();
         private IAi ai;
+
+        #region Public control tools
+
         public void SetAiType(string name) { }
+
+        public void AddScripts(params ScriptBase[] scripts)
+        {
+            foreach (var script in scripts) _scriptQueue.Enqueue(script);
+        }
+
+        #endregion
+
+        #region Control
 
         public void UpdateControl(EntityController entityController)
         {
             if (!entityController) return;
             ActivateScripts(entityController);
+            TryActivateNextScript(entityController);
+
             MoveControl(entityController);
             RotateControl(entityController);
             AttackControl(entityController);
@@ -27,14 +45,14 @@ namespace AI
 
         private void AttackControl(EntityController entityController)
         {
-            if (_targetPoint == null) return;
+            if (TargetPoint == null) return;
             //entityController.totalAbbilitiesController.Invoke(_targetPoint.position, AbilityType.FirePrimary);
         }
 
         private void RotateControl(EntityController entityController)
         {
-            if (_targetPoint == null) return;
-            entityController.hull.RotateEquipment(_targetPoint.position);
+            if (TargetPoint == null) return;
+            entityController.hull.RotateEquipment(TargetPoint.position);
         }
 
         private void MoveControl(EntityController entityController)
@@ -45,12 +63,12 @@ namespace AI
         private void PointMovement(EntityController entityController)
         {
             HullBase hullBase = entityController.hull;
-            if (_movePoint == null)
+            if (MovePoint == null)
             {
                 hullBase.SetTargetSpeed(Vector2.zero);
                 return;
             }
-            Vector2 directionToPoint = _movePoint.position - hullBase.transform.position;
+            Vector2 directionToPoint = MovePoint.position - hullBase.transform.position;
             float distance = directionToPoint.magnitude;
             if (distance < 3f)
             {
@@ -62,42 +80,48 @@ namespace AI
             float rotationDirection = Mathf.Clamp(angleToTarget / 45f, -1f, 1f);
             hullBase.Movement(rotationDirection);
 
-            if (Mathf.Abs(angleToTarget) < 10f)
-                hullBase.SetTargetSpeed(directionToPoint);
-            else
-                hullBase.SetTargetSpeed(Vector2.zero);
+            if (Mathf.Abs(angleToTarget) < 10f) hullBase.SetTargetSpeed(directionToPoint);
+            else hullBase.SetTargetSpeed(Vector2.zero);
         }
 
-        public void SetupAreaScripts(GameObject[] scriptAreaSets)
-        {
-            throw new System.NotImplementedException();
-        }
+        #endregion
 
-        public void SetupScripts(IScript[] scriptPointSets)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void SetMovementPoint(Transform target) => _movePoint = target;
-
-        public void SetTargetPoint(Transform target) => _targetPoint = target;
+        #region Script handler
 
         private void ActivateScripts(EntityController entityController)
         {
-            if (Scripts.Count == 0) return;
-            if (!IsExecuted(entityController))
+            var activeList = _activeScripts.Keys.ToList();
+
+            foreach (var script in activeList)
             {
-                Scripts.Peek().Execute(entityController);
-                return;
+                script.Execute(entityController);
+                if (script.IsFinished(entityController))
+                {
+                    _activeScripts[script]?.Invoke();
+                    _activeScripts.Remove(script);
+                }
             }
-            if (IsScriptActive(entityController)) return;
-            Scripts.Dequeue();
-            if (Scripts.Count == 0) return;
-            Scripts.Peek().Execute(entityController);
         }
 
-        private bool IsScriptActive(EntityController entityController) => !Scripts.Peek().IsFinished(entityController);
+        private void TryActivateNextScript(EntityController entityController)
+        {
+            if (_scriptQueue.Count == 0) return;
 
-        private bool IsExecuted(EntityController entityController) => Scripts.Peek().IsExecuted(entityController);
+            ScriptBase nextScript = _scriptQueue.Peek();
+            bool isSameTypeActive = _activeScripts.Keys.Any(active => active.GetType() == nextScript.GetType());
+
+            if (!isSameTypeActive)
+            {
+                _scriptQueue.Dequeue();
+                _activeScripts.Add(nextScript, OnScriptCompleted);
+                nextScript.Execute(entityController);
+            }
+        }
+
+        private void OnScriptCompleted()
+        {
+        }
+
+        #endregion
     }
 }

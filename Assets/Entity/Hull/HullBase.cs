@@ -1,77 +1,58 @@
 ﻿using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.DataContainers;
-using Assets.Entity.BuffStatuses;
+using Assets.Entity.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
-using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
 using GameplayActions;
 using Scripts;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Entity.Hull
 {
-    public abstract class HullBase : MonoBehaviour, IHull, IInteractive, IStats, IAbbility, IBuffable
+    public abstract class HullBase : EntityPartBase, IHull
     {
         [field: SerializeField] public HullDataSO Data { get; private set; }
-        [field: SerializeField] public BuffStatusesController Buffs { get; private set; }
 
-        [HideInInspector] public List<EquipmentAnchor> equipmentAnchors;
-        [HideInInspector] public List<Equipment.Equipment> equipments;
+        [HideInInspector] public List<EquipmentAnchor> equipmentAnchors = new();
+        [HideInInspector] public List<Equipment.Equipment> equipments = new();
         [HideInInspector] public Transform root;
         [HideInInspector] public float currentSpeed;
-        public string Id { get; set; }
-        public event Action OnGameObjectDestroyed;
 
-        protected EntityController entityController;
         protected Rigidbody2D rigidBody2D;
 
-        #region Editor
-
-        private void OnValidate()
-        {
-            var statOptions = Data.statOptions;
-            if (statOptions.stats != null) foreach (var stat in statOptions.stats) stat?.UpdateInspectorName();
-            if (statOptions.mods != null)foreach (var mod in statOptions.mods) mod?.UpdateInspectorName();
-        }
-
-        #endregion
+        protected override StatOptions StatOptions => Data.statOptions;
+        protected override StatLayer StatLayer => StatLayer.Hull;
+        public override IDataContainer GetInitialData() => Data;
 
         #region Setup
 
-        private void Awake()
+        protected override void Awake()
         {
-            Id = GameObjectHandler.GenerateUniqueId(name);
+            base.Awake();
             rigidBody2D = GetComponent<Rigidbody2D>();
         }
 
-        public void Setup(EntityController entityController)
+        public override void Setup(EntityController entityController)
         {
-            this.entityController = entityController;
-            var statOptions = Data.statOptions;
-            var snapshot = entityController.GetSnapshot();
+            base.Setup(entityController);
 
-            abilitiesController = new(statOptions.abilities, 
-                entityController.TotalAbbilitiesController, _actionDataController, this);
+            abilitiesController = new AbilitiesController(
+                StatOptions.abilities,
+                entityController.TotalAbbilitiesController,
+                _actionDataController,
+                this
+            );
             OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
 
-            _statModController = new(entityController.StatModController, statOptions);
-            _statModController.OnChange += () => _actionDataController.MarkDirty();
-
-            foreach (var buff in statOptions.buffs) entityController.Buffs.AddBuff(buff, snapshot);
-
             CollectAnchors(transform);
-            //Debug.Log(RuntimeAbilities.Count);
         }
-
-        private void OnDestroy() => OnGameObjectDestroyed?.Invoke();
 
         private void CollectAnchors(Transform parent)
         {
@@ -89,12 +70,12 @@ namespace Assets.Entity.Hull
         #region Movement
 
         public void RotateEquipment(Vector3 target)
-        { foreach (var eq in equipments) eq.GetComponent<Equipment.Equipment>().Rotate(target); }
+        {
+            foreach (var eq in equipments) eq.Rotate(target);
+        }
 
         public abstract void AddSpeed(bool isAddition);
-
         public abstract void SetTargetSpeed(Vector2 directionToPoint);
-
         public abstract void Movement(float rotationDirection);
 
         #endregion
@@ -116,76 +97,26 @@ namespace Assets.Entity.Hull
         {
             Rigidbody2D otherRb = collision.rigidbody;
             if (otherRb == null) return;
+
             if (collision.gameObject.layer != LayerMask.NameToLayer(Data.general.Layer.ToString())
                 && collision.gameObject.layer != LayerMask.NameToLayer("Markers"))
             {
                 currentSpeed = 0;
                 return;
             }
+
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             Vector2 pushDirection = (rb.position - otherRb.position).normalized;
-            float totalMass = rb.mass + otherRb.mass; // Общая масса двух объектов
-            float impulse = currentSpeed * rb.mass * 0.1f;  // Импульс игрока
+            float totalMass = rb.mass + otherRb.mass;
+            float impulse = currentSpeed * rb.mass * 0.1f;
 
-            // Передаем часть импульса другому объекту
             otherRb.AddForce(-pushDirection * (impulse * (rb.mass / totalMass)), ForceMode2D.Impulse);
-
-            //Теряет скорость пропорционально массе другого объекта
             currentSpeed *= otherRb.mass / totalMass;
         }
 
         #endregion
 
-        #region IInteractive
-
-        public LayerType Layer => (LayerType)gameObject.layer;
-        public GameObject GameObject => gameObject;
-
-        public void AddBuff(InteractionContext context, BuffStatus buff)
-        {
-            if (buff == null) return;
-            if (buff.Scope == BuffScope.Global) entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
-            else Buffs.AddBuff(buff, context.SourceSnapshot);
-        }
-
-        public void TakeDamage(InteractionContext context, DamageData data)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void TakeHeal(InteractionContext context, HealData data)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        #endregion
-
-        #region IStats
-
-        [SerializeField] private StatModController _statModController;
-
-        private const StatLayer _statLayer = StatLayer.Hull;
-
-        public float GetLifetimeStat(StatType type) => _statModController.GetStat(type, _statLayer);
-        public IDataContainer GetInitialData() => Data;
-
-        #endregion
-
-        #region IAbbility
-        public AbilitiesController abilitiesController;
-        public IReadOnlyList<AbilityUnit> RuntimeAbilities => abilitiesController.RuntimeAbilities;
-        private readonly ActionDataController _actionDataController = new();
-
-        public void AddAbility(AbilityUnit ability) => abilitiesController.AddAbility(ability);
-
-        public bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
-
-        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit) {
-            if (abilitiesController.TryActivate(targetPos, abilityUnit)) ;
-                //EventBrocker.Raise(new EntityInteractionEvent(context));
-        }
-
-        public EntitySnapshot GetSnapshot() => entityController.GetSnapshot();
+        #region IAbbility Implementation
 
         #endregion
     }

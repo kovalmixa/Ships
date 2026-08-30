@@ -5,6 +5,7 @@ using Assets.Scripts.Actions;
 using Entity.Controllers;
 using GameplayActions;
 using Scripts;
+using System;
 using UnityEngine;
 
 namespace Assets.Scripts.GameplayActions
@@ -38,6 +39,7 @@ namespace Assets.Scripts.GameplayActions
         protected override void ExecuteAction(InteractionContext context, SpawnData data, Vector2 targetPos)
         {
             if (data == null || data.entityData == null) return;
+            if (!ValidateEntityData(data.entityData)) return;
 
             Vector2 spawnPosition = CalculateSpawnPosition(context, data, targetPos);
             Quaternion spawnRotation = context.SourceObject != null
@@ -50,6 +52,11 @@ namespace Assets.Scripts.GameplayActions
                 entityController.transform.SetPositionAndRotation(spawnPosition, spawnRotation);
                 InitEntityAsync(entityController, data);
             }
+        }
+
+        private bool ValidateEntityData(EntityData entityData)
+        {
+            return entityData.hullId != String.Empty;
         }
 
         protected override void ExecuteAction(InteractionContext context, SpawnData data, IInteractive target)

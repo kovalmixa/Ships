@@ -15,7 +15,7 @@ namespace Scripts
             var ai = GameObjectHandler.GetAI(entityController);
             if (ai != null)
             {
-                ai.SetMovementPoint(Target);
+                ai.MovePoint = Target;
                 isExecuted = true;
                 return true;
             }
@@ -30,6 +30,7 @@ namespace Scripts
             if (area) return Vector3.Distance(entityController.transform.position, Target.position) < area.radius + threshold;
             return Vector3.Distance(entityController.transform.position, Target.position) < threshold;
         }
+
         #if UNITYEDITOR
                 private void OnDrawGizmos()
                 {
