@@ -1,5 +1,6 @@
 using Assets.Common.Interfaces;
 using Assets.Handlers.CommonParents;
+using Cysharp.Threading.Tasks;
 using Entity.Controllers;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,10 +18,23 @@ namespace Assets.Handlers.SceneHandlers
 
         #region Setup
 
-        protected override void ClearOnSceneChange()
+        protected override async UniTask ClearOnSceneChangeAsync()
         {
-            foreach (IPoolInstance instance in _activeEntities) instance.ReleaseToPool();
-            _activeEntities.Clear();
+            isClearing = true;
+            try
+            {
+                var targetsToRelease = _activeEntities.ToArray();
+                for (int i = 0; i < targetsToRelease.Length; i++)
+                {
+                    if (targetsToRelease[i] != null) _pool.Release(targetsToRelease[i]);
+                    if (IsIndexOverClearDelay(i)) await UniTask.Yield();
+                }
+                _activeEntities.Clear();
+            }
+            finally
+            {
+                isClearing = false;
+            }
         }
 
         protected override void Awake()
@@ -75,7 +89,7 @@ namespace Assets.Handlers.SceneHandlers
 
         public EntityController GetEntity()
         {
-            if (_pool == null) return null;
+            if (_pool == null || isClearing) return null;
             return _pool.Get();
         }
 

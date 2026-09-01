@@ -8,6 +8,7 @@ namespace Assets.Entity.Equipment
     public class EquipmentAnchor : MonoBehaviour
     {
         public int index;
+        public string sortingLayer;
 
         public EquipmentType equipmentType = EquipmentType.None;
         public ProjectileType projectileType = ProjectileType.None;
@@ -40,7 +41,7 @@ namespace Assets.Entity.Equipment
             eqTransform.SetPositionAndRotation(transform.position, transform.rotation);
             eqTransform.localScale = scale;
             equipment.EquipmentAnchor = this;
-            GameObjectHandler.SetRenderLayerOrder(gameObject, orderLayer);
+            GameObjectHandler.SetRenderLayerOrder(gameObject, sortingLayer, orderLayer);
             _isPlaced = true;
         }
 

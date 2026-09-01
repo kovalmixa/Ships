@@ -1,7 +1,7 @@
 using Assets.Handlers.CommonParents;
 using Assets.Handlers.FileHandlers;
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -11,11 +11,11 @@ namespace Assets.Scripts.Actions.VFX
     {
         None = 0,
         //Bullet
-        bulletLaunch = 1, 
-        bulletMetalHit = 2, 
-        bulletGroundHit = 3, 
-        bulletWaterHit = 4, 
-        bulletFlashHit = 5, 
+        bulletLaunch = 1,
+        bulletMetalHit = 2,
+        bulletGroundHit = 3,
+        bulletWaterHit = 4,
+        bulletFlashHit = 5,
         bulletExplosion = 6,
         //...
     }
@@ -23,24 +23,48 @@ namespace Assets.Scripts.Actions.VFX
     public class VfxController : SingletonPoolHandler<VfxController, VfxInstance>
     {
         private readonly Dictionary<VfxType, IObjectPool<VfxInstance>> _pools = new();
-        private readonly Dictionary<VfxType, Task<IObjectPool<VfxInstance>>> _loadingTasks = new();
+        private readonly Dictionary<VfxType, UniTask<IObjectPool<VfxInstance>>> _loadingTasks = new();
+        private readonly List<VfxInstance> _activeVfx = new();
+
+        private bool _isClearing;
 
         #region Setup
 
-        protected override void ClearOnSceneChange()
+        protected override async UniTask ClearOnSceneChangeAsync()
         {
-            foreach (var pool in _pools.Values) pool.Clear();
-            _pools.Clear();
-            _loadingTasks.Clear();
+            _isClearing = true;
+
+            try
+            {
+                var targetsToRelease = _activeVfx.ToArray();
+                for (int i = 0; i < targetsToRelease.Length; i++)
+                {
+                    VfxInstance instance = targetsToRelease[i];
+                    if (instance != null && instance.gameObject.activeSelf)
+                        instance.gameObject.SetActive(false);
+                    if (IsIndexOverClearDelay(i)) await UniTask.Yield();
+                }
+                _activeVfx.Clear();
+            }
+            finally
+            {
+                _isClearing = false;
+            }
         }
 
         protected override void Awake() => base.Awake();
 
         #endregion
 
-        public async void PlayEffect(InteractionContext context, VfxType type, Vector3 position, Quaternion rotation)
+        public void PlayEffect(InteractionContext context, VfxType type, Vector3 position, Quaternion rotation)
         {
-            if (type == VfxType.None) return;
+            PlayEffectAsync(context, type, position, rotation).Forget();
+        }
+
+        private async UniTaskVoid PlayEffectAsync(InteractionContext context, VfxType type, Vector3 position, Quaternion rotation)
+        {
+            if (_isClearing || type == VfxType.None) return;
+
             if (!_pools.TryGetValue(type, out var pool))
             {
                 if (!_loadingTasks.TryGetValue(type, out var loadTask))
@@ -52,20 +76,26 @@ namespace Assets.Scripts.Actions.VFX
                 pool = await loadTask;
                 _loadingTasks.Remove(type);
 
-                if (pool == null) return;
+                if (_isClearing || pool == null) return;
                 _pools[type] = pool;
             }
+
+            if (_isClearing) return;
 
             VfxInstance instance = pool.Get();
             instance.Play(
                 context,
                 position,
                 rotation,
-                onRelease: () => pool.Release(instance)
+                onRelease: () =>
+                {
+                    if (instance != null && instance.gameObject != null)
+                        pool.Release(instance);
+                }
             );
         }
 
-        private async Task<IObjectPool<VfxInstance>> CreatePoolAsync(VfxType type)
+        private async UniTask<IObjectPool<VfxInstance>> CreatePoolAsync(VfxType type)
         {
             var typeName = type.ToString();
             var id = char.ToLower(typeName[0]) + typeName.Substring(1);
@@ -85,11 +115,20 @@ namespace Assets.Scripts.Actions.VFX
                     go.SetActive(false);
                     return go.GetComponent<VfxInstance>();
                 },
-                actionOnGet: instance => { },
-                actionOnRelease: instance => instance.gameObject.SetActive(false),
+                actionOnGet: instance =>
+                {
+                    instance.gameObject.SetActive(true);
+                    _activeVfx.Add(instance);
+                },
+                actionOnRelease: instance =>
+                {
+                    instance.gameObject.SetActive(false);
+                    _activeVfx.Remove(instance);
+                },
                 actionOnDestroy: instance =>
                 {
-                    if (instance != null && instance.gameObject != null) Destroy(instance.gameObject);
+                    if (instance != null && instance.gameObject != null) 
+                        Destroy(instance.gameObject);
                 },
                 collectionCheck: true,
                 defaultCapacity: initialCapacity,

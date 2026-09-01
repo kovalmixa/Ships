@@ -7,6 +7,8 @@ using UnityEngine;
 
 namespace Assets.Common
 {
+    public enum LayerPositioning { Bottom, Top, Toppest }
+
     [Serializable]
     public struct AbilityUnit
     {
@@ -18,6 +20,7 @@ namespace Assets.Common
         public uint charges;
         public bool isPassive;
         public int animationID;
+        public LayerPositioning drawLayerPositioning;
     }
 
     [System.Serializable]

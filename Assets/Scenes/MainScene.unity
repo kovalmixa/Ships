@@ -133,12 +133,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 404449013754530913, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1595710537326669728, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: Target
       value: 
       objectReference: {fileID: 441779388}
+    - target: {fileID: 2019343180243880329, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
+      propertyPath: m_SortingLayer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2019343180243880329, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1941594299
+      objectReference: {fileID: 0}
     - target: {fileID: 6326538263517037327, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.1
@@ -305,12 +313,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 404449013754530913, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1595710537326669728, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: Target
       value: 
       objectReference: {fileID: 1321164348}
+    - target: {fileID: 2019343180243880329, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
+      propertyPath: m_SortingLayer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2019343180243880329, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1941594299
+      objectReference: {fileID: 0}
     - target: {fileID: 6326538263517037327, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: m_LocalPosition.x
       value: 10.7
@@ -409,7 +425,7 @@ GameObject:
   - component: {fileID: 686259445}
   - component: {fileID: 686259447}
   - component: {fileID: 686259446}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Tilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -475,9 +491,9 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingLayerID: -2095845681
+  m_SortingLayer: 7
+  m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -1778,12 +1794,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 404449013754530913, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 1595710537326669728, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: Target
       value: 
       objectReference: {fileID: 14743001}
+    - target: {fileID: 2019343180243880329, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
+      propertyPath: m_SortingLayer
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 2019343180243880329, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1941594299
+      objectReference: {fileID: 0}
     - target: {fileID: 6326538263517037327, guid: f1466d77170ee5545b0c2620cafa4c63, type: 3}
       propertyPath: m_LocalPosition.x
       value: -11.3
@@ -1933,9 +1957,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ship
       objectReference: {fileID: 0}
+    - target: {fileID: 1135077420047393352, guid: 4e08591d3d572a0429353b2f28b3f06a, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2155248591020735349, guid: 4e08591d3d572a0429353b2f28b3f06a, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6934366918790761403, guid: 4e08591d3d572a0429353b2f28b3f06a, type: 3}
       propertyPath: data.hullId

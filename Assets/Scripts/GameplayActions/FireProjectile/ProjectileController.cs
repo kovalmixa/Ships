@@ -2,6 +2,7 @@
 using Assets.Handlers.CommonParents;
 using Assets.Handlers.Enums;
 using Assets.Handlers.FileHandlers;
+using Cysharp.Threading.Tasks;
 using GameplayActions;
 using System;
 using System.Collections.Generic;
@@ -18,10 +19,24 @@ namespace Assets.Scripts.Actions.Projectile
 
         #region Setup
 
-        protected override void ClearOnSceneChange()
+        protected override async UniTask ClearOnSceneChangeAsync()
         {
-            foreach (IPoolInstance instance in _activeProjectiles) instance.ReleaseToPool();
-            _activeProjectiles.Clear();
+            isClearing = true;
+            try
+            {
+                var targetsToRelease = _activeProjectiles.ToArray();
+                for (int i = 0; i < targetsToRelease.Length; i++)
+                {
+                    IPoolInstance instance = targetsToRelease[i];
+                    instance?.ReleaseToPool();
+                    if (IsIndexOverClearDelay(i)) await UniTask.Yield();
+                }
+                _activeProjectiles.Clear();
+            }
+            finally
+            {
+                isClearing = false;
+            }
         }
 
         async protected override void Awake()
@@ -89,6 +104,12 @@ namespace Assets.Scripts.Actions.Projectile
 
         public void Launch(InteractionContext interactionContext, ProjectileData data, Vector2 targetPosition)
         {
+            if (isClearing)
+            {
+                Debug.LogWarning("[ProjectileController] Launch skipped: scene cleanup is in progress.");
+                return;
+            }
+
             if (!_pools.TryGetValue(data.type, out var pool)) return;
             ProjectileInstance instance = pool.Get();
             instance.Setup(
@@ -101,8 +122,11 @@ namespace Assets.Scripts.Actions.Projectile
 
         private void Update()
         {
+            if (isClearing) return;
+
             float dt = Time.deltaTime;
-            for (int i = _activeProjectiles.Count - 1; i >= 0; i--) _activeProjectiles[i].Tick(dt);
+            for (int i = _activeProjectiles.Count - 1; i >= 0; i--)
+                _activeProjectiles[i].Tick(dt);
         }
     }
 }

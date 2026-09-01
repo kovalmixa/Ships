@@ -152,6 +152,7 @@ namespace Assets.Entity.Equipment
 
             for (int i = 0; i < abilities.Count; i++)
             {
+                // make an eclusion for aviation
                 if (i >= _abilityNodes.Count || _abilityNodes[i] == null)
                 {
                     Debug.LogWarning($"[{name}] No Transform node assigned for ability #{i} in the Ability Nodes array.");

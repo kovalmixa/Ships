@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -19,7 +20,7 @@ namespace Assets.Handlers.SceneHandlers
         [Header("Save / Load Settings")]
         public string fileName;
 
-        public static event Action OnBeforeSceneLoad;
+        public static event Func<UniTask> OnBeforeSceneLoad;
 
         #region Unity Lifecycle
 
@@ -47,7 +48,14 @@ namespace Assets.Handlers.SceneHandlers
                 return;
             }
 
-            OnBeforeSceneLoad?.Invoke();
+            if (OnBeforeSceneLoad != null)
+            {
+                var tasks = OnBeforeSceneLoad.GetInvocationList()
+                    .Cast<Func<UniTask>>()
+                    .Select(subscriber => subscriber.Invoke());
+
+                await UniTask.WhenAll(tasks);
+            }
 
             AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(locationName, LoadSceneMode.Single);
             while (!asyncLoad.isDone) await UniTask.Yield();
@@ -114,8 +122,7 @@ namespace Assets.Handlers.SceneHandlers
             if (node == null)
             {
                 Transform dontDestroy = GameObject.Find("DontDestroyOnLoad")?.transform;
-                if (dontDestroy != null)
-                    node = dontDestroy.GetComponentInChildren<T>(true);
+                if (dontDestroy != null) node = dontDestroy.GetComponentInChildren<T>(true);
             }
 
             return node;

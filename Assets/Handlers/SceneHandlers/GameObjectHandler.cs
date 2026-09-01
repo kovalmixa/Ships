@@ -10,10 +10,16 @@ namespace Assets.Handlers.SceneHandlers
 {
     public static class GameObjectHandler
     {
-        public static void SetRenderLayerOrder(GameObject parent, int value)
+        #region Monobehavior nodes
+
+        public static void SetRenderLayerOrder(GameObject parent, string layerName, int orderOffset)
         {
-            var renderers = parent.GetComponentsInChildren<SpriteRenderer>();
-            foreach (var spriteRenderer in renderers) spriteRenderer.sortingOrder += value;
+            var renderers = parent.GetComponentsInChildren<SpriteRenderer>(true);
+            foreach (var spriteRenderer in renderers)
+            {
+                spriteRenderer.sortingLayerName = layerName;
+                spriteRenderer.sortingOrder += orderOffset;
+            }
         }
 
         public static GameObject Clone(GameObject main)
@@ -46,6 +52,8 @@ namespace Assets.Handlers.SceneHandlers
                 GameObject.Destroy(component);
             }
         }
+
+        #endregion
 
         #region Entity controller
 

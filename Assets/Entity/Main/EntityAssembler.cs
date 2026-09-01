@@ -1,4 +1,5 @@
-﻿using Assets.Entity.Hull;
+﻿using Assets.Entity.Equipment;
+using Assets.Entity.Hull;
 using Assets.Handlers.FileHandlers;
 using Assets.Handlers.SceneHandlers;
 using Entity.Controllers;
@@ -22,28 +23,9 @@ namespace Assets.Entity.Controllers
 
             _entity.data = data;
             if (!await SetHull(data.hullId)) return false;
+            SetSortingLayersToAnchors(data);
+            SetEquipments(data);
 
-            for (int i = data.equipmentSlots.Count - 1; i >= 0; i--)
-            {
-                var slot = data.equipmentSlots[i];
-                bool isSuccess = false;
-
-                var equipmentObj = await PrefabLoader.Instance.InstantiatePrefabAsync(
-                    slot.equipmentId,
-                    Vector3.zero,
-                    Quaternion.identity);
-                if (equipmentObj == null) data.equipmentSlots.Remove(slot);
-                else
-                {
-                    while (AddEquipment(equipmentObj, slot.number)) isSuccess = true;
-                    if (!isSuccess)
-                    {
-                        data.equipmentSlots.Remove(slot);
-                        // code for placing it to inventory if unsuccessful
-                    }
-                    GameObject.DestroyImmediate(equipmentObj);
-                }
-            }
             return true;
         }
 
@@ -65,6 +47,44 @@ namespace Assets.Entity.Controllers
             hull.Setup(_entity);
             onSetHull?.Invoke(hull);
             return true;
+        }
+        
+        private void SetSortingLayersToAnchors(EntityData data)
+        {
+            var renderers = _entity.hull.GetComponentsInChildren<SpriteRenderer>();
+            if (renderers == null || renderers.Length == 0)
+                Debug.LogWarning("There are no sprites on hull. Unable to get sorting layer");
+            else
+            {
+                var layerName = renderers[0].sortingLayerName;
+                var anchors = _entity.hull.GetComponentsInChildren<EquipmentAnchor>();
+                foreach (var anchor in anchors) anchor.sortingLayer = layerName;
+            }
+        }
+
+        private async void SetEquipments(EntityData data)
+        {
+            for (int i = data.equipmentSlots.Count - 1; i >= 0; i--)
+            {
+                var slot = data.equipmentSlots[i];
+                bool isSuccess = false;
+
+                var equipmentObj = await PrefabLoader.Instance.InstantiatePrefabAsync(
+                    slot.equipmentId,
+                    Vector3.zero,
+                    Quaternion.identity);
+                if (equipmentObj == null) data.equipmentSlots.Remove(slot);
+                else
+                {
+                    while (AddEquipment(equipmentObj, slot.number)) isSuccess = true;
+                    if (!isSuccess)
+                    {
+                        data.equipmentSlots.Remove(slot);
+                        // code for placing it to inventory if unsuccessful
+                    }
+                    GameObject.DestroyImmediate(equipmentObj);
+                }
+            }
         }
 
         public bool AddEquipment(GameObject eqObj, int index)

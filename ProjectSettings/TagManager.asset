@@ -41,5 +41,56 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Underwater_Terrain
+    uniqueID: 2224307891
+    locked: 0
+  - name: Underwater_Decals
+    uniqueID: 3008393307
+    locked: 0
+  - name: Underwater_Decoration
+    uniqueID: 952792045
+    locked: 0
+  - name: Underwater_World
+    uniqueID: 3504121035
+    locked: 0
+  - name: Underwater_Effects
+    uniqueID: 938965897
+    locked: 0
+  - name: Water
+    uniqueID: 1414025153
+    locked: 0
+  - name: Terrain
+    uniqueID: 2199121615
+    locked: 0
+  - name: Decals_Terrain
+    uniqueID: 3437960475
+    locked: 0
+  - name: Decoration_Bottom
+    uniqueID: 3873502237
+    locked: 0
+  - name: Ground_World
+    uniqueID: 138808533
+    locked: 0
+  - name: Ground_Effects
+    uniqueID: 2151034147
+    locked: 0
+  - name: Decoration_Top
+    uniqueID: 2172334137
+    locked: 0
+  - name: Air_World
+    uniqueID: 352733315
+    locked: 0
+  - name: Air_Effects
+    uniqueID: 2386517599
+    locked: 0
+  - name: Weather_Clouds
+    uniqueID: 3408098101
+    locked: 0
+  - name: UI
+    uniqueID: 3875462443
+    locked: 0
+  - name: Scripts
+    uniqueID: 1941594299
+    locked: 0
   m_RenderingLayers:
   - Default
