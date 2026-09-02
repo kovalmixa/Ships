@@ -29,7 +29,8 @@ namespace Assets.Handlers.SceneHandlers
         {
             await WindowManager.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
             await UniTask.Yield(PlayerLoopTiming.Update);
-            await WindowManager.Instance.OpenWindowIndependent(_mainMenuSceneName, 0, freezeTime: true);
+
+            await WindowManager.Instance.OpenTab(_mainMenuSceneName, delayMs: 0, freezeTime: true);
             await WindowManager.Instance.CloseWindowIndependent(_loadingScreenWindowName);
         }
 
@@ -69,10 +70,11 @@ namespace Assets.Handlers.SceneHandlers
 
                 sceneLoadOperation.allowSceneActivation = true;
                 await sceneLoadOperation.WithCancellation(token);
+
                 await InvokeAsyncEvent(OnAfterSceneLoad);
 
                 if (loadingWindow != null) loadingWindow.UpdateProgress(1f);
-                await UniTask.Delay(200, ignoreTimeScale: true, cancellationToken: token);
+                await UniTask.Delay(100, ignoreTimeScale: true, cancellationToken: token);
             }
             catch (Exception ex)
             {
@@ -81,7 +83,6 @@ namespace Assets.Handlers.SceneHandlers
             finally
             {
                 await WindowManager.Instance.CloseWindowIndependent(_loadingScreenWindowName);
-                Debug.Log("[SceneController] Loading screen closed.");
             }
         }
 

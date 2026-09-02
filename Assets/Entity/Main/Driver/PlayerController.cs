@@ -29,6 +29,7 @@ namespace Entity.Controllers
     {
         private bool _isInputBlocked = false;
         private CameraController _cameraController;
+        private EntityController _entityController;
 
         public CameraController CameraController
         {
@@ -57,6 +58,8 @@ namespace Entity.Controllers
             GUIHandler.OnInputBlockedStateChanged += OnGUIBlocked;
         }
 
+        public void Setup(EntityController entityController) => _entityController = entityController;
+
         private void OnDestroy()
         {
             GUIHandler.OnInputBlockedStateChanged -= OnGUIBlocked;
@@ -64,20 +67,20 @@ namespace Entity.Controllers
 
         private void OnGUIBlocked(bool isBlocked) => _isInputBlocked = isBlocked;
 
-        public void UpdateControl(EntityController controller)
+        public void UpdateControl()
         {
-            if (!controller) return;
+            if (!_entityController) return;
             Vector2 worldPos = CameraController.CursorPosition;
             CameraControl();
 
             if (_isInputBlocked)
             {
-                controller.Move(0, 0);
+                _entityController.Move(0, 0);
                 return;
             }
-            MoveControl(controller);
-            controller.AimAt(worldPos);
-            ActionControls(controller, worldPos);
+            MoveControl();
+            _entityController.AimAt(worldPos);
+            ActionControls(worldPos);
         }
 
         private void CameraControl()
@@ -87,7 +90,7 @@ namespace Entity.Controllers
             CameraController.ManualMove(Input.GetMouseButtonDown(2), Input.GetMouseButton(2));
         }
 
-        private void MoveControl(EntityController controller)
+        private void MoveControl()
         {
             float rotationInput = 0f;
             float accel = 0f;
@@ -98,10 +101,10 @@ namespace Entity.Controllers
                 else if (Input.GetKeyDown(KeyCode.S)) accel = -1f;
                 rotationInput = -Input.GetAxis("Horizontal");
             }
-            controller.Move(accel, rotationInput);
+            _entityController.Move(accel, rotationInput);
         }
 
-        private void ActionControls(EntityController controller, Vector2 targetPos)
+        private void ActionControls(Vector2 targetPos)
         {
             if (_isInputBlocked) return;
             foreach (var entry in _keyBinds)
@@ -110,7 +113,7 @@ namespace Entity.Controllers
                     : entry.Key == KeyCode.Mouse1 ? Input.GetMouseButton(1)
                     : Input.GetKey(entry.Key);
 
-                if (isPressed) controller.ExecuteAction(entry.Value, targetPos);
+                if (isPressed) _entityController.ExecuteAction(entry.Value, targetPos);
             }
         }
     }

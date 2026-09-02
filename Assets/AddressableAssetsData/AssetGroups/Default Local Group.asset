@@ -30,6 +30,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 595034be9ad0a264d884dc06d63224ae
+    m_Address: CommandLine
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9dbbf89edadbe8848be3f5b726ba64d8
     m_Address: none_boat
     m_ReadOnly: 0
@@ -52,11 +57,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: fc6ef3b868d734e4e8e3ffb8a1bbfad0
     m_Address: MainMenu
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: fd67ff3ac5219424f9fce8b090c904c3
-    m_Address: CommandLine
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

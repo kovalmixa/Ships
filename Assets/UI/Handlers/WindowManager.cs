@@ -36,24 +36,41 @@ namespace Assets.Handlers.SceneHandlers
             return null;
         }
 
+        public async UniTask SwitchWindow(string windowId, bool isTab)
+        {
+            var window = GetWindow(windowId);
+            if (window == null || !window.IsOpen)
+            {
+                if (isTab) await OpenTab(windowId);
+                else await OpenWindowIndependent(windowId);
+                return;
+            }
+            if (isTab) await CloseTab(windowId);
+            else await CloseWindowIndependent(windowId);
+        }
+
         #region Tabs logic
 
         public async UniTask OpenTab(string windowId, int delayMs = 0, bool freezeTime = false, Action onComplete = null)
         {
             if (_currentActiveTabId == windowId && _currentActiveTab != null && _currentActiveTab.IsOpen) return;
 
-            var tasks = new List<UniTask>();
-            if (_currentActiveTab != null) tasks.Add(CloseWindowInternal(_currentActiveTabId, unfreezeTime: false));
+            if (_currentActiveTab != null) await CloseWindowInternal(_currentActiveTabId, unfreezeTime: false);
 
             SetTimeScale(freezeTime);
-            tasks.Add(OpenWindowInternal(windowId, delayMs, onComplete));
-            await UniTask.WhenAll(tasks);
+            await OpenWindowInternal(windowId, delayMs, onComplete);
 
             if (_activeWindows.TryGetValue(windowId, out UIWindow newTab))
             {
                 _currentActiveTab = newTab;
                 _currentActiveTabId = windowId;
             }
+        }
+
+        public async UniTask CloseTab(string windowId, bool unfreezeTime = true, Action onComplete = null)
+        {
+            if (_currentActiveTabId == windowId || _activeWindows.ContainsKey(windowId))
+                await CloseWindowInternal(windowId, unfreezeTime, onComplete);
         }
 
         #endregion

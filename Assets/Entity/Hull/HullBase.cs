@@ -5,7 +5,6 @@ using Assets.Entity.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
 using Assets.Entity.Modifiers;
-using Assets.Handlers.SceneHandlers;
 using Entity.Controllers;
 using Scripts;
 using System.Collections.Generic;

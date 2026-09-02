@@ -21,7 +21,7 @@ namespace Assets.Entity.Controllers
 
     public class StatModController : ICrud, IDirty
     {
-        private Dictionary<(StatType Type, StatLayer Layer), float> _baseStats = new();
+        private readonly Dictionary<(StatType Type, StatLayer Layer), float> _baseStats = new();
 
         private readonly Dictionary<(StatType Type, StatLayer Layer), float> _cachedCombinedStats = new();
 
@@ -30,10 +30,6 @@ namespace Assets.Entity.Controllers
 
         private readonly List<Modifiers.Modifiers> _externalModifiers = new();
         private readonly StatModController _totalController;
-
-        public event Action OnChange;
-        public event Action OnDelete;
-        public event Action OnInsert;
 
         public StatModController() { }
 
@@ -48,7 +44,7 @@ namespace Assets.Entity.Controllers
             if (statOptions.mods != null) _localModifiers.Add(statOptions.mods);
 
             _totalController.RegisterExternalModifiers(_localModifiers);
-
+            OnChange?.Invoke();
             _isDirty = true;
         }
 
@@ -57,6 +53,7 @@ namespace Assets.Entity.Controllers
             if (mods == null || _externalModifiers.Contains(mods)) return;
 
             _externalModifiers.Add(mods);
+            OnChange?.Invoke();
             _isDirty = true;
         }
 
@@ -64,6 +61,7 @@ namespace Assets.Entity.Controllers
         {
             if (mods == null) return;
             _externalModifiers.Remove(mods);
+            OnChange?.Invoke();
             _isDirty = true;
         }
 
@@ -103,6 +101,14 @@ namespace Assets.Entity.Controllers
         public bool IsDirty => _isDirty;
 
         public void MarkDirty() => _isDirty = true;
+
+        #endregion
+
+        #region ICrud
+
+        public event Action OnChange;
+        public event Action OnDelete;
+        public event Action OnInsert;
 
         #endregion
     }

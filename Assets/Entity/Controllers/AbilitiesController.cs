@@ -24,10 +24,6 @@ namespace Assets.Entity.Controllers
         protected readonly ActionDataController actionDataController;
         protected readonly IAbbility source;
 
-        public event Action OnChange;
-        public event Action OnDelete;
-        public event Action OnInsert;
-
         public AbilitiesController(IEnumerable<AbilityUnit> setupAbilities, TotalAbbilitiesController totalAbbilities,
             ActionDataController actionDataController, IAbbility source)
         {
@@ -131,6 +127,14 @@ namespace Assets.Entity.Controllers
         public bool IsDirty => _isDirty;
 
         public void MarkDirty() => _isDirty = true;
+
+        #endregion
+
+        #region ICrud
+
+        public event Action OnChange;
+        public event Action OnDelete;
+        public event Action OnInsert;
 
         #endregion
     }

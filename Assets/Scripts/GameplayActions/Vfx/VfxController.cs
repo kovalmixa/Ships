@@ -1,7 +1,8 @@
+using System;
+using System.Collections.Generic;
 using Assets.Handlers.CommonParents;
 using Assets.Handlers.FileHandlers;
 using Cysharp.Threading.Tasks;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -25,13 +26,12 @@ namespace Assets.Scripts.Actions.VFX
         private readonly Dictionary<VfxType, IObjectPool<VfxInstance>> _pools = new();
         private readonly Dictionary<VfxType, AsyncLazy<IObjectPool<VfxInstance>>> _loadingTasks = new();
         private readonly List<VfxInstance> _activeVfx = new();
-        private bool _isClearing;
 
         #region Setup
 
         protected override async UniTask ClearOnSceneChangeAsync()
         {
-            _isClearing = true;
+            isClearing = true;
 
             try
             {
@@ -48,11 +48,29 @@ namespace Assets.Scripts.Actions.VFX
             }
             finally
             {
-                _isClearing = false;
+                isClearing = false;
             }
         }
 
         protected override void Awake() => base.Awake();
+
+        protected override async UniTask PrewarmAsync()
+        {
+            foreach (VfxType type in Enum.GetValues(typeof(VfxType)))
+            {
+                if (type == VfxType.None) continue;
+
+                if (!_pools.ContainsKey(type))
+                {
+                    var pool = await CreatePoolAsync(type);
+                    if (pool != null)
+                    {
+                        _pools[type] = pool;
+                        PrewarmPool(pool, initialCapacity);
+                    }
+                }
+            }
+        }
 
         #endregion
 
@@ -63,20 +81,19 @@ namespace Assets.Scripts.Actions.VFX
 
         private async UniTaskVoid PlayEffectAsync(InteractionContext context, VfxType type, Vector3 position, Quaternion rotation)
         {
-            if (_isClearing || type == VfxType.None) return;
+            if (isClearing || type == VfxType.None) return;
 
             if (!_pools.TryGetValue(type, out var pool))
             {
                 if (!_loadingTasks.TryGetValue(type, out var lazyLoad))
                 {
-                    // AsyncLazy гарантирует, что метод выполнится ровно 1 раз, сколько бы await к нему ни обратилось
                     lazyLoad = UniTask.Lazy(() => CreatePoolAsync(type));
                     _loadingTasks[type] = lazyLoad;
                 }
 
                 pool = await lazyLoad.Task;
 
-                if (_isClearing || pool == null) return;
+                if (isClearing || pool == null) return;
 
                 if (!_pools.ContainsKey(type))
                 {
@@ -85,9 +102,11 @@ namespace Assets.Scripts.Actions.VFX
                 }
             }
 
-            if (_isClearing) return;
+            if (isClearing) return;
 
             VfxInstance instance = pool.Get();
+            if (instance == null) return;
+
             instance.Play(
                 context,
                 position,
@@ -108,7 +127,13 @@ namespace Assets.Scripts.Actions.VFX
             GameObject prefab = await PrefabLoader.Instance.GetPrefabAsync(id);
             if (prefab == null)
             {
-                Debug.LogWarning($"[VfxController] Не удалось загрузить префаб для эффекта: {id}");
+                Debug.LogWarning($"[VfxController] Failed to load prefab for effect: '{id}' ({type})");
+                return null;
+            }
+
+            if (!prefab.TryGetComponent<VfxInstance>(out _))
+            {
+                Debug.LogWarning($"[VfxController] The VfxInstance script is missing from prefab '{id}' ({type})!");
                 return null;
             }
 
@@ -122,11 +147,13 @@ namespace Assets.Scripts.Actions.VFX
                 },
                 actionOnGet: instance =>
                 {
+                    if (instance == null) return;
                     instance.gameObject.SetActive(true);
                     _activeVfx.Add(instance);
                 },
                 actionOnRelease: instance =>
                 {
+                    if (instance == null) return;
                     instance.gameObject.SetActive(false);
                     _activeVfx.Remove(instance);
                 },

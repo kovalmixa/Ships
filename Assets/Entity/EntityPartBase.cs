@@ -68,7 +68,10 @@ namespace Assets.Entity.Common
             SetupInitialBuffs(statOptions.buffs);
         }
 
-        protected virtual void OnStatModChanged() => _actionDataController.MarkDirty();
+        protected virtual void OnStatModChanged() {
+            _actionDataController.MarkDirty();
+            entityController.AggregatedStats.MarkDirty();
+        }
 
         protected virtual void SetupInitialBuffs(IEnumerable<BuffStatus> buffs)
         {

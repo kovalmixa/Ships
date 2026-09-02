@@ -2,6 +2,7 @@ namespace Entity.Controllers
 {
     public interface IDriver
     {
-        public void UpdateControl(EntityController controller);
+        public void Setup(EntityController controller);
+        public void UpdateControl();
     }
 }

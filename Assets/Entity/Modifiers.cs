@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Entity.Modifiers
 {
-    public enum StatLayer { Hull, Equipment, Projectile, Global }
+    public enum StatLayer { Hull, Equipment, Global }
 
     public enum StatCalcType { Set = 0, Addition = 1, Percentage = 2 }
 
@@ -12,7 +12,7 @@ namespace Assets.Entity.Modifiers
     {
         // ==============================================
         // 1. BASIC AND RESOURCES (0 - 49)
-        // =============================================
+        // ==============================================
         Hp = 0,
         MaxHp = 1,
         HpRegen = 2,
@@ -24,6 +24,10 @@ namespace Assets.Entity.Modifiers
         MaxShield = 8,
         ShieldRegen = 9,
         ShieldDelay = 10, // Delay before shield recovery starts
+        Stealth = 11, // NEW: Current stealth level/resource
+        MaxStealth = 12, // NEW: Maximum stealth capacity
+        StealthRegen = 13, // NEW: Stealth recovery rate per second
+        StealthDrain = 14, // NEW: Stealth consumption rate per second while active
 
 
         // ==============================================
@@ -35,6 +39,8 @@ namespace Assets.Entity.Modifiers
         Acceleration = 53,
         KnockbackResist = 54, // Knockback Resistance
         CollisionDamageReduction = 55, // Damage Reduction from Collisions/Rambling
+        DetectionRadius = 56, // NEW: Enemy detection radius / Vision range to reveal stealth
+        StealthVisibilityMultiplier = 57, // NEW: Multiplier affecting overall visibility percentage
 
 
         // ==============================================
@@ -58,11 +64,14 @@ namespace Assets.Entity.Modifiers
         ShieldOnKill = 115, // Shield per kill
         ShootDispersion = 116, // Accuracy of shooting
         Heal = 117, // Heal from projectile to target or by item to host
-        DamageLayer = 118, //Damage layers by index of enum of it
-        
+        DamageLayer = 118, // Damage layers by index of enum of it
+        StealthDetectionOnShot = 119, // NEW: Flat stealth loss or visibility noise added per shot
+        StealthDetectionOnAbility = 120, // NEW: Flat stealth loss or visibility noise added per ability activation
+
+
         // ==============================================
         // 4. PROTECTION AND ARMOR (150 - 199)
-        // =============================================
+        // ==============================================
         Armor = 150, // Base Physical Armor
         Evasion = 151, // Evasion (%)
         BlockChance = 152, // Block Chance
@@ -71,7 +80,7 @@ namespace Assets.Entity.Modifiers
 
         // ==============================================
         // 5. ELEMENTAL DAMAGE TYPES (200 - 249)
-        // =============================================
+        // ==============================================
         PhysicalDamage = 200,
         FireDamage = 201, // Fire
         ExplosiveDamage = 202, // Explosion
@@ -87,9 +96,10 @@ namespace Assets.Entity.Modifiers
         SpatialAnomalyDamage = 212, // Spatial Anomaly
         FloodingDamage = 213, // Flooding
 
-        // ==================================================
+
+        // ==============================================
         // 6. RESISTANCES (250 - 299)
-        // =================================================
+        // ==============================================
         PhysicalResistance = 250,
         FireResistance = 251, // Fire Resistance
         ExplosiveResistance = 252, // Explosion Resistance
@@ -107,9 +117,10 @@ namespace Assets.Entity.Modifiers
         ShockResistance = 264, // Shock Protection
         StealResistance = 265, // HP/Energy/Shield Steal Protection
 
-        // ===============================================
+
+        // ==============================================
         // 7. CRITICAL DAMAGE AND ELEMENTAL CRIT CHANCE (300 - 349)
-        // ==================================================
+        // ==============================================
         FireCritChance = 300,
         ExplosiveCritChance = 301,
         AcidCritChance = 302,
@@ -144,9 +155,9 @@ namespace Assets.Entity.Modifiers
         StealCritMultiplier = 334,
 
 
-        // ===================================================
+        // ==============================================
         // 8. DATE / PROJECTILE PARAMETERS (350 - 399)
-        // ================================================
+        // ==============================================
         PrSpeed = 350,
         PrMoveType = 351,
         PrIsHoming = 352,
@@ -156,17 +167,16 @@ namespace Assets.Entity.Modifiers
         PrCount = 356, // Number of projectiles fired per shot (Multishot)
 
 
-        // ===================================================
+        // ==============================================
         // 9. DIABLO-LIKE / REWARDS / ECONOMY (400 - 449)
-        // =============================================
+        // ==============================================
         ItemFind = 400, // Magic Find / Rare Loot Chance (%)
         GoldFind = 401, // Resource/Credit Mining Surplus (%)
         ExpGain = 402, // Experience Bonus (%)
         PickupRadius = 403, // Item/Orb Pickup Radius
-        BuildingSpeed = 404, // Construction/Repair Speed ​​(for buildings/turrets)
+        BuildingSpeed = 404, // Construction/Repair Speed (for buildings/turrets)
         RepairEfficiency = 405 // Repair Efficiency (%)
     }
-
     public enum ModApplyType { Single, Multiple }
 
     [System.Serializable]

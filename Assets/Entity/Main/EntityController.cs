@@ -9,6 +9,7 @@ using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using Scripts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,6 +26,7 @@ namespace Entity.Controllers
         public TotalAbbilitiesController TotalAbbilitiesController { get; private set; }
         public StatModController StatModController { get; private set; } = new();
         public BuffStatusesController Buffs { get; private set; }
+        public EntityStatsAggregator AggregatedStats { get; private set; }
         public IDriver Driver { get; set; }
         public string Id { get; set; }
         [HideInInspector] public HullBase hull;
@@ -34,7 +36,7 @@ namespace Entity.Controllers
         private void Update()
         {
             if (hull == null) return;
-            Driver?.UpdateControl(this);
+            Driver?.UpdateControl();
         }
 
         #region Setup
@@ -48,6 +50,7 @@ namespace Entity.Controllers
             if (_isPlayerEntity)
             {
                 Driver = gameObject.AddComponent<PlayerController>();
+                Driver.Setup(this);
                 if (GameSessionHandler.Instance != null)
                     GameSessionHandler.Instance.playerController = this;
                 Assembler.onSetHull += (HullBase hull) => {
@@ -55,6 +58,7 @@ namespace Entity.Controllers
                         CameraController.Instance.Follow(hull.transform);
                 };
             }
+            AggregatedStats = new EntityStatsAggregator(this);
         }
 
         public async Task Setup(EntityData data)
@@ -72,6 +76,7 @@ namespace Entity.Controllers
             var aiDriver = gameObject.AddComponent<AiDriverController>();
             aiDriver.AddScripts(scripts?.ToArray() ?? new ScriptBase[0]);
             Driver = aiDriver;
+            Driver.Setup(this);
         }
 
         #endregion
@@ -123,9 +128,10 @@ namespace Entity.Controllers
         [SerializeField] private StatModController _statModController;
 
         private const StatLayer _statLayer = StatLayer.Hull;
-
         public float GetLifetimeStat(StatType type) => _statModController.GetStat(type, _statLayer);
         public IDataContainer GetInitialData() => data;
+
+        public float GetTotalLifetimeStat(StatType type) => AggregatedStats.GetStat(type);
 
         #endregion
 

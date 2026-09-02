@@ -1,11 +1,11 @@
-﻿using Assets.Common.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using Assets.Common.Interfaces;
 using Assets.Handlers.CommonParents;
 using Assets.Handlers.Enums;
 using Assets.Handlers.FileHandlers;
 using Cysharp.Threading.Tasks;
 using GameplayActions;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -39,20 +39,25 @@ namespace Assets.Scripts.Actions.Projectile
             }
         }
 
-        async protected override void Awake()
+        protected override void Awake()
         {
             base.Awake();
             initialCapacity = 20;
             maxPoolSize = 200;
+        }
 
+        protected override async UniTask PrewarmAsync()
+        {
             var prefabLoader = PrefabLoader.Instance;
 
             foreach (ProjectileType type in Enum.GetValues(typeof(ProjectileType)))
             {
                 if (type == ProjectileType.None) continue;
+
                 var typeName = type.ToString();
                 var id = char.ToLower(typeName[0]) + typeName.Substring(1);
                 GameObject prefab = await prefabLoader.GetPrefabAsync(id);
+
                 if (prefab != null)
                 {
                     _prefabDict[type] = prefab;
@@ -93,24 +98,18 @@ namespace Assets.Scripts.Actions.Projectile
             );
         }
 
-        private void PrewarmPool(IObjectPool<ProjectileInstance> pool, int amount)
-        {
-            var tempList = new List<ProjectileInstance>(amount);
-            for (int i = 0; i < amount; i++) tempList.Add(pool.Get());
-            foreach (var item in tempList) pool.Release(item);
-        }
-
         #endregion
 
         public void Launch(InteractionContext interactionContext, ProjectileData data, Vector2 targetPosition)
         {
-            if (isClearing)
+            if (isClearing || !isPrewarmed)
             {
-                Debug.LogWarning("[ProjectileController] Launch skipped: scene cleanup is in progress.");
+                Debug.LogWarning("[ProjectileController] Launch skipped: pool is not ready or clearing in progress.");
                 return;
             }
 
             if (!_pools.TryGetValue(data.type, out var pool)) return;
+
             ProjectileInstance instance = pool.Get();
             instance.Setup(
                 interactionContext,

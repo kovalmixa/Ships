@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using Assets.Handlers.CommonParents;
 using Cysharp.Threading.Tasks;
 using Entity.Controllers;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -39,9 +39,19 @@ namespace Assets.Handlers.SceneHandlers
         protected override void Awake()
         {
             base.Awake();
+            if (_prefab != null)
+            {
+                _pool = CreatePool(_prefab);
+            }
+        }
 
-            _pool = CreatePool(_prefab);
-            PrewarmPool(_pool, initialCapacity);
+        protected override UniTask PrewarmAsync()
+        {
+            if (_pool != null)
+            {
+                PrewarmPool(_pool, initialCapacity);
+            }
+            return UniTask.CompletedTask;
         }
 
         private IObjectPool<EntityController> CreatePool(GameObject prefab)
@@ -75,20 +85,13 @@ namespace Assets.Handlers.SceneHandlers
             );
         }
 
-        private void PrewarmPool(IObjectPool<EntityController> pool, int amount)
-        {
-            var tempList = new List<EntityController>(amount);
-            for (int i = 0; i < amount; i++) tempList.Add(pool.Get());
-            foreach (var item in tempList) pool.Release(item);
-        }
-
         #endregion
 
         #region Public API
 
         public EntityController GetEntity()
         {
-            if (_pool == null || isClearing) return null;
+            if (_pool == null || isClearing || !isPrewarmed) return null;
             return _pool.Get();
         }
 
@@ -107,7 +110,6 @@ namespace Assets.Handlers.SceneHandlers
                 entity.Driver = null;
             }
             entity.data = null;
-
             // Если есть баффы или абилки - их тоже нужно сбросить
             //entity.abilitiesController?.Clear();
         }

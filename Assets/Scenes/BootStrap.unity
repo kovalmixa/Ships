@@ -434,6 +434,7 @@ GameObject:
   - component: {fileID: 6480957579418787231}
   - component: {fileID: 8640452451569283214}
   - component: {fileID: 8640452451569283215}
+  - component: {fileID: 8640452451569283216}
   m_Layer: 0
   m_Name: GameHandlers
   m_TagString: Untagged
@@ -1008,6 +1009,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GUIHandler
   _commandLine: {fileID: 0}
+--- !u!114 &8640452451569283216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3645952117214419065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4565f348fa006844597c40495aaf41ba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.GameplayActions.Audio.AudioController
 --- !u!114 &8716243400182154182
 MonoBehaviour:
   m_ObjectHideFlags: 3

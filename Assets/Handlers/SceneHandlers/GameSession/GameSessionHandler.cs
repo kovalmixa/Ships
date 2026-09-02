@@ -3,6 +3,7 @@ using Assets.Scripts.Actions;
 using Cysharp.Threading.Tasks;
 using Entity.Controllers;
 using GameplayActions;
+using System;
 using UnityEngine;
 
 namespace Assets.Handlers.SceneHandlers
@@ -13,6 +14,10 @@ namespace Assets.Handlers.SceneHandlers
         [SerializeField] private EntityController playerPrefab;
 
         [HideInInspector] public EntityController playerController;
+
+        public static event Action<EntityController> OnPlayerSpawned;
+        public static event Action OnPlayerDespawned;
+        public EntityController PlayerController => playerController;
 
         private static (PositionData, Vector2) _respawnPointData;
         private static GameSessionData _data;
@@ -60,10 +65,14 @@ namespace Assets.Handlers.SceneHandlers
             await playerController.Setup(Data.entityDataContainer);
             _spawnContext.SetSource(playerController.gameObject);
             ActionProvider.Position.Execute(_spawnContext, _respawnPointData.Item1, spawnPosition);
+
+            OnPlayerSpawned?.Invoke(playerController);
         }
 
         public async UniTask RespawnPlayer()
         {
+            OnPlayerDespawned?.Invoke();
+
             if (playerController != null)
             {
                 Destroy(playerController.gameObject);
@@ -72,5 +81,7 @@ namespace Assets.Handlers.SceneHandlers
 
             await SpawnPlayer();
         }
+
+        private void OnDestroy() => OnPlayerDespawned?.Invoke();
     }
 }

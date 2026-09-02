@@ -20,10 +20,6 @@ namespace Assets.Entity.Controllers
         private GameObject _source;
         private StatModController _statMods;
 
-        public event Action OnChange;
-        public event Action OnDelete;
-        public event Action OnInsert;
-
         public BuffStatusesController(GameObject source, StatModController statMods)
         {
             _source = source;
@@ -137,6 +133,15 @@ namespace Assets.Entity.Controllers
         public bool IsDirty => _isDirty;
 
         public void MarkDirty() => _isDirty = true;
+
+        #endregion
+
+
+        #region ICrud
+
+        public event Action OnChange;
+        public event Action OnDelete;
+        public event Action OnInsert;
 
         #endregion
     }

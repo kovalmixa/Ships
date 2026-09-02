@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using UI.GUI.CommandLine;
+using Assets.Handlers.SceneHandlers;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 {
-    [SerializeField] private CommandLine _commandLine;
     private Dictionary<KeyCode, Action> _keyCommands;
 
     #region InputBlock
@@ -26,22 +26,11 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
         base.Awake();
         OnInputBlockedStateChanged += (bool isBlocked) => IsInputBlocked = isBlocked;
 
-        // Используем лямбда-выражение со сэйфти-проверкой на null
+        async UniTaskVoid ToggleCommandLine() => await WindowManager.Instance.SwitchWindow("CommandLine", isTab: false);
+
         _keyCommands = new Dictionary<KeyCode, Action>
         {
-            {
-                KeyCode.Slash, () =>
-                {
-                    if (_commandLine != null)
-                    {
-                        _commandLine.Switch();
-                    }
-                    else
-                    {
-                        Debug.LogError("[GUIHandler] Ссылка на CommandLine не задана в Inspector!", this);
-                    }
-                }
-            }
+            { KeyCode.Slash, () => { ToggleCommandLine().Forget(); } }
         };
     }
 
@@ -52,8 +41,7 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 
     private void GetInput()
     {
-        foreach (var kpv in _keyCommands)
-            if (Input.GetKeyDown(kpv.Key)) kpv.Value?.Invoke();
+        foreach (var kpv in _keyCommands) if (Input.GetKeyDown(kpv.Key)) kpv.Value?.Invoke();
     }
 
     public void HandleTabToggled(bool isConsoleOpen)
