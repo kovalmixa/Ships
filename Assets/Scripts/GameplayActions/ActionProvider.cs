@@ -17,6 +17,7 @@ namespace GameplayActions
         public static VfxAction Effect { get; } = new();
         public static AudioAction Audio { get; } = new();
         public static SpawnAction Spawn { get; } = new();
+        public static PositionAction Position { get; } = new();
 
         #endregion
 

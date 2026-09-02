@@ -8,15 +8,16 @@ namespace Assets.Handlers.FileHandlers
 {
     public static class FilesPathExtractor
     {
-        public static string[] GetFilesPaths(string[] folderPaths, string[] excludedFolders)
+        public static IEnumerable<string> GetFilePaths(IEnumerable<string> folderPaths, IEnumerable<string>? excludedFolders = null)
         {
-            List<string> allFiles = new();
-            allFiles = (from folderPath in folderPaths
-                where IsValidPath(folderPath)
-                select Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories)
-                    .Where(file => !file.Contains(".meta") && !IsInExcludedFolder(file, excludedFolders))).Aggregate(allFiles, (current, files) => current.Concat(files).ToList());
-            return allFiles.ToArray();
+            excludedFolders ??= Enumerable.Empty<string>();
+
+            return folderPaths
+                .Where(IsValidPath)
+                .SelectMany(folderPath => Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories))
+                .Where(file => !file.Contains(".meta") && !IsInExcludedFolder(file, excludedFolders));
         }
+
         private static bool IsValidPath(string folderPath)
         {
             try
@@ -33,12 +34,9 @@ namespace Assets.Handlers.FileHandlers
             }
             return true;
         }
-        private static bool IsInExcludedFolder(string filePath, string[] excludedFolders)
+        private static bool IsInExcludedFolder(string filePath, IEnumerable<string> excludedFolders)
         {
-            foreach (var folder in excludedFolders)
-            {
-                if (filePath.Contains(folder)) return true;
-            }
+            foreach (var folder in excludedFolders) if (filePath.Contains(folder)) return true;
             return false;
         }
     }

@@ -23,9 +23,8 @@ namespace Assets.Scripts.Actions.VFX
     public class VfxController : SingletonPoolHandler<VfxController, VfxInstance>
     {
         private readonly Dictionary<VfxType, IObjectPool<VfxInstance>> _pools = new();
-        private readonly Dictionary<VfxType, UniTask<IObjectPool<VfxInstance>>> _loadingTasks = new();
+        private readonly Dictionary<VfxType, AsyncLazy<IObjectPool<VfxInstance>>> _loadingTasks = new();
         private readonly List<VfxInstance> _activeVfx = new();
-
         private bool _isClearing;
 
         #region Setup
@@ -45,6 +44,7 @@ namespace Assets.Scripts.Actions.VFX
                     if (IsIndexOverClearDelay(i)) await UniTask.Yield();
                 }
                 _activeVfx.Clear();
+                _loadingTasks.Clear();
             }
             finally
             {
@@ -67,17 +67,22 @@ namespace Assets.Scripts.Actions.VFX
 
             if (!_pools.TryGetValue(type, out var pool))
             {
-                if (!_loadingTasks.TryGetValue(type, out var loadTask))
+                if (!_loadingTasks.TryGetValue(type, out var lazyLoad))
                 {
-                    loadTask = CreatePoolAsync(type);
-                    _loadingTasks[type] = loadTask;
+                    // AsyncLazy гарантирует, что метод выполнится ровно 1 раз, сколько бы await к нему ни обратилось
+                    lazyLoad = UniTask.Lazy(() => CreatePoolAsync(type));
+                    _loadingTasks[type] = lazyLoad;
                 }
 
-                pool = await loadTask;
-                _loadingTasks.Remove(type);
+                pool = await lazyLoad.Task;
 
                 if (_isClearing || pool == null) return;
-                _pools[type] = pool;
+
+                if (!_pools.ContainsKey(type))
+                {
+                    _pools[type] = pool;
+                    _loadingTasks.Remove(type);
+                }
             }
 
             if (_isClearing) return;
@@ -127,7 +132,7 @@ namespace Assets.Scripts.Actions.VFX
                 },
                 actionOnDestroy: instance =>
                 {
-                    if (instance != null && instance.gameObject != null) 
+                    if (instance != null && instance.gameObject != null)
                         Destroy(instance.gameObject);
                 },
                 collectionCheck: true,

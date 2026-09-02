@@ -12,6 +12,8 @@ namespace Assets.Handlers.SceneHandlers
     {
         #region Monobehavior nodes
 
+        #region Layers
+
         public static void SetRenderLayerOrder(GameObject parent, string layerName, int orderOffset)
         {
             var renderers = parent.GetComponentsInChildren<SpriteRenderer>(true);
@@ -22,6 +24,42 @@ namespace Assets.Handlers.SceneHandlers
             }
         }
 
+        #endregion
+
+        #region Scene Search Helpers
+
+        public static GameObject GetNodeByName(string name)
+        {
+            GameObject node = GameObject.Find(name);
+            if (node == null)
+            {
+                Transform dontDestroy = GameObject.Find("DontDestroyOnLoad")?.transform;
+                if (dontDestroy != null)
+                {
+                    Transform found = dontDestroy.Find(name);
+                    if (found != null) return found.gameObject;
+                }
+                return null;
+            }
+            return node;
+        }
+
+        public static T GetNodeByType<T>() where T : Component
+        {
+            T node = GameObject.FindAnyObjectByType<T>(FindObjectsInactive.Include);
+            if (node == null)
+            {
+                Transform dontDestroy = GameObject.Find("DontDestroyOnLoad")?.transform;
+                if (dontDestroy != null) node = dontDestroy.GetComponentInChildren<T>(true);
+            }
+
+            return node;
+        }
+
+        #endregion
+
+        #region Copy/Clone/Clearing Components
+
         public static GameObject Clone(GameObject main)
         {
             if (main == null) return null;
@@ -29,6 +67,7 @@ namespace Assets.Handlers.SceneHandlers
             clone.name = main.name;
             return clone;
         }
+
 
         public static void CopyComponentsTo(GameObject source, GameObject target)
         {
@@ -52,6 +91,8 @@ namespace Assets.Handlers.SceneHandlers
                 GameObject.Destroy(component);
             }
         }
+
+        #endregion
 
         #endregion
 

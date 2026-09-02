@@ -1,39 +1,36 @@
 using System;
-using System.IO;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Assets.Handlers.FileHandlers;
-using Entity.Controllers;
 
 namespace Assets.Handlers.SceneHandlers
 {
     public class SceneController : SingletonMonoBehaviour<SceneController>
     {
-        [Header("Core Container")]
-        [SerializeField] private GameObject appCoreContainer;
-
-        [Header("Player Settings")]
-        public EntityController playerController;
-
-        [Header("Save / Load Settings")]
-        public string fileName;
+        [SerializeField] private GameObject _appCoreContainer;
+        [SerializeField] private string _mainMenuSceneName = "MainMenu";
+        [SerializeField] private string _loadingScreenWindowName = "LoadingScreen";
 
         public static event Func<UniTask> OnBeforeSceneLoad;
+        public static event Func<UniTask> OnAfterSceneLoad;
 
-        #region Unity Lifecycle
+        #region Initialization
 
         protected override void Awake()
         {
             base.Awake();
-            if (appCoreContainer != null) DontDestroyOnLoad(appCoreContainer);
-            else DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(_appCoreContainer);
         }
 
-        private async void Start()
+        private void Start() => InitializeBootWindowsAsync().Forget();
+
+        private async UniTaskVoid InitializeBootWindowsAsync()
         {
-            await InitializeSaveDataAsync();
+            await WindowManager.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
+            await UniTask.Yield(PlayerLoopTiming.Update);
+            await WindowManager.Instance.OpenWindowIndependent(_mainMenuSceneName, 0, freezeTime: true);
+            await WindowManager.Instance.CloseWindowIndependent(_loadingScreenWindowName);
         }
 
         #endregion
@@ -44,88 +41,48 @@ namespace Assets.Handlers.SceneHandlers
         {
             if (!Application.CanStreamedLevelBeLoaded(locationName))
             {
-                Debug.LogWarning($"[SceneController] Scene not found by name: {locationName}");
+                Debug.LogWarning($"[SceneController] Scene not found in Build Settings: {locationName}");
                 return;
             }
 
-            if (OnBeforeSceneLoad != null)
+            var token = this.GetCancellationTokenOnDestroy();
+
+            await WindowManager.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
+            await InvokeAsyncEvent(OnBeforeSceneLoad);
+
+            AsyncOperation sceneLoadOperation = SceneManager.LoadSceneAsync(locationName, LoadSceneMode.Single);
+            sceneLoadOperation.allowSceneActivation = false;
+
+            var loadingWindow = WindowManager.Instance.GetWindow(_loadingScreenWindowName) as UILoadingWindow;
+
+            while (sceneLoadOperation.progress < 0.9f)
             {
-                var tasks = OnBeforeSceneLoad.GetInvocationList()
-                    .Cast<Func<UniTask>>()
-                    .Select(subscriber => subscriber.Invoke());
-
-                await UniTask.WhenAll(tasks);
-            }
-
-            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(locationName, LoadSceneMode.Single);
-            while (!asyncLoad.isDone) await UniTask.Yield();
-        }
-
-        #endregion
-
-        #region Save / Load Logic
-
-        private async UniTask InitializeSaveDataAsync()
-        {
-            try
-            {
-                if (playerController == null)
+                if (loadingWindow != null)
                 {
-                    Debug.LogWarning("[SceneController] PlayerController is not assigned!");
-                    return;
+                    float progress = Mathf.Clamp01(sceneLoadOperation.progress / 0.9f);
+                    loadingWindow.UpdateProgress(progress);
                 }
-
-                string path = Path.Combine(Application.streamingAssetsPath, "Saves", fileName);
-                SaveDataBundle data = LoadData(path);
-
-                if (data == null)
-                    throw new Exception($"Data file could not be loaded from path: {path}");
-
-                await ExtractDataAsync(data);
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
             }
-            catch (Exception e)
-            {
-                Debug.LogError($"[SceneController] Failed to initialize save data: {e}");
-            }
+
+            sceneLoadOperation.allowSceneActivation = true;
+            await sceneLoadOperation.WithCancellation(token);
+            await InvokeAsyncEvent(OnAfterSceneLoad);
+
+            if (loadingWindow != null) loadingWindow.UpdateProgress(1f);
+            await UniTask.Delay(200, cancellationToken: token);
+            await WindowManager.Instance.CloseWindowIndependent(_loadingScreenWindowName);
         }
 
-        private SaveDataBundle LoadData(string path) => DataFileHandler.LoadFromJson<SaveDataBundle>(path);
-
-        private async UniTask ExtractDataAsync(SaveDataBundle data)
+        private async UniTask InvokeAsyncEvent(Func<UniTask> asyncEvent)
         {
-            if (playerController != null) await playerController.Setup(data.entityDataContainer);
-        }
+            if (asyncEvent == null) return;
 
-        #endregion
+            var tasks = asyncEvent.GetInvocationList()
+                .Cast<Func<UniTask>>()
+                .Select(subscriber => subscriber.Invoke());
 
-        #region Scene Search Helpers
-
-        public static GameObject GetNodeByName(string name)
-        {
-            GameObject node = GameObject.Find(name);
-            if (node == null)
-            {
-                Transform dontDestroy = GameObject.Find("DontDestroyOnLoad")?.transform;
-                if (dontDestroy != null)
-                {
-                    Transform found = dontDestroy.Find(name);
-                    if (found != null) return found.gameObject;
-                }
-                return null;
-            }
-            return node;
-        }
-
-        public static T GetNodeByType<T>() where T : Component
-        {
-            T node = FindAnyObjectByType<T>(FindObjectsInactive.Include);
-            if (node == null)
-            {
-                Transform dontDestroy = GameObject.Find("DontDestroyOnLoad")?.transform;
-                if (dontDestroy != null) node = dontDestroy.GetComponentInChildren<T>(true);
-            }
-
-            return node;
+            await UniTask.WhenAll(tasks);
         }
 
         #endregion

@@ -1,0 +1,20 @@
+{
+  "entityDataContainer": {
+    "hullId": "none_smallPatrolBoat",
+    "equipmentSlots": [
+      {
+        "equipmentId": "ger_mg45",
+        "number": 0
+      },
+      {
+        "equipmentId": "ger_mg45",
+        "number": 1
+      }
+    ]
+  },
+  "respawnPosition": {
+    "x": 0.0,
+    "y": 0.0
+  },
+  "locationName": "MainScene"
+}

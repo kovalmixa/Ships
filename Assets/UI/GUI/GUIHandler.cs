@@ -12,6 +12,7 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 
     public static event Action<bool> OnInputBlockedStateChanged;
     public bool IsInputBlocked { get; private set; }
+
     public void SetInputBlocked(bool isBlocked)
     {
         IsInputBlocked = isBlocked;
@@ -25,9 +26,22 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
         base.Awake();
         OnInputBlockedStateChanged += (bool isBlocked) => IsInputBlocked = isBlocked;
 
-        _keyCommands = new()
+        // Используем лямбда-выражение со сэйфти-проверкой на null
+        _keyCommands = new Dictionary<KeyCode, Action>
         {
-            { KeyCode.Slash, _commandLine.Switch }
+            {
+                KeyCode.Slash, () =>
+                {
+                    if (_commandLine != null)
+                    {
+                        _commandLine.Switch();
+                    }
+                    else
+                    {
+                        Debug.LogError("[GUIHandler] Ссылка на CommandLine не задана в Inspector!", this);
+                    }
+                }
+            }
         };
     }
 
@@ -38,7 +52,7 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 
     private void GetInput()
     {
-        foreach (var kpv in _keyCommands) 
+        foreach (var kpv in _keyCommands)
             if (Input.GetKeyDown(kpv.Key)) kpv.Value?.Invoke();
     }
 

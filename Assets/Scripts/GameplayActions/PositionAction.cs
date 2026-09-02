@@ -16,14 +16,14 @@ namespace GameplayActions
     {
         protected override void ExecuteAction(InteractionContext context, PositionData data, Vector2 targetPos)
         {
-            if (context.SourceObject == null) return;
+            if (context == null || context.SourceObject == null) return;
             Transform targetTransform = context.SourceObject.transform;
             ApplyPositionAndRotation(targetTransform, data, targetPos);
         }
 
         protected override void ExecuteAction(InteractionContext context, PositionData data, IInteractive target)
         {
-            if (target?.GameObject == null) return;
+            if (context == null || context.SourceObject == null) return;
             Transform targetTransform = target.GameObject.transform;
             ApplyPositionAndRotation(targetTransform, data, targetTransform.position);
         }

@@ -36,7 +36,7 @@ namespace Entity.Controllers
             if (hull == null) return;
             Driver?.UpdateControl(this);
         }
-        
+
         #region Setup
 
         private void Awake()
@@ -48,9 +48,11 @@ namespace Entity.Controllers
             if (_isPlayerEntity)
             {
                 Driver = gameObject.AddComponent<PlayerController>();
-                SceneController.Instance.playerController = this;
+                if (GameSessionHandler.Instance != null)
+                    GameSessionHandler.Instance.playerController = this;
                 Assembler.onSetHull += (HullBase hull) => {
-                    if (hull != null) CameraController.Instance.Follow(hull.transform);
+                    if (hull != null && CameraController.Instance != null)
+                        CameraController.Instance.Follow(hull.transform);
                 };
             }
         }
