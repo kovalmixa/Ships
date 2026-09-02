@@ -12,11 +12,7 @@ public class UIWindow : MonoBehaviour
     private CanvasGroup _canvasGroup;
     private CancellationTokenSource _cts;
 
-    protected virtual void OnOpened()
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-    }
+    protected virtual void OnOpened() { }
 
     protected virtual void OnClosed() { }
 
@@ -39,18 +35,28 @@ public class UIWindow : MonoBehaviour
         ResetCancellationToken();
         var token = _cts.Token;
 
-        gameObject.SetActive(true);
+        try
+        {
+            gameObject.SetActive(true);
 
-        if (delayMs > 0)
-            await UniTask.Delay(delayMs, cancellationToken: token);
+            if (delayMs > 0)
+            {
+                bool isCanceled = await UniTask.Delay(delayMs, cancellationToken: token).SuppressCancellationThrow();
+                if (isCanceled) return;
+            }
 
-        CanvasGroup.interactable = true;
-        CanvasGroup.blocksRaycasts = true;
+            CanvasGroup.interactable = true;
+            CanvasGroup.blocksRaycasts = true;
 
-        await FadeAsync(0f, 1f, token);
+            await FadeAsync(0f, 1f, token);
 
-        OnOpened();
-        onComplete?.Invoke();
+            if (!token.IsCancellationRequested)
+            {
+                OnOpened();
+                onComplete?.Invoke();
+            }
+        }
+        catch (OperationCanceledException) { }
     }
 
     public async UniTask CloseAsync(Action onComplete = null)
@@ -58,14 +64,21 @@ public class UIWindow : MonoBehaviour
         ResetCancellationToken();
         var token = _cts.Token;
 
-        CanvasGroup.interactable = false;
-        CanvasGroup.blocksRaycasts = false;
+        try
+        {
+            CanvasGroup.interactable = false;
+            CanvasGroup.blocksRaycasts = false;
 
-        await FadeAsync(1f, 0f, token);
+            await FadeAsync(1f, 0f, token);
 
-        OnClosed();
-        gameObject.SetActive(false);
-        onComplete?.Invoke();
+            if (!token.IsCancellationRequested)
+            {
+                OnClosed();
+                gameObject.SetActive(false);
+                onComplete?.Invoke();
+            }
+        }
+        catch (OperationCanceledException) { }
     }
 
     public void SetStateImmediately(bool isOpen)
@@ -86,9 +99,11 @@ public class UIWindow : MonoBehaviour
             elapsedTime += Time.unscaledDeltaTime;
             float progress = elapsedTime / _fadeDuration;
             CanvasGroup.alpha = Mathf.Lerp(startAlpha, endAlpha, progress);
-            await UniTask.Yield(PlayerLoopTiming.Update, token);
+            bool isCanceled = await UniTask.Yield(PlayerLoopTiming.Update, token).SuppressCancellationThrow();
+            if (isCanceled) return;
         }
-        CanvasGroup.alpha = endAlpha;
+
+        if (!token.IsCancellationRequested) CanvasGroup.alpha = endAlpha;
     }
 
     private void ResetCancellationToken()

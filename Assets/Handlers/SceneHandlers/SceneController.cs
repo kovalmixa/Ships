@@ -47,42 +47,58 @@ namespace Assets.Handlers.SceneHandlers
 
             var token = this.GetCancellationTokenOnDestroy();
 
-            await WindowManager.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
-            await InvokeAsyncEvent(OnBeforeSceneLoad);
-
-            AsyncOperation sceneLoadOperation = SceneManager.LoadSceneAsync(locationName, LoadSceneMode.Single);
-            sceneLoadOperation.allowSceneActivation = false;
-
-            var loadingWindow = WindowManager.Instance.GetWindow(_loadingScreenWindowName) as UILoadingWindow;
-
-            while (sceneLoadOperation.progress < 0.9f)
+            try
             {
-                if (loadingWindow != null)
+                await WindowManager.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
+                await InvokeAsyncEvent(OnBeforeSceneLoad);
+
+                AsyncOperation sceneLoadOperation = SceneManager.LoadSceneAsync(locationName, LoadSceneMode.Single);
+                sceneLoadOperation.allowSceneActivation = false;
+
+                var loadingWindow = WindowManager.Instance.GetWindow(_loadingScreenWindowName) as UILoadingWindow;
+
+                while (sceneLoadOperation.progress < 0.9f)
                 {
-                    float progress = Mathf.Clamp01(sceneLoadOperation.progress / 0.9f);
-                    loadingWindow.UpdateProgress(progress);
+                    if (loadingWindow != null)
+                    {
+                        float progress = Mathf.Clamp01(sceneLoadOperation.progress / 0.9f);
+                        loadingWindow.UpdateProgress(progress);
+                    }
+                    await UniTask.Yield(PlayerLoopTiming.Update, token);
                 }
-                await UniTask.Yield(PlayerLoopTiming.Update, token);
+
+                sceneLoadOperation.allowSceneActivation = true;
+                await sceneLoadOperation.WithCancellation(token);
+                await InvokeAsyncEvent(OnAfterSceneLoad);
+
+                if (loadingWindow != null) loadingWindow.UpdateProgress(1f);
+                await UniTask.Delay(200, ignoreTimeScale: true, cancellationToken: token);
             }
-
-            sceneLoadOperation.allowSceneActivation = true;
-            await sceneLoadOperation.WithCancellation(token);
-            await InvokeAsyncEvent(OnAfterSceneLoad);
-
-            if (loadingWindow != null) loadingWindow.UpdateProgress(1f);
-            await UniTask.Delay(200, cancellationToken: token);
-            await WindowManager.Instance.CloseWindowIndependent(_loadingScreenWindowName);
+            catch (Exception ex)
+            {
+                Debug.LogError($"[SceneController] Ошибка при переходе на сцену '{locationName}': {ex}");
+            }
+            finally
+            {
+                await WindowManager.Instance.CloseWindowIndependent(_loadingScreenWindowName);
+                Debug.Log("[SceneController] Loading screen closed.");
+            }
         }
 
         private async UniTask InvokeAsyncEvent(Func<UniTask> asyncEvent)
         {
             if (asyncEvent == null) return;
 
-            var tasks = asyncEvent.GetInvocationList()
+            var validTasks = asyncEvent.GetInvocationList()
+                .Where(del =>
+                {
+                    if (del.Target is UnityEngine.Object unityObj) return unityObj != null;
+                    return del.Target != null || del.Method.IsStatic;
+                })
                 .Cast<Func<UniTask>>()
                 .Select(subscriber => subscriber.Invoke());
 
-            await UniTask.WhenAll(tasks);
+            await UniTask.WhenAll(validTasks);
         }
 
         #endregion

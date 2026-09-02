@@ -128,7 +128,7 @@ namespace Assets.Scripts.Actions.Projectile
                 explosionAction.Execute(context, expData, explodePos);
 
                 var vfxAction = ActionProvider.Effect;
-                var vfxData = dataController.GetActionData(vfxAction.GetType(), context) as VfxData; // Кастуем к VfxData
+                var vfxData = dataController.GetActionData(vfxAction.GetType(), context) as VfxData;
 
                 vfxAction.Execute(context, vfxData, explodePos);
 

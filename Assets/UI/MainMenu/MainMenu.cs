@@ -21,24 +21,6 @@ namespace UI.MainMenu
             foreach (var path in paths) _saves.Add(DataFileHandler.LoadFromJson<GameSessionData>(path));
         }
 
-        protected override void OnOpened()
-        {
-            base.OnOpened();
-            SetUIInputState(true);
-        }
-
-        protected override void OnClosed()
-        {
-            base.OnClosed();
-            SetUIInputState(false);
-        }
-
-        private void SetUIInputState(bool isMenuOpen)
-        {
-            Cursor.lockState = isMenuOpen ? CursorLockMode.None : CursorLockMode.Locked;
-            Cursor.visible = isMenuOpen;
-        }
-
         #endregion
 
         #region UI API

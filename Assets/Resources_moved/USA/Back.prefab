@@ -101,7 +101,6 @@ GameObject:
   m_Component:
   - component: {fileID: 124669368259897105}
   - component: {fileID: 5888668427879922858}
-  - component: {fileID: 508184833516364186}
   - component: {fileID: 930236656171629701}
   - component: {fileID: 8011573466066948868}
   m_Layer: 7
@@ -139,35 +138,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0ac7d6a8204a7848ae3debee20e939b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <Data>k__BackingField: {fileID: 0}
   equipmentAnchors: []
   equipments: []
   root: {fileID: 0}
   currentSpeed: 0
---- !u!114 &508184833516364186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8122809092557298440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c85f499fd81c96348945713bbcac28a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  general:
-    name: 
-    <SizeType>k__BackingField: 0
-    Layer: 0
-    <SlotHeight>k__BackingField: 1
-    <SlotWidth>k__BackingField: 1
-    icon: {fileID: 0}
-  <VehicleType>k__BackingField: 0
-  statOptions:
-    stats: []
-    mods: []
-    buffs: []
-    abilities: []
 --- !u!50 &930236656171629701
 Rigidbody2D:
   serializedVersion: 5

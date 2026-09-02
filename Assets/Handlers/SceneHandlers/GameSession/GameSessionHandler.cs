@@ -35,21 +35,21 @@ namespace Assets.Handlers.SceneHandlers
         {
             if (Data == null)
             {
-                Debug.LogWarning("[GameSessionHandler] Нельзя заспавнить игрока: Data == null");
+                Debug.LogWarning("[GameSessionHandler] Cannot spawn player: Data == null");
                 return;
             }
 
             Vector2 spawnPosition = _respawnPointData.Item2;
-
             if (playerController == null)
             {
                 if (playerPrefab == null)
                 {
-                    Debug.LogError("[GameSessionHandler] PlayerPrefab не назначен в инспекторе!");
+                    Debug.LogError("[GameSessionHandler] PlayerPrefab is not assigned in the Inspector!");
                     return;
                 }
 
                 playerController = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+                DontDestroyOnLoad(playerController.gameObject);
             }
             else
             {
