@@ -62,7 +62,7 @@ TagManager:
   - name: Water_Effects
     uniqueID: 1640461839
     locked: 0
-  - name: Ground
+  - name: Ground_Terrain
     uniqueID: 2199121615
     locked: 0
   - name: Ground_Decals
