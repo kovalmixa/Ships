@@ -6,24 +6,23 @@ using UnityEngine;
 namespace GameplayActions
 {
     [System.Serializable]
-    public class EsplosionData : ActionData
+    public class ExplosionData : ActionData
     {
-        public uint range;
         public int[] layers;
         public DamageData damageData;
         [CanBeNull] public VfxData visualData;
         //[CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
     }
 
-    public class ExplosionAction : GameplayAction<EsplosionData>
+    public class ExplosionAction : GameplayAction<ExplosionData>
     {
-        protected override void ExecuteAction(InteractionContext context, EsplosionData data, Vector2 targetPos)
+        protected override void ExecuteAction(InteractionContext context, ExplosionData data, Vector2 targetPos)
         {
             ActionProvider.Effect.Execute(context, data.visualData, targetPos);
 
-            var targetsToExecute = GetTargetsToExecuteInRange(targetPos, data.range, data.layers);
+            //var targetsToExecute = GetTargetsToExecuteInRange(targetPos, data.range, data.layers);
 
-            foreach (var target in targetsToExecute) { }
+            //foreach (var target in targetsToExecute) { }
                 //foreach (var zone in data.ActionZones)
                 //{
                 //    float rangeProp = Vector2.Distance(target.Value, targetPos) / data.range;
@@ -33,7 +32,7 @@ namespace GameplayActions
                 //}
         }
 
-        protected override void ExecuteAction(InteractionContext context, EsplosionData data, IInteractive target)
+        protected override void ExecuteAction(InteractionContext context, ExplosionData data, IInteractive target)
         {
             throw new System.NotImplementedException();
         }

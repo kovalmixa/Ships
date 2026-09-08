@@ -12,7 +12,8 @@ namespace Assets.Scripts.Actions.Projectile
 
         protected ProjectileData data;
         protected InteractionContext context;
-        
+
+        [SerializeField] protected float avarageDamage; //for setting size depending on damage value
         [SerializeField] protected VfxData launchEffectData;
         [SerializeField] protected VfxData explosionEffectData;
 
@@ -111,36 +112,19 @@ namespace Assets.Scripts.Actions.Projectile
             isReturned = !isContinuous;
             Debug.Log("Exploaded");
 
-            ExecuteExplosionActions();
+            ExecuteExplosionAction();
             if (!isContinuous) ReleaseToPool();
             return true;
         }
 
-        protected void ExecuteExplosionActions()
+        protected void ExecuteExplosionAction()
         {
-            if (_onExplosionActions != null)
-            {
-                Vector3 explodePos = transform.position;
-                var explosionAction = ActionProvider.Explosion;
-                var dataController = context.ActionDataController;
+            Vector3 explodePos = transform.position;
+            var explosionAction = ActionProvider.Explosion;
+            var dataController = context.ActionDataController;
 
-                var expData = dataController.GetActionData(explosionAction.GetType(), context);
-                explosionAction.Execute(context, expData, explodePos);
-
-                var vfxAction = ActionProvider.Effect;
-                var vfxData = dataController.GetActionData(vfxAction.GetType(), context) as VfxData;
-
-                vfxAction.Execute(context, vfxData, explodePos);
-
-                var data = dataController.GetActionData(explosionAction.GetType(), context);
-                explosionAction.Execute(context, data, explodePos);
-
-                foreach (var action in _onExplosionActions)
-                {
-                    data = dataController.GetActionData(action.GetType(), context);
-                    action?.Execute(context, data, explodePos);
-                }
-            }
+            var expData = dataController.GetActionData(explosionAction.GetType(), context, false);
+            explosionAction.Execute(context, expData, explodePos);
         }
 
         public void ReleaseToPool()
