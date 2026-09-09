@@ -2,7 +2,6 @@ using Assets.Common;
 using Assets.Handlers.Enums;
 using Assets.Scripts.Actions;
 using Assets.Scripts.Actions.Projectile;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameplayActions
@@ -13,10 +12,10 @@ namespace GameplayActions
         public string id;
         public Vector2 startPosition;
         public ProjectileType type;
-        public List<DamageType> elementalTypes;
-        public float damageValue;
+        public DamageData damageData;
         public float speed;
         public float lifeTime;
+        public float maxRange;
         public bool isHoming;
         public bool isBallistic;
     }

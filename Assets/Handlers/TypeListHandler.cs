@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
+using UnityEngine;
 
 namespace Assets.Handlers.Enums
 {
@@ -96,11 +97,11 @@ namespace Assets.Handlers.Enums
     public enum LayerType
     {
         None = 0,
-        Land = 6 << 0, // 2
-        Sea = 7 << 1,  // 1
-        Air = 8 << 2,  // 4
+        Land = 1 << 0, // 1
+        Sea = 1 << 1, // 2
+        Air = 1 << 2, // 4
 
-        All = Land | Sea | Air
+        All = Land | Sea | Air // 7
     }
 }
 
@@ -275,5 +276,18 @@ namespace Assets.Handlers
             (DamageType.SpatialAnomaly, StatType.SpatialAnomalyDamage, StatType.SpatialAnomalyCritChance, StatType.SpatialAnomalyCritMultiplier),
             (DamageType.Flooding, StatType.FloodingDamage, StatType.FloodingCritChance, StatType.FloodingCritMultiplier)
         };
+    }
+
+    public static class LayersHandler
+    {
+        public static string[] interactionIgnore = { "Markers", "InvisibleMarkers" };
+        public static int GetPhysicsLayerMask(LayerType targetLayer)
+        {
+            int mask = 0;
+            if ((targetLayer & LayerType.Land) != 0) mask |= LayerMask.GetMask("Land");
+            if ((targetLayer & LayerType.Sea) != 0) mask |= LayerMask.GetMask("Sea");
+            if ((targetLayer & LayerType.Air) != 0) mask |= LayerMask.GetMask("Air");
+            return mask;
+        }
     }
 }

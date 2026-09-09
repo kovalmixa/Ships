@@ -50,17 +50,23 @@ MonoBehaviour:
       _type: 116
       _statLayer: 1
       _value: 0.2
-    - name: 'PrSpeed: 10'
+    - name: 'PrSpeed: 30'
       _type: 350
       _statLayer: 1
       _value: 30
+    - name: 'AreaOfEffect: 0,5'
+      _type: 108
+      _statLayer: 1
+      _value: 0.5
     mods: []
     buffs: []
     abilities:
-    - abilityPosition: {x: -0.007, y: 0.093200006}
+    - abilityPosition: {x: -0.061, y: 0.564}
       type: 1
       mode: 0
       delay: 1
       globalUsageDelay: 0
       charges: 1
       isPassive: 0
+      animationID: 0
+      drawLayerPositioning: 0

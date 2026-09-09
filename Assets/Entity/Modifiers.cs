@@ -67,7 +67,7 @@ namespace Assets.Entity.Modifiers
         DamageLayer = 118, // Damage layers by index of enum of it
         StealthDetectionOnShot = 119, // NEW: Flat stealth loss or visibility noise added per shot
         StealthDetectionOnAbility = 120, // NEW: Flat stealth loss or visibility noise added per ability activation
-
+        SplashModifier = 121, //NEW: For splash gradient, and it depends on damage moderation with distance
 
         // ==============================================
         // 4. PROTECTION AND ARMOR (150 - 199)

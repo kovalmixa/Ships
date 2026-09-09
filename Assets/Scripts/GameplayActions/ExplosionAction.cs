@@ -1,6 +1,5 @@
 ﻿using Assets.Common;
 using Assets.Scripts.Actions;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace GameplayActions
@@ -8,33 +7,22 @@ namespace GameplayActions
     [System.Serializable]
     public class ExplosionData : ActionData
     {
-        public int[] layers;
         public DamageData damageData;
-        [CanBeNull] public VfxData visualData;
-        //[CanBeNull] public Dictionary<float, IScalableAction[]> ActionZones;
+        public VfxData vfxData;
     }
 
     public class ExplosionAction : GameplayAction<ExplosionData>
     {
         protected override void ExecuteAction(InteractionContext context, ExplosionData data, Vector2 targetPos)
         {
-            ActionProvider.Effect.Execute(context, data.visualData, targetPos);
-
-            //var targetsToExecute = GetTargetsToExecuteInRange(targetPos, data.range, data.layers);
-
-            //foreach (var target in targetsToExecute) { }
-                //foreach (var zone in data.ActionZones)
-                //{
-                //    float rangeProp = Vector2.Distance(target.Value, targetPos) / data.range;
-                //    if (zone.Key <= rangeProp)
-                //        foreach (var action in zone.Value)
-                //            action?.ScaleExecute(context, target.Key, 1 - rangeProp / zone.Key);
-                //}
+            ActionProvider.Effect.Execute(context, data.vfxData, targetPos);
+            ActionProvider.Damage.Execute(context, data.damageData, targetPos);
         }
 
         protected override void ExecuteAction(InteractionContext context, ExplosionData data, IInteractive target)
         {
-            throw new System.NotImplementedException();
+            ActionProvider.Effect.Execute(context, data.vfxData, target);
+            ActionProvider.Damage.Execute(context, data.damageData, target);
         }
     }
 }

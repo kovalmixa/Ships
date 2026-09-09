@@ -63,19 +63,25 @@ namespace Assets.Entity.Controllers
             switch (data)
             {
                 case ExplosionData explosionData:
+                    explosionData.vfxData ??= new VfxData();
                     explosionData.damageData ??= new DamageData();
                     SetActionData(explosionData.damageData, context, getFromSnapshot);
                     break;
 
                 case DamageData damageData:
                     damageData.value = stats.GetLifetimeStat(StatType.Damage);
+                    damageData.range = stats.GetLifetimeStat(StatType.AreaOfEffect);
+
+                    damageData.splashModifier = stats.GetLifetimeStat(StatType.SplashModifier);
+                    damageData.splashModifier = damageData.splashModifier == 0 ? 0.1f : damageData.splashModifier;
+                    damageData.splashCurve = AnimationCurve.Linear(0, 1, 1, damageData.splashModifier);
+
                     damageData.penetration = stats.GetLifetimeStat(StatType.Penetration);
                     damageData.critChance = stats.GetLifetimeStat(StatType.CritChance);
                     damageData.critMultiplier = stats.GetLifetimeStat(StatType.CritMultiplier);
-                    damageData.range = stats.GetLifetimeStat(StatType.AreaOfEffect);
 
                     int layerMaskValue = (int)stats.GetLifetimeStat(StatType.DamageLayer);
-                    damageData.targetLayers = layerMaskValue == 0 ? LayerType.All : (LayerType)layerMaskValue;
+                    damageData.targetLayer = layerMaskValue == 0 ? LayerType.All : (LayerType)layerMaskValue;
                     
                     damageData.elements.Clear();
                     foreach (var element in StatModHandler.elementalMap)
@@ -99,22 +105,17 @@ namespace Assets.Entity.Controllers
                     break;
 
                 case ProjectileData projData:
-                    projData.damageValue = stats.GetLifetimeStat(StatType.Damage);
+                    projData.damageData ??= new DamageData();
+                    SetActionData(projData.damageData, context, getFromSnapshot);
+
                     projData.speed = stats.GetLifetimeStat(StatType.PrSpeed);
                     projData.lifeTime = stats.GetLifetimeStat(StatType.PrLifeTime);
+                    projData.maxRange = stats.GetLifetimeStat(StatType.MaxRange);
                     projData.isHoming = stats.GetLifetimeStat(StatType.PrIsHoming) > 0f;
                     projData.isBallistic = stats.GetLifetimeStat(StatType.PrMoveType) == 1f;
 
                     var _dataContainer = stats.GetInitialData();
                     if (_dataContainer is EquipmentDataSO eqData) projData.type = eqData.projectileType;
-
-                    projData.elementalTypes.Clear();
-
-                    foreach (var element in StatModHandler.elementalMap)
-                    {
-                        float dmgValue = stats.GetLifetimeStat(element.dmg);
-                        if (dmgValue > 0f) projData.elementalTypes.Add(element.type);
-                    }
                     break;
 
                 case SpawnData spawnData:

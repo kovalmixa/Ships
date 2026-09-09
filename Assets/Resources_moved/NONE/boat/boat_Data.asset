@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets.DataContainers.HullDataSO
   general:
     <SizeType>k__BackingField: 0
-    Layer: 0
+    Layer: 2
     <SlotHeight>k__BackingField: 1
     <SlotWidth>k__BackingField: 1
     icon: {fileID: 0}

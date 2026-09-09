@@ -1,13 +1,19 @@
-﻿using Assets.Common.Interfaces;
+﻿using Assets.Common;
+using Assets.Common.Interfaces;
+using Assets.Handlers;
+using Assets.Handlers.Enums;
+using Assets.Scripts.Actions.VFX;
 using GameplayActions;
 using System;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Scripts.Actions.Projectile
 {
     public class ProjectileInstance : MonoBehaviour, IPoolInstance
     {
-        private readonly GameplayAction[] _onExplosionActions;
+        protected readonly GameplayAction[] onExplosionActions;
         protected Action onReturnToPool;
 
         protected ProjectileData data;
@@ -16,6 +22,7 @@ namespace Assets.Scripts.Actions.Projectile
         [SerializeField] protected float avarageDamage; //for setting size depending on damage value
         [SerializeField] protected VfxData launchEffectData;
         [SerializeField] protected VfxData explosionEffectData;
+        [SerializeField] protected VfxRotationType vfxRotation = VfxRotationType.Default;
 
         protected Transform targetTransform;
         protected Vector2 targetPosition;
@@ -86,6 +93,8 @@ namespace Assets.Scripts.Actions.Projectile
 
         #endregion
 
+        #region Public/Protected
+
         protected virtual void Move(float deltaTime)
         {
             if (isReturned) return;
@@ -110,21 +119,78 @@ namespace Assets.Scripts.Actions.Projectile
         {
             if (isReturned) return false;
             isReturned = !isContinuous;
-            Debug.Log("Exploaded");
 
             ExecuteExplosionAction();
+            if (onExplosionActions != null)
+            {
+                foreach (var action in onExplosionActions)
+                {
+                    var data = context.ActionDataController.GetActionData(action.GetType(), context, true);
+                    action.Execute(context, data, transform.position);
+                }
+            }
             if (!isContinuous) ReleaseToPool();
             return true;
         }
 
         protected void ExecuteExplosionAction()
         {
+            if (data?.damageData == null) { Debug.LogError("Damage is null"); return; }
             Vector3 explodePos = transform.position;
-            var explosionAction = ActionProvider.Explosion;
-            var dataController = context.ActionDataController;
+            var expData = new ExplosionData {
+                vfxData = new VfxData { rotationType = vfxRotation },
+                damageData = data.damageData
+            };
 
-            var expData = dataController.GetActionData(explosionAction.GetType(), context, false);
-            explosionAction.Execute(context, expData, explodePos);
+            int ignoreMask = 0;
+            if (LayersHandler.interactionIgnore != null)
+            {
+                foreach (var layerNameItem in LayersHandler.interactionIgnore)
+                {
+                    int layerIndex = LayerMask.NameToLayer(layerNameItem);
+                    if (layerIndex != -1) ignoreMask |= (1 << layerIndex);
+                }
+            }
+
+            Collider2D[] hitColliders = Physics2D.OverlapPointAll(explodePos, ~ignoreMask);
+            string layerName = "";
+            if (hitColliders.Length > 0)
+            {
+                foreach (var col in hitColliders)
+                {
+                    string currentLayer = LayerMask.LayerToName(col.gameObject.layer);
+                    if (currentLayer == "Land")
+                    {
+                        layerName = "Land";
+                        break;
+                    }
+                    if (currentLayer == "Sea" && layerName != "Land") layerName = "Sea";
+                    else if (string.IsNullOrEmpty(layerName)) layerName = currentLayer;
+                }
+            }
+
+            var targetLayer = data.damageData.targetLayer;
+            var range = data.damageData.range;
+            var airLayerMask = 1 << LayerMask.NameToLayer("Air");
+
+            Collider2D[] targetCollider = Physics2D.OverlapCircleAll(explodePos, range, ~ignoreMask);
+            bool hitInteractiveTarget = targetCollider.Any(col => col.GetComponent<IInteractive>() != null);
+            bool isAirUnitNearSplash = Physics2D.OverlapCircle(explodePos, range * 3f, airLayerMask) != null;
+
+            if (hitInteractiveTarget) layerName = "Target";
+            else if (((targetLayer & LayerType.Air) != 0 || targetLayer == LayerType.All) && isAirUnitNearSplash) layerName = "Air";
+            else if (string.IsNullOrEmpty(layerName)) layerName = "Air";
+            else if (string.IsNullOrEmpty(layerName)) layerName = "Air";
+
+            string vfxName = $"{data.type}{layerName}";
+            Debug.Log(vfxName);
+
+            //if (Enum.TryParse(vfxName, out VfxType result))
+            //{
+            //    expData.vfxData.type = result;
+            //    ActionProvider.Explosion.Execute(context, expData, explodePos);
+            //}
+            //else Debug.LogError($"[ProjectileInstance] Unable to convert string '{vfxName}' to VfxType enum");
         }
 
         public void ReleaseToPool()
@@ -132,6 +198,8 @@ namespace Assets.Scripts.Actions.Projectile
             onReturnToPool?.Invoke();
             onReturnToPool = null;
         }
+        #endregion
+
         #endregion
     }
 }
