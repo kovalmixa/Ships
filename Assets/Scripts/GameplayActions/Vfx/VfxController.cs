@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Assets.Handlers.CommonParents;
 using Assets.Handlers.FileHandlers;
+using Assets.Handlers.TextHandlers;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -12,12 +13,11 @@ namespace Assets.Scripts.Actions.VFX
     {
         None = 0,
         //Bullet
-        bulletLaunch = 1,
-        bulletMetalHit = 2,
-        bulletGroundHit = 3,
-        bulletWaterHit = 4,
-        bulletFlashHit = 5,
-        bulletExplosion = 6,
+        BulletLaunch = 1,
+        BulletHit = 2,
+        BulletHitWater = 3,
+        BulletHitGround = 4,
+        BulletHitAir = 5,
         //...
     }
 
@@ -74,6 +74,12 @@ namespace Assets.Scripts.Actions.VFX
 
         #endregion
 
+        public UniTask<bool> IsExist(VfxType type)
+        {
+            string id = StringHandler.FirstCharToLower(type.ToString());
+            return PrefabLoader.Instance.CheckAddressableExistsAsync(id);
+        }
+
         public void PlayEffect(InteractionContext context, VfxType type, Vector3 position, Quaternion rotation)
         {
             PlayEffectAsync(context, type, position, rotation).Forget();
@@ -92,9 +98,7 @@ namespace Assets.Scripts.Actions.VFX
                 }
 
                 pool = await lazyLoad.Task;
-
                 if (isClearing || pool == null) return;
-
                 if (!_pools.ContainsKey(type))
                 {
                     _pools[type] = pool;
@@ -121,9 +125,7 @@ namespace Assets.Scripts.Actions.VFX
 
         private async UniTask<IObjectPool<VfxInstance>> CreatePoolAsync(VfxType type)
         {
-            var typeName = type.ToString();
-            var id = char.ToLower(typeName[0]) + typeName.Substring(1);
-
+            var id = StringHandler.FirstCharToLower(type.ToString());
             GameObject prefab = await PrefabLoader.Instance.GetPrefabAsync(id);
             if (prefab == null)
             {

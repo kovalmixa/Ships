@@ -14,7 +14,7 @@ namespace GameplayActions
         public static ExplosionAction Explosion { get; } = new();
         public static HealAction Heal { get; } = new();
         public static DamageAction Damage { get; } = new();
-        public static VfxAction Effect { get; } = new();
+        public static VfxAction Vfx { get; } = new();
         public static AudioAction Audio { get; } = new();
         public static SpawnAction Spawn { get; } = new();
         public static PositionAction Position { get; } = new();

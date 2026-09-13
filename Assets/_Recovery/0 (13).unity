@@ -194,14 +194,6 @@ PrefabInstance:
       propertyPath: m_Intensity
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 2872905297271435608, guid: 1b03d94787fd9334b8bbef494824fbe9, type: 3}
-      propertyPath: m_ApplyToSortingLayers.Array.size
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 2872905297271435608, guid: 1b03d94787fd9334b8bbef494824fbe9, type: 3}
-      propertyPath: 'm_ApplyToSortingLayers.Array.data[15]'
-      value: 1640461839
-      objectReference: {fileID: 0}
     - target: {fileID: 3728667232679261808, guid: 1b03d94787fd9334b8bbef494824fbe9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 385.86508

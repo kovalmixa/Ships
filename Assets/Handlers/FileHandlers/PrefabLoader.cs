@@ -1,7 +1,7 @@
 namespace Assets.Handlers.FileHandlers
 {
+    using Cysharp.Threading.Tasks;
     using System.Collections.Generic;
-    using System.Threading.Tasks;
     using UnityEngine;
     using UnityEngine.AddressableAssets;
     using UnityEngine.ResourceManagement.AsyncOperations;
@@ -11,7 +11,7 @@ namespace Assets.Handlers.FileHandlers
     {
         private readonly Dictionary<string, AsyncOperationHandle<GameObject>> _loadedPrefabs = new();
 
-        public async Task<GameObject> GetPrefabAsync(string id)
+        public async UniTask<GameObject> GetPrefabAsync(string id)
         {
             if (_loadedPrefabs.TryGetValue(id, out var existingHandle))
             {
@@ -26,19 +26,17 @@ namespace Assets.Handlers.FileHandlers
 
             if (locations == null || locations.Count == 0)
             {
-                Debug.LogWarning($"[Addressables] Ключ '{id}' не найден в системе Addressables Groups! Проверьте настройки префаба.");
+                Debug.LogWarning($"[Addressables] Key '{id}' not found in the Addressables Groups system! Check the prefab settings.");
                 return null;
             }
 
-            // 2. Загружаем префаб, если ключ существует
             var handle = Addressables.LoadAssetAsync<GameObject>(id);
             _loadedPrefabs[id] = handle;
-
             GameObject prefab = await handle.Task;
 
             if (handle.Status != AsyncOperationStatus.Succeeded)
             {
-                Debug.LogError($"[Addressables] Ошибка при загрузке префаба '{id}'.");
+                Debug.LogError($"[Addressables] Error loading prefab '{id}'.");
                 _loadedPrefabs.Remove(id);
                 return null;
             }
@@ -66,7 +64,19 @@ namespace Assets.Handlers.FileHandlers
             return null;
         }
 
-        public async Task<GameObject> InstantiatePrefabAsync(string id, Vector3 pos, Quaternion rot, Transform parent = null)
+        public async UniTask<bool> CheckAddressableExistsAsync(string key)
+        {
+            var handle = Addressables.LoadResourceLocationsAsync(key);
+            var locations = await handle.Task;
+
+            bool exists = handle.Status == AsyncOperationStatus.Succeeded
+                          && locations != null
+                          && locations.Count > 0;
+            Addressables.Release(handle);
+            return exists;
+        }
+
+        public async UniTask<GameObject> InstantiatePrefabAsync(string id, Vector3 pos, Quaternion rot, Transform parent = null)
         {
             var instanceHandle = Addressables.InstantiateAsync(id, pos, rot, parent);
             return await instanceHandle.Task;

@@ -18,7 +18,7 @@ public class SetBuffAction : GameplayAction<BuffData>
 {
     protected override void ExecuteAction(InteractionContext context, BuffData data, Vector2 targetPos)
     {
-        if (data.visualData != null) ActionProvider.Effect.Execute(context, data.visualData, targetPos);
+        if (data.visualData != null) ActionProvider.Vfx.Execute(context, data.visualData, targetPos);
 
         int combinedMask = 0;
         if (data.filterLayers != null)

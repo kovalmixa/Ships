@@ -2,11 +2,16 @@
 using Assets.Common.Interfaces;
 using Assets.Handlers;
 using Assets.Handlers.Enums;
+using Assets.Handlers.FileHandlers;
 using Assets.Scripts.Actions.VFX;
+using Cysharp.Threading.Tasks;
 using GameplayActions;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 
 namespace Assets.Scripts.Actions.Projectile
@@ -23,6 +28,7 @@ namespace Assets.Scripts.Actions.Projectile
         [SerializeField] protected VfxData launchEffectData;
         [SerializeField] protected VfxData explosionEffectData;
         [SerializeField] protected VfxRotationType vfxRotation = VfxRotationType.Default;
+        [SerializeField] protected VfxType defaultExpVfx;
 
         protected Transform targetTransform;
         protected Vector2 targetPosition;
@@ -89,7 +95,7 @@ namespace Assets.Scripts.Actions.Projectile
             gameObject.SetActive(true);
         }
 
-        protected virtual void SetLaunchEffect() => ActionProvider.Effect.Execute(context, launchEffectData, data.startPosition);
+        protected virtual void SetLaunchEffect() => ActionProvider.Vfx.Execute(context, launchEffectData, data.startPosition);
 
         #endregion
 
@@ -133,7 +139,7 @@ namespace Assets.Scripts.Actions.Projectile
             return true;
         }
 
-        protected void ExecuteExplosionAction()
+        protected async UniTask ExecuteExplosionAction()
         {
             if (data?.damageData == null) { Debug.LogError("Damage is null"); return; }
             Vector3 explodePos = transform.position;
@@ -164,7 +170,7 @@ namespace Assets.Scripts.Actions.Projectile
                         layerName = "Land";
                         break;
                     }
-                    if (currentLayer == "Sea" && layerName != "Land") layerName = "Sea";
+                    if (currentLayer == "Water" && layerName != "Land") layerName = "Water";
                     else if (string.IsNullOrEmpty(layerName)) layerName = currentLayer;
                 }
             }
@@ -177,20 +183,16 @@ namespace Assets.Scripts.Actions.Projectile
             bool hitInteractiveTarget = targetCollider.Any(col => col.GetComponent<IInteractive>() != null);
             bool isAirUnitNearSplash = Physics2D.OverlapCircle(explodePos, range * 3f, airLayerMask) != null;
 
-            if (hitInteractiveTarget) layerName = "Target";
+            if (hitInteractiveTarget) layerName = "";
             else if (((targetLayer & LayerType.Air) != 0 || targetLayer == LayerType.All) && isAirUnitNearSplash) layerName = "Air";
             else if (string.IsNullOrEmpty(layerName)) layerName = "Air";
             else if (string.IsNullOrEmpty(layerName)) layerName = "Air";
 
-            string vfxName = $"{data.type}{layerName}";
-            Debug.Log(vfxName);
-
-            //if (Enum.TryParse(vfxName, out VfxType result))
-            //{
-            //    expData.vfxData.type = result;
-            //    ActionProvider.Explosion.Execute(context, expData, explodePos);
-            //}
-            //else Debug.LogError($"[ProjectileInstance] Unable to convert string '{vfxName}' to VfxType enum");
+            string layerVfx = $"{data.type}Hit{layerName}";
+            if (Enum.TryParse(layerVfx, out VfxType result) && await VfxController.Instance.IsExist(result)) expData.vfxData.type = result;
+            else if (await VfxController.Instance.IsExist(defaultExpVfx)) expData.vfxData.type = defaultExpVfx;
+            else { Debug.LogWarning($"There is no match for both layer vfx({layerVfx}) and default one({defaultExpVfx})"); return; }
+            ActionProvider.Explosion.Execute(context, expData, explodePos);
         }
 
         public void ReleaseToPool()
@@ -198,6 +200,7 @@ namespace Assets.Scripts.Actions.Projectile
             onReturnToPool?.Invoke();
             onReturnToPool = null;
         }
+
         #endregion
 
         #endregion

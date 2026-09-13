@@ -71,7 +71,6 @@ namespace Assets.Scripts.GameplayActions.FireProjectile
                 isReturned = true;
                 StartCoroutine(FadeTrailsAndReleaseRoutine());
             }
-
             return true;
         }
 

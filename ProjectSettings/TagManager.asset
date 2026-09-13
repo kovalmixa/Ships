@@ -8,15 +8,15 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - UnderWater
   - Water
   - UI
   - Land
-  - Sea
+  - Hover
   - Air
   - Markers
   - InvisibleMarkers
-  - 
+  - Outliners
   - 
   - 
   - 
@@ -62,6 +62,9 @@ TagManager:
   - name: Water_Effects
     uniqueID: 1640461839
     locked: 0
+  - name: Water_Effects_Stencil
+    uniqueID: 315385921
+    locked: 0
   - name: Ground_Terrain
     uniqueID: 2199121615
     locked: 0
@@ -77,6 +80,9 @@ TagManager:
   - name: Ground_Effects
     uniqueID: 2151034147
     locked: 0
+  - name: Ground_Effects_Stencil
+    uniqueID: 348998041
+    locked: 0
   - name: Ground_Decoration_Top
     uniqueID: 2172334137
     locked: 0
@@ -85,6 +91,9 @@ TagManager:
     locked: 0
   - name: Air_Effects
     uniqueID: 2386517599
+    locked: 0
+  - name: Air_Effects_Stencil
+    uniqueID: 3240961051
     locked: 0
   - name: Air_Decoration_Top
     uniqueID: 3408098101

@@ -97,11 +97,15 @@ namespace Assets.Handlers.Enums
     public enum LayerType
     {
         None = 0,
-        Land = 1 << 0, // 1
-        Sea = 1 << 1, // 2
-        Air = 1 << 2, // 4
+        UnderWater = 1 << 0,                // 1
+        Water = 1 << 2,                     // 2
+        Land = 1 << 3,                      // 4
+        Hover = 1 << 4,                     // 8
+        Air = 1 << 5,                       // 16
 
-        All = Land | Sea | Air // 7
+        WaterLayer = UnderWater | Water,    // 5
+        GroundLayer = Water | Land | Hover, // 14
+        All = WaterLayer | GroundLayer | Air// 31
     }
 }
 
@@ -285,7 +289,7 @@ namespace Assets.Handlers
         {
             int mask = 0;
             if ((targetLayer & LayerType.Land) != 0) mask |= LayerMask.GetMask("Land");
-            if ((targetLayer & LayerType.Sea) != 0) mask |= LayerMask.GetMask("Sea");
+            if ((targetLayer & LayerType.Water) != 0) mask |= LayerMask.GetMask("Water");
             if ((targetLayer & LayerType.Air) != 0) mask |= LayerMask.GetMask("Air");
             return mask;
         }
