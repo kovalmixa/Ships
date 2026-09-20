@@ -7,7 +7,6 @@ using Scripts;
 using UnityEngine;
 using Assets.Scripts.GameplayActions;
 
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -29,9 +28,9 @@ namespace EntityMarkers.Spawner
 
         private void Awake()
         {
-#if UNITY_EDITOR
+            if (!Application.isPlaying) return;
+
             ClearPreview();
-#endif
             _context.SetSource(gameObject);
             _spawnData.entityData = data;
             _spawnData.scripts = _scripts;
@@ -40,11 +39,19 @@ namespace EntityMarkers.Spawner
         private void Start()
         {
             if (!Application.isPlaying) return;
-            Spawn();
+
+            for (int i = 0; i < _spawnQuantity; i++)
+            {
+                ActionProvider.Spawn.Execute(_context, _spawnData, transform.position);
+            }
         }
 
 #if UNITY_EDITOR
-        private void OnEnable() => EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        private void OnEnable()
+        {
+            if (!Application.isPlaying)
+                EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
 
         private void OnDisable()
         {
@@ -60,17 +67,13 @@ namespace EntityMarkers.Spawner
 
         #endregion
 
-        private void Spawn()
-        {
-            for (int i = 0; i < _spawnQuantity; i++)
-                ActionProvider.Spawn.Execute(_context, _spawnData, transform.position);
-        }
+        #region Editor Methods (Safe for Build)
 
-        #region Editor
-
-#if UNITY_EDITOR
+        // Оставляем сигнатуру публичных методов открытой для компилятора,
+        // но вырезаем логику внутри для билда игрока.
         public void ClearPreview()
         {
+#if UNITY_EDITOR
             for (int i = transform.childCount - 1; i >= 0; i--)
             {
                 var child = transform.GetChild(i);
@@ -79,10 +82,12 @@ namespace EntityMarkers.Spawner
 
             var defaultSprite = GetComponent<SpriteRenderer>();
             if (defaultSprite != null) defaultSprite.enabled = true;
+#endif
         }
 
         public void BuildPreviewInEditor(GameObject hullPrefab, List<GameObject> equipmentPrefabs)
         {
+#if UNITY_EDITOR
             ClearPreview();
 
             if (hullPrefab == null) return;
@@ -113,8 +118,8 @@ namespace EntityMarkers.Spawner
                 else
                     DestroyImmediate(eqInstance);
             }
-        }
 #endif
+        }
 
         #endregion
     }

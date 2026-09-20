@@ -3,12 +3,9 @@ using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
 using Assets.Handlers;
-using Assets.Scripts.Actions;
-using GameplayActions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Assets.Entity.Controllers

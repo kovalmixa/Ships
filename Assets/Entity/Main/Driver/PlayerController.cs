@@ -112,8 +112,10 @@ namespace Entity.Controllers
                 bool isPressed = entry.Key == KeyCode.Mouse0 ? Input.GetMouseButton(0)
                     : entry.Key == KeyCode.Mouse1 ? Input.GetMouseButton(1)
                     : Input.GetKey(entry.Key);
-
-                if (isPressed) _entityController.ExecuteAction(entry.Value, targetPos);
+                if (isPressed)
+                {
+                    _entityController.ExecuteAction(entry.Value, targetPos);
+                }
             }
         }
     }

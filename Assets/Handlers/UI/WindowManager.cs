@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Assets.Handlers.FileHandlers;
 using Cysharp.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
-using Assets.Handlers.FileHandlers;
+using UnityEngine.EventSystems;
 
 namespace Assets.Handlers.SceneHandlers
 {
@@ -143,7 +144,6 @@ namespace Assets.Handlers.SceneHandlers
         private async UniTask CloseWindowInternal(string windowId, bool unfreezeTime, Action onComplete = null)
         {
             if (!_activeWindows.TryGetValue(windowId, out UIWindow window)) return;
-
             await window.CloseAsync(onComplete);
             if (unfreezeTime) SetTimeScale(false);
             _activeWindows.Remove(windowId);
@@ -154,6 +154,7 @@ namespace Assets.Handlers.SceneHandlers
                 _currentActiveTabId = null;
             }
             if (window != null && window.gameObject != null) Destroy(window.gameObject);
+
         }
 
         private void SetTimeScale(bool freeze) => Time.timeScale = freeze ? 0f : 1f;

@@ -5,7 +5,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
-public class UIWindow : MonoBehaviour
+public abstract class UIWindow : MonoBehaviour
 {
     [SerializeField] private float _fadeDuration = 0.25f;
 
@@ -19,7 +19,7 @@ public class UIWindow : MonoBehaviour
     public string WindowId => GameObjectHandler.GenerateUniqueId(name);
     public bool IsOpen => CanvasGroup != null && CanvasGroup.alpha > 0;
 
-    private CanvasGroup CanvasGroup
+    protected CanvasGroup CanvasGroup
     {
         get
         {
@@ -61,6 +61,7 @@ public class UIWindow : MonoBehaviour
 
     public async UniTask CloseAsync(Action onComplete = null)
     {
+        DisableRaycasts();
         ResetCancellationToken();
         var token = _cts.Token;
 
@@ -111,6 +112,15 @@ public class UIWindow : MonoBehaviour
         _cts?.Cancel();
         _cts?.Dispose();
         _cts = new CancellationTokenSource();
+    }
+
+    public void DisableRaycasts()
+    {
+        CanvasGroup.blocksRaycasts = false;
+        CanvasGroup.interactable = false;
+
+        if (UnityEngine.EventSystems.EventSystem.current != null)
+            UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
     }
 
     private void OnDestroy()

@@ -16,7 +16,7 @@ namespace Assets.Scripts.Actions.VFX
         BulletLaunch = 1,
         BulletHit = 2,
         BulletHitWater = 3,
-        BulletHitGround = 4,
+        BulletHitLand = 4,
         BulletHitAir = 5,
         //...
     }

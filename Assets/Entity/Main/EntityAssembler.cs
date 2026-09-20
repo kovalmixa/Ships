@@ -2,6 +2,7 @@
 using Assets.Entity.Hull;
 using Assets.Handlers.FileHandlers;
 using Assets.Handlers.SceneHandlers;
+using Cysharp.Threading.Tasks;
 using Entity.Controllers;
 using System;
 using System.Threading.Tasks;
@@ -24,8 +25,7 @@ namespace Assets.Entity.Controllers
             _entity.data = data;
             if (!await SetHull(data.hullId)) return false;
             SetSortingLayersToAnchors(data);
-            SetEquipments(data);
-
+            await SetEquipments(data);
             return true;
         }
 
@@ -62,7 +62,7 @@ namespace Assets.Entity.Controllers
             }
         }
 
-        private async void SetEquipments(EntityData data)
+        private async UniTask SetEquipments(EntityData data)
         {
             for (int i = data.equipmentSlots.Count - 1; i >= 0; i--)
             {

@@ -1,6 +1,7 @@
+using Cysharp.Threading.Tasks;
 using System;
 using System.Linq;
-using Cysharp.Threading.Tasks;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,6 +16,8 @@ namespace Assets.Handlers.SceneHandlers
         public static event Func<UniTask> OnBeforeSceneLoad;
         public static event Func<UniTask> OnAfterSceneLoad;
 
+        private UILoadingWindow _loadingWindow;
+
         #region Initialization
 
         protected override void Awake()
@@ -28,10 +31,10 @@ namespace Assets.Handlers.SceneHandlers
         private async UniTaskVoid InitializeBootWindowsAsync()
         {
             await WindowManager.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
-            await UniTask.Yield(PlayerLoopTiming.Update);
+            _loadingWindow = WindowManager.Instance.GetWindow(_loadingScreenWindowName) as UILoadingWindow;
 
+            await UniTask.Yield(PlayerLoopTiming.Update);
             await WindowManager.Instance.OpenTab(_mainMenuSceneName, delayMs: 0, freezeTime: true);
-            await WindowManager.Instance.CloseWindowIndependent(_loadingScreenWindowName);
         }
 
         #endregion
@@ -40,41 +43,30 @@ namespace Assets.Handlers.SceneHandlers
 
         public async UniTask NextLocation(string locationName)
         {
-            if (!Application.CanStreamedLevelBeLoaded(locationName))
-            {
-                Debug.LogWarning($"[SceneController] Scene not found in Build Settings: {locationName}");
-                return;
-            }
+            if (!Application.CanStreamedLevelBeLoaded(locationName)) return;
 
             var token = this.GetCancellationTokenOnDestroy();
-
             try
             {
                 await WindowManager.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
-                await InvokeAsyncEvent(OnBeforeSceneLoad);
+
+                UniTask beforeLoadTask = InvokeAsyncEvent(OnBeforeSceneLoad);
 
                 AsyncOperation sceneLoadOperation = SceneManager.LoadSceneAsync(locationName, LoadSceneMode.Single);
                 sceneLoadOperation.allowSceneActivation = false;
 
-                var loadingWindow = WindowManager.Instance.GetWindow(_loadingScreenWindowName) as UILoadingWindow;
-
-                while (sceneLoadOperation.progress < 0.9f)
-                {
-                    if (loadingWindow != null)
-                    {
-                        float progress = Mathf.Clamp01(sceneLoadOperation.progress / 0.9f);
-                        loadingWindow.UpdateProgress(progress);
-                    }
-                    await UniTask.Yield(PlayerLoopTiming.Update, token);
-                }
+                await ShowLoadingProgressAsync(sceneLoadOperation, beforeLoadTask, token);
 
                 sceneLoadOperation.allowSceneActivation = true;
                 await sceneLoadOperation.WithCancellation(token);
 
+                if (EntityPoolHandler.Instance != null)
+                    await EntityPoolHandler.Instance.WaitUntilAllActiveInitializedAsync(token);
+
                 await InvokeAsyncEvent(OnAfterSceneLoad);
 
-                if (loadingWindow != null) loadingWindow.UpdateProgress(1f);
-                await UniTask.Delay(100, ignoreTimeScale: true, cancellationToken: token);
+                if (_loadingWindow != null) _loadingWindow.UpdateProgress(1f);
+                await UniTask.Delay(50, ignoreTimeScale: true, cancellationToken: token);
             }
             catch (Exception ex)
             {
@@ -84,6 +76,24 @@ namespace Assets.Handlers.SceneHandlers
             {
                 await WindowManager.Instance.CloseWindowIndependent(_loadingScreenWindowName);
             }
+        }
+
+        private async UniTask ShowLoadingProgressAsync(AsyncOperation operation, UniTask eventTask, CancellationToken token)
+        {
+            UniTask sceneProgressTask = UniTask.Create(async () =>
+            {
+                while (operation.progress < 0.9f)
+                {
+                    if (_loadingWindow != null)
+                    {
+                        float progress = Mathf.Clamp01(operation.progress / 0.9f);
+                        _loadingWindow.UpdateProgress(progress);
+                    }
+                    await UniTask.Yield(PlayerLoopTiming.Update, token);
+                }
+            });
+
+            await UniTask.WhenAll(sceneProgressTask, eventTask);
         }
 
         private async UniTask InvokeAsyncEvent(Func<UniTask> asyncEvent)

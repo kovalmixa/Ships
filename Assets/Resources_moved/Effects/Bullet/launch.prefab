@@ -180,7 +180,7 @@ ParticleSystemRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -2143933149
-  m_SortingLayer: 11
+  m_SortingLayer: 13
   m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -5003,6 +5003,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7317340649721092562}
     m_Modifications:
+    - target: {fileID: 2007097233683339010, guid: e987de93e89d3e54593ca2c7e7163275, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007097233683339010, guid: e987de93e89d3e54593ca2c7e7163275, type: 3}
+      propertyPath: m_Color.g
+      value: 0.56099313
+      objectReference: {fileID: 0}
+    - target: {fileID: 2007097233683339010, guid: e987de93e89d3e54593ca2c7e7163275, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2007097233683339010, guid: e987de93e89d3e54593ca2c7e7163275, type: 3}
       propertyPath: m_Intensity
       value: 3

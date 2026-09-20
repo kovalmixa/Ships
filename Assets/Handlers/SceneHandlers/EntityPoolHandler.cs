@@ -1,7 +1,9 @@
-using System.Collections.Generic;
 using Assets.Handlers.CommonParents;
 using Cysharp.Threading.Tasks;
 using Entity.Controllers;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -25,7 +27,7 @@ namespace Assets.Handlers.SceneHandlers
                 var targetsToRelease = _activeEntities.ToArray();
                 for (int i = 0; i < targetsToRelease.Length; i++)
                 {
-                    if (targetsToRelease[i] != null) _pool.Release(targetsToRelease[i]);
+                    if (targetsToRelease[i] != null) _pool?.Release(targetsToRelease[i]);
                     if (IsIndexOverClearDelay(i)) await UniTask.Yield();
                 }
                 _activeEntities.Clear();
@@ -39,19 +41,20 @@ namespace Assets.Handlers.SceneHandlers
         protected override void Awake()
         {
             base.Awake();
-            if (_prefab != null)
-            {
-                _pool = CreatePool(_prefab);
-            }
+            InitPoolIfNeeded();
         }
 
-        protected override UniTask PrewarmAsync()
+        private void InitPoolIfNeeded()
         {
-            if (_pool != null)
-            {
-                PrewarmPool(_pool, initialCapacity);
-            }
-            return UniTask.CompletedTask;
+            if (_pool == null && _prefab != null) _pool = CreatePool(_prefab);
+        }
+
+        protected override async UniTask PrewarmAsync()
+        {
+            InitPoolIfNeeded();
+            if (_pool != null) PrewarmPool(_pool, initialCapacity);
+            isPrewarmed = true;
+            await UniTask.CompletedTask;
         }
 
         private IObjectPool<EntityController> CreatePool(GameObject prefab)
@@ -65,6 +68,7 @@ namespace Assets.Handlers.SceneHandlers
                 },
                 actionOnGet: instance =>
                 {
+                    instance.ResetInitializationState();
                     instance.gameObject.SetActive(true);
                     _activeEntities.Add(instance);
                 },
@@ -89,9 +93,28 @@ namespace Assets.Handlers.SceneHandlers
 
         #region Public API
 
+        public async UniTask WaitUntilAllActiveInitializedAsync(CancellationToken token)
+        {
+            await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate, cancellationToken: token);
+
+            if (_activeEntities.Count == 0) return;
+
+            var tasks = _activeEntities
+                .Where(entity => entity != null && !entity.IsInitialized)
+                .Select(entity => entity.WaitUntilInitializedAsync(token));
+
+            await UniTask.WhenAll(tasks);
+        }
+
         public EntityController GetEntity()
         {
-            if (_pool == null || isClearing || !isPrewarmed) return null;
+            InitPoolIfNeeded();
+            if (_pool == null || isClearing)
+            {
+                Debug.LogWarning($"[EntityPoolHandler] Cannot get entity. Pool null: {_pool == null}, IsClearing: {isClearing}");
+                return null;
+            }
+
             return _pool.Get();
         }
 
@@ -110,8 +133,6 @@ namespace Assets.Handlers.SceneHandlers
                 entity.Driver = null;
             }
             entity.data = null;
-            // Если есть баффы или абилки - их тоже нужно сбросить
-            //entity.abilitiesController?.Clear();
         }
     }
 }

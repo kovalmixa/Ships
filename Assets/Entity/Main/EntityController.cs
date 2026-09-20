@@ -8,10 +8,12 @@ using Assets.Entity.Interfaces;
 using Assets.Entity.Modifiers;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
+using Cysharp.Threading.Tasks;
 using Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -33,6 +35,9 @@ namespace Entity.Controllers
 
         public EntitySnapshot GetSnapshot() => new EntitySnapshot(this, data);
 
+        public bool IsInitialized { get; private set; } = false;
+        private UniTaskCompletionSource _initTcs;
+
         private void Update()
         {
             if (hull == null) return;
@@ -41,8 +46,43 @@ namespace Entity.Controllers
 
         #region Setup
 
+        #region Init Token API
+
+        public UniTask WaitUntilInitializedAsync(CancellationToken token = default)
+        {
+            if (IsInitialized) return UniTask.CompletedTask;
+            return _initTcs.Task.AttachExternalCancellation(token);
+        }
+
+        public void ResetInitializationState()
+        {
+            IsInitialized = false;
+            _initTcs = new UniTaskCompletionSource();
+        }
+
+        private void InvokeInitializationState()
+        {
+            IsInitialized = true;
+            _initTcs?.TrySetResult();
+        }
+
+        #endregion
+
+        #region Enable/Disable
+        private void OnEnable()
+        {
+        }
+
+        private void OnDisable()
+        {
+            ResetInitializationState();
+        }
+
+        #endregion
+
         private void Awake()
         {
+            ResetInitializationState();
             Assembler = new EntityAssembler(this);
             TotalAbbilitiesController = new(this);
 
@@ -61,16 +101,31 @@ namespace Entity.Controllers
             AggregatedStats = new EntityStatsAggregator(this);
         }
 
-        public async Task Setup(EntityData data)
+        public async UniTask Setup(EntityData data)
         {
-            if (data == null) return;
-            this.data = data;
-            await Assembler.Build(data);
+            try
+            {
+                if (data == null)
+                {
+                    InvokeInitializationState();
+                    return;
+                }
+
+                this.data = data;
+                await Assembler.Build(data);
+                InvokeInitializationState();
+            }
+            catch (Exception ex)
+            {
+                _initTcs?.TrySetException(ex);
+                throw;
+            }
         }
 
-        public async Task Setup(EntityData data, IEnumerable<ScriptBase> scripts = null)
+        public async UniTask Setup(EntityData data, IEnumerable<ScriptBase> scripts = null)
         {
             if (data == null) return;
+
             await Setup(data);
 
             var aiDriver = gameObject.AddComponent<AiDriverController>();
@@ -78,7 +133,6 @@ namespace Entity.Controllers
             Driver = aiDriver;
             Driver.Setup(this);
         }
-
         #endregion
 
         #region IDriver Facade Methods
@@ -98,7 +152,8 @@ namespace Entity.Controllers
 
         public void ExecuteAction(KeyAction action, Vector2 targetPosition)
         {
-            if (!CanUseAbilities) return;
+            if (!CanUseAbilities || !IsInitialized) return;
+
             if (action.Category == ActionCategory.Weapon)
                 TotalAbbilitiesController.Invoke(targetPosition, (WeaponType)action.ActionId);
             else if (action.Category == ActionCategory.Ability)
