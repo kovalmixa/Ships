@@ -63,6 +63,7 @@ namespace GameplayActions
                         float multiplier = data.splashCurve.Evaluate(normalizedDistance);
                         multiplier = Mathf.Max(multiplier, data.splashModifier);
                         currentData = data.GetScaledDamage(multiplier);
+                        Debug.Log("Splashed");
                     }
                     interactive.TakeDamage(context, currentData);
                 }

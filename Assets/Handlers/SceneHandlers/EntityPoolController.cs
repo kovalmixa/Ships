@@ -89,6 +89,21 @@ namespace Assets.Handlers.SceneHandlers
             );
         }
 
+        private void CleanUpEntityBeforeRelease(EntityController entity)
+        {
+            if (entity.hull != null)
+            {
+                Destroy(entity.hull.gameObject);
+                entity.hull = null;
+            }
+            if (entity.Driver != null && entity.Driver is MonoBehaviour driverMb)
+            {
+                Destroy(driverMb);
+                entity.Driver = null;
+            }
+            entity.data = null;
+        }
+
         #endregion
 
         #region Public API
@@ -119,20 +134,5 @@ namespace Assets.Handlers.SceneHandlers
         }
 
         #endregion
-
-        private void CleanUpEntityBeforeRelease(EntityController entity)
-        {
-            if (entity.hull != null)
-            {
-                Destroy(entity.hull.gameObject);
-                entity.hull = null;
-            }
-            if (entity.Driver != null && entity.Driver is MonoBehaviour driverMb)
-            {
-                Destroy(driverMb);
-                entity.Driver = null;
-            }
-            entity.data = null;
-        }
     }
 }

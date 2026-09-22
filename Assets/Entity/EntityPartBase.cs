@@ -107,7 +107,8 @@ namespace Assets.Entity.Common
 
         public virtual void TakeDamage(InteractionContext context, DamageData data)
         {
-            throw new NotImplementedException();
+            Debug.Log($"Damaged with value {data.value} to {gameObject.name}");
+
         }
 
         public virtual void TakeHeal(InteractionContext context, HealData data)

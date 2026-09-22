@@ -1,8 +1,7 @@
 
-using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public class GlobalLightHandler : SingletonMonoBehaviour<GlobalLightHandler>
+public class GlobalLightController : SingletonMonoBehaviour<GlobalLightController>
 {
     private Light2D _globalLight;
 

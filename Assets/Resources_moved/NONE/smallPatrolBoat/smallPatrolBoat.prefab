@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1328403097879313759}
-  m_Layer: 7
+  m_Layer: 4
   m_Name: Layer1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3784776152572968837}
   - component: {fileID: 3901504903923586846}
-  m_Layer: 7
+  m_Layer: 4
   m_Name: Layer2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,7 +111,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 138808533
-  m_SortingLayer: 11
+  m_SortingLayer: 12
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 8cc53c107e46df542ac6128acc7585ba, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 3417965498495214239}
   - component: {fileID: 1691923692890103079}
   - component: {fileID: 7224750891720324652}
-  m_Layer: 7
+  m_Layer: 4
   m_Name: smallPatrolBoat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -359,7 +359,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8296754573792745974, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8661486173044409718, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_LocalPosition.x
@@ -501,7 +501,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8296754573792745974, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8661486173044409718, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_LocalPosition.x
@@ -607,7 +607,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8296754573792745974, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8661486173044409718, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_LocalPosition.x

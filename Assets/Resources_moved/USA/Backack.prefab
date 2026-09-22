@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 5888668427879922858}
   - component: {fileID: 2067661678433763203}
   - component: {fileID: 8273113706489101639}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: Backack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -241,7 +241,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8296754573792745974, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8661486173044409718, guid: 31481eafb3db21d4c93931e910ef1f13, type: 3}
       propertyPath: m_LocalPosition.x

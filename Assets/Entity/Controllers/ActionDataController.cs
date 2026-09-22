@@ -73,7 +73,7 @@ namespace Assets.Entity.Controllers
                     damageData.range = stats.GetLifetimeStat(StatType.AreaOfEffect);
 
                     damageData.splashModifier = stats.GetLifetimeStat(StatType.SplashModifier);
-                    damageData.splashModifier = damageData.splashModifier == 0 ? 0.1f : damageData.splashModifier;
+                    damageData.splashModifier = damageData.splashModifier == 0 ? 1f : damageData.splashModifier;
                     damageData.splashCurve = AnimationCurve.Linear(0, 1, 1, damageData.splashModifier);
 
                     damageData.penetration = stats.GetLifetimeStat(StatType.Penetration);

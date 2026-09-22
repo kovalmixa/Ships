@@ -174,8 +174,8 @@ namespace Assets.Scripts.Actions.Projectile
             var range = data.damageData.range;
             var airLayerMask = 1 << LayerMask.NameToLayer("Air");
 
-            Collider2D[] targetCollider = Physics2D.OverlapCircleAll(explodePos, range, ~ignoreMask);
-            bool hitInteractiveTarget = targetCollider.Any(col => col.GetComponent<IInteractive>() != null);
+            Collider2D[] targetColliders = Physics2D.OverlapCircleAll(explodePos, range, ~ignoreMask);
+            bool hitInteractiveTarget = targetColliders.Any(col => col.GetComponent<IInteractive>() != null);
             bool isAirUnitNearSplash = Physics2D.OverlapCircle(explodePos, range * 3f, airLayerMask) != null;
 
             if (hitInteractiveTarget) layerName = "";
