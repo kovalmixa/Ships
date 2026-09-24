@@ -14,16 +14,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using UI.GUI.CommandLine;
+using UI.GUI.EntityGUI;
 using UnityEngine;
-using UnityEngine.U2D;
 
 namespace Entity.Controllers
 {
     public class EntityController : MonoBehaviour, IObject, IAbbility, IStats, IPoolInstance
     {
         [Header("Settings")]
-        [SerializeField] private bool _isPlayerEntity;
         [SerializeField] private EntityNameplate _nameplate;
 
         public EntityData data;
@@ -90,17 +88,6 @@ namespace Entity.Controllers
             TotalAbbilitiesController = new(this);
 
             Id = GameObjectHandler.GenerateUniqueId(name);
-            if (_isPlayerEntity)
-            {
-                Driver = gameObject.AddComponent<PlayerController>();
-                Driver.Setup(this);
-                if (GameSessionHandler.Instance != null)
-                    GameSessionHandler.Instance.playerController = this;
-                Assembler.onSetHull += (HullBase hull) => {
-                    if (hull != null && CameraController.Instance != null)
-                        CameraController.Instance.Follow(hull.transform);
-                };
-            }
             AggregatedStats = new EntityStatsAggregator(this);
         }
 
@@ -114,8 +101,11 @@ namespace Entity.Controllers
                     return;
                 }
                 this.data = data;
+                SetupDriver();
                 await Assembler.Build(data);
+
                 SetupNameplate();
+
                 InvokeInitializationState();
             }
             catch (Exception ex)
@@ -130,18 +120,33 @@ namespace Entity.Controllers
             if (data == null) return;
 
             await Setup(data);
+            ((AiDriverController)Driver).AddScripts(scripts?.ToArray() ?? new ScriptBase[0]);
+        }
 
-            var aiDriver = gameObject.AddComponent<AiDriverController>();
-            aiDriver.AddScripts(scripts?.ToArray() ?? new ScriptBase[0]);
-            Driver = aiDriver;
+        private void SetupDriver()
+        {
+            if (data.isPlayer)
+            {
+                Driver = gameObject.AddComponent<PlayerController>();
+                Assembler.onSetHull += (HullBase hull) => {
+                    if (hull != null && CameraController.Instance != null)
+                        CameraController.Instance.Follow(hull.transform);
+                };
+            }
+            else Driver = gameObject.AddComponent<AiDriverController>();
             Driver.Setup(this);
         }
 
         private void SetupNameplate()
         {
-            if (_nameplate == null) return;
+            if (_nameplate == null || hull == null) return;
             var sprites = hull.Sprites;
-            if (sprites == null) { _nameplate.enabled = false; return; }
+            if (sprites == null || !sprites.Any() || data.isPlayer)
+            {
+                _nameplate.gameObject.SetActive(false);
+                return;
+            }
+            _nameplate.Setup(this);
 
             float maxX = 0f;
             foreach (Sprite sprite in sprites.Select(s => s.sprite))
@@ -151,8 +156,14 @@ namespace Entity.Controllers
                 if (size.x > maxX) maxX = size.x;
             }
 
-            _nameplate.transform.localScale = new Vector3(maxX, maxX, 0f);
+            float calculatedBasicScale = maxX / _nameplate.standartSize;
+            _nameplate.transform.localScale = new Vector2(calculatedBasicScale, calculatedBasicScale);
+            _nameplate._offset = new Vector3(0, 1.5f * calculatedBasicScale, 0);
+            float currentZoomFactor = CameraController.Instance != null
+                ? CameraController.Instance.GetTargetZoom : 1f;
+
         }
+
         #endregion
 
         #region IDriver Facade Methods

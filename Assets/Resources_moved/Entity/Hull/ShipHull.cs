@@ -48,8 +48,9 @@ namespace Assets.Entity.Hull
             rigidBody2D.MoveRotation(newAngle);
 
             Vector2 forwardDirection = Quaternion.Euler(0, 0, newAngle) * Vector2.up;
-            Vector2 nextPos = rigidBody2D.position + forwardDirection * (currentSpeed * Time.fixedDeltaTime);
-            rigidBody2D.MovePosition(nextPos);
+            Vector2 totalMovement = (forwardDirection * currentSpeed + externalVelocity) * Time.fixedDeltaTime;
+
+            rigidBody2D.MovePosition(rigidBody2D.position + totalMovement);
         }
     }
 }

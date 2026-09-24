@@ -1,0 +1,4 @@
+/* Применяет шрифт ко всем текстовым элементам UI Toolkit */
+Label, Button, TextField {
+    -unity-font-definition: resource("Fonts/YourTMPFontAsset SDF");
+}

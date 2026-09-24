@@ -49,9 +49,7 @@ namespace UI.MainMenu
             {
                 var save = LoadGameData(index);
                 GameSessionHandler.Data = save;
-
                 await SceneController.Instance.NextLocation(save.locationName);
-                await GameSessionHandler.Instance.SpawnPlayer();
             }
             catch (Exception ex)
             {

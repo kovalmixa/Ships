@@ -584,7 +584,6 @@ GameObject:
   - component: {fileID: 8640452451569283213}
   - component: {fileID: 6977048487192166433}
   - component: {fileID: 6480957579418787231}
-  - component: {fileID: 8640452451569283214}
   - component: {fileID: 8640452451569283215}
   - component: {fileID: 8640452451569283216}
   m_Layer: 0
@@ -953,8 +952,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41b783444a332d74dbf4cf4dda852afe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Handlers.SceneHandlers.GameSessionHandler
-  playerPrefab: {fileID: 8836336424163488932, guid: 53148dcd54cd9c042ac7d1ab1b471954, type: 3}
-  playerController: {fileID: 0}
+  _entityPrefab: {fileID: 479629053994360685, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
 --- !u!114 &7098805417650737212
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1098,20 +1096,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a7e0996208091f489428efce7787322, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8640452451569283214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3645952117214419065}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1d0db636b31f974598a57855bac9fdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Assets.Handlers.SceneHandlers.WindowManager
-  _currentActiveTab: {fileID: 0}
-  _currentActiveTabId: 
 --- !u!114 &8640452451569283215
 MonoBehaviour:
   m_ObjectHideFlags: 0

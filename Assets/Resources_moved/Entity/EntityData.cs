@@ -13,6 +13,7 @@ namespace Assets.Entity
     [System.Serializable]
     public class EntityData : IDataContainer
     {
+        public bool isPlayer;
         public string hullId;
         public List<EquipmentSlotData> equipmentSlots;
 

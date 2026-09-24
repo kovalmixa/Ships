@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Assets.DataContainers.HullDataSO
   general:
     <SizeType>k__BackingField: 0
-    Layer: 2
+    Layer: 0
     <SlotHeight>k__BackingField: 2
     <SlotWidth>k__BackingField: 1
     icon: {fileID: 0}
@@ -36,7 +36,7 @@ MonoBehaviour:
     - name: 'Mass: 5'
       _type: 52
       _statLayer: 0
-      _value: 5
+      _value: 2.5
     - name: 'MaxMoveSpeed: 5'
       _type: 50
       _statLayer: 0

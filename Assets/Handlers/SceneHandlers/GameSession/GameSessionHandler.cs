@@ -11,13 +11,11 @@ namespace Assets.Handlers.SceneHandlers
     public class GameSessionHandler : SingletonMonoBehaviour<GameSessionHandler>
     {
         [Header("Player Settings")]
-        [SerializeField] private EntityController playerPrefab;
-
-        [HideInInspector] public EntityController playerController;
-
+        [SerializeField] private EntityController _entityPrefab;
+        private EntityController _playerController;
+        public EntityController PlayerController => _playerController;
         public static event Action<EntityController> OnPlayerSpawned;
         public static event Action OnPlayerDespawned;
-        public EntityController PlayerController => playerController;
 
         private static (PositionData, Vector2) _respawnPointData;
         private static GameSessionData _data;
@@ -45,38 +43,38 @@ namespace Assets.Handlers.SceneHandlers
             }
 
             Vector2 spawnPosition = _respawnPointData.Item2;
-            if (playerController == null)
+            if (_playerController == null)
             {
-                if (playerPrefab == null)
+                if (_entityPrefab == null)
                 {
                     Debug.LogError("[GameSessionHandler] PlayerPrefab is not assigned in the Inspector!");
                     return;
                 }
 
-                playerController = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-                DontDestroyOnLoad(playerController.gameObject);
+                _playerController = Instantiate(_entityPrefab, spawnPosition, Quaternion.identity);
+                DontDestroyOnLoad(_playerController.gameObject);
             }
             else
             {
-                playerController.transform.position = spawnPosition;
-                playerController.gameObject.SetActive(true);
+                _playerController.transform.position = spawnPosition;
+                _playerController.gameObject.SetActive(true);
             }
 
-            await playerController.Setup(Data.entityDataContainer);
-            _spawnContext.SetSource(playerController.gameObject);
+            await _playerController.Setup(Data.entityDataContainer);
+            _spawnContext.SetSource(_playerController.gameObject);
             ActionProvider.Position.Execute(_spawnContext, _respawnPointData.Item1, spawnPosition);
 
-            OnPlayerSpawned?.Invoke(playerController);
+            OnPlayerSpawned?.Invoke(_playerController);
         }
 
         public async UniTask RespawnPlayer()
         {
             OnPlayerDespawned?.Invoke();
 
-            if (playerController != null)
+            if (_playerController != null)
             {
-                Destroy(playerController.gameObject);
-                playerController = null;
+                Destroy(_playerController.gameObject);
+                _playerController = null;
             }
 
             await SpawnPlayer();

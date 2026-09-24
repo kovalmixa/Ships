@@ -19,7 +19,10 @@ public class UILoadingWindow : UIWindow
     protected override void OnClosed()
     {
         if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
+        if (GUIHandler.Instance != null) GUIHandler.Instance.SetInputBlocked(false);
     }
+
+    private void OnDestroy() => OnClosed();
 
     public void UpdateProgress(float progress)
     {

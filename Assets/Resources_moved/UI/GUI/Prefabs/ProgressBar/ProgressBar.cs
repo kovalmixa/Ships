@@ -1,8 +1,10 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class ProgressBar : MonoBehaviour
 {
+    [SerializeField] private TextMeshPro _label;
     private float _lastValue = 0;
     private float _value = 0;
     private Material _material = null;
@@ -12,6 +14,7 @@ public class ProgressBar : MonoBehaviour
         set
         {
             _value = value;
+            _label.text = value.ToString();
             StartCoroutine(FillMaterialOverTime(3.0f));
         }
     }
@@ -38,5 +41,4 @@ public class ProgressBar : MonoBehaviour
         _lastValue = _value;
         Debug.Log("Действие завершено!");
     }
-
 }

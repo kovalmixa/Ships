@@ -63,10 +63,13 @@ namespace Assets.Handlers.SceneHandlers
                 if (EntityPoolHandler.Instance != null)
                     await EntityPoolHandler.Instance.WaitUntilAllActiveInitializedAsync(token);
 
+                if (GameSessionHandler.Instance != null && GameSessionHandler.Instance.PlayerController == null)
+                    await GameSessionHandler.Instance.SpawnPlayer();
+
                 await InvokeAsyncEvent(OnAfterSceneLoad);
 
                 if (_loadingWindow != null) _loadingWindow.UpdateProgress(1f);
-                await UniTask.Delay(50, ignoreTimeScale: true, cancellationToken: token);
+                await UniTask.Delay(100, ignoreTimeScale: true, cancellationToken: token);
             }
             catch (Exception ex)
             {

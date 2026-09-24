@@ -1,4 +1,5 @@
 using Cinemachine;
+using System;
 using UnityEngine;
 
 namespace Entity.Controllers
@@ -26,7 +27,7 @@ namespace Entity.Controllers
     {
         [SerializeField] private Camera _camera;
         [SerializeField] private CinemachineVirtualCamera _virtualCamera;
-
+  
         public Vector2 CursorPosition
         {
             get
@@ -61,6 +62,10 @@ namespace Entity.Controllers
 
         private Transform _panningTarget;
         public Transform _followTransform;
+
+        public Camera Camera => _camera;
+        public event Action<float> OnZoom;
+        public float GetTargetZoom => _targetZoom;
 
         protected override void Awake()
         {
@@ -101,7 +106,10 @@ namespace Entity.Controllers
         private void ZoomUpdate()
         {
             if (Mathf.Abs(_currentZoom - _targetZoom) > 0.01f)
+            {
                 _currentZoom = Mathf.Lerp(_currentZoom, _targetZoom, zoomSpeed * Time.deltaTime);
+                OnZoom?.Invoke(_targetZoom);
+            }
             else _currentZoom = _targetZoom;
 
             if (_virtualCamera != null) _virtualCamera.m_Lens.OrthographicSize = _currentZoom;
