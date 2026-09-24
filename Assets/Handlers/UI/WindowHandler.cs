@@ -3,11 +3,10 @@ using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Assets.Handlers.SceneHandlers
 {
-    public class WindowManager : SingletonMonoBehaviour<WindowManager>
+    public class WindowHandler : SingletonMonoBehaviour<WindowHandler>
     {
         private readonly Dictionary<string, UIWindow> _activeWindows = new Dictionary<string, UIWindow>();
         private UIWindow _currentActiveTab;

@@ -19,6 +19,8 @@ namespace Assets.Entity.Common
     {
         [field: SerializeField] public BuffStatusesController Buffs { get; protected set; }
         [SerializeField] protected StatModController _statModController;
+        private SpriteRenderer[] _sprites;
+        public SpriteRenderer[] Sprites => _sprites;
 
         public string Id { get; set; }
         public event Action OnGameObjectDestroyed;
@@ -59,6 +61,7 @@ namespace Assets.Entity.Common
         public virtual void Setup(EntityController entityController)
         {
             this.entityController = entityController;
+            _sprites = GameObjectHandler.GetNodesByType<SpriteRenderer>(transform).ToArray();
             Buffs = new BuffStatusesController(gameObject, _statModController);
 
             var statOptions = StatOptions;

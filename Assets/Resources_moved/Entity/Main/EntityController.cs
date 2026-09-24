@@ -14,8 +14,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
+using UI.GUI.CommandLine;
 using UnityEngine;
+using UnityEngine.U2D;
 
 namespace Entity.Controllers
 {
@@ -23,6 +24,8 @@ namespace Entity.Controllers
     {
         [Header("Settings")]
         [SerializeField] private bool _isPlayerEntity;
+        [SerializeField] private EntityNameplate _nameplate;
+
         public EntityData data;
         public EntityAssembler Assembler { get; private set; }
         public TotalAbbilitiesController TotalAbbilitiesController { get; private set; }
@@ -110,9 +113,9 @@ namespace Entity.Controllers
                     InvokeInitializationState();
                     return;
                 }
-
                 this.data = data;
                 await Assembler.Build(data);
+                SetupNameplate();
                 InvokeInitializationState();
             }
             catch (Exception ex)
@@ -132,6 +135,23 @@ namespace Entity.Controllers
             aiDriver.AddScripts(scripts?.ToArray() ?? new ScriptBase[0]);
             Driver = aiDriver;
             Driver.Setup(this);
+        }
+
+        private void SetupNameplate()
+        {
+            if (_nameplate == null) return;
+            var sprites = hull.Sprites;
+            if (sprites == null) { _nameplate.enabled = false; return; }
+
+            float maxX = 0f;
+            foreach (Sprite sprite in sprites.Select(s => s.sprite))
+            {
+                if (sprite == null) continue;
+                Vector3 size = sprite.bounds.size;
+                if (size.x > maxX) maxX = size.x;
+            }
+
+            _nameplate.transform.localScale = new Vector3(maxX, maxX, 0f);
         }
         #endregion
 

@@ -26,7 +26,7 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
         base.Awake();
         OnInputBlockedStateChanged += (bool isBlocked) => IsInputBlocked = isBlocked;
 
-        async UniTaskVoid ToggleCommandLine() => await WindowManager.Instance.SwitchWindow("CommandLine", isTab: false);
+        async UniTaskVoid ToggleCommandLine() => await WindowHandler.Instance.SwitchWindow("CommandLine", isTab: false);
 
         _keyCommands = new Dictionary<KeyCode, Action>
         {

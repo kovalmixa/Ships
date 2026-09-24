@@ -1110,6 +1110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1d0db636b31f974598a57855bac9fdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Handlers.SceneHandlers.WindowManager
+  _currentActiveTab: {fileID: 0}
+  _currentActiveTabId: 
 --- !u!114 &8640452451569283215
 MonoBehaviour:
   m_ObjectHideFlags: 0

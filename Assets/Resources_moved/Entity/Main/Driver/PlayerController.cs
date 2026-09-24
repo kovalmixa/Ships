@@ -36,7 +36,7 @@ namespace Entity.Controllers
             get
             {
                 if (_cameraController != null) return _cameraController;
-                _cameraController = GameObjectHandler.GetNodeByType<CameraController>();
+                _cameraController = GameObjectHandler.GetNodesByType<CameraController>()[0];
                 return _cameraController;
             }
         }

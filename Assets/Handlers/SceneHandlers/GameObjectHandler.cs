@@ -3,6 +3,7 @@ using Assets.Entity.Hull;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
@@ -44,16 +45,26 @@ namespace Assets.Handlers.SceneHandlers
             return node;
         }
 
-        public static T GetNodeByType<T>() where T : Component
+        public static List<T> GetNodesByType<T>(Transform parent = null) where T : Component
         {
-            T node = GameObject.FindAnyObjectByType<T>(FindObjectsInactive.Include);
-            if (node == null)
+            var result = new List<T>();
+
+            if (parent != null)
             {
-                Transform dontDestroy = GameObject.Find("DontDestroyOnLoad")?.transform;
-                if (dontDestroy != null) node = dontDestroy.GetComponentInChildren<T>(true);
+                result.AddRange(parent.GetComponentsInChildren<T>(true));
+                return result;
             }
 
-            return node;
+            T[] nodes = GameObject.FindObjectsByType<T>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            result.AddRange(nodes);
+
+            if (result.Count == 0)
+            {
+                Transform dontDestroy = GameObject.Find("DontDestroyOnLoad")?.transform;
+                if (dontDestroy != null) result.AddRange(dontDestroy.GetComponentsInChildren<T>(true));
+            }
+
+            return result;
         }
 
         #endregion

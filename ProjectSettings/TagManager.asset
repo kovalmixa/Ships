@@ -92,8 +92,11 @@ TagManager:
   - name: Scripts
     uniqueID: 1941594299
     locked: 0
-  - name: UI
+  - name: NamePlates
     uniqueID: 3875462443
+    locked: 0
+  - name: UI
+    uniqueID: 3215240833
     locked: 0
   m_RenderingLayers:
   - Default

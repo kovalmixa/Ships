@@ -30,11 +30,11 @@ namespace Assets.Handlers.SceneHandlers
 
         private async UniTaskVoid InitializeBootWindowsAsync()
         {
-            await WindowManager.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
-            _loadingWindow = WindowManager.Instance.GetWindow(_loadingScreenWindowName) as UILoadingWindow;
+            await WindowHandler.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
+            _loadingWindow = WindowHandler.Instance.GetWindow(_loadingScreenWindowName) as UILoadingWindow;
 
             await UniTask.Yield(PlayerLoopTiming.Update);
-            await WindowManager.Instance.OpenTab(_mainMenuSceneName, delayMs: 0, freezeTime: true);
+            await WindowHandler.Instance.OpenTab(_mainMenuSceneName, delayMs: 0, freezeTime: true);
         }
 
         #endregion
@@ -48,7 +48,7 @@ namespace Assets.Handlers.SceneHandlers
             var token = this.GetCancellationTokenOnDestroy();
             try
             {
-                await WindowManager.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
+                await WindowHandler.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
 
                 UniTask beforeLoadTask = InvokeAsyncEvent(OnBeforeSceneLoad);
 
@@ -74,7 +74,7 @@ namespace Assets.Handlers.SceneHandlers
             }
             finally
             {
-                await WindowManager.Instance.CloseWindowIndependent(_loadingScreenWindowName);
+                await WindowHandler.Instance.CloseWindowIndependent(_loadingScreenWindowName);
             }
         }
 
