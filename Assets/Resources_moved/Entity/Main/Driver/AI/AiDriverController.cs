@@ -71,7 +71,7 @@ namespace AI
         private void RotateControl()
         {
             if (TargetPoint == null) return;
-            _entityController.hull.RotateEquipment(TargetPoint.position);
+            _entityController.Hull.RotateEquipment(TargetPoint.position);
         }
 
         private void MoveControl()
@@ -81,7 +81,7 @@ namespace AI
 
         private void PointMovement()
         {
-            HullBase hullBase = _entityController.hull;
+            HullBase hullBase = _entityController.Hull;
             if (MovePoint == null)
             {
                 hullBase.SetTargetSpeed(Vector2.zero);

@@ -1,5 +1,6 @@
 ﻿using Assets.Common.Interfaces;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Entity
 {
@@ -13,7 +14,8 @@ namespace Assets.Entity
     [System.Serializable]
     public class EntityData : IDataContainer
     {
-        public bool isPlayer;
+        [HideInInspector] public bool isPlayer;
+        public string name;
         public string hullId;
         public List<EquipmentSlotData> equipmentSlots;
 

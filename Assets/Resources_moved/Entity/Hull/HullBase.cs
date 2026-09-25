@@ -15,24 +15,30 @@ namespace Assets.Entity.Hull
 {
     public abstract class HullBase : EntityPartBase, IHull
     {
+        #region Fields & Properties
+
+        [Header("Data & Configuration")]
         [field: SerializeField] public HullDataSO Data { get; private set; }
 
-        [HideInInspector] public List<EquipmentAnchor> equipmentAnchors = new();
-        [HideInInspector] public List<Equipment.Equipment> equipments = new();
-        [HideInInspector] public Transform root;
-
+        [Header("Physics & Movement State")]
         [HideInInspector] public float currentSpeed;
         [HideInInspector] public Vector2 externalVelocity;
         public Vector2 TotalVelocity => (Vector2)transform.up * currentSpeed + externalVelocity;
 
-        public event Action OnMovement;
+        [Header("Equipment & Hierarchy")]
+        [HideInInspector] public Transform root;
+        [HideInInspector] public List<EquipmentAnchor> equipmentAnchors = new();
+        [HideInInspector] public List<Equipment.Equipment> equipments = new();
+
         protected Rigidbody2D rigidBody2D;
-
-        protected override StatOptions StatOptions => Data.statOptions;
+        protected override StatOptions StatOptions => Data != null ? Data.statOptions : default;
         protected override StatLayer StatLayer => StatLayer.Hull;
-        public override IDataContainer GetInitialData() => Data;
 
-        #region Life Cycle
+        public event Action OnMovement;
+
+        #endregion
+
+        #region Unity Lifecycle
 
         protected override void Awake()
         {
@@ -40,7 +46,15 @@ namespace Assets.Entity.Hull
             rigidBody2D = GetComponent<Rigidbody2D>();
         }
 
-        #region Setup
+        protected virtual void Update()
+        {
+            DampExternalVelocity();
+            InvokeMovement();
+        }
+
+        #endregion
+
+        #region Setup & Initialization
 
         public override void Setup(EntityController entityController)
         {
@@ -49,10 +63,11 @@ namespace Assets.Entity.Hull
             abilitiesController = new AbilitiesController(
                 StatOptions.abilities,
                 entityController.TotalAbbilitiesController,
-                _actionDataController,
+                actionDataController,
                 this
             );
-            OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
+
+            OnGameObjectDestroyed += () => abilitiesController?.RemoveAbilities();
 
             CollectAnchors(transform);
         }
@@ -62,21 +77,29 @@ namespace Assets.Entity.Hull
             if (parent == null) return;
             foreach (Transform child in parent)
             {
-                var equipmentAnchor = child.GetComponent<EquipmentAnchor>();
-                if (equipmentAnchor != null) equipmentAnchors.Add(equipmentAnchor);
+                if (child.TryGetComponent<EquipmentAnchor>(out var equipmentAnchor))
+                    equipmentAnchors.Add(equipmentAnchor);
+
                 CollectAnchors(child);
             }
         }
 
         #endregion
 
-        #region Update
+        #region Movement & Physics
 
-        protected virtual void Update()
+        public abstract void AddSpeed(bool isAddition);
+        public abstract void SetTargetSpeed(Vector2 directionToPoint);
+        public abstract void Movement(float rotationDirection);
+
+        public void RotateEquipment(Vector3 target)
         {
-            DampExternalVelocity();
-            InvokeMovement();
+            if (equipments == null) return;
+            foreach (var eq in equipments)
+                eq?.Rotate(target);
         }
+
+        public void AddExternalForce(Vector2 force) => externalVelocity += force;
 
         private void DampExternalVelocity()
         {
@@ -85,7 +108,7 @@ namespace Assets.Entity.Hull
                 externalVelocity = Vector2.MoveTowards(
                     externalVelocity,
                     Vector2.zero,
-                    GetLifetimeStat(StatType.Mass) * 2 * Time.deltaTime
+                    GetLifetimeStat(StatType.Mass) * 2f * Time.deltaTime
                 );
                 InvokeMovement();
             }
@@ -94,24 +117,7 @@ namespace Assets.Entity.Hull
 
         #endregion
 
-        #endregion
-
-        #region Movement
-
-        public void RotateEquipment(Vector3 target)
-        {
-            foreach (var eq in equipments) eq.Rotate(target);
-        }
-
-        public abstract void AddSpeed(bool isAddition);
-        public abstract void SetTargetSpeed(Vector2 directionToPoint);
-        public abstract void Movement(float rotationDirection);
-
-        public void AddExternalForce(Vector2 force) => externalVelocity += force;
-
-        #endregion
-
-        #region Triggers
+        #region Collision & Triggers
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
@@ -120,8 +126,8 @@ namespace Assets.Entity.Hull
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            IScript script = other.GetComponent<IScript>();
-            script?.Execute(entityController);
+            if (other.TryGetComponent<IScript>(out var script))
+                script.Execute(entityController);
         }
 
         private void Bounce(Collision2D collision)
@@ -129,11 +135,14 @@ namespace Assets.Entity.Hull
             Rigidbody2D otherRb = collision.rigidbody;
             if (otherRb == null) return;
 
-            float otherMass = 1, hostMass = GetLifetimeStat(StatType.Mass);
-            if (otherRb.TryGetComponent(out HullBase otherHull))
+            float otherMass = 1f;
+            float hostMass = GetLifetimeStat(StatType.Mass);
+
+            if (otherRb.TryGetComponent<HullBase>(out var otherHull))
                 otherMass = otherHull.GetLifetimeStat(StatType.Mass);
 
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            Rigidbody2D rb = rigidBody2D != null ? rigidBody2D : GetComponent<Rigidbody2D>();
+            if (rb == null) return;
 
             Vector2 pushDirection = (rb.position - otherRb.position).normalized;
             Vector2 hostDirection = rb.linearVelocity.sqrMagnitude > 0.01f ? rb.linearVelocity.normalized : (Vector2)transform.up;
@@ -160,12 +169,9 @@ namespace Assets.Entity.Hull
 
         #endregion
 
-        #region IAbbility Implementation
+        #region Interface Implementations & Helpers
 
-        #endregion
-
-        #region Event invokations
-
+        public override IDataContainer GetInitialData() => Data;
         protected void InvokeMovement() => OnMovement?.Invoke();
 
         #endregion

@@ -1,13 +1,11 @@
 using Assets.Common;
+using Assets.Common.Interfaces;
 using Assets.Entity.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Modifiers;
+using Entity.Controllers;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Common.Interfaces;
-
-using Entity.Controllers;
-
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -17,25 +15,30 @@ namespace Assets.Entity.Equipment
 {
     public class Equipment : EntityPartBase
     {
+        #region Fields & Properties
+
+        [Header("Data & Configuration")]
         [field: SerializeField] public EquipmentDataSO Data { get; private set; }
         public EquipmentAnchor EquipmentAnchor { get; set; }
-        private const float _basicAngle = 90f;
 
         [Header("Editor Settings")]
         [Tooltip("Drag shot/ability nodes here directly from the object hierarchy")]
         [SerializeField] private List<Transform> _abilityNodes = new();
 
-        protected override StatOptions StatOptions => Data.statOptions;
+        private const float _basicAngle = 90f;
+        private float _currentLocalAngle = 0f;
+        private bool _isLocalAngleInitialized = false;
+
+        protected override StatOptions StatOptions => Data != null ? Data.statOptions : default;
         protected override StatLayer StatLayer => StatLayer.Equipment;
-        public override IDataContainer GetInitialData() => Data;
 
-        public Vector2 Position
-        {
-            get => transform.position + entityController.transform.position;
-            set { }
-        }
+        public Vector2 Position => entityController != null
+            ? (Vector2)transform.position + (Vector2)entityController.transform.position
+            : transform.position;
 
-        #region Setup
+        #endregion
+
+        #region Setup & Initialization
 
         public override void Setup(EntityController entityController)
         {
@@ -44,26 +47,24 @@ namespace Assets.Entity.Equipment
             abilitiesController = new EqAbilitiesController(
                 StatOptions.abilities,
                 entityController.TotalAbbilitiesController,
-                _actionDataController,
+                actionDataController,
                 this,
                 _basicAngle,
                 EquipmentAnchor
             );
-            OnGameObjectDestroyed += () => abilitiesController.RemoveAbilities();
+
+            OnGameObjectDestroyed += () => abilitiesController?.RemoveAbilities();
         }
 
         #endregion
 
-        #region Rotation
-
-        private float _currentLocalAngle = 0f;
-        private bool _isLocalAngleInitialized = false;
+        #region Rotation Logic
 
         public void Rotate(Vector3 targetPos)
         {
             if (Data == null || !CanRotate()) return;
 
-            var rotationSpeed = GetLifetimeStat(StatType.RotationSpeed);
+            float rotationSpeed = GetLifetimeStat(StatType.RotationSpeed);
 
             Vector3 localTarget = EquipmentAnchor.transform.InverseTransformPoint(targetPos);
             float targetAngle = Mathf.Atan2(localTarget.y, localTarget.x) * Mathf.Rad2Deg;
@@ -94,7 +95,10 @@ namespace Assets.Entity.Equipment
             float targetOffset = NormalizeAngle(targetAngle - min);
 
             float desiredOffset;
-            if (targetOffset <= sectorWidth) desiredOffset = targetOffset;
+            if (targetOffset <= sectorWidth)
+            {
+                desiredOffset = targetOffset;
+            }
             else
             {
                 float distToMin = 360f - targetOffset;
@@ -109,6 +113,11 @@ namespace Assets.Entity.Equipment
             transform.localRotation = Quaternion.Euler(0f, 0f, _currentLocalAngle - _basicAngle);
         }
 
+        public bool CanRotate()
+        {
+            return EquipmentAnchor != null && EquipmentAnchor.rotationSector != Vector2.zero;
+        }
+
         private float NormalizeAngle(float angle)
         {
             float result = angle % 360f;
@@ -116,20 +125,15 @@ namespace Assets.Entity.Equipment
             return result;
         }
 
-        public bool CanRotate()
-        {
-            if (EquipmentAnchor == null) return false;
-            return EquipmentAnchor.rotationSector != Vector2.zero;
-        }
+        #endregion
+
+        #region Helpers & Overrides
+
+        public override IDataContainer GetInitialData() => Data;
 
         #endregion
 
-        #region IAbbility Implementation
-
-
-        #endregion
-
-        #region Editor Context Menu
+        #region Editor Context Menu & Gizmos
 
 #if UNITY_EDITOR
         [ContextMenu("Bake node coordinates into SO")]
@@ -152,7 +156,6 @@ namespace Assets.Entity.Equipment
 
             for (int i = 0; i < abilities.Count; i++)
             {
-                // make an eclusion for aviation
                 if (i >= _abilityNodes.Count || _abilityNodes[i] == null)
                 {
                     Debug.LogWarning($"[{name}] No Transform node assigned for ability #{i} in the Ability Nodes array.");

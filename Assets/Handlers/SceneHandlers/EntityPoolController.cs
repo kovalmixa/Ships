@@ -91,10 +91,10 @@ namespace Assets.Handlers.SceneHandlers
 
         private void CleanUpEntityBeforeRelease(EntityController entity)
         {
-            if (entity.hull != null)
+            if (entity.Hull != null)
             {
-                Destroy(entity.hull.gameObject);
-                entity.hull = null;
+                Destroy(entity.Hull.gameObject);
+                entity.Hull = null;
             }
             if (entity.Driver != null && entity.Driver is MonoBehaviour driverMb)
             {

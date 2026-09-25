@@ -17,22 +17,30 @@ namespace Assets.Entity.Common
 {
     public abstract class EntityPartBase : MonoBehaviour, IInteractive, IStats, IAbbility, IBuffable
     {
+        #region Fields & Properties
+
+        [Header("Components & State")]
         [field: SerializeField] public BuffStatusesController Buffs { get; protected set; }
-        [SerializeField] protected StatModController _statModController;
-        private SpriteRenderer[] _sprites;
-        public SpriteRenderer[] Sprites => _sprites;
+        [SerializeField] protected StatModController statModController;
 
         public string Id { get; set; }
-        public event Action OnGameObjectDestroyed;
+        public SpriteRenderer[] Sprites => _sprites;
+        public GameObject GameObject => gameObject;
+        public LayerType Layer => (LayerType)gameObject.layer;
 
         protected EntityController entityController;
         protected LocalAnimatorController animatorController;
-        protected readonly ActionDataController _actionDataController = new();
         protected AbilitiesController abilitiesController;
+        protected readonly ActionDataController actionDataController = new();
+
+        private SpriteRenderer[] _sprites;
 
         protected abstract StatOptions StatOptions { get; }
         protected abstract StatLayer StatLayer { get; }
-        public abstract IDataContainer GetInitialData();
+
+        public event Action OnGameObjectDestroyed;
+
+        #endregion
 
         #region Unity Lifecycle & Editor
 
@@ -50,30 +58,48 @@ namespace Assets.Entity.Common
         {
             Id = GameObjectHandler.GenerateUniqueId(name);
             animatorController = gameObject.AddComponent<LocalAnimatorController>();
+
+            var triggerCollider = GameObjectHandler.DuplicateCollider2D(gameObject);
+            if (triggerCollider != null) triggerCollider.isTrigger = true;
         }
 
-        protected virtual void OnDestroy() => OnGameObjectDestroyed?.Invoke();
+        protected virtual void OnDestroy()
+        {
+            if (statModController != null) statModController.OnChange -= OnStatModChanged;
+            if (entityController != null) entityController.OnHighlightStateChanged -= HandleHighlight;
+
+            OnGameObjectDestroyed?.Invoke();
+        }
 
         #endregion
 
-        #region Setup
+        #region Setup & Initialization
 
         public virtual void Setup(EntityController entityController)
         {
+            if (this.entityController != null) this.entityController.OnHighlightStateChanged -= HandleHighlight;
+
             this.entityController = entityController;
+
+            if (this.entityController != null) this.entityController.OnHighlightStateChanged += HandleHighlight;
+
             _sprites = GameObjectHandler.GetNodesByType<SpriteRenderer>(transform).ToArray();
-            Buffs = new BuffStatusesController(gameObject, _statModController);
+            Buffs = new BuffStatusesController(gameObject, statModController);
 
             var statOptions = StatOptions;
-            _statModController = new StatModController(entityController.StatModController, statOptions);
-            _statModController.OnChange += OnStatModChanged;
+
+            StatModController parentModController = entityController != null ? entityController.StatModController : null;
+
+            statModController = new StatModController(parentModController, statOptions);
+            statModController.OnChange += OnStatModChanged;
 
             SetupInitialBuffs(statOptions.buffs);
         }
 
-        protected virtual void OnStatModChanged() {
-            _actionDataController.MarkDirty();
-            entityController.AggregatedStats.MarkDirty();
+        protected virtual void OnStatModChanged()
+        {
+            actionDataController.MarkDirty();
+            entityController?.AggregatedStats?.MarkDirty();
         }
 
         protected virtual void SetupInitialBuffs(IEnumerable<BuffStatus> buffs)
@@ -83,12 +109,12 @@ namespace Assets.Entity.Common
 
             foreach (var buff in buffs)
             {
-                if (buff.Scope == BuffScope.Global)
+                if (buff.Scope == BuffScope.Global && entityController?.Buffs != null)
                 {
                     entityController.Buffs.AddBuff(buff, snapshot);
                     OnGameObjectDestroyed += () => entityController.Buffs.RemoveBuff(buff.Id);
                 }
-                else Buffs.AddBuff(buff, snapshot);
+                else Buffs?.AddBuff(buff, snapshot);
             }
         }
 
@@ -96,22 +122,18 @@ namespace Assets.Entity.Common
 
         #region IInteractive & IBuffable
 
-        public LayerType Layer => (LayerType)gameObject.layer;
-        public GameObject GameObject => gameObject;
-
         public virtual void AddBuff(InteractionContext context, BuffStatus buff)
         {
             if (buff == null) return;
 
-            if (buff.Scope == BuffScope.Global)
+            if (buff.Scope == BuffScope.Global && entityController?.Buffs != null)
                 entityController.Buffs.AddBuff(buff, context.SourceSnapshot);
-            else Buffs.AddBuff(buff, context.SourceSnapshot);
+            else Buffs?.AddBuff(buff, context.SourceSnapshot);
         }
 
         public virtual void TakeDamage(InteractionContext context, DamageData data)
         {
             Debug.Log($"Damaged with value {data.value} to {gameObject.name}");
-
         }
 
         public virtual void TakeHeal(InteractionContext context, HealData data)
@@ -123,26 +145,51 @@ namespace Assets.Entity.Common
 
         #region IStats
 
-        public float GetLifetimeStat(StatType type) => _statModController.GetStat(type, StatLayer);
+        public float GetLifetimeStat(StatType type) => statModController != null ? statModController.GetStat(type, StatLayer) : 0f;
+        public abstract IDataContainer GetInitialData();
 
         #endregion
 
         #region IAbbility
 
-        public virtual IReadOnlyList<AbilityUnit> RuntimeAbilities => abilitiesController.RuntimeAbilities;
-        public virtual void AddAbility(AbilityUnit ability) => abilitiesController.AddAbility(ability);
-        public virtual bool RemoveAbility(AbilityUnit ability) => abilitiesController.RemoveAbility(ability);
+        public virtual IReadOnlyList<AbilityUnit> RuntimeAbilities => abilitiesController?.RuntimeAbilities;
+
+        public virtual void AddAbility(AbilityUnit ability) => abilitiesController?.AddAbility(ability);
+
+        public virtual bool RemoveAbility(AbilityUnit ability) => abilitiesController != null && abilitiesController.RemoveAbility(ability);
 
         public virtual void Activate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
-            if (abilitiesController.TryActivate(targetPos, abilityUnit))
+            if (abilitiesController != null && abilitiesController.TryActivate(targetPos, abilityUnit))
             {
                 float activationRate = GetLifetimeStat(StatType.ActivationRate);
                 animatorController?.PlayAction(abilityUnit.animationID, activationRate == 0 ? 1 : activationRate);
             }
         }
 
-        public EntitySnapshot GetSnapshot() => entityController.GetSnapshot();
+        public EntitySnapshot GetSnapshot() => entityController?.GetSnapshot();
+
+        #endregion
+
+        #region Hover & Highlight Logic
+
+        protected virtual void OnMouseEnter()
+        {
+            Debug.Log("Moused");
+            entityController?.SetHighlight(true);
+        }
+        protected virtual void OnMouseExit() => entityController?.SetHighlight(false);
+
+        private void HandleHighlight(bool isHighlighted) => SetSpritesHighlight(isHighlighted);
+
+        protected virtual void SetSpritesHighlight(bool isHighlighted)
+        {
+            if (_sprites == null || _sprites.Length == 0) return;
+
+            Color targetColor = isHighlighted ? Color.yellow : Color.white;
+            foreach (var sprite in _sprites)
+                if (sprite != null) sprite.color = targetColor;
+        }
 
         #endregion
     }

@@ -29,7 +29,7 @@ namespace Assets.Entity.Controllers
             _activeAbilities.Clear();
             _weaponAbilities.Clear();
 
-            var hull = _entityController != null ? _entityController.hull : null;
+            var hull = _entityController != null ? _entityController.Hull : null;
             if (hull != null && hull.equipments != null)
             {
                 void RegisterAbility<TKey>(
@@ -144,11 +144,11 @@ namespace Assets.Entity.Controllers
             Collider2D hitCollider = Physics2D.OverlapPoint(position);
             if (hitCollider == null) return false;
 
-            if (_entityController != null && _entityController.hull != null)
+            if (_entityController != null && _entityController.Hull != null)
             {
-                if (hitCollider.gameObject == _entityController.hull.gameObject) return true;
-                if (_entityController.hull.equipments != null)
-                    foreach (var equipment in _entityController.hull.equipments)
+                if (hitCollider.gameObject == _entityController.Hull.gameObject) return true;
+                if (_entityController.Hull.equipments != null)
+                    foreach (var equipment in _entityController.Hull.equipments)
                         if (equipment != null && hitCollider.gameObject == equipment.gameObject) return true;
             }
             return false;

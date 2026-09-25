@@ -32,7 +32,7 @@ namespace Assets.Entity.Controllers
         public async Task<bool> SetHull(string hullId)
         {
             if (string.IsNullOrEmpty(hullId)) return false;
-            if (_entity.hull != null) UnityEngine.Object.Destroy(_entity.hull.gameObject);
+            if (_entity.Hull != null) UnityEngine.Object.Destroy(_entity.Hull.gameObject);
             var hullObj = await PrefabLoader.Instance.InstantiatePrefabAsync(
                 hullId,
                 _entity.transform.position,
@@ -43,7 +43,7 @@ namespace Assets.Entity.Controllers
             var hull = hullObj.GetComponent<HullBase>();
             if (hull == null) return false;
             hull.root = _entity.transform;
-            _entity.hull = hull;
+            _entity.Hull = hull;
             hull.Setup(_entity);
             onSetHull?.Invoke(hull);
             return true;
@@ -51,13 +51,13 @@ namespace Assets.Entity.Controllers
         
         private void SetSortingLayersToAnchors(EntityData data)
         {
-            var renderers = _entity.hull.GetComponentsInChildren<SpriteRenderer>();
+            var renderers = _entity.Hull.GetComponentsInChildren<SpriteRenderer>();
             if (renderers == null || renderers.Length == 0)
                 Debug.LogWarning("There are no sprites on hull. Unable to get sorting layer");
             else
             {
                 var layerName = renderers[0].sortingLayerName;
-                var anchors = _entity.hull.GetComponentsInChildren<EquipmentAnchor>();
+                var anchors = _entity.Hull.GetComponentsInChildren<EquipmentAnchor>();
                 foreach (var anchor in anchors) anchor.sortingLayer = layerName;
             }
         }
@@ -98,14 +98,14 @@ namespace Assets.Entity.Controllers
                 UnityEngine.Object.Destroy(clone);
                 return false;
             }
-            foreach (var anchor in _entity.hull.equipmentAnchors)
+            foreach (var anchor in _entity.Hull.equipmentAnchors)
             {
                 if (!anchor.CanBePlaced(equipment, index)) continue;
 
                 anchor.Place(equipment);
                 equipment.Setup(_entity);
                 onSetEquipment?.Invoke(equipment);
-                _entity.hull.equipments.Add(equipment);
+                _entity.Hull.equipments.Add(equipment);
 
                 return true;
             }

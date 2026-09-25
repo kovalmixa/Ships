@@ -27,7 +27,7 @@ namespace Assets.Entity.Controllers
         {
             _cachedStats.Clear();
 
-            var hull = _entity.hull;
+            var hull = _entity.Hull;
             if (hull == null)
             {
                 _isDirty = false;

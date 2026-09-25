@@ -79,7 +79,6 @@ namespace Assets.Handlers.SceneHandlers
             return clone;
         }
 
-
         public static void CopyComponentsTo(GameObject source, GameObject target)
         {
             Component[] components = source.GetComponents<Component>();
@@ -101,6 +100,58 @@ namespace Assets.Handlers.SceneHandlers
                 if (component is Transform) continue;
                 GameObject.Destroy(component);
             }
+        }
+
+        public static Collider2D DuplicateCollider2D(this GameObject target)
+        {
+            if (target == null) return null;
+
+            var sourceCollider = target.GetComponent<Collider2D>();
+            if (sourceCollider == null) return null;
+
+            Collider2D copy = null;
+
+            switch (sourceCollider)
+            {
+                case BoxCollider2D box:
+                    var newBox = target.AddComponent<BoxCollider2D>();
+                    newBox.size = box.size;
+                    newBox.offset = box.offset;
+                    newBox.edgeRadius = box.edgeRadius;
+                    copy = newBox;
+                    break;
+
+                case CircleCollider2D circle:
+                    var newCircle = target.AddComponent<CircleCollider2D>();
+                    newCircle.radius = circle.radius;
+                    newCircle.offset = circle.offset;
+                    copy = newCircle;
+                    break;
+
+                case CapsuleCollider2D capsule:
+                    var newCapsule = target.AddComponent<CapsuleCollider2D>();
+                    newCapsule.size = capsule.size;
+                    newCapsule.offset = capsule.offset;
+                    newCapsule.direction = capsule.direction;
+                    copy = newCapsule;
+                    break;
+
+                case PolygonCollider2D poly:
+                    var newPoly = target.AddComponent<PolygonCollider2D>();
+                    newPoly.offset = poly.offset;
+                    newPoly.pathCount = poly.pathCount;
+                    for (int i = 0; i < poly.pathCount; i++)
+                    {
+                        newPoly.SetPath(i, poly.GetPath(i));
+                    }
+                    copy = newPoly;
+                    break;
+
+                default:
+                    Debug.LogWarning($"[{target.name}] Тип коллайдера {sourceCollider.GetType().Name} не поддерживается для копирования.");
+                    return null;
+            }
+            return copy;
         }
 
         #endregion
