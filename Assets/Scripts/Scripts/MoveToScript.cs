@@ -31,16 +31,16 @@ namespace Scripts
             return Vector3.Distance(entityController.transform.position, Target.position) < threshold;
         }
 
-        #if UNITYEDITOR
-                private void OnDrawGizmos()
-                {
-                    if (Target != null)
-                    {
-                        Gizmos.color = Color.cyan;
-                        Gizmos.DrawLine(transform.position, Target.position);
-                        Gizmos.DrawSphere(Target.position, 0.1f);
-                    }
-                }
-        #endif
+#if UNITY_EDITOR
+        private void OnDrawGizmos()
+        {
+            if (Target != null)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawLine(transform.position, Target.position);
+                Gizmos.DrawSphere(Target.position, 0.1f);
+            }
+        }
+#endif
     }
 }

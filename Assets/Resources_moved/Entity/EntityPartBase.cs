@@ -15,7 +15,8 @@ using UnityEngine;
 
 namespace Assets.Entity.Common
 {
-    public abstract class EntityPartBase : MonoBehaviour, IInteractive, IStats, IAbbility, IBuffable
+    public abstract class EntityPartBase : MonoBehaviour,
+        IInteractive, IStats, IAbbility, IBuffable
     {
         #region Fields & Properties
 
@@ -24,7 +25,7 @@ namespace Assets.Entity.Common
         [SerializeField] protected StatModController statModController;
 
         public string Id { get; set; }
-        public SpriteRenderer[] Sprites => _sprites;
+        public SpriteRenderer[] Sprites => sprites;
         public GameObject GameObject => gameObject;
         public LayerType Layer => (LayerType)gameObject.layer;
 
@@ -33,7 +34,7 @@ namespace Assets.Entity.Common
         protected AbilitiesController abilitiesController;
         protected readonly ActionDataController actionDataController = new();
 
-        private SpriteRenderer[] _sprites;
+        protected SpriteRenderer[] sprites;
 
         protected abstract StatOptions StatOptions { get; }
         protected abstract StatLayer StatLayer { get; }
@@ -58,9 +59,6 @@ namespace Assets.Entity.Common
         {
             Id = GameObjectHandler.GenerateUniqueId(name);
             animatorController = gameObject.AddComponent<LocalAnimatorController>();
-
-            var triggerCollider = GameObjectHandler.DuplicateCollider2D(gameObject);
-            if (triggerCollider != null) triggerCollider.isTrigger = true;
         }
 
         protected virtual void OnDestroy()
@@ -83,7 +81,7 @@ namespace Assets.Entity.Common
 
             if (this.entityController != null) this.entityController.OnHighlightStateChanged += HandleHighlight;
 
-            _sprites = GameObjectHandler.GetNodesByType<SpriteRenderer>(transform).ToArray();
+            sprites = GameObjectHandler.GetNodesByType<SpriteRenderer>(transform).ToArray();
             Buffs = new BuffStatusesController(gameObject, statModController);
 
             var statOptions = StatOptions;
@@ -173,21 +171,20 @@ namespace Assets.Entity.Common
 
         #region Hover & Highlight Logic
 
-        protected virtual void OnMouseEnter()
-        {
-            Debug.Log("Moused");
-            entityController?.SetHighlight(true);
-        }
+        protected virtual void OnMouseEnter() => entityController?.SetHighlight(true);
         protected virtual void OnMouseExit() => entityController?.SetHighlight(false);
 
         private void HandleHighlight(bool isHighlighted) => SetSpritesHighlight(isHighlighted);
 
         protected virtual void SetSpritesHighlight(bool isHighlighted)
         {
-            if (_sprites == null || _sprites.Length == 0) return;
+            if (sprites == null || sprites.Length == 0) return;
 
-            Color targetColor = isHighlighted ? Color.yellow : Color.white;
-            foreach (var sprite in _sprites)
+            // when will be added fraction classes highlight it in color
+            // relative to player relationship
+            Color softYellow = new Color(1f, 0.98f, 0.8f); 
+            Color targetColor = isHighlighted ? softYellow : Color.white;
+            foreach (var sprite in sprites)
                 if (sprite != null) sprite.color = targetColor;
         }
 

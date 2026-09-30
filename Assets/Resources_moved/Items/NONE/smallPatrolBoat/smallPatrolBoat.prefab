@@ -174,10 +174,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Data>k__BackingField: {fileID: 11400000, guid: e8b664e50f5b175479f8bc595e569665, type: 2}
+  currentSpeed: 0
+  externalVelocity: {x: 0, y: 0}
+  root: {fileID: 0}
   equipmentAnchors: []
   equipments: []
-  root: {fileID: 0}
-  currentSpeed: 0
 --- !u!95 &3417965498495214239
 Animator:
   serializedVersion: 7

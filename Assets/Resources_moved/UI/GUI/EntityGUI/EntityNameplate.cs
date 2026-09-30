@@ -128,6 +128,7 @@ namespace UI.GUI.EntityGUI
             UpdateHealthBar();
             UpdateEnergyBar();
             ResetFadeTimer();
+            Hide();
         }
 
         private void UpdateHealthBar()
@@ -172,7 +173,7 @@ namespace UI.GUI.EntityGUI
 
         public void Show() => _canvasGroup.alpha = 1f;
 
-        public void Hide() => ResetFadeTimer();
+        public void Hide() => _canvasGroup.alpha = 0f;
 
         public void ResetFadeTimer()
         {

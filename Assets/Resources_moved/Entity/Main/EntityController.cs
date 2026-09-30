@@ -247,8 +247,8 @@ namespace Entity.Controllers
 
         public void SetHighlight(bool isHighlighted)
         {
+            if (data.isPlayer) return;
             OnHighlightStateChanged?.Invoke(isHighlighted);
-            Debug.Log("Highlighted");
             if (_nameplate == null) return;
             if (isHighlighted) _nameplate.Show();
             else _nameplate.Hide();
