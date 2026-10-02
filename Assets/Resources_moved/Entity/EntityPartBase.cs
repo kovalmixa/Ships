@@ -86,7 +86,6 @@ namespace Assets.Entity.Common
 
             var statOptions = StatOptions;
 
-            StatModController parentModController = entityController != null ? entityController.StatModController : null;
 
             statModController = new StatModController(parentModController, statOptions);
             statModController.OnChange += OnStatModChanged;

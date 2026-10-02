@@ -19,7 +19,7 @@ using UnityEngine;
 
 namespace Entity.Controllers
 {
-    public class EntityController : MonoBehaviour, IObject, IAbbility, IStats, IPoolInstance
+    public class EntityController : MonoBehaviour, IObject, IAbbility, IPoolInstance
     {
         #region Fields & Properties
 
@@ -34,7 +34,6 @@ namespace Entity.Controllers
         public IDriver Driver { get; set; }
         public EntityAssembler Assembler { get; private set; }
         public TotalAbbilitiesController TotalAbbilitiesController { get; private set; }
-        public StatModController StatModController { get; private set; } = new();
         public BuffStatusesController Buffs { get; private set; }
         public EntityStatsAggregator AggregatedStats { get; private set; }
         public AbilitiesController AbilitiesController { get; private set; }
@@ -44,7 +43,6 @@ namespace Entity.Controllers
         public bool CanUseAbilities { get; set; } = true;
 
         private UniTaskCompletionSource _initTcs;
-        private const StatLayer _hullStatLayer = StatLayer.Hull;
 
         public event Action<bool> OnHighlightStateChanged;
 
@@ -226,11 +224,12 @@ namespace Entity.Controllers
 
         #endregion
 
-        #region IStats
+        #region Buff/Mod bridge
+        
+        public void AddMods(IEnumerable<ModUnit> mods)
+        {
 
-        public float GetLifetimeStat(StatType type) => StatModController.GetStat(type, _hullStatLayer);
-        public IDataContainer GetInitialData() => data;
-        public float GetTotalLifetimeStat(StatType type) => AggregatedStats.GetStat(type);
+        }
 
         #endregion
 

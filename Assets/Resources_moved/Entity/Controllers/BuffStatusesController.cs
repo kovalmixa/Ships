@@ -105,9 +105,9 @@ namespace Assets.Entity.Controllers
 
         private void RebuildCachedStats()
         {
-            var finalMods = new Modifiers.Modifiers();
-            foreach (var buff in ActiveBuffs.Values) finalMods.Add(buff.status.modifiers);
-            _statMods.RegisterExternalModifiers(finalMods);
+            //var finalMods = new Modifiers.Modifiers();
+            //foreach (var buff in ActiveBuffs.Values) finalMods.Add(buff.status.modifiers);
+            //_statMods.RegisterExternalModifiers(finalMods);
             _isDirty = false;
         }
 

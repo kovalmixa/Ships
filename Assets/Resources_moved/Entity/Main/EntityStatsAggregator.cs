@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using Entity.Controllers;
 
 namespace Assets.Entity.Controllers
