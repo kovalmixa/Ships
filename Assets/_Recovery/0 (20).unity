@@ -828,6 +828,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6273868933916948238}
   - component: {fileID: 4407277316745440840}
+  - component: {fileID: 7098805417650737213}
   - component: {fileID: 4857179626076565542}
   - component: {fileID: 2918633975410373365}
   - component: {fileID: 7098805417650737212}
@@ -968,6 +969,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: FMODUnity::FMODUnity.StudioListener
   nonRigidbodyVelocity: 0
   attenuationObject: {fileID: 0}
+--- !u!114 &7098805417650737213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5081028286958570798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56666c5a40171f54783dd416a44f42bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.Physics2DRaycaster
+  m_EventMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_MaxRayIntersections: 0
 --- !u!4 &7654968046906539404 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3728667232679261808, guid: 1b03d94787fd9334b8bbef494824fbe9, type: 3}

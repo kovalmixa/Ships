@@ -1,7 +1,7 @@
 ﻿using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.Entity.Interfaces;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using Assets.Scripts.Actions;
 using GameplayActions;
 using System;
@@ -111,7 +111,7 @@ namespace Assets.Entity.Controllers
         {
             if (EventSystem.current.IsPointerOverGameObject()) return false;
             float time = Time.time;
-            float activationRate = (source as IStats)?.GetLifetimeStat(StatType.ActivationRate) ?? 1f;
+            float activationRate = (source as IStats)?.GetLifetimeStatValue(StatType.ActivationRate) ?? 1f;
             float delay = abilityUnit.delay / activationRate;
             if (delay <= 0 || abilityUnit.isPassive) return true;
             abilityCooldowns.TryGetValue(abilityUnit, out float lastActivationTime);

@@ -1,6 +1,6 @@
 ﻿using Assets.Common;
+using Assets.Entity.StatMods;
 using Assets.Scripts.Actions;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,8 +33,7 @@ namespace Assets.Entity.BuffStatuses
         [field: SerializeField] public BuffScope Scope { get; set; } = BuffScope.Local;
         [field: SerializeField] public BuffApplicationPolicy Policy { get; set; } = BuffApplicationPolicy.Replace;
 
-        public List<Modifiers.ModUnit> mods = new();
-
+        public List<ModUnit> mods = new();
 
         private float _lifetime = 0f;
         public IInteractive Owner { get; private set; }

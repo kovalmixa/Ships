@@ -5,7 +5,7 @@ namespace Assets.Entity.StatMods
 {
     public enum ModApplyType { Single, Multiple }
 
-    public enum StatLayer { Hull, Equipment, Global }
+    public enum StatLayer { Hull, Equipment, Accessory }
 
     public enum StatCalcType { Set = 0, Addition = 1, Percentage = 2 }
 

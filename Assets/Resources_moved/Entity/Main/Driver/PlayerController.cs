@@ -114,6 +114,7 @@ namespace Entity.Controllers
                     : Input.GetKey(entry.Key);
                 if (isPressed)
                 {
+                    Debug.Log($"Pressed {entry}");
                     _entityController.ExecuteAction(entry.Value, targetPos);
                 }
             }

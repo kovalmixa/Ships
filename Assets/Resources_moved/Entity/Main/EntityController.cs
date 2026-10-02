@@ -2,10 +2,11 @@ using AI;
 using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.Entity;
+using Assets.Entity.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Hull;
 using Assets.Entity.Interfaces;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using Cysharp.Threading.Tasks;
@@ -35,7 +36,6 @@ namespace Entity.Controllers
         public EntityAssembler Assembler { get; private set; }
         public TotalAbbilitiesController TotalAbbilitiesController { get; private set; }
         public BuffStatusesController Buffs { get; private set; }
-        public EntityStatsAggregator AggregatedStats { get; private set; }
         public AbilitiesController AbilitiesController { get; private set; }
 
         public bool IsInitialized { get; private set; } = false;
@@ -57,7 +57,7 @@ namespace Entity.Controllers
             TotalAbbilitiesController = new TotalAbbilitiesController(this);
 
             Id = GameObjectHandler.GenerateUniqueId(name);
-            AggregatedStats = new EntityStatsAggregator(this);
+
         }
 
         private void OnEnable()
@@ -115,7 +115,6 @@ namespace Entity.Controllers
                 await Assembler.Build(data);
 
                 SetupNameplate();
-
                 InvokeInitializationState();
             }
             catch (Exception ex)
@@ -251,6 +250,7 @@ namespace Entity.Controllers
             if (_nameplate == null) return;
             if (isHighlighted) _nameplate.Show();
             else _nameplate.Hide();
+            Debug.Log("Highlighted");
         }
 
         #endregion

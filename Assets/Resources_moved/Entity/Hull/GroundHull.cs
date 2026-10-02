@@ -1,4 +1,4 @@
-﻿using Assets.Entity.Modifiers;
+﻿using Assets.Entity.StatMods;
 using UnityEngine;
 
 namespace Assets.Entity.Hull
@@ -9,8 +9,8 @@ namespace Assets.Entity.Hull
         public override void SetTargetSpeed(Vector2 directionToPoint)
         {
            
-            var maxMoveSpeed = GetLifetimeStat(StatType.MaxMoveSpeed);
-            var acceleration = GetLifetimeStat(StatType.Acceleration);
+            var maxMoveSpeed = GetLifetimeStatValue(StatType.MaxMoveSpeed);
+            var acceleration = GetLifetimeStatValue(StatType.Acceleration);
 
             float angleToTarget = Vector2.SignedAngle(transform.up, directionToPoint.normalized);
             float targetSpeed = Mathf.Clamp(directionToPoint.magnitude, 0, maxMoveSpeed);

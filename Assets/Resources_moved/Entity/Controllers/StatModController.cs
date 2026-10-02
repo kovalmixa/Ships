@@ -13,11 +13,9 @@ namespace Assets.Entity.Controllers
         private readonly Dictionary<(StatType Type, StatLayer Layer), float> _baseStats = new();
         private readonly Dictionary<(StatType Type, StatLayer Layer), float> _cachedCombinedStats = new();
 
-        // Локальные модификаторы объекта
         private readonly List<ModUnit> _localModifiers = new();
         public IReadOnlyList<ModUnit> LocalModifiers => _localModifiers;
 
-        // Внешние группы модификаторов (например, списки модификаторов от предметов, баффов и т.д.)
         private readonly List<IEnumerable<ModUnit>> _externalModifiers = new();
         private readonly EntityController _entityController;
 
@@ -36,13 +34,30 @@ namespace Assets.Entity.Controllers
 
             if (statOptions.mods != null)
             {
-                //_localModifiers.AddRange(statOptions.mods);
             }
 
             MarkDirty();
         }
 
-        #region Управление локальными модификаторами
+        #region Base Stats Management
+
+        /// <summary>
+        /// Устанавливает базовое значение характеристики для указанного типа и слоя.
+        /// Если характеристики с такими типом и слоем нет, она создается.
+        /// </summary>
+        public void SetStatValue(StatType type, StatLayer layer, float value)
+        {
+            var key = (type, layer);
+
+            // Записываем или обновляем значение базовой характеристики
+            _baseStats[key] = value;
+
+            MarkDirty();
+        }
+
+        #endregion
+
+        #region Local modifiers
 
         public void AddLocalModifier(ModUnit mod)
         {
@@ -75,7 +90,7 @@ namespace Assets.Entity.Controllers
 
         #endregion
 
-        #region Управление внешними модификаторами
+        #region External modifiers
 
         public void RegisterExternalModifiers(IEnumerable<ModUnit> mods)
         {
@@ -93,7 +108,7 @@ namespace Assets.Entity.Controllers
 
         #endregion
 
-        public float GetStat(StatType type, StatLayer layer)
+        public float GetStatValue(StatType type, StatLayer layer)
         {
             var key = (type, layer);
 
@@ -125,17 +140,13 @@ namespace Assets.Entity.Controllers
         private IEnumerable<ModUnit> GetAllActiveModifiers()
         {
             foreach (var mod in _localModifiers)
-            {
                 if (mod != null) yield return mod;
-            }
 
             foreach (var extGroup in _externalModifiers)
             {
                 if (extGroup == null) continue;
                 foreach (var mod in extGroup)
-                {
                     if (mod != null) yield return mod;
-                }
             }
         }
 

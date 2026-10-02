@@ -1,7 +1,6 @@
 using Assets.AI;
 using Assets.Entity.AI.Interfaces;
 using Assets.Entity.Hull;
-using Assets.Entity.Modifiers;
 using Entity.Controllers;
 using Scripts;
 using System;
@@ -179,7 +178,7 @@ namespace AI
                 if (_playerTransform == null) return;
             }
 
-            float attackRange = _entityController.GetTotalLifetimeStat(StatType.MaxRange);
+            float attackRange = 42; // _entityController.GetTotalLifetimeStat(StatType.MaxRange);
             float visionRange = attackRange * 1.5f; //moderated by ai type
             float sqrDistance = (_playerTransform.position - transform.position).sqrMagnitude;
             float sqrVisionRange = visionRange * visionRange;

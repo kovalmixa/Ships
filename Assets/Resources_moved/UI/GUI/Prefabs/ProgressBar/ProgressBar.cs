@@ -91,6 +91,5 @@ public class ProgressBar : MonoBehaviour
 
         _lastValue = targetValue;
         _fillCoroutine = null;
-        Debug.Log("Действие завершено!");
     }
 }

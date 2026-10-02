@@ -1,5 +1,5 @@
 ﻿using Assets.Entity;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using System;
 using System.Collections.Generic;
 
@@ -19,7 +19,7 @@ namespace Assets.Scripts.GameplayActions.Audio
         {
             if (Enum.TryParse<StatType>(key, out var statType))
             {
-                value = _stats.GetLifetimeStat(statType);
+                value = _stats.GetLifetimeStatValue(statType);
                 return true;
             }
             value = 0f;

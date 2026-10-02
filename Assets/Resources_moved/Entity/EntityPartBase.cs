@@ -3,7 +3,7 @@ using Assets.Common.Interfaces;
 using Assets.Entity.BuffStatuses;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
@@ -23,7 +23,7 @@ namespace Assets.Entity.Common
         [Header("Components & State")]
         [field: SerializeField] public BuffStatusesController Buffs { get; protected set; }
         [SerializeField] protected StatModController statModController;
-
+        public StatModController StatModController => statModController;
         public string Id { get; set; }
         public SpriteRenderer[] Sprites => sprites;
         public GameObject GameObject => gameObject;
@@ -35,6 +35,8 @@ namespace Assets.Entity.Common
         protected readonly ActionDataController actionDataController = new();
 
         protected SpriteRenderer[] sprites;
+        protected Collider2D partCollider;
+        private bool _isMouseHovered = false;
 
         protected abstract StatOptions StatOptions { get; }
         protected abstract StatLayer StatLayer { get; }
@@ -59,6 +61,21 @@ namespace Assets.Entity.Common
         {
             Id = GameObjectHandler.GenerateUniqueId(name);
             animatorController = gameObject.AddComponent<LocalAnimatorController>();
+            partCollider = GetComponent<Collider2D>();
+        }
+
+        protected virtual void Update()
+        {
+            CheckMouseHover();
+        }
+
+        protected virtual void OnDisable()
+        {
+            if (_isMouseHovered)
+            {
+                _isMouseHovered = false;
+                entityController?.SetHighlight(false);
+            }
         }
 
         protected virtual void OnDestroy()
@@ -86,17 +103,24 @@ namespace Assets.Entity.Common
 
             var statOptions = StatOptions;
 
-
-            statModController = new StatModController(parentModController, statOptions);
+            statModController = new StatModController(this.entityController, statOptions);
             statModController.OnChange += OnStatModChanged;
 
             SetupInitialBuffs(statOptions.buffs);
+            SetupStatValues();
+        }
+
+        private void SetupStatValues()
+        {
+            float maxHp = GetLifetimeStatValue(StatType.MaxHp);
+            if (maxHp != 0) SetStatValue(StatType.Hp, maxHp);
+            float maxEnergy = GetLifetimeStatValue(StatType.MaxEnergy);
+            if (maxEnergy != 0) SetStatValue(StatType.Energy, maxEnergy);
         }
 
         protected virtual void OnStatModChanged()
         {
             actionDataController.MarkDirty();
-            entityController?.AggregatedStats?.MarkDirty();
         }
 
         protected virtual void SetupInitialBuffs(IEnumerable<BuffStatus> buffs)
@@ -142,7 +166,16 @@ namespace Assets.Entity.Common
 
         #region IStats
 
-        public float GetLifetimeStat(StatType type) => statModController != null ? statModController.GetStat(type, StatLayer) : 0f;
+        public float GetLifetimeStatValue(StatType type)
+        {
+            return statModController != null ? statModController.GetStatValue(type, StatLayer) : 0f;
+        }
+
+        public void SetStatValue(StatType type, float value)
+        {
+            statModController.SetStatValue(type, layer: StatLayer, value);
+        }
+
         public abstract IDataContainer GetInitialData();
 
         #endregion
@@ -159,7 +192,7 @@ namespace Assets.Entity.Common
         {
             if (abilitiesController != null && abilitiesController.TryActivate(targetPos, abilityUnit))
             {
-                float activationRate = GetLifetimeStat(StatType.ActivationRate);
+                float activationRate = GetLifetimeStatValue(StatType.ActivationRate);
                 animatorController?.PlayAction(abilityUnit.animationID, activationRate == 0 ? 1 : activationRate);
             }
         }
@@ -170,8 +203,27 @@ namespace Assets.Entity.Common
 
         #region Hover & Highlight Logic
 
-        protected virtual void OnMouseEnter() => entityController?.SetHighlight(true);
-        protected virtual void OnMouseExit() => entityController?.SetHighlight(false);
+        private void CheckMouseHover()
+        {
+            if (partCollider == null) return;
+
+            var cameraController = CameraController.Instance;
+            if (cameraController == null || cameraController.Camera == null) return;
+
+            Vector2 mouseWorldPos = cameraController.Camera.ScreenToWorldPoint(Input.mousePosition);
+            bool isInside = partCollider.OverlapPoint(mouseWorldPos);
+
+            if (isInside && !_isMouseHovered)
+            {
+                _isMouseHovered = true;
+                entityController?.SetHighlight(true);
+            }
+            else if (!isInside && _isMouseHovered)
+            {
+                _isMouseHovered = false;
+                entityController?.SetHighlight(false);
+            }
+        }
 
         private void HandleHighlight(bool isHighlighted) => SetSpritesHighlight(isHighlighted);
 
@@ -179,12 +231,9 @@ namespace Assets.Entity.Common
         {
             if (sprites == null || sprites.Length == 0) return;
 
-            // when will be added fraction classes highlight it in color
-            // relative to player relationship
-            Color softYellow = new Color(1f, 0.98f, 0.8f); 
+            Color softYellow = new Color(1f, 0.98f, 0.8f);
             Color targetColor = isHighlighted ? softYellow : Color.white;
-            foreach (var sprite in sprites)
-                if (sprite != null) sprite.color = targetColor;
+            foreach (var sprite in sprites) if (sprite != null) sprite.color = targetColor;
         }
 
         #endregion

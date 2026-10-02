@@ -1,9 +1,9 @@
-﻿using Assets.Entity.Modifiers;
-using Assets.Handlers.Enums;
+﻿using Assets.Handlers.Enums;
 using System;
 using System.Collections.Generic;
 using Assets.Entity.BuffStatuses;
 using UnityEngine;
+using Assets.Entity.StatMods;
 
 namespace Assets.Common
 {

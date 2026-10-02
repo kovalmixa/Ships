@@ -47,7 +47,7 @@ public class SetBuffAction : GameplayAction<BuffData>
                 Duration = buffTemplate.Duration,
                 Scope = buffTemplate.Scope,
                 Policy = buffTemplate.Policy,
-                modifiers = buffTemplate.modifiers
+                mods = buffTemplate.mods
             };
             target.AddBuff(context, instance);
         }

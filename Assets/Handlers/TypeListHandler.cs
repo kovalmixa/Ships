@@ -1,5 +1,5 @@
 ﻿using Assets.Entity.Equipment;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using Assets.Handlers.Enums;
 using GameplayActions;
 using System;

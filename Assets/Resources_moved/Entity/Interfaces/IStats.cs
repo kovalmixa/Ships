@@ -1,11 +1,11 @@
 ﻿using Assets.Common.Interfaces;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 
 namespace Assets.Entity
 {
     public interface IStats
     {
-        public float GetLifetimeStat(StatType type);
+        public float GetLifetimeStatValue(StatType type);
         public IDataContainer GetInitialData();
     }
 }

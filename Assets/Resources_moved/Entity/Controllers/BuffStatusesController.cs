@@ -1,6 +1,6 @@
 ﻿using Assets.Common.Interfaces;
 using Assets.Entity.BuffStatuses;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using Assets.Scripts.Actions;
 using System;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
 ﻿using Assets.Common;
 using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using Assets.Handlers;
 using System;
 using System.Collections.Generic;
@@ -30,7 +30,7 @@ namespace Assets.Entity.Controllers
             var (action, context, data) = SetupActivationData(abilityUnit);
             if (action == null || !CanActivate(targetPos, abilityUnit) || data == null) return false;
 
-            float activationRate = (source as IStats)?.GetLifetimeStat(StatType.ActivationRate) ?? 0f;
+            float activationRate = (source as IStats)?.GetLifetimeStatValue(StatType.ActivationRate) ?? 0f;
             float activationDelay = abilityUnit.delay / activationRate;
 
             float distance = Vector2.Distance(_equipmentTransform.position, targetPos);

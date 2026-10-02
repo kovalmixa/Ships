@@ -4,7 +4,6 @@ using Assets.DataContainers;
 using Assets.Entity.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
-using Assets.Entity.Modifiers;
 using Assets.Entity.StatMods;
 using Entity.Controllers;
 using Scripts;
@@ -47,8 +46,10 @@ namespace Assets.Entity.Hull
             rigidBody2D = GetComponent<Rigidbody2D>();
         }
 
-        protected virtual void Update()
+        protected override void Update()
         {
+            base.Update();
+
             DampExternalVelocity();
             InvokeMovement();
         }
@@ -109,7 +110,7 @@ namespace Assets.Entity.Hull
                 externalVelocity = Vector2.MoveTowards(
                     externalVelocity,
                     Vector2.zero,
-                    GetLifetimeStat(StatType.Mass) * 2f * Time.deltaTime
+                    GetLifetimeStatValue(StatType.Mass) * 2f * Time.deltaTime
                 );
                 InvokeMovement();
             }
@@ -137,10 +138,10 @@ namespace Assets.Entity.Hull
             if (otherRb == null) return;
 
             float otherMass = 1f;
-            float hostMass = GetLifetimeStat(StatType.Mass);
+            float hostMass = GetLifetimeStatValue(StatType.Mass);
 
             if (otherRb.TryGetComponent<HullBase>(out var otherHull))
-                otherMass = otherHull.GetLifetimeStat(StatType.Mass);
+                otherMass = otherHull.GetLifetimeStatValue(StatType.Mass);
 
             Rigidbody2D rb = rigidBody2D != null ? rigidBody2D : GetComponent<Rigidbody2D>();
             if (rb == null) return;

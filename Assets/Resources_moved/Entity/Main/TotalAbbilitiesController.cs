@@ -141,16 +141,28 @@ namespace Assets.Entity.Controllers
 
         private bool IsPositionBlocked(Vector3 position)
         {
-            Collider2D hitCollider = Physics2D.OverlapPoint(position);
-            if (hitCollider == null) return false;
+            if (_entityController == null || _entityController.Hull == null)
+                return false;
 
-            if (_entityController != null && _entityController.Hull != null)
+            Collider2D[] hitColliders = Physics2D.OverlapPointAll(position);
+            if (hitColliders.Length == 0) return false;
+
+            GameObject hullGo = _entityController.Hull.gameObject;
+            var equipments = _entityController.Hull.equipments;
+
+            foreach (var hitCollider in hitColliders)
             {
-                if (hitCollider.gameObject == _entityController.Hull.gameObject) return true;
-                if (_entityController.Hull.equipments != null)
-                    foreach (var equipment in _entityController.Hull.equipments)
-                        if (equipment != null && hitCollider.gameObject == equipment.gameObject) return true;
+                if (hitCollider == null) continue;
+                GameObject hitGo = hitCollider.gameObject;
+
+                if (hitGo == hullGo) return true;
+
+                if (equipments != null)
+                    foreach (var equipment in equipments)
+                        if (equipment != null && hitGo == equipment.gameObject) 
+                            return true;
             }
+
             return false;
         }
     }

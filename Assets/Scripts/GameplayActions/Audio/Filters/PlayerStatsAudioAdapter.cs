@@ -1,5 +1,4 @@
-﻿using Assets.Entity.Modifiers;
-using Assets.Handlers.SceneHandlers;
+﻿using Assets.Handlers.SceneHandlers;
 using Entity.Controllers;
 using FMODUnity;
 using UnityEngine;
@@ -35,17 +34,17 @@ namespace Assets.Scripts.GameplayActions.Audio.Filters
             DetachFromPlayer();
             _playerEC = newPlayer;
 
-            if (_playerEC != null && _playerEC.StatModController != null)
-            {
-                _playerEC.StatModController.OnChange += UpdateAudioParameter;
-                UpdateAudioParameter();
-            }
+            //if (_playerEC != null && _playerEC.StatModController != null)
+            //{
+            //    _playerEC.StatModController.OnChange += UpdateAudioParameter;
+            //    UpdateAudioParameter();
+            //}
         }
 
         private void DetachFromPlayer()
         {
-            if (_playerEC != null && _playerEC.StatModController != null)
-                _playerEC.StatModController.OnChange -= UpdateAudioParameter;
+            //if (_playerEC != null && _playerEC.StatModController != null)
+            //    _playerEC.StatModController.OnChange -= UpdateAudioParameter;
 
             _playerEC = null;
             RuntimeManager.StudioSystem.setParameterByName(_fmodParameterName, 0f);
@@ -53,12 +52,12 @@ namespace Assets.Scripts.GameplayActions.Audio.Filters
 
         private void UpdateAudioParameter()
         {
-            if (_playerEC == null || _playerEC.StatModController == null) return;
+            //if (_playerEC == null || _playerEC.StatModController == null) return;
 
-            float maxHp = _playerEC.GetTotalLifetimeStat(StatType.MaxHp);
-            float currentHp = _playerEC.GetTotalLifetimeStat(StatType.Hp);
-            float normalizedHp = maxHp > 0f ? Mathf.Clamp01(currentHp / maxHp) : 0f;
-            RuntimeManager.StudioSystem.setParameterByName(_fmodParameterName, normalizedHp);
+            //float maxHp = _playerEC.GetTotalLifetimeStat(StatType.MaxHp);
+            //float currentHp = _playerEC.GetTotalLifetimeStat(StatType.Hp);
+            //float normalizedHp = maxHp > 0f ? Mathf.Clamp01(currentHp / maxHp) : 0f;
+            //RuntimeManager.StudioSystem.setParameterByName(_fmodParameterName, normalizedHp);
         }
     }
 }

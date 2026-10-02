@@ -2,10 +2,11 @@ using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.Entity.Common;
 using Assets.Entity.Controllers;
-using Assets.Entity.Modifiers;
 using Entity.Controllers;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Entity.StatMods;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -64,7 +65,7 @@ namespace Assets.Entity.Equipment
         {
             if (Data == null || !CanRotate()) return;
 
-            float rotationSpeed = GetLifetimeStat(StatType.RotationSpeed);
+            float rotationSpeed = GetLifetimeStatValue(StatType.RotationSpeed);
 
             Vector3 localTarget = EquipmentAnchor.transform.InverseTransformPoint(targetPos);
             float targetAngle = Mathf.Atan2(localTarget.y, localTarget.x) * Mathf.Rad2Deg;

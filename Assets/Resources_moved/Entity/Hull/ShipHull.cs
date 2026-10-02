@@ -1,4 +1,4 @@
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using System;
 using UnityEngine;
 
@@ -36,9 +36,9 @@ namespace Assets.Entity.Hull
 
         public override void Movement(float rotationDirection)
         {
-            var maxMoveSpeed = GetLifetimeStat(StatType.MaxMoveSpeed);
-            var acceleration = GetLifetimeStat(StatType.Acceleration);
-            var rotationSpeed = GetLifetimeStat(StatType.RotationSpeed);
+            var maxMoveSpeed = GetLifetimeStatValue(StatType.MaxMoveSpeed);
+            var acceleration = GetLifetimeStatValue(StatType.Acceleration);
+            var rotationSpeed = GetLifetimeStatValue(StatType.RotationSpeed);
             _targetSpeed = _speedLevel * (maxMoveSpeed / _maxSpeedLevel);
             currentSpeed = MathF.Min(
                 Mathf.MoveTowards(currentSpeed, _targetSpeed, acceleration * Time.fixedDeltaTime),maxMoveSpeed);

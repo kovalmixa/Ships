@@ -1,5 +1,5 @@
 using Assets.Entity.Hull;
-using Assets.Entity.Modifiers;
+using Assets.Entity.StatMods;
 using Entity.Controllers;
 using System.Collections;
 using TMPro;
@@ -46,12 +46,22 @@ namespace UI.GUI.EntityGUI
 
             _entityController = entityController;
             _hull = entityController.Hull;
+
             SetupNameLabel(entityController);
-            SetupProgressBars(entityController);
 
             SubscribeToEvents();
             InitVisuals();
         }
+
+        #region Event Handlers
+
+        private void OnStatsChanged()
+        {
+            UpdateHealthBar();
+            UpdateEnergyBar();
+        }
+
+        #endregion
 
         private void SetupNameLabel(EntityController entityController)
         {
@@ -94,27 +104,16 @@ namespace UI.GUI.EntityGUI
             if (_hull != null)
             {
                 _hull.OnMovement += UpdateNameplatePosition;
-            }
-
-            if (_entityController != null)
-            {
-                if (_entityController.StatModController != null)
-                {
-                    // Подписки на события статов
-                }
+                _hull.StatModController.OnChange += OnStatsChanged;
             }
         }
 
         private void UnsubscribeFromEvents()
         {
-            if (_hull != null) _hull.OnMovement -= UpdateNameplatePosition;
-
-            if (_entityController != null)
+            if (_hull != null)
             {
-                if (_entityController.StatModController != null)
-                {
-                    // Отписки от событий статов
-                }
+                _hull.OnMovement -= UpdateNameplatePosition;
+                _hull.StatModController.OnChange -= OnStatsChanged;
             }
         }
 
@@ -134,13 +133,21 @@ namespace UI.GUI.EntityGUI
         private void UpdateHealthBar()
         {
             if (_entityController == null || _hpBar == null) return;
+
+            float currentHp = _hull.GetLifetimeStatValue(StatType.Hp);
+            float maxHp = _hull.GetLifetimeStatValue(StatType.MaxHp);
+            if (maxHp > 0) OnHpSet(currentHp / maxHp);
         }
 
         private void UpdateEnergyBar()
         {
             if (_entityController == null || _energyBar == null) return;
-        }
 
+            float currentEnergy = _hull.GetLifetimeStatValue(StatType.Energy);
+            float maxEnergy = _hull.GetLifetimeStatValue(StatType.MaxEnergy);
+            if (currentEnergy == 0) _energyBar?.gameObject.SetActive(false);
+            else if (maxEnergy > 0) OnEnergySet(currentEnergy / maxEnergy);
+        }
         #endregion
 
         #region On Invocations & Public API
@@ -162,6 +169,7 @@ namespace UI.GUI.EntityGUI
         public void OnEnergySet(float normalizedValue)
         {
             if (_energyBar == null) return;
+            _energyBar.gameObject.SetActive(true);
             _energyBar.Value = Mathf.Clamp01(normalizedValue);
 
             ResetFadeTimer();

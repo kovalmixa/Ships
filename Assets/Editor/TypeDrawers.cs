@@ -1,6 +1,6 @@
 ﻿namespace Assets.Handlers.Editor
 {
-    using Assets.Entity.Modifiers;
+    using Assets.Entity.StatMods;
     using Assets.Scripts.Actions.VFX;
     using System;
     using System.Collections.Generic;
