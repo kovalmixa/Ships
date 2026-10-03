@@ -17,7 +17,7 @@ namespace GameplayActions
     public struct ElementalDamageData
     {
         public DamageType type;
-        public float damage;
+        public float value;
         public float critChance;
         public float critMultiplier;
     }

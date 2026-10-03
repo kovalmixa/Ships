@@ -5,8 +5,10 @@ using GameplayActions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Rendering.FilterWindow;
 
 namespace Assets.Handlers.Enums
 {
@@ -263,23 +265,39 @@ namespace Assets.Handlers
 
     public static class StatModHandler
     {
-        public static readonly (DamageType type, StatType dmg, StatType critC, StatType critM)[] elementalMap =
+        public static readonly (DamageType type, StatType dmg, StatType critC, StatType critM, StatType res)[] elementalMap =
         {
-            (DamageType.Physical, StatType.PhysicalDamage, StatType.CritChance, StatType.CritMultiplier),
-            (DamageType.Fire, StatType.FireDamage, StatType.FireCritChance, StatType.FireCritMultiplier),
-            (DamageType.Explosive, StatType.ExplosiveDamage, StatType.ExplosiveCritChance, StatType.ExplosiveCritMultiplier),
-            (DamageType.Acid, StatType.AcidDamage, StatType.AcidCritChance, StatType.AcidCritMultiplier),
-            (DamageType.Ultrasound, StatType.UltrasoundDamage, StatType.UltrasoundCritChance, StatType.UltrasoundCritMultiplier),
-            (DamageType.Electricity, StatType.ElectricityDamage, StatType.ElectricityCritChance, StatType.ElectricityCritMultiplier),
-            (DamageType.Plasma, StatType.PlasmaDamage, StatType.PlasmaCritChance, StatType.PlasmaCritMultiplier),
-            (DamageType.Slow, StatType.SlowDamage, StatType.SlowCritChance, StatType.SlowCritMultiplier),
-            (DamageType.Freeze, StatType.FreezeDamage, StatType.FreezeCritChance, StatType.FreezeCritMultiplier),
-            (DamageType.Psi, StatType.PsiDamage, StatType.PsiCritChance, StatType.PsiCritMultiplier),
-            (DamageType.Radiation, StatType.RadiationDamage, StatType.RadiationCritChance, StatType.RadiationCritMultiplier),
-            (DamageType.EMP, StatType.EMPDamage, StatType.EMPCritChance, StatType.EMPCritMultiplier),
-            (DamageType.SpatialAnomaly, StatType.SpatialAnomalyDamage, StatType.SpatialAnomalyCritChance, StatType.SpatialAnomalyCritMultiplier),
-            (DamageType.Flooding, StatType.FloodingDamage, StatType.FloodingCritChance, StatType.FloodingCritMultiplier)
-        };
+        (DamageType.Physical, StatType.PhysicalDamage, StatType.CritChance, StatType.CritMultiplier, StatType.PhysicalResistance),
+        (DamageType.Fire, StatType.FireDamage, StatType.FireCritChance, StatType.FireCritMultiplier, StatType.FireResistance),
+        (DamageType.Explosive, StatType.ExplosiveDamage, StatType.ExplosiveCritChance, StatType.ExplosiveCritMultiplier, StatType.ExplosiveResistance),
+        (DamageType.Acid, StatType.AcidDamage, StatType.AcidCritChance, StatType.AcidCritMultiplier, StatType.AcidResistance),
+        (DamageType.Ultrasound, StatType.UltrasoundDamage, StatType.UltrasoundCritChance, StatType.UltrasoundCritMultiplier, StatType.UltrasoundResistance),
+        (DamageType.Electricity, StatType.ElectricityDamage, StatType.ElectricityCritChance, StatType.ElectricityCritMultiplier, StatType.ElectricityResistance),
+        (DamageType.Plasma, StatType.PlasmaDamage, StatType.PlasmaCritChance, StatType.PlasmaCritMultiplier, StatType.PlasmaResistance),
+        (DamageType.Slow, StatType.SlowDamage, StatType.SlowCritChance, StatType.SlowCritMultiplier, StatType.SlowResistance),
+        (DamageType.Freeze, StatType.FreezeDamage, StatType.FreezeCritChance, StatType.FreezeCritMultiplier, StatType.FreezeResistance),
+        (DamageType.Psi, StatType.PsiDamage, StatType.PsiCritChance, StatType.PsiCritMultiplier, StatType.PsiResistance),
+        (DamageType.Radiation, StatType.RadiationDamage, StatType.RadiationCritChance, StatType.RadiationCritMultiplier, StatType.RadiationResistance),
+        (DamageType.EMP, StatType.EMPDamage, StatType.EMPCritChance, StatType.EMPCritMultiplier, StatType.EMPResistance),
+        (DamageType.SpatialAnomaly, StatType.SpatialAnomalyDamage, StatType.SpatialAnomalyCritChance, StatType.SpatialAnomalyCritMultiplier, StatType.SpatialAnomalyResistance),
+        (DamageType.Flooding, StatType.FloodingDamage, StatType.FloodingCritChance, StatType.FloodingCritMultiplier, StatType.FloodingResistance)
+    };
+
+        public static StatType GetResistanceStat(DamageType damageType)
+        {
+            for (int i = 0; i < elementalMap.Length; i++)
+                if (elementalMap[i].type == damageType)
+                    return elementalMap[i].res;
+            return StatType.PhysicalResistance;
+        }
+
+        public static float CalculateCritRatio(float critChance, float critMult)
+        {
+            int elementCritQuantity = (int)critChance;
+            if (UnityEngine.Random.value < (critChance - elementCritQuantity)) elementCritQuantity++;
+            float elementCrit = elementCritQuantity * critMult;
+            return elementCrit;
+        }
     }
 
     public static class LayersHandler

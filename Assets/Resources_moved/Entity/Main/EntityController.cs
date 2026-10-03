@@ -250,7 +250,6 @@ namespace Entity.Controllers
             if (_nameplate == null) return;
             if (isHighlighted) _nameplate.Show();
             else _nameplate.Hide();
-            Debug.Log("Highlighted");
         }
 
         #endregion

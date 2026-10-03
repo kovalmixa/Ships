@@ -92,7 +92,7 @@ namespace Assets.Entity.Controllers
                             damageData.elements.Add(new ElementalDamageData
                             {
                                 type = element.type,
-                                damage = dmgValue,
+                                value = dmgValue,
                                 critChance = stats.GetLifetimeStatValue(element.critC),
                                 critMultiplier = stats.GetLifetimeStatValue(element.critM)
                             });

@@ -4,6 +4,7 @@ using Assets.Entity.BuffStatuses;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
 using Assets.Entity.StatMods;
+using Assets.Handlers;
 using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using Assets.Scripts.Actions;
@@ -11,6 +12,7 @@ using Entity.Controllers;
 using GameplayActions;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 
 namespace Assets.Entity.Common
@@ -103,7 +105,7 @@ namespace Assets.Entity.Common
 
             var statOptions = StatOptions;
 
-            statModController = new StatModController(this.entityController, statOptions);
+            statModController = new StatModController(Id, statOptions);
             statModController.OnChange += OnStatModChanged;
 
             SetupInitialBuffs(statOptions.buffs);
@@ -154,7 +156,39 @@ namespace Assets.Entity.Common
 
         public virtual void TakeDamage(InteractionContext context, DamageData data)
         {
-            Debug.Log($"Damaged with value {data.value} to {gameObject.name}");
+            if (data == null) return;
+            var (totalDamageValue, buffs) = CalculateDamageAndBuffs(context, data);
+            if (totalDamageValue <= 1e-2f) return;
+            Debug.Log($"Damaged with value {totalDamageValue} to {gameObject.name}");
+            float currentHP = GetLifetimeStatValue(StatType.Hp);
+            SetStatValue(StatType.Hp, currentHP - totalDamageValue);
+        }
+
+        private (float damage, IEnumerable<BuffStatus> buffs) CalculateDamageAndBuffs(InteractionContext context, DamageData data)
+        {
+            if (data == null) return (0f, Array.Empty<BuffStatus>());
+
+            float baseDam = data.value;
+            float armorMod = data.penetration / GetLifetimeStatValue(StatType.Armor);
+
+            float elementDam = 0f;
+            List<BuffStatus> buffs = new();
+
+            foreach (var element in data.elements)
+            {
+                StatType resStat = StatModHandler.GetResistanceStat(element.type);
+                float resistanceValue = GetLifetimeStatValue(resStat);
+                float elementCrit = StatModHandler.CalculateCritRatio(element.critChance, element.critMultiplier);
+                float elementRatio = Math.Max(resistanceValue - element.value * elementCrit, 0);
+                elementDam += elementRatio * baseDam;
+
+                if (elementCrit / element.critChance > 0)
+                {
+                    // buffs.Add(...);
+                }
+            }
+            float totalDamage = (baseDam * armorMod) + elementDam;
+            return (totalDamage, buffs);
         }
 
         public virtual void TakeHeal(InteractionContext context, HealData data)

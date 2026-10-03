@@ -4,7 +4,6 @@ namespace Assets.Handlers
 {
     public static class MathFuncHandler
     {
-
         public static Vector3 GetAngleDistancePoint(Vector2 startPosition, float angle, float distance)
         {
             float angleRadians = angle * Mathf.Deg2Rad;

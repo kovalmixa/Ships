@@ -4,7 +4,6 @@ using System.Linq;
 using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.Entity.StatMods;
-using Entity.Controllers;
 
 namespace Assets.Entity.Controllers
 {
@@ -17,14 +16,12 @@ namespace Assets.Entity.Controllers
         public IReadOnlyList<ModUnit> LocalModifiers => _localModifiers;
 
         private readonly List<IEnumerable<ModUnit>> _externalModifiers = new();
-        private readonly EntityController _entityController;
-
+        private readonly string _hostId;
         public StatModController() { }
 
-        public StatModController(EntityController entityController, StatOptions statOptions)
+        public StatModController(string Id, StatOptions statOptions)
         {
-            _entityController = entityController;
-
+            _hostId = Id;
             if (statOptions.stats != null)
             {
                 _baseStats = statOptions.stats
@@ -41,17 +38,10 @@ namespace Assets.Entity.Controllers
 
         #region Base Stats Management
 
-        /// <summary>
-        /// Устанавливает базовое значение характеристики для указанного типа и слоя.
-        /// Если характеристики с такими типом и слоем нет, она создается.
-        /// </summary>
         public void SetStatValue(StatType type, StatLayer layer, float value)
         {
             var key = (type, layer);
-
-            // Записываем или обновляем значение базовой характеристики
             _baseStats[key] = value;
-
             MarkDirty();
         }
 
@@ -66,14 +56,14 @@ namespace Assets.Entity.Controllers
             MarkDirty();
         }
 
-        public void AddLocalModifiers(IEnumerable<ModUnit> mods)
+        private void AddLocalModifiers(IEnumerable<ModUnit> mods)
         {
             if (mods == null) return;
             _localModifiers.AddRange(mods);
             MarkDirty();
         }
 
-        public bool RemoveLocalModifier(ModUnit mod)
+        private bool RemoveLocalModifier(ModUnit mod)
         {
             if (mod == null) return false;
             bool removed = _localModifiers.Remove(mod);
@@ -81,7 +71,7 @@ namespace Assets.Entity.Controllers
             return removed;
         }
 
-        public void ClearLocalModifiers()
+        private void ClearLocalModifiers()
         {
             if (_localModifiers.Count == 0) return;
             _localModifiers.Clear();
@@ -92,16 +82,18 @@ namespace Assets.Entity.Controllers
 
         #region External modifiers
 
-        public void RegisterExternalModifiers(IEnumerable<ModUnit> mods)
+        public void RegisterExternalModifiers(string id, IEnumerable<ModUnit> mods)
         {
+            if (id == _hostId) return;
             if (mods == null || _externalModifiers.Contains(mods)) return;
-
+            
             _externalModifiers.Add(mods);
             MarkDirty();
         }
 
-        public void UnregisterExternalModifiers(IEnumerable<ModUnit> mods)
+        public void UnregisterExternalModifiers(string id, IEnumerable<ModUnit> mods)
         {
+            if (id == _hostId) return;
             if (mods == null) return;
             if (_externalModifiers.Remove(mods)) MarkDirty();
         }

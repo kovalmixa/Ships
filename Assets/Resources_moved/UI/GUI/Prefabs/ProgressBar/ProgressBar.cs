@@ -25,7 +25,7 @@ public class ProgressBar : MonoBehaviour
             if (_label != null) _label.text = value.ToString();
             if (_fillCoroutine != null) StopCoroutine(_fillCoroutine);
 
-            _fillCoroutine = StartCoroutine(FillMaterialOverTime(3.0f));
+            _fillCoroutine = StartCoroutine(FillMaterialOverTime(0.5f));
         }
     }
 
