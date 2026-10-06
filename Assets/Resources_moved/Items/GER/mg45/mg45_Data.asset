@@ -76,3 +76,24 @@ MonoBehaviour:
       isPassive: 0
       animationID: 0
       drawLayerPositioning: 0
+  lifeTimeData:
+    explosionOnDeath:
+      damageData:
+        value: 0
+        range: 0
+        splashModifier: 0
+        penetration: 0
+        critChance: 0
+        critMultiplier: 0
+        targetLayer: 0
+        elements: []
+        splashCurve:
+          serializedVersion: 2
+          m_Curve: []
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+      vfxData:
+        type: 0
+        rotationType: 0
+    vfxOnLowHP: 1021

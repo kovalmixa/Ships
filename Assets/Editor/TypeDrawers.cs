@@ -8,7 +8,7 @@
     using UnityEngine;
 
     public enum StatCategory { Resources, Movement, Attack, Defense, Elements, Resists, Crits, Projectiles, Economy }
-    public enum VfxCategory { Bullet }
+    public enum VfxCategory { Bullet, SmallProjectile, Explosion, Fire, Smoke }
 
 
     public class TypeDrawerCache<SubCat, MasterCat>
@@ -109,6 +109,6 @@
     [CustomPropertyDrawer(typeof(VfxType))]
     public class VfxTypeDrawer : TypeDrawer<VfxType, VfxCategory>
     {
-        public VfxTypeDrawer() : base(10) { }
+        public VfxTypeDrawer() : base(20) { }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.Handlers.Enums;
+using Assets.Resources_moved.Entity.Parts;
 using UnityEngine;
 
 namespace Assets.DataContainers
@@ -14,7 +15,8 @@ namespace Assets.DataContainers
         [Header("Vehicle Type")]
         public VehicleSubType vehicleType;
 
-        [Header("Base Stats & Options")]
         public StatOptions statOptions;
+
+        public LifeTimeData lifeTimeData;
     }
 }

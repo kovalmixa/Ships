@@ -14,7 +14,7 @@ public class ProgressBar : MonoBehaviour
     private RectTransform _rectTransform;
 
     private static readonly int _valueProperty = Shader.PropertyToID("_Value");
-    private static readonly int _aspectProperty = Shader.PropertyToID("_Aspect");
+    private static readonly int _deltaProperty = Shader.PropertyToID("_Delta");
 
     public float Value
     {
@@ -62,12 +62,6 @@ public class ProgressBar : MonoBehaviour
     {
         if (_rectTransform == null) return;
         InitMaterial();
-
-        if (_material != null && _rectTransform.rect.height > 0)
-        {
-            float aspect = _rectTransform.rect.width / _rectTransform.rect.height;
-            _material.SetFloat(_aspectProperty, aspect);
-        }
     }
 
     private IEnumerator FillMaterialOverTime(float duration)
@@ -79,15 +73,15 @@ public class ProgressBar : MonoBehaviour
         float startValue = _lastValue;
         float targetValue = _value;
 
+        _material.SetFloat(_valueProperty, targetValue);
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
             float currentProgress = Mathf.Lerp(startValue, targetValue, elapsedTime / duration);
-            if (_material != null) _material.SetFloat(_valueProperty, currentProgress);
+            _material.SetFloat(_deltaProperty, currentProgress);
             yield return null;
         }
-
-        if (_material != null) _material.SetFloat(_valueProperty, targetValue);
+        _material.SetFloat(_deltaProperty, targetValue);
 
         _lastValue = targetValue;
         _fillCoroutine = null;

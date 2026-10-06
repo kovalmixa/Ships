@@ -1,6 +1,8 @@
 ﻿using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.Handlers.Enums;
+using Assets.Resources_moved.Entity.Parts;
+using GameplayActions;
 using UnityEngine;
 
 namespace Assets.Entity.Equipment
@@ -15,7 +17,8 @@ namespace Assets.Entity.Equipment
         public EquipmentType type;
         public ProjectileType projectileType;
 
-        [Header("Base Stats & Options")]
         public StatOptions statOptions;
+
+        public LifeTimeData lifeTimeData;
     }
 }

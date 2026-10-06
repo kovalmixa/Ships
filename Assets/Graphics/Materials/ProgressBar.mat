@@ -69,14 +69,16 @@ Material:
     m_Floats:
     - _Aspect: 0
     - _BorderWidth: 0.101
+    - _DeltaValue: 0
     - _EnableExternalAlpha: 0
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _Value: 0.473
+    - _Value: 0
     - _ZWrite: 0
     m_Colors:
     - _BorderColor: {r: 0, g: 0, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _HighlightColor: {r: 0.690566, g: 0.690566, b: 0.690566, a: 1}
     - _MultColor: {r: 0.2603773, g: 0.2603773, b: 0.2603773, a: 0.6039216}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

@@ -18,7 +18,20 @@ namespace Assets.Scripts.Actions.VFX
         BulletHitWater = 3,
         BulletHitLand = 4,
         BulletHitAir = 5,
-        //...
+        //SmallProjectile
+        SmallProjectileLaunch = 21,
+        SmallProjectileHit = 22,
+        SmallProjectileHitWater = 23,
+        SmallProjectileHitLand = 24,
+        SmallProjectileHitAir = 25,
+        //Explosion
+        SmallExplosion = 501,
+        //Fire
+        SmallFire = 1001,
+        //Smoke
+        SmallSmoke = 1021,
+        //Sparks
+
     }
 
     public class VfxController : SingletonPoolHandler<VfxController, VfxInstance>
