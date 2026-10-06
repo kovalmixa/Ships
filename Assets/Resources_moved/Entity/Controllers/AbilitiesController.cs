@@ -1,7 +1,7 @@
-﻿using Assets.Common;
-using Assets.Common.Interfaces;
+﻿using Assets.Common.Interfaces;
 using Assets.Entity.Interfaces;
 using Assets.Entity.StatMods;
+using Assets.Entity;
 using Assets.Scripts.Actions;
 using GameplayActions;
 using System;

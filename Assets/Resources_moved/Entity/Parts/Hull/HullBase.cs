@@ -1,6 +1,4 @@
-﻿using Assets.Common;
-using Assets.Common.Interfaces;
-using Assets.DataContainers;
+﻿using Assets.Common.Interfaces;
 using Assets.Entity.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
@@ -16,9 +14,6 @@ namespace Assets.Entity.Hull
     public abstract class HullBase : EntityPartBase, IHull
     {
         #region Fields & Properties
-
-        [Header("Data & Configuration")]
-        [field: SerializeField] public HullDataSO Data { get; private set; }
 
         [Header("Physics & Movement State")]
         [HideInInspector] public float currentSpeed;
@@ -173,7 +168,7 @@ namespace Assets.Entity.Hull
 
         #region Interface Implementations & Helpers
 
-        public override IDataContainer GetInitialData() => Data;
+        public override IUIData GetInitialData() => Data;
         protected void InvokeMovement() => OnMovement?.Invoke();
 
         #endregion

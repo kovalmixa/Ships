@@ -1,4 +1,3 @@
-using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.Entity.Common;
 using Assets.Entity.Controllers;
@@ -17,9 +16,6 @@ namespace Assets.Entity.Equipment
     public class Equipment : EntityPartBase
     {
         #region Fields & Properties
-
-        [Header("Data & Configuration")]
-        [field: SerializeField] public EquipmentDataSO Data { get; private set; }
         public EquipmentAnchor EquipmentAnchor { get; set; }
 
         [Header("Editor Settings")]
@@ -130,7 +126,7 @@ namespace Assets.Entity.Equipment
 
         #region Helpers & Overrides
 
-        public override IDataContainer GetInitialData() => Data;
+        public override IUIData GetInitialData() => Data;
 
         #endregion
 

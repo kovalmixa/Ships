@@ -5,7 +5,7 @@ using Assets.Entity.BuffStatuses;
 using UnityEngine;
 using Assets.Entity.StatMods;
 
-namespace Assets.Common
+namespace Assets.Entity
 {
     public enum LayerPositioning { Bottom, Top, Toppest }
 

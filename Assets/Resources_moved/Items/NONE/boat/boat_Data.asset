@@ -12,13 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07e78b9639657324c94bc14e6a6453a4, type: 3}
   m_Name: boat_Data
   m_EditorClassIdentifier: Assembly-CSharp::Assets.DataContainers.HullDataSO
-  general:
+  _general:
     <SizeType>k__BackingField: 0
-    Layer: 0
+    Layer: 4
     <SlotHeight>k__BackingField: 1
     <SlotWidth>k__BackingField: 1
     icon: {fileID: 0}
-  vehicleType: 1
   statOptions:
     stats:
     - name: 'MaxHp: 5'
@@ -52,3 +51,44 @@ MonoBehaviour:
     mods: []
     buffs: []
     abilities: []
+  lifeTimeData:
+    vfxDuringLife: 1061
+    vfxOnLowHP: 1021
+    explosionOnDeath:
+      damageData:
+        value: 1
+        range: 1
+        splashModifier: 1
+        penetration: 0.5
+        critChance: 0
+        critMultiplier: 0
+        targetLayer: 4
+        elements: []
+        splashCurve:
+          serializedVersion: 2
+          m_Curve:
+          - serializedVersion: 3
+            time: 0
+            value: 1
+            inSlope: -1
+            outSlope: -1
+            tangentMode: 34
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          - serializedVersion: 3
+            time: 1
+            value: 0
+            inSlope: -1
+            outSlope: -1
+            tangentMode: 34
+            weightedMode: 0
+            inWeight: 0
+            outWeight: 0
+          m_PreInfinity: 2
+          m_PostInfinity: 2
+          m_RotationOrder: 4
+      vfxData:
+        type: 501
+        rotationType: 0
+  vehicleType: 1

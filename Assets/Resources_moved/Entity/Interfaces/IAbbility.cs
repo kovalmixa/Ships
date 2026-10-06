@@ -1,5 +1,5 @@
-﻿using Assets.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Assets.Entity;
 using UnityEngine;
 
 namespace Assets.Entity.Interfaces

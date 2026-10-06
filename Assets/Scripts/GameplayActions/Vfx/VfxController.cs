@@ -30,8 +30,10 @@ namespace Assets.Scripts.Actions.VFX
         SmallFire = 1001,
         //Smoke
         SmallSmoke = 1021,
-        //Sparks
-
+        SmokeBlast = 1022,
+        //Misc
+        Ripple = 1061,
+        Spark = 1062,
     }
 
     public class VfxController : SingletonPoolHandler<VfxController, VfxInstance>

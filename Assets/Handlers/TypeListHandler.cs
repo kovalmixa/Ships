@@ -5,10 +5,8 @@ using GameplayActions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.Rendering.FilterWindow;
 
 namespace Assets.Handlers.Enums
 {
@@ -17,7 +15,7 @@ namespace Assets.Handlers.Enums
         None,
         FireWeapon,
         LaunchAircraft, LaunchMissile, DropBomb, FireLaser, LaunchTorpedo, SummonDrone,
-        Heal, Regeneration, Shield, RadarPulse, Smoke, Dash, Teleport, Repair,
+        Heal, Regeneration, Shield, RadarPulse, Smoke, Dash, Teleport, Repair, Explosion,
         AllTurrets
     }
 
@@ -119,7 +117,7 @@ namespace Assets.Handlers
             type == EquipmentType.Turret || type == EquipmentType.Aircraft;
 
         public static bool IsWeaponEquipment(Equipment equipment) =>
-            equipment != null && IsWeaponEquipment(equipment.Data.type);
+            equipment != null && IsWeaponEquipment((equipment.Data as EquipmentDataSO).type);
 
         public static Dictionary<WeaponType, SizeType[]> GetWeaponTiers(IEnumerable<Equipment> equipments)
         {
@@ -134,8 +132,8 @@ namespace Assets.Handlers
 
             var availableSizes = equipments
                 .Where(IsWeaponEquipment)
-                .Where(e => e.Data.general.SizeType != SizeType.None)
-                .Select(e => e.Data.general.SizeType)
+                .Where(e => e.Data.General.SizeType != SizeType.None)
+                .Select(e => e.Data.General.SizeType)
                 .Distinct()
                 .OrderByDescending(size => (int)size)
                 .ToList();
@@ -169,9 +167,9 @@ namespace Assets.Handlers
 
             foreach (var weapon in weapons)
             {
-                if (weapon?.Data?.general == null) continue;
+                if (weapon?.Data?.General == null) continue;
 
-                var size = weapon.Data.general.SizeType;
+                var size = weapon.Data.General.SizeType;
 
                 if (tierSizes[WeaponType.Primary]?.Contains(size) == true)
                     result[WeaponType.Primary].Add(weapon);

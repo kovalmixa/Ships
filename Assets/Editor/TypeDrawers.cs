@@ -8,7 +8,7 @@
     using UnityEngine;
 
     public enum StatCategory { Resources, Movement, Attack, Defense, Elements, Resists, Crits, Projectiles, Economy }
-    public enum VfxCategory { Bullet, SmallProjectile, Explosion, Fire, Smoke }
+    public enum VfxCategory { Bullet, SmallProjectile, Explosion, Fire, Smoke, Misc }
 
 
     public class TypeDrawerCache<SubCat, MasterCat>

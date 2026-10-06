@@ -6,6 +6,6 @@ namespace Assets.Entity
     public interface IStats
     {
         public float GetLifetimeStatValue(StatType type);
-        public IDataContainer GetInitialData();
+        public IUIData GetInitialData();
     }
 }

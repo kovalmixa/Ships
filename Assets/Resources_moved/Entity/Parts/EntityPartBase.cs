@@ -1,8 +1,10 @@
 ﻿using Assets.Common;
 using Assets.Common.Interfaces;
+using Assets.Entity;
 using Assets.Entity.BuffStatuses;
 using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
+using Assets.Entity.Parts;
 using Assets.Entity.StatMods;
 using Assets.Handlers;
 using Assets.Handlers.Enums;
@@ -20,7 +22,8 @@ namespace Assets.Entity.Common
         IInteractive, IStats, IAbbility, IBuffable
     {
         #region Fields & Properties
-
+        [Header("Data & Configuration")]
+        [field: SerializeField] public EntityPartDataSO Data { get; private set; }
         [Header("Components & State")]
         [field: SerializeField] public BuffStatusesController Buffs { get; protected set; }
         [SerializeField] protected StatModController statModController;
@@ -153,14 +156,20 @@ namespace Assets.Entity.Common
             else Buffs?.AddBuff(buff, context.SourceSnapshot);
         }
 
+        #region Damage
+
         public virtual void TakeDamage(InteractionContext context, DamageData data)
         {
             if (data == null) return;
+
             var (totalDamageValue, buffs) = CalculateDamageAndBuffs(context, data);
             if (totalDamageValue <= 1e-2f) return;
-            Debug.Log($"Damaged with value {totalDamageValue} to {gameObject.name}");
+
             float currentHP = GetLifetimeStatValue(StatType.Hp);
-            SetStatValue(StatType.Hp, currentHP - totalDamageValue);
+            float finalHp = currentHP - totalDamageValue;
+            SetStatValue(StatType.Hp, finalHp);
+
+            if (finalHp <= 0) ProceedDeath();
         }
 
         private (float damage, IEnumerable<BuffStatus> buffs) CalculateDamageAndBuffs(InteractionContext context, DamageData data)
@@ -190,6 +199,30 @@ namespace Assets.Entity.Common
             return (totalDamage, buffs);
         }
 
+        public virtual void ProceedDeath()
+        {
+            var explosionData = Data.lifeTimeData.explosionOnDeath;
+            if (explosionData == null) return;
+            explosionData.damageData.attackHost = false;
+
+            var context = new InteractionContext(
+                AbilityType.Explosion,
+                GetSnapshot(),
+                gameObject,
+                actionDataController,
+                transform.position
+            );
+            ActionProvider.Explosion.Execute(context, explosionData, transform.position);
+            //StartCoroutine(ShowCorpse());
+        }
+
+        //IEnumerator ShowCorpse()
+        //{
+        //    yield return null;
+        //}
+
+        #endregion
+
         public virtual void TakeHeal(InteractionContext context, HealData data)
         {
             throw new NotImplementedException();
@@ -209,7 +242,7 @@ namespace Assets.Entity.Common
             statModController.SetStatValue(type, layer: StatLayer, value);
         }
 
-        public abstract IDataContainer GetInitialData();
+        public abstract IUIData GetInitialData();
 
         #endregion
 

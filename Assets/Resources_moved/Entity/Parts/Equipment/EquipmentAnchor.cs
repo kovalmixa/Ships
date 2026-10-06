@@ -25,8 +25,8 @@ namespace Assets.Entity.Equipment
         {
             if (this.index != index || _isPlaced) return false;
 
-            var equipmentContainer = equipment.Data;
-            if (equipmentContainer == null || sizeType != equipmentContainer.general.SizeType) return false;
+            var equipmentContainer = equipment.Data as EquipmentDataSO;
+            if (equipmentContainer == null || sizeType != equipmentContainer.General.SizeType) return false;
             bool equipmentMatch = equipmentType == EquipmentType.None || equipmentType == equipmentContainer.type;
             bool projectileMatch = projectileType == ProjectileType.None || projectileType == equipmentContainer.projectileType;
             return equipmentMatch && projectileMatch;

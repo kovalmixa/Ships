@@ -12,14 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef452126ba3ace94f87da4ce0c9e448d, type: 3}
   m_Name: mg45_Data
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Entity.Equipment.EquipmentDataSO
-  general:
+  _general:
     <SizeType>k__BackingField: 1
     Layer: 0
     <SlotHeight>k__BackingField: 1
     <SlotWidth>k__BackingField: 1
     icon: {fileID: 0}
-  type: 1
-  projectileType: 1
   statOptions:
     stats:
     - name: 'Damage: 1'
@@ -59,7 +57,7 @@ MonoBehaviour:
       _statLayer: 1
       _value: 0.5
     mods:
-    - name: 
+    - name: 'Hp: 0'
       _type: 0
       _statLayer: 0
       _value: 0
@@ -77,6 +75,8 @@ MonoBehaviour:
       animationID: 0
       drawLayerPositioning: 0
   lifeTimeData:
+    vfxDuringLife: 0
+    vfxOnLowHP: 1021
     explosionOnDeath:
       damageData:
         value: 0
@@ -93,7 +93,11 @@ MonoBehaviour:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
+        attackHost: 1
       vfxData:
-        type: 0
+        type: 1022
         rotationType: 0
-    vfxOnLowHP: 1021
+    lifeState: 0
+    leftCorpseOnDeath: 1
+  type: 1
+  projectileType: 1

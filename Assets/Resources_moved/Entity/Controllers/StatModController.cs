@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Common;
 using Assets.Common.Interfaces;
 using Assets.Entity.StatMods;
+using Assets.Entity;
 
 namespace Assets.Entity.Controllers
 {

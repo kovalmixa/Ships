@@ -34,6 +34,7 @@ namespace GameplayActions
         public LayerType targetLayer;
         public List<ElementalDamageData> elements = new();
         public AnimationCurve splashCurve;
+        public bool attackHost = true;
 
         public DamageData GetScaledDamage(float multiplier)
         {
@@ -53,6 +54,8 @@ namespace GameplayActions
                 if (targetCollider.TryGetComponent(out IInteractive interactive))
                 {
                     if (!CanDamageLayer(data.targetLayer, interactive.Layer)) continue;
+                    if (interactive.GameObject == context.SourceObject && !data.attackHost) continue;
+                    
                     DamageData currentData = data;
                     if (data.splashModifier != 1 && data.range > 0)
                     {
