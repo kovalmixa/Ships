@@ -81,7 +81,7 @@ namespace Assets.Entity.Controllers
                     damageData.critMultiplier = stats.GetLifetimeStatValue(StatType.CritMultiplier);
 
                     int layerMaskValue = (int)stats.GetLifetimeStatValue(StatType.DamageLayer);
-                    damageData.targetLayer = layerMaskValue == 0 ? LayerType.All : (LayerType)layerMaskValue;
+                    damageData.targetLayer = layerMaskValue == 0 ? InterractLayerType.All : (InterractLayerType)layerMaskValue;
                     
                     damageData.elements.Clear();
                     foreach (var element in StatModHandler.elementalMap)

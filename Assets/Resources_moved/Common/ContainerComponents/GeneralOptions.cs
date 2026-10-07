@@ -7,7 +7,7 @@ namespace Assets.Common
     public struct GeneralOptions
     {
         [field: SerializeField] public SizeType SizeType { get; private set; }
-        public LayerType Layer;
+        public InterractLayerType Layer;
         [field: SerializeField] public int SlotHeight { get; private set; }
         [field: SerializeField] public int SlotWidth { get; private set; }
         public Texture icon;

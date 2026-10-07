@@ -31,7 +31,7 @@ namespace GameplayActions
         public float penetration;
         public float critChance;
         public float critMultiplier;
-        public LayerType targetLayer;
+        public InterractLayerType targetLayer;
         public List<ElementalDamageData> elements = new();
         public AnimationCurve splashCurve;
         public bool attackHost = true;
@@ -78,6 +78,6 @@ namespace GameplayActions
             if (CanDamageLayer(data.targetLayer, target.Layer)) target.TakeDamage(context, data);
         }
 
-        private bool CanDamageLayer(LayerType attackLayers, LayerType targetLayer) => (attackLayers & targetLayer) != 0;
+        private bool CanDamageLayer(InterractLayerType attackLayers, InterractLayerType targetLayer) => (attackLayers & targetLayer) != 0;
     }
 }

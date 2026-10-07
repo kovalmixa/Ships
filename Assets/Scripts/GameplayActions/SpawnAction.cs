@@ -46,7 +46,7 @@ namespace Assets.Scripts.GameplayActions
                 ? context.SourceObject.transform.rotation
                 : Quaternion.identity;
 
-            var entityController = EntityPoolHandler.Instance.GetEntity();
+            var entityController = EntityPoolController.Instance.GetEntity();
             if (entityController != null)
             {
                 entityController.transform.SetPositionAndRotation(spawnPosition, spawnRotation);

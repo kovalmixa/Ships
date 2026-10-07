@@ -5,7 +5,9 @@ using Entity.Controllers;
 using System.Collections.Generic;
 using UnityEngine;
 using Assets.Entity.StatMods;
-
+using Assets.Scripts.Actions;
+using Assets.Handlers.Enums;
+using GameplayActions;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -120,6 +122,27 @@ namespace Assets.Entity.Equipment
             float result = angle % 360f;
             if (result < 0) result += 360f;
             return result;
+        }
+
+        #endregion
+
+        #region IInteractive & IBuffable
+
+        protected override void ProceedDeath()
+        {
+            var explosionData = Data.lifeTimeData.explosionOnDeath;
+            if (explosionData == null) return;
+            explosionData.damageData.attackHost = false;
+
+            var context = new InteractionContext(
+                AbilityType.Explosion,
+                GetSnapshot(),
+                gameObject,
+                actionDataController,
+                transform.position
+            );
+            ActionProvider.Explosion.Execute(context, explosionData, transform.position);
+            //logic for setting of lifetime sprites and showing instead corpse sprite
         }
 
         #endregion

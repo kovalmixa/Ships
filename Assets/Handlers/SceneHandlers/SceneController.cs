@@ -1,3 +1,4 @@
+using Assets.Entity;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Linq;
@@ -60,8 +61,8 @@ namespace Assets.Handlers.SceneHandlers
                 sceneLoadOperation.allowSceneActivation = true;
                 await sceneLoadOperation.WithCancellation(token);
 
-                if (EntityPoolHandler.Instance != null)
-                    await EntityPoolHandler.Instance.WaitUntilAllActiveInitializedAsync(token);
+                if (EntityPoolController.Instance != null)
+                    await EntityPoolController.Instance.WaitUntilAllActiveInitializedAsync(token);
 
                 if (GameSessionHandler.Instance != null && GameSessionHandler.Instance.PlayerController == null)
                     await GameSessionHandler.Instance.SpawnPlayer();

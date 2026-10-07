@@ -7,9 +7,9 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace Assets.Handlers.SceneHandlers
+namespace Assets.Entity
 {
-    public class EntityPoolHandler : SingletonPoolHandler<EntityPoolHandler, EntityController>
+    public class EntityPoolController : SingletonPoolController<EntityPoolController, EntityController>
     {
         [SerializeField] private GameObject _prefab;
         private IObjectPool<EntityController> _pool;
@@ -131,6 +131,14 @@ namespace Assets.Handlers.SceneHandlers
             }
 
             return _pool.Get();
+        }
+
+        public void Release(EntityController entity)
+        {
+            if (entity == null || _pool == null) return;
+            // collectionCheck is on: a double release would throw, so guard it
+            if (!_activeEntities.Contains(entity)) return;
+            _pool.Release(entity);
         }
 
         #endregion

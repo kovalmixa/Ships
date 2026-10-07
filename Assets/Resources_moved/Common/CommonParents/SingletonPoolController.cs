@@ -6,7 +6,7 @@ using UnityEngine.Pool;
 
 namespace Assets.Handlers.CommonParents
 {
-    public abstract class SingletonPoolHandler<TSingleton, TPooled> : SingletonMonoBehaviour<TSingleton>
+    public abstract class SingletonPoolController<TSingleton, TPooled> : SingletonMonoBehaviour<TSingleton>
         where TSingleton : MonoBehaviour
         where TPooled : class
     {

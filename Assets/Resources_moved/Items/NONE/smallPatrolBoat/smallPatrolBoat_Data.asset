@@ -101,6 +101,8 @@ MonoBehaviour:
       vfxData:
         type: 501
         rotationType: 0
-    lifeState: 0
+    corpseSprite: {fileID: 21300000, guid: 666f108bc9f1f5845b290aec329cad11, type: 3}
     leftCorpseOnDeath: 1
+    sunkOnDeath: 1
+    corpseDisappearTime: 300
   vehicleType: 1

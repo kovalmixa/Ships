@@ -19,7 +19,9 @@ namespace Assets.Scripts.Actions.Projectile
         protected ProjectileData data;
         protected InteractionContext context;
 
-        [SerializeField] protected float avarageDamage; //for setting size depending on damage value
+        [SerializeField] protected float avarageDamage; //for setting size depending on damage value -- false
+        // need to set it by additional stat parameter like stat in isaac!
+
         [SerializeField] protected VfxData launchEffectData;
         [SerializeField] protected VfxData explosionEffectData;
         [SerializeField] protected VfxRotationType vfxRotation = VfxRotationType.Default;
@@ -179,7 +181,7 @@ namespace Assets.Scripts.Actions.Projectile
             bool isAirUnitNearSplash = Physics2D.OverlapCircle(explodePos, range * 3f, airLayerMask) != null;
 
             if (hitInteractiveTarget) layerName = "";
-            else if (((targetLayer & LayerType.Air) != 0 || targetLayer == LayerType.All) && isAirUnitNearSplash) layerName = "Air";
+            else if (((targetLayer & InterractLayerType.Air) != 0 || targetLayer == InterractLayerType.All) && isAirUnitNearSplash) layerName = "Air";
             else if (string.IsNullOrEmpty(layerName)) layerName = "Air";
             else if (string.IsNullOrEmpty(layerName)) layerName = "Air";
 

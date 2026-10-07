@@ -6,6 +6,8 @@ namespace Assets.Entity.Hull
 {
     public class ShipHull : HullBase
     {
+        protected override bool IsOnWater => true;
+
         private float _speedLevel;
         private int _maxSpeedLevel = 3;
         private int _minSpeedLevel = -1;
@@ -41,7 +43,7 @@ namespace Assets.Entity.Hull
             var rotationSpeed = GetLifetimeStatValue(StatType.RotationSpeed);
             _targetSpeed = _speedLevel * (maxMoveSpeed / _maxSpeedLevel);
             currentSpeed = MathF.Min(
-                Mathf.MoveTowards(currentSpeed, _targetSpeed, acceleration * Time.fixedDeltaTime),maxMoveSpeed);
+                Mathf.MoveTowards(currentSpeed, _targetSpeed, acceleration * Time.fixedDeltaTime), maxMoveSpeed);
 
             float angle = rotationDirection * rotationSpeed * Time.fixedDeltaTime;
             float newAngle = rigidBody2D.rotation + (rotationDirection * rotationSpeed * Time.fixedDeltaTime);

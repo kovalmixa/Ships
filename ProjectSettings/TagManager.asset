@@ -44,11 +44,11 @@ TagManager:
   - name: Underwater_Terrain
     uniqueID: 2224307891
     locked: 0
-  - name: Underwater_Decals
-    uniqueID: 3008393307
-    locked: 0
   - name: Underwater_Decoration
     uniqueID: 952792045
+    locked: 0
+  - name: Underwater_Decals
+    uniqueID: 3008393307
     locked: 0
   - name: Underwater_Entities
     uniqueID: 3504121035

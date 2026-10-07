@@ -11,7 +11,7 @@ using UnityEngine.Pool;
 
 namespace Assets.Scripts.Actions.Projectile
 {
-    public class ProjectileController : SingletonPoolHandler<ProjectileController, ProjectileInstance>
+    public class ProjectileController : SingletonPoolController<ProjectileController, ProjectileInstance>
     {
         private Dictionary<ProjectileType, GameObject> _prefabDict = new();
         private Dictionary<ProjectileType, IObjectPool<ProjectileInstance>> _pools = new();

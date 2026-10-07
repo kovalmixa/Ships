@@ -31,7 +31,7 @@ namespace Assets.Entity.Common
         public string Id { get; set; }
         public SpriteRenderer[] Sprites => sprites;
         public GameObject GameObject => gameObject;
-        public LayerType Layer => (LayerType)gameObject.layer;
+        public InterractLayerType Layer => (InterractLayerType)gameObject.layer;
 
         protected EntityController entityController;
         protected LocalAnimatorController animatorController;
@@ -41,6 +41,9 @@ namespace Assets.Entity.Common
         protected SpriteRenderer[] sprites;
         protected Collider2D partCollider;
         private bool _isMouseHovered = false;
+
+        protected bool _isDead;
+        public bool IsDead => _isDead;
 
         protected abstract StatOptions StatOptions { get; }
         protected abstract StatLayer StatLayer { get; }
@@ -160,7 +163,7 @@ namespace Assets.Entity.Common
 
         public virtual void TakeDamage(InteractionContext context, DamageData data)
         {
-            if (data == null) return;
+            if (data == null || _isDead) return;
 
             var (totalDamageValue, buffs) = CalculateDamageAndBuffs(context, data);
             if (totalDamageValue <= 1e-2f) return;
@@ -169,7 +172,11 @@ namespace Assets.Entity.Common
             float finalHp = currentHP - totalDamageValue;
             SetStatValue(StatType.Hp, finalHp);
 
-            if (finalHp <= 0) ProceedDeath();
+            if (finalHp <= 0)
+            {
+                _isDead = true; // set once here, so ProceedDeath can never run twice
+                ProceedDeath();
+            }
         }
 
         private (float damage, IEnumerable<BuffStatus> buffs) CalculateDamageAndBuffs(InteractionContext context, DamageData data)
@@ -199,27 +206,7 @@ namespace Assets.Entity.Common
             return (totalDamage, buffs);
         }
 
-        public virtual void ProceedDeath()
-        {
-            var explosionData = Data.lifeTimeData.explosionOnDeath;
-            if (explosionData == null) return;
-            explosionData.damageData.attackHost = false;
-
-            var context = new InteractionContext(
-                AbilityType.Explosion,
-                GetSnapshot(),
-                gameObject,
-                actionDataController,
-                transform.position
-            );
-            ActionProvider.Explosion.Execute(context, explosionData, transform.position);
-            //StartCoroutine(ShowCorpse());
-        }
-
-        //IEnumerator ShowCorpse()
-        //{
-        //    yield return null;
-        //}
+        protected abstract void ProceedDeath();
 
         #endregion
 

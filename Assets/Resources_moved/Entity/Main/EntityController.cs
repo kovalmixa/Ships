@@ -13,6 +13,7 @@ using Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using UI.GUI.EntityGUI;
 using UnityEngine;
@@ -40,10 +41,12 @@ namespace Entity.Controllers
         public bool IsInitialized { get; private set; } = false;
         public bool CanMove { get; set; } = true;
         public bool CanUseAbilities { get; set; } = true;
+        public bool IsDead { get; private set; }
 
         private UniTaskCompletionSource _initTcs;
 
         public event Action<bool> OnHighlightStateChanged;
+        public event Action OnDeath;
 
         #endregion
 
@@ -56,7 +59,6 @@ namespace Entity.Controllers
             TotalAbbilitiesController = new TotalAbbilitiesController(this);
 
             Id = GameObjectHandler.GenerateUniqueId(name);
-
         }
 
         private void OnEnable()
@@ -89,6 +91,9 @@ namespace Entity.Controllers
         public void ResetInitializationState()
         {
             IsInitialized = false;
+            IsDead = false;
+            CanMove = true;
+            CanUseAbilities = true;
             _initTcs = new UniTaskCompletionSource();
         }
 
@@ -223,7 +228,7 @@ namespace Entity.Controllers
         #endregion
 
         #region Buff/Mod bridge
-        
+
         public void AddMods(IEnumerable<ModUnit> mods)
         {
 
@@ -233,10 +238,7 @@ namespace Entity.Controllers
 
         #region IPoolInstance
 
-        public void ReleaseToPool()
-        {
-            // Логика сброса объекта в пул
-        }
+        public void ReleaseToPool() => EntityPoolController.Instance?.Release(this);
 
         #endregion
 
@@ -250,6 +252,27 @@ namespace Entity.Controllers
             if (isHighlighted) _nameplate.Show();
             else _nameplate.Hide();
         }
+
+        #region Death
+
+        /// <summary>
+        /// Called by the hull. Events can only be raised from the class that declares them,
+        /// so the hull cannot do entityController.OnDeath?.Invoke() - it calls this instead.
+        /// </summary>
+        public void Die()
+        {
+            if (IsDead) return;
+            IsDead = true;
+            CanMove = false;
+            CanUseAbilities = false;
+
+            OnDeath?.Invoke();   // subscribers (score, loot, UI...) still see a valid hull here
+            OnDeath = null;      // pooled instance: do not leak subscribers into the next life
+
+            ReleaseToPool();
+        }
+
+        #endregion
 
         #endregion
 

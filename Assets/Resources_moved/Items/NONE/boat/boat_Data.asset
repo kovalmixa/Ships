@@ -88,7 +88,12 @@ MonoBehaviour:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
+        attackHost: 0
       vfxData:
         type: 501
         rotationType: 0
+    corpseSprite: {fileID: 21300000, guid: 4f54a02e6f136a54d841d28713811d25, type: 3}
+    leftCorpseOnDeath: 1
+    sunkOnDeath: 1
+    corpseDisappearTime: 300
   vehicleType: 1

@@ -8,7 +8,7 @@ namespace Assets.Common
 {
     public interface IInteractive : IObject
     {
-        LayerType Layer { get; }
+        InterractLayerType Layer { get; }
         public GameObject GameObject { get; }
         public void AddBuff(InteractionContext context, BuffStatus buff);
 

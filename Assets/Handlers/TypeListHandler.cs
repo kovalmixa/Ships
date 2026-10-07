@@ -93,8 +93,32 @@ namespace Assets.Handlers.Enums
         None, S, M, L, XL, XXL, X
     }
 
+    public enum SortingLayerType
+    {
+        Default = 0,
+        Underwater_Terrain,
+        Underwater_Decoration,
+        Underwater_Decals,
+        Underwater_Entities,
+        Underwater_Effects,
+        Water,
+        Water_Decals,
+        Water_Effects,
+        Ground_Terrain,
+        Ground_Decals,
+        Ground_Decoration_Bottom,
+        Ground_Entities,
+        Ground_Effects,
+        Ground_Decoration_Top,
+        Air_Entities,
+        Air_Effects,
+        Scripts,
+        GameUI,
+        PlayerUI
+    }
+
     [Flags]
-    public enum LayerType
+    public enum InterractLayerType
     {
         None = 0,
         UnderWater = 1 << 0,                // 1
@@ -301,12 +325,31 @@ namespace Assets.Handlers
     public static class LayersHandler
     {
         public static string[] interactionIgnore = { "Markers", "InvisibleMarkers" };
-        public static int GetPhysicsLayerMask(LayerType targetLayer)
+
+        private static readonly Dictionary<SortingLayerType, int> _layerIdCache = new();
+
+        static LayersHandler()
+        {
+            foreach (SortingLayerType layer in Enum.GetValues(typeof(SortingLayerType)))
+                _layerIdCache[layer] = SortingLayer.NameToID(layer.ToString());
+        }
+
+        public static int GetID(SortingLayerType layer)
+        {
+            return _layerIdCache.TryGetValue(layer, out int id) ? id : 0;
+        }
+
+        public static void SetSortingLayer(SpriteRenderer renderer, SortingLayerType layer)
+        {
+            if (renderer != null) renderer.sortingLayerID = GetID(layer);
+        }
+
+        public static int GetPhysicsLayerMask(InterractLayerType targetLayer)
         {
             int mask = 0;
-            if ((targetLayer & LayerType.Land) != 0) mask |= LayerMask.GetMask("Land");
-            if ((targetLayer & LayerType.Water) != 0) mask |= LayerMask.GetMask("Water");
-            if ((targetLayer & LayerType.Air) != 0) mask |= LayerMask.GetMask("Air");
+            if ((targetLayer & InterractLayerType.Land) != 0) mask |= LayerMask.GetMask("Land");
+            if ((targetLayer & InterractLayerType.Water) != 0) mask |= LayerMask.GetMask("Water");
+            if ((targetLayer & InterractLayerType.Air) != 0) mask |= LayerMask.GetMask("Air");
             return mask;
         }
     }

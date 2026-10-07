@@ -12,6 +12,6 @@ namespace Assets.Entity.Parts
 
         public StatOptions statOptions;
 
-        public LifeTimeData lifeTimeData;
+        public LifeCycleData lifeTimeData;
     }
 }

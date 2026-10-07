@@ -36,7 +36,7 @@ namespace Assets.Scripts.Actions.VFX
         Spark = 1062,
     }
 
-    public class VfxController : SingletonPoolHandler<VfxController, VfxInstance>
+    public class VfxController : SingletonPoolController<VfxController, VfxInstance>
     {
         private readonly Dictionary<VfxType, IObjectPool<VfxInstance>> _pools = new();
         private readonly Dictionary<VfxType, AsyncLazy<IObjectPool<VfxInstance>>> _loadingTasks = new();

@@ -3,7 +3,13 @@ using Assets.Entity.Common;
 using Assets.Entity.Controllers;
 using Assets.Entity.Equipment;
 using Assets.Entity.StatMods;
+using Assets.Handlers;
+using Assets.Handlers.Enums;
+using Assets.Scripts.Actions;
+using Assets.Entity.Parts;
+using Assets.Scripts.Actions.Corpse;
 using Entity.Controllers;
+using GameplayActions;
 using Scripts;
 using System;
 using System.Collections.Generic;
@@ -110,6 +116,55 @@ namespace Assets.Entity.Hull
                 InvokeMovement();
             }
             else externalVelocity = Vector2.zero;
+        }
+
+        #endregion
+
+        #region IInteractive & IBuffable
+
+        protected virtual bool IsOnWater => false;
+
+        // _isDead is set by EntityPartBase.TakeDamage before this is called.
+        protected override void ProceedDeath()
+        {
+            var life = Data.lifeTimeData;
+
+            // 1. Explosion is optional and must NOT block the death of the entity.
+            var explosionData = life.explosionOnDeath;
+            if (explosionData != null)
+            {
+                explosionData.damageData.attackHost = false;
+
+                var context = new InteractionContext(
+                    AbilityType.Explosion,
+                    GetSnapshot(),
+                    gameObject,
+                    actionDataController,
+                    transform.position
+                );
+                ActionProvider.Explosion.Execute(context, explosionData, transform.position);
+            }
+
+            // 2. Corpse has to be captured while hull + equipment still exist.
+            if (life.leftCorpseOnDeath) SpawnCorpse(life);
+
+            // 3. Entity-level event + return to pool (hull is destroyed inside, so it goes last).
+            entityController?.Die();
+        }
+
+        private void SpawnCorpse(LifeCycleData life)
+        {
+            if (CorpsePoolController.Instance == null) return;
+
+            SortingLayerType layer;
+            if (IsOnWater) layer = life.sunkOnDeath ? SortingLayerType.Underwater_Decals : SortingLayerType.Water_Decals;
+            else layer = SortingLayerType.Ground_Decals;
+
+            CorpsePoolController.Instance.SpawnCorpse(
+                source: transform,
+                layer: layer,
+                hullSpriteOverride: life.corpseSprite,
+                disappearTime: life.corpseDisappearTime);
         }
 
         #endregion

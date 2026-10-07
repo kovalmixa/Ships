@@ -5,16 +5,20 @@ using UnityEngine;
 
 namespace Assets.Entity.Parts
 {
-    public enum LifeState { FullHealth, Damaged, RecentlyDead, OldDeath}
-
     [Serializable]
-    public struct LifeTimeData
+    public struct LifeCycleData
     {
         [Header("Life time VFX")]
         public VfxType vfxDuringLife;
+
+        [Header("Damage & death VFX")]
         public VfxType vfxOnLowHP;
         public ExplosionData explosionOnDeath;
-        public LifeState lifeState;
-		public bool leftCorpseOnDeath;
+        public Sprite corpseSprite;
+
+        public bool leftCorpseOnDeath;
+        public bool sunkOnDeath;
+        [Tooltip("<= 0 means use CorpseInstance default")]
+        public float corpseDisappearTime;
     }
 }
