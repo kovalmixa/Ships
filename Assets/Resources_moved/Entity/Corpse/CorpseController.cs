@@ -64,7 +64,6 @@ namespace Assets.Scripts.Actions.Corpse
                                           Sprite hullSpriteOverride = null, float disappearTime = -1f)
         {
             if (isClearing || _pool == null || source == null) return null;
-
             var instance = _pool.Get();
             if (instance == null) return null;
 

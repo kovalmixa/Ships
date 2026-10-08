@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4496434952435371487}
   - component: {fileID: 1332497715225008521}
   - component: {fileID: 5291859290931706547}
+  - component: {fileID: 520418776940981829}
   m_Layer: 0
   m_Name: SmallExplosion
   m_TagString: Untagged
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.63, y: 0.63, z: 0.63}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 2526649990357798607}
@@ -4905,7 +4906,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 9.11e-43, y: 1.7904247e+26, z: 9.11e-43, w: -3.699727e+29}
+  m_BoundingSphereOverride: {x: 0, y: NaN, z: 0, w: 8.7e-44}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
@@ -4943,6 +4944,75 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &520418776940981829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696215673715295838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb27d34a304ed6144be2cb7ac01e5037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _particleSystems:
+  - {fileID: 8465736090438931621}
+  - {fileID: 555755691531942384}
+  - {fileID: 5084795041635385248}
+  _audioData:
+    sound:
+      Guid:
+        Data1: -1552281604
+        Data2: 1316443332
+        Data3: -271699815
+        Data4: 1946970023
+      Path: event:/Sfx/Bullet/LoopLaunch
+    isOneShot: 0
+    loopStopTimeout: 0.15
+    parameters:
+    - fmodParameterName: FireRate
+      sourceKey: ActivationRate
+      fallbackValue: 1
+      remapInMin: 0
+      remapInMax: 1000
+      remapOutMin: 0
+      remapOutMax: 1
+  _light: {fileID: 8839284861922991245}
+  _lightingTime: 0.5
+  _lightIntencityCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.040000916
+      value: 0.023788452
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.028721824
+      value: 0.99964666
+      inSlope: -0.027057024
+      outSlope: -0.027057024
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.24795097
+      value: 0.022866584
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &4378793682736600976
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5009,7 +5079,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4099195253228586190, guid: c712f8340fd90004d9699e1b5b9b8e3d, type: 3}
       propertyPath: m_BoundingSphereOverride.w
-      value: 1
+      value: -0.0000000033428045
       objectReference: {fileID: 0}
     - target: {fileID: 4099195253228586190, guid: c712f8340fd90004d9699e1b5b9b8e3d, type: 3}
       propertyPath: m_BoundingSphereOverride.x
@@ -5033,6 +5103,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3319532401106352119, guid: c712f8340fd90004d9699e1b5b9b8e3d, type: 3}
   m_PrefabInstance: {fileID: 4378793682736600976}
   m_PrefabAsset: {fileID: 0}
+--- !u!198 &5084795041635385248 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8814753392126945328, guid: c712f8340fd90004d9699e1b5b9b8e3d, type: 3}
+  m_PrefabInstance: {fileID: 4378793682736600976}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8839284861922991245 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5075533794511227677, guid: c712f8340fd90004d9699e1b5b9b8e3d, type: 3}
+  m_PrefabInstance: {fileID: 4378793682736600976}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073797afb82c5a1438f328866b10b3f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.2D.Runtime::UnityEngine.Rendering.Universal.Light2D
 --- !u!1001 &7089819777482974674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5314,6 +5400,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd72a34189dc5db4ab0d19512c4eef65, type: 3}
+--- !u!198 &555755691531942384 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7337042593001298978, guid: cd72a34189dc5db4ab0d19512c4eef65, type: 3}
+  m_PrefabInstance: {fileID: 7089819777482974674}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2526649990357798607 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4716517037502638877, guid: cd72a34189dc5db4ab0d19512c4eef65, type: 3}

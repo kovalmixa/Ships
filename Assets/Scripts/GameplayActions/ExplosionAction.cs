@@ -15,6 +15,7 @@ namespace GameplayActions
     {
         protected override void ExecuteAction(InteractionContext context, ExplosionData data, Vector2 targetPos)
         {
+            Debug.Log(data.vfxData.type.ToString());
             ActionProvider.Vfx.Execute(context, data.vfxData, targetPos);
             ActionProvider.Damage.Execute(context, data.damageData, targetPos);
         }

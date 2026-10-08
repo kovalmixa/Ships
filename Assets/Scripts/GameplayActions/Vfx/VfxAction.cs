@@ -17,6 +17,10 @@ namespace GameplayActions
     {
         public VfxType type;
         public VfxRotationType rotationType = VfxRotationType.Default;
+        
+        public float duration = 0;
+        public float playSpeed = 0;
+        public bool isLoop = false;
     }
 
     public class VfxAction : GameplayAction<VfxData>
@@ -49,7 +53,7 @@ namespace GameplayActions
                 }
             }
 
-            VfxController.Instance.PlayEffect(context, data.type, targetPos, rotation);
+            VfxController.Instance.PlayEffect(context, data, targetPos, rotation);
         }
 
         protected override void ExecuteAction(InteractionContext context, VfxData data, IInteractive target)
@@ -73,7 +77,7 @@ namespace GameplayActions
                     rot = Quaternion.Euler(0, 0, angle);
                 }
 
-                VfxController.Instance.PlayEffect(context, data.type, pos, rot);
+                VfxController.Instance.PlayEffect(context, data, pos, rot);
             }
         }
     }

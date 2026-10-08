@@ -4,6 +4,7 @@ using Assets.Handlers.CommonParents;
 using Assets.Handlers.FileHandlers;
 using Assets.Handlers.TextHandlers;
 using Cysharp.Threading.Tasks;
+using GameplayActions;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -95,13 +96,14 @@ namespace Assets.Scripts.Actions.VFX
             return PrefabLoader.Instance.CheckAddressableExistsAsync(id);
         }
 
-        public void PlayEffect(InteractionContext context, VfxType type, Vector3 position, Quaternion rotation)
+        public void PlayEffect(InteractionContext context, VfxData data, Vector3 position, Quaternion rotation)
         {
-            PlayEffectAsync(context, type, position, rotation).Forget();
+            PlayEffectAsync(context, data, position, rotation).Forget();
         }
 
-        private async UniTaskVoid PlayEffectAsync(InteractionContext context, VfxType type, Vector3 position, Quaternion rotation)
+        private async UniTaskVoid PlayEffectAsync(InteractionContext context, VfxData data, Vector3 position, Quaternion rotation)
         {
+            var type = data.type;
             if (isClearing || type == VfxType.None) return;
 
             if (!_pools.TryGetValue(type, out var pool))
@@ -126,10 +128,7 @@ namespace Assets.Scripts.Actions.VFX
             VfxInstance instance = pool.Get();
             if (instance == null) return;
 
-            instance.Play(
-                context,
-                position,
-                rotation,
+            instance.Play(context, position, rotation, data,
                 onRelease: () =>
                 {
                     if (instance != null && instance.gameObject != null)

@@ -20,8 +20,9 @@ namespace Assets.Scripts.Actions.Corpse
         private CancellationTokenSource _cts;
 
         public void Setup(Transform source, SortingLayerType layer, Sprite hullSpriteOverride,
-                          Action onRelease, float disappearTime = -1f)
+            Action onRelease, float disappearTime = -1f)
         {
+
             _onRelease = onRelease;
             transform.SetPositionAndRotation(source.position, source.rotation);
             transform.localScale = Vector3.one;
@@ -33,7 +34,7 @@ namespace Assets.Scripts.Actions.Corpse
             {
                 if (src == null || !src.enabled || src.sprite == null) continue;
 
-                var sprite = (hullSpriteOverride != null && src.transform == source) ? hullSpriteOverride : src.sprite;
+                var sprite = hullSpriteOverride != null ? hullSpriteOverride : src.sprite;
                 var dst = GetRenderer(_activeCount++);
 
                 var t = dst.transform;

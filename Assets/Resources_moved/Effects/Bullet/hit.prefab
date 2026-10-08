@@ -144,7 +144,7 @@ MonoBehaviour:
     loopStopTimeout: 0
     parameters: []
   _light: {fileID: 8745942945624864293}
-  _time: 0.5
+  _lightingTime: 0.5
   _lightIntencityCurve:
     serializedVersion: 2
     m_Curve:
@@ -223,7 +223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4099195253228586190, guid: c712f8340fd90004d9699e1b5b9b8e3d, type: 3}
       propertyPath: m_BoundingSphereOverride.w
-      value: 9077816
+      value: 0.00010512088
       objectReference: {fileID: 0}
     - target: {fileID: 4099195253228586190, guid: c712f8340fd90004d9699e1b5b9b8e3d, type: 3}
       propertyPath: m_BoundingSphereOverride.x
@@ -235,7 +235,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4099195253228586190, guid: c712f8340fd90004d9699e1b5b9b8e3d, type: 3}
       propertyPath: m_BoundingSphereOverride.z
-      value: 0
+      value: -1.0000099
       objectReference: {fileID: 0}
     - target: {fileID: 5075533794511227677, guid: c712f8340fd90004d9699e1b5b9b8e3d, type: 3}
       propertyPath: m_Color.g
@@ -386,17 +386,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: Spark
       objectReference: {fileID: 0}
+    - target: {fileID: 468772283228912331, guid: e43649fcf50a0d5419c788604cfff59e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3319532401106352119, guid: e43649fcf50a0d5419c788604cfff59e, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.02
+      value: 0.025
       objectReference: {fileID: 0}
     - target: {fileID: 3319532401106352119, guid: e43649fcf50a0d5419c788604cfff59e, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.02
+      value: 0.025
       objectReference: {fileID: 0}
     - target: {fileID: 3319532401106352119, guid: e43649fcf50a0d5419c788604cfff59e, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.02
+      value: 0.025
       objectReference: {fileID: 0}
     - target: {fileID: 3319532401106352119, guid: e43649fcf50a0d5419c788604cfff59e, type: 3}
       propertyPath: m_LocalPosition.x

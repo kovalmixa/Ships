@@ -124,12 +124,9 @@ namespace Assets.Entity.Hull
 
         protected virtual bool IsOnWater => false;
 
-        // _isDead is set by EntityPartBase.TakeDamage before this is called.
         protected override void ProceedDeath()
         {
             var life = Data.lifeTimeData;
-
-            // 1. Explosion is optional and must NOT block the death of the entity.
             var explosionData = life.explosionOnDeath;
             if (explosionData != null)
             {
@@ -145,20 +142,25 @@ namespace Assets.Entity.Hull
                 ActionProvider.Explosion.Execute(context, explosionData, transform.position);
             }
 
-            // 2. Corpse has to be captured while hull + equipment still exist.
-            if (life.leftCorpseOnDeath) SpawnCorpse(life);
-
-            // 3. Entity-level event + return to pool (hull is destroyed inside, so it goes last).
+            if (life.leftCorpseOnDeath) SpawnCorpse();
             entityController?.Die();
         }
 
-        private void SpawnCorpse(LifeCycleData life)
+        private void SpawnCorpse()
         {
             if (CorpsePoolController.Instance == null) return;
+            var life = Data.lifeTimeData;
 
             SortingLayerType layer;
             if (IsOnWater) layer = life.sunkOnDeath ? SortingLayerType.Underwater_Decals : SortingLayerType.Water_Decals;
             else layer = SortingLayerType.Ground_Decals;
+
+            //add equipment corpses
+
+            //foreach (var equipment in equipments)
+            //    equipment.transform.position;
+
+            //add equipment corpses
 
             CorpsePoolController.Instance.SpawnCorpse(
                 source: transform,
