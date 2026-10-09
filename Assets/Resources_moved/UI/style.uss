@@ -1,4 +1,18 @@
-/* Применяет шрифт ко всем текстовым элементам UI Toolkit */
-Label, Button, TextField {
-    -unity-font-definition: resource("Fonts/YourTMPFontAsset SDF");
+Label {
+    -unity-font-definition: resource('Fonts/YourTMPFontAsset SDF');
+}
+
+Button {
+    -unity-font-definition: resource('Fonts/YourTMPFontAsset SDF');
+}
+
+TextField {
+    -unity-font-definition: resource('Fonts/YourTMPFontAsset SDF');
+}
+
+.menu-button {
+    height: 90px;
+    font-size: 36px;
+    margin-bottom: 24px;
+    border-radius: 8px;
 }
