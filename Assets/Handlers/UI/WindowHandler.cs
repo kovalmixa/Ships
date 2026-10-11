@@ -8,7 +8,8 @@ namespace Assets.Handlers.SceneHandlers
 {
     public class WindowHandler : SingletonMonoBehaviour<WindowHandler>
     {
-        private readonly Dictionary<string, UIWindow> _activeWindows = new Dictionary<string, UIWindow>();
+        [SerializeField] private UIWindow[] _batchSceneWindows;
+        private readonly Dictionary<string, UIWindow> _activeWindows = new();
         private UIWindow _currentActiveTab;
         private string _currentActiveTabId;
 
@@ -17,6 +18,16 @@ namespace Assets.Handlers.SceneHandlers
         protected override void Awake()
         {
             base.Awake();
+
+            foreach (var bsw in _batchSceneWindows)
+            {
+                var uiWindow = bsw.GetComponent<UIWindow>();
+                string windowName = uiWindow != null ? uiWindow.GetType().Name : bsw.name;
+
+                if (uiWindow != null && !_activeWindows.ContainsKey(windowName))
+                    _activeWindows.Add(windowName, uiWindow);
+            }
+
             DontDestroyOnLoad(gameObject);
         }
 
@@ -28,7 +39,7 @@ namespace Assets.Handlers.SceneHandlers
 
         #endregion
 
-        #region Public API
+        #region Public API (String-based)
 
         public UIWindow GetWindow(string windowId)
         {
@@ -48,6 +59,43 @@ namespace Assets.Handlers.SceneHandlers
             if (isTab) await CloseTab(windowId);
             else await CloseWindowIndependent(windowId);
         }
+
+        #endregion
+
+        #region Public API (Type-based / Generic)
+
+        public T GetWindow<T>() where T : UIWindow
+        {
+            string windowId = typeof(T).Name;
+            return GetWindow(windowId) as T;
+        }
+
+        public async UniTask SwitchWindow<T>(bool isTab) where T : UIWindow
+        {
+            await SwitchWindow(typeof(T).Name, isTab);
+        }
+
+        public async UniTask OpenTab<T>(int delayMs = 0, bool freezeTime = false, Action onComplete = null) where T : UIWindow
+        {
+            await OpenTab(typeof(T).Name, delayMs, freezeTime, onComplete);
+        }
+
+        public async UniTask CloseTab<T>(bool unfreezeTime = true, Action onComplete = null) where T : UIWindow
+        {
+            await CloseTab(typeof(T).Name, unfreezeTime, onComplete);
+        }
+
+        public async UniTask OpenWindowIndependent<T>(int delayMs = 0, bool freezeTime = false, Action onComplete = null) where T : UIWindow
+        {
+            await OpenWindowIndependent(typeof(T).Name, delayMs, freezeTime, onComplete);
+        }
+
+        public async UniTask CloseWindowIndependent<T>(bool unfreezeTime = true, Action onComplete = null) where T : UIWindow
+        {
+            await CloseWindowIndependent(typeof(T).Name, unfreezeTime, onComplete);
+        }
+
+        #endregion
 
         #region Tabs logic
 
@@ -106,8 +154,6 @@ namespace Assets.Handlers.SceneHandlers
 
         #endregion
 
-        #endregion
-
         #region Internal Spawning & Lifecycle
 
         private async UniTask OpenWindowInternal(string windowId, int delayMs, Action onComplete)
@@ -153,7 +199,6 @@ namespace Assets.Handlers.SceneHandlers
                 _currentActiveTabId = null;
             }
             if (window != null && window.gameObject != null) Destroy(window.gameObject);
-
         }
 
         private void SetTimeScale(bool freeze) => Time.timeScale = freeze ? 0f : 1f;

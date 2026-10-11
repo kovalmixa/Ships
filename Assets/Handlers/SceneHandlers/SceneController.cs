@@ -12,12 +12,9 @@ namespace Assets.Handlers.SceneHandlers
     {
         [SerializeField] private GameObject _appCoreContainer;
         [SerializeField] private string _mainMenuSceneName = "MainMenu";
-        [SerializeField] private string _loadingScreenWindowName = "LoadingScreen";
 
         public static event Func<UniTask> OnBeforeSceneLoad;
         public static event Func<UniTask> OnAfterSceneLoad;
-
-        private UILoadingWindow _loadingWindow;
 
         #region Initialization
 
@@ -31,9 +28,6 @@ namespace Assets.Handlers.SceneHandlers
 
         private async UniTaskVoid InitializeBootWindowsAsync()
         {
-            await WindowHandler.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
-            _loadingWindow = WindowHandler.Instance.GetWindow(_loadingScreenWindowName) as UILoadingWindow;
-
             await UniTask.Yield(PlayerLoopTiming.Update);
             await WindowHandler.Instance.OpenTab(_mainMenuSceneName, delayMs: 0, freezeTime: true);
         }
@@ -49,7 +43,7 @@ namespace Assets.Handlers.SceneHandlers
             var token = this.GetCancellationTokenOnDestroy();
             try
             {
-                await WindowHandler.Instance.OpenWindowIndependent(_loadingScreenWindowName, delayMs: 0);
+                await WindowHandler.Instance.OpenWindowIndependent<LoadingScreen>();
 
                 UniTask beforeLoadTask = InvokeAsyncEvent(OnBeforeSceneLoad);
 
@@ -69,16 +63,15 @@ namespace Assets.Handlers.SceneHandlers
 
                 await InvokeAsyncEvent(OnAfterSceneLoad);
 
-                if (_loadingWindow != null) _loadingWindow.UpdateProgress(1f);
                 await UniTask.Delay(100, ignoreTimeScale: true, cancellationToken: token);
             }
             catch (Exception ex)
             {
-                Debug.LogError($"[SceneController] Ошибка при переходе на сцену '{locationName}': {ex}");
+                Debug.LogError($"[SceneController] Error transitioning to scene '{locationName}': {ex}");
             }
             finally
             {
-                await WindowHandler.Instance.CloseWindowIndependent(_loadingScreenWindowName);
+                await WindowHandler.Instance.CloseTab<LoadingScreen>();
             }
         }
 
@@ -86,12 +79,13 @@ namespace Assets.Handlers.SceneHandlers
         {
             UniTask sceneProgressTask = UniTask.Create(async () =>
             {
+                var _loadingWindow = WindowHandler.Instance.GetWindow<LoadingScreen>();
                 while (operation.progress < 0.9f)
                 {
                     if (_loadingWindow != null)
                     {
                         float progress = Mathf.Clamp01(operation.progress / 0.9f);
-                        _loadingWindow.UpdateProgress(progress);
+                        //_loadingWindow.UpdateProgress(progress);
                     }
                     await UniTask.Yield(PlayerLoopTiming.Update, token);
                 }

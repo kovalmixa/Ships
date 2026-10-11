@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: 4d9eaf19c35876a4bb9ed7505cccf908
+guid: 51836ee17ff5f714aa5aff1e4afbe111
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8920926761252782933
-    second: MainMenuButtonsPanel_0
+      213: -4320295261928297051
+    second: logo_0
   - first:
-      213: -4417189558425728773
-    second: MainMenuButtonsPanel_1
+      213: 5470614613321624601
+    second: logo_1
   - first:
-      213: -5279407689300768760
-    second: MainMenuButtonsPanel_2
+      213: 4560591551370500262
+    second: logo_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -132,13 +132,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MainMenuButtonsPanel_0
+      name: logo_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1357
-        height: 1000
+        width: 174
+        height: 112
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -147,20 +147,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bac70403060823480800000000000000
-      internalID: -8920926761252782933
+      spriteID: 5ade5f3695a3b04c0800000000000000
+      internalID: -4320295261928297051
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MainMenuButtonsPanel_1
+      name: logo_1
       rect:
         serializedVersion: 2
-        x: 1244
+        x: 142
         y: 0
-        width: 224
-        height: 169
+        width: 167
+        height: 112
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -169,20 +169,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: bf84878ff7df2b2c0800000000000000
-      internalID: -4417189558425728773
+      spriteID: 91ca81a91078beb40800000000000000
+      internalID: 5470614613321624601
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MainMenuButtonsPanel_2
+      name: logo_2
       rect:
         serializedVersion: 2
-        x: 1355
+        x: 313
         y: 0
-        width: 145
-        height: 169
+        width: 349
+        height: 113
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -191,8 +191,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 80803c69da6cbb6b0800000000000000
-      internalID: -5279407689300768760
+      spriteID: 6a816195ad97a4f30800000000000000
+      internalID: 4560591551370500262
       vertices: []
       indices: 
       edges: []
@@ -211,9 +211,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      MainMenuButtonsPanel_0: -8920926761252782933
-      MainMenuButtonsPanel_1: -4417189558425728773
-      MainMenuButtonsPanel_2: -5279407689300768760
+      logo_0: -4320295261928297051
+      logo_1: 5470614613321624601
+      logo_2: 4560591551370500262
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
