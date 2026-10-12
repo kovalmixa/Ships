@@ -190,6 +190,7 @@ namespace Assets.Handlers.SceneHandlers
         {
             if (!_activeWindows.TryGetValue(windowId, out UIWindow window)) return;
             await window.CloseAsync(onComplete);
+            if (window == null || window.IsOpen) return;
             if (unfreezeTime) SetTimeScale(false);
             _activeWindows.Remove(windowId);
 

@@ -36,16 +36,8 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 
     private void Update()
     {
-        if (!IsInputBlocked) GetInput();
-    }
-
-    private void GetInput()
-    {
-        foreach (var kpv in _keyCommands) if (Input.GetKeyDown(kpv.Key)) kpv.Value?.Invoke();
-    }
-
-    public void HandleTabToggled(bool isConsoleOpen)
-    {
-
+        if (!IsInputBlocked) 
+            foreach (var kpv in _keyCommands) 
+                if (Input.GetKeyDown(kpv.Key)) kpv.Value?.Invoke();
     }
 }

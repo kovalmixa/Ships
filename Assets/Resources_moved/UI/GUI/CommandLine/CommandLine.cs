@@ -1,122 +1,196 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 namespace UI.GUI.CommandLine
 {
     public class CommandLine : UIWindow
     {
-        [SerializeField] private TMP_InputField _inputField;
+        [SerializeField] private string _inputFieldName = "CommandLineInput";
+        [SerializeField] private string _containerName = "MessageContainer";
 
-        public struct CLLMessage
-        {
-            public string text;
-            public Color color;
+        private TextField _inputField;
+        private ScrollView _messageContainer;
 
-            public CLLMessage(string text, Color color)
-            {
-                this.text = text;
-                this.color = color;
-            }
-        }
-
-        private readonly List<CLLMessage> _messageLog = new();
-        private readonly List<TextMeshProUGUI> _textBoxBuffer = new();
-        private Dictionary<string, Action> _commandMap;
+        private readonly List<string> _commandHistory = new();
+        private int _historyIndex = -1;
 
         public event Action<bool> OnToggled;
-        public bool IsOpen => gameObject.activeSelf;
 
-        #region Unity Lifecycle
-
-        private void Awake()
+        protected override void OnOpened()
         {
-            _commandMap = new Dictionary<string, Action>
+            base.OnOpened();
+
+            if (RootVisualElement != null)
             {
-                { "print", () => WriteMessage("HelloWorld") }
-            };
-        }
+                _inputField = RootVisualElement.Q<TextField>(_inputFieldName);
+                _messageContainer = RootVisualElement.Q<ScrollView>(_containerName);
 
-        private void OnEnable()
-        {
-            DebugHandler.OnLog += HandleLog;
+                _inputField?.RegisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
+
+                RebuildMessageHistory();
+            }
+
             if (GUIHandler.Instance != null) GUIHandler.Instance.SetInputBlocked(true);
             FocusInputFieldAsync().Forget();
             OnToggled?.Invoke(true);
         }
 
-        private async UniTaskVoid FocusInputFieldAsync()
+        protected override void OnClosed()
         {
-            await UniTask.Yield(PlayerLoopTiming.Update);
-            if (_inputField != null)
-            {
-                _inputField.text = string.Empty;
-                _inputField.Select();
-                _inputField.ActivateInputField();
-            }
-        }
+            base.OnClosed();
 
-        private void OnDisable()
-        {
-            DebugHandler.OnLog -= HandleLog;
-
+            if (_inputField != null) _inputField.UnregisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
             if (GUIHandler.Instance != null) GUIHandler.Instance.SetInputBlocked(false);
-            if (_inputField != null) _inputField.DeactivateInputField();
-            if (EventSystem.current != null) EventSystem.current.SetSelectedGameObject(null);
-
             OnToggled?.Invoke(false);
         }
 
-        private void Update()
+        private async UniTaskVoid FocusInputFieldAsync()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            await UniTask.Yield(PlayerLoopTiming.Update);
+
+            if (this == null || !IsOpen)
+                return;
+
+            if (_inputField == null || _inputField.panel == null || RootVisualElement == null)
             {
-                CloseConsole();
+                Debug.LogWarning("[Console] Cannot focus: window or panel is unavailable.");
                 return;
             }
 
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) ExecuteCommand();
+            _inputField.value = string.Empty;
+            _inputField.Focus();
+        }
+
+        private void OnKeyDown(KeyDownEvent evt)
+        {
+            if (evt.keyCode == KeyCode.Return || evt.keyCode == KeyCode.KeypadEnter)
+            {
+                ExecuteCommand();
+                evt.StopPropagation();
+                evt.PreventDefault();
+            }
+            else if (evt.keyCode == KeyCode.UpArrow)
+            {
+                NavigateHistory(-1);
+                evt.StopPropagation();
+            }
+            else if (evt.keyCode == KeyCode.DownArrow)
+            {
+                NavigateHistory(1);
+                evt.StopPropagation();
+            }
+            else if (evt.keyCode == KeyCode.Escape || evt.keyCode == KeyCode.Slash)
+            {
+                CloseConsole();
+                evt.StopPropagation();
+            }
+        }
+
+        #region Command Processing & History
+
+        private void ExecuteCommand()
+        {
+            if (_inputField == null || string.IsNullOrWhiteSpace(_inputField.value)) return;
+
+            string text = _inputField.value.Trim();
+            _commandHistory.Add(text);
+            _historyIndex = _commandHistory.Count;
+
+            DuplicateMessage(text);
+            /*
+            string commandText = text.ToLower();
+            if (_commandMap.TryGetValue(commandText, out Action command)) command?.Invoke();
+            else WriteMessage($"Unknown command: '{commandText}'", Color.red);
+            */
+
+            _inputField.value = string.Empty;
+            _inputField.Focus();
+        }
+
+        private void DuplicateMessage(string messageText)
+        {
+            if (_messageContainer == null) return;
+
+            var currentTime = DateTime.Now.ToString("HH:mm:ss");
+            string labelText = $">{currentTime}: {messageText}";
+            Label messageLabel = new Label(labelText);
+            messageLabel.AddToClassList("message-item");
+
+            messageLabel.style.color = Color.white;
+            messageLabel.style.fontSize = 14;
+            messageLabel.style.marginBottom = 4;
+
+            _messageContainer.Add(messageLabel);
+
+            _messageContainer.schedule.Execute(() =>
+            {
+                if (_messageContainer != null)
+                    _messageContainer.ScrollTo(messageLabel);
+            });
+        }
+
+        private void RebuildMessageHistory()
+        {
+            if (_messageContainer == null) return;
+
+            _messageContainer.Clear();
+
+            foreach (var messageText in _commandHistory)
+            {
+                Label messageLabel = new Label(messageText);
+                messageLabel.AddToClassList("message-item");
+
+                messageLabel.style.color = Color.white;
+                messageLabel.style.fontSize = 14;
+                messageLabel.style.marginBottom = 4;
+
+                _messageContainer.Add(messageLabel);
+            }
+
+            if (_commandHistory.Count > 0)
+            {
+                _messageContainer.schedule.Execute(() =>
+                {
+                    if (_messageContainer != null && _messageContainer.childCount > 0)
+                        _messageContainer.ScrollTo(_messageContainer[_messageContainer.childCount - 1]);
+                });
+            }
+        }
+
+        private void NavigateHistory(int direction)
+        {
+            if (_commandHistory.Count == 0) return;
+
+            _historyIndex += direction;
+            _historyIndex = Mathf.Clamp(_historyIndex, 0, _commandHistory.Count);
+
+            if (_historyIndex < _commandHistory.Count)
+            {
+                _inputField.value = _commandHistory[_historyIndex];
+                _inputField.selectIndex = _inputField.value.Length;
+            }
+            else _inputField.value = string.Empty;
         }
 
         #endregion
 
         #region Public API
 
-        public void Switch() => gameObject.SetActive(!gameObject.activeSelf);
+        public void WriteMessage()
+        {
+
+        }
+
+        public void Switch()
+        {
+            if (IsOpen) CloseConsole();
+            else OpenAsync().Forget();
+        }
 
         public void CloseConsole() => CloseAsync().Forget();
-
-        #endregion
-
-        #region Command Processing
-
-        private void ExecuteCommand()
-        {
-            if (_inputField == null || string.IsNullOrWhiteSpace(_inputField.text)) return;
-
-            string commandText = _inputField.text.Trim().ToLower();
-
-            if (_commandMap.TryGetValue(commandText, out Action command)) command?.Invoke();
-            else WriteMessage($"Unknown command: '{commandText}'", Color.red);
-
-            _inputField.text = string.Empty;
-            _inputField.ActivateInputField();
-        }
-
-        private void HandleLog(string message)
-        {
-            WriteMessage(message, Color.green);
-        }
-
-        private void WriteMessage(string message, Color color = default)
-        {
-            if (color == default) color = Color.white;
-            _messageLog.Add(new CLLMessage(message, color));
-            Debug.Log(message);
-        }
 
         #endregion
     }

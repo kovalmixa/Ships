@@ -17,16 +17,13 @@ public abstract class UIWindow : MonoBehaviour
     {
         get
         {
-            if (_cachedRootVisualElement == null)
-            {
-                if (_uiDocument == null) _uiDocument = GetComponent<UIDocument>();
-                if (_uiDocument != null) _cachedRootVisualElement = _uiDocument.rootVisualElement;
-            }
-            return _cachedRootVisualElement;
+            if (_uiDocument == null) _uiDocument = GetComponent<UIDocument>();
+            return _uiDocument != null ? _uiDocument.rootVisualElement : null;
         }
     }
 
-    public bool IsOpen => RootVisualElement != null && RootVisualElement.style.opacity.value > 0;
+    private bool _isOpen;
+    public bool IsOpen => _isOpen;
 
     protected virtual void OnOpened() { }
     protected virtual void OnClosed() { }
@@ -40,6 +37,8 @@ public abstract class UIWindow : MonoBehaviour
     public async UniTask OpenAsync(int delayMs = 0, Action onComplete = null)
     {
         ResetCancellationToken();
+        _isOpen = true;
+
         var token = _cts.Token;
 
         try
@@ -77,6 +76,8 @@ public abstract class UIWindow : MonoBehaviour
     public async UniTask CloseAsync(Action onComplete = null)
     {
         ResetCancellationToken();
+        _isOpen = false;
+
         var token = _cts.Token;
 
         try
@@ -102,6 +103,7 @@ public abstract class UIWindow : MonoBehaviour
     public void SetStateImmediately(bool isOpen)
     {
         ResetCancellationToken();
+        _isOpen = isOpen;
 
         if (RootVisualElement != null)
         {
