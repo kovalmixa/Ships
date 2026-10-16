@@ -1,0 +1,163 @@
+.root-container {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(30, 30, 36);
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.unity-tab-view {
+    flex-grow: 1;
+    width: 100%;
+    height: 10%;
+}
+
+.unity-tab-view__header-container {
+    flex-direction: row;
+    background-color: rgb(43, 45, 66);
+    border-radius: 8px 8px 0 0;
+    padding: 4px 4px 0 4px;
+    height: initial;
+    flex-shrink: 0;
+}
+
+.unity-tab-button {
+    flex-grow: 1;
+    height: 100%;
+    background-color: transparent;
+    border-width: 0;
+    border-radius: 6px 6px 0 0;
+    color: rgb(141, 153, 174);
+    font-size: 14px;
+    -unity-font-style: bold;
+    transition-duration: 0.2s;
+}
+
+.unity-tab-button:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: rgb(237, 242, 244);
+}
+
+.unity-tab-button--selected {
+    background-color: rgb(61, 64, 91);
+    color: rgb(76, 201, 240);
+    border-bottom-width: 3px;
+    border-bottom-color: rgb(76, 201, 240);
+}
+
+.unity-tab-view__content-container {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(43, 45, 66);
+    border-radius: 0 0 8px 8px;
+    padding: 0;
+}
+
+.tab-content {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    box-sizing: border-box;
+    justify-content: flex-start;
+}
+
+.full-size-panel {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(27, 27, 30);
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: rgb(61, 64, 91);
+    padding: 12px;
+}
+
+.tab-scroll-view {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.content-fill-element {
+    flex-grow: 1;
+    width: 100%;
+    background-color: rgb(36, 36, 41);
+    border-radius: 4px;
+    margin-top: 8px;
+    padding: 10px;
+    color: rgb(237, 242, 244);
+}
+
+.minimap-frame {
+    width: 200px;
+    height: 200px;
+    min-width: 150px;
+    min-height: 150px;
+    max-width: 350px;
+    max-height: 350px;
+    background-color: rgb(255, 255, 255);
+    overflow: hidden;
+    position: relative;
+    top: 0;
+    right: 0;
+}
+
+.button-panel {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 1;
+    height: 40%;
+    width: auto;
+    align-content: flex-start;
+}
+
+.button-panel > Button {
+    flex-grow: 1;
+    width: 80px;
+    height: 100%;
+}
+
+.abilities-panel {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 60px;
+}
+
+.ability-slot {
+    width: 50px;
+    height: 50px;
+    margin-right: 4px;
+    position: relative;
+    background-color: rgb(43, 45, 66);
+    border-width: 1px;
+    border-color: rgb(61, 64, 91);
+}
+
+.ability-dropdown-menu {
+    display: none;
+    position: absolute;
+    bottom: 60px;
+    left: 0;
+    width: 200px;
+    height: 250px;
+    background-color: rgb(30, 30, 36);
+    border-width: 1px;
+    border-color: rgb(76, 201, 240);
+    border-radius: 4px;
+    padding: 4px;
+    z-index: 100;
+}
+
+.ability-dropdown-menu.active {
+    display: flex;
+}
+
+.ability-scroll-view {
+    flex-grow: 1;
+    width: 100%;
+}
