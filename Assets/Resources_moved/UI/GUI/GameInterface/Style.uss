@@ -133,9 +133,13 @@
     height: 50px;
     margin-right: 4px;
     position: relative;
-    background-color: rgb(43, 45, 66);
+    background-color: rgba(30, 31, 41, 0.8);
     border-width: 1px;
     border-color: rgb(61, 64, 91);
+    border-left-color: rgb(6, 7, 16);
+    border-right-color: rgb(6, 7, 16);
+    border-top-color: rgb(6, 7, 16);
+    border-bottom-color: rgb(6, 7, 16);
 }
 
 .ability-dropdown-menu {
@@ -160,4 +164,10 @@
 .ability-scroll-view {
     flex-grow: 1;
     width: 100%;
+}
+
+.ability-label {
+    color: white;
+    align: center;
+    align-self: center;
 }

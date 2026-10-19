@@ -18,23 +18,31 @@
         </ui:VisualElement>
         <ui:VisualElement name="Bottom" style="flex-grow: 1; margin-top: 0%; align-content: auto; align-self: auto; justify-content: flex-end;">
             <ui:VisualElement name="Abilities" style="flex-grow: initial; align-items: center; height: 29%;">
-                <ui:VisualElement name="AbilitiesPanel" class="abilities-panel" style="flex-grow: 1; flex-direction: row; align-self: center; align-items: flex-end; height: auto; background-color: rgba(0, 0, 0, 0.7); width: 60%;">
-                    <ui:VisualElement name="KeyboardAbilities" class="abilities-panel" style="flex-grow: initial; align-items: auto; justify-content: flex-start; width: auto; margin-right: 0%; margin-left: 0%;">
-                        <ui:Button text="Button" name="AbButton1" />
-                        <ui:Button text="Button" name="AbButton2" />
-                        <ui:Button text="Button" name="AbButton3" />
-                        <ui:Button text="Button" name="AbButton4" />
-                        <ui:Button text="Button" name="AbButton5" />
-                        <ui:Button text="Button" name="AbButton6" />
-                        <ui:Button text="Button" name="AbButton7" />
-                        <ui:Button text="Button" name="AbButton8" />
-                        <ui:Button text="Button" name="AbButton9" />
-                        <ui:Button text="Button" name="AbButton0" />
+                <ui:VisualElement name="AbilitiesPanel" class="abilities-panel" style="flex-grow: 1; flex-direction: row; align-self: center; align-items: flex-end; height: auto; background-color: rgba(0, 1, 45, 0.35); width: 60%; border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-left-color: rgb(75, 0, 130); border-right-color: rgb(75, 0, 130); border-top-color: rgb(75, 0, 130); border-bottom-color: rgb(75, 0, 130); padding-top: 2%;">
+                    <ui:ProgressBar value="22" title="my-progress" style="margin-right: 4%;" />
+                    <ui:VisualElement name="KeyboardAbilities" class="abilities-panel" style="flex-grow: initial; align-items: auto; justify-content: flex-start; width: auto; margin-right: 0%; margin-left: 0%; flex-direction: column; align-content: flex-start; height: auto; background-color: rgba(17, 1, 30, 0.27); padding-right: 1%; padding-left: 1%;">
+                        <ui:Label text="Keyboard numbers" class="ability-label" />
+                        <ui:VisualElement name="Buttons" style="flex-grow: 1; flex-direction: row; align-items: auto;">
+                            <ui:Button text="1" name="AbButton1" class="ability-slot ability-label" style="align-items: stretch;" />
+                            <ui:Button text="2" name="AbButton2" class="ability-slot ability-label" />
+                            <ui:Button text="3" name="AbButton3" class="ability-slot ability-label" />
+                            <ui:Button text="4" name="AbButton4" class="ability-slot ability-label" />
+                            <ui:Button text="5" name="AbButton5" class="ability-slot ability-label" />
+                            <ui:Button text="6" name="AbButton6" class="ability-slot ability-label" />
+                            <ui:Button text="7" name="AbButton7" class="ability-slot ability-label" />
+                            <ui:Button text="8" name="AbButton8" class="ability-slot ability-label" />
+                            <ui:Button text="9" name="AbButton9" class="ability-slot ability-label" />
+                            <ui:Button text="10" name="AbButton0" class="ability-slot ability-label" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:VisualElement name="MouseAbiblities" style="flex-grow: initial; flex-direction: row; align-items: auto; margin-left: 7%;">
-                        <ui:Button text="Button" name="AbButtonLb" />
-                        <ui:Button text="Button" name="AbButtonRb" />
+                    <ui:VisualElement name="MouseAbiblities" style="flex-grow: initial; flex-direction: column; align-items: auto; margin-left: 3%; background-color: rgba(17, 1, 30, 0.27); padding-right: 1%; padding-left: 1%;">
+                        <ui:Label text="Mouse buttons" class="ability-label" />
+                        <ui:VisualElement name="Buttons" style="flex-grow: 1; flex-direction: row; align-items: auto;">
+                            <ui:Button text="LB" name="AbButtonLb" class="ability-slot ability-label" />
+                            <ui:Button text="RB" name="AbButtonRb" class="ability-slot ability-label" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
+                    <ui:ProgressBar value="22" title="my-progress" style="margin-left: 4%; padding-right: 0%;" />
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:ProgressBar value="22" title="my-progress" />

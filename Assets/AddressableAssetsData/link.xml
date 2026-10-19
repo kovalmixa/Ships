@@ -1,0 +1,105 @@
+<linker>
+  <assembly fullname="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="Assets.DataContainers.HullDataSO" preserve="all" />
+    <type fullname="Assets.Entity.Equipment.Equipment" preserve="all" />
+    <type fullname="Assets.Entity.Equipment.EquipmentAnchor" preserve="all" />
+    <type fullname="Assets.Entity.Equipment.EquipmentDataSO" preserve="all" />
+    <type fullname="Assets.Entity.Hull.ShipHull" preserve="all" />
+    <type fullname="Assets.Scripts.Actions.VFX.VfxInstance" preserve="all" />
+    <type fullname="Assets.Scripts.GameplayActions.FireProjectile.CommonProjectile" preserve="all" />
+    <type fullname="LoadingScreen" preserve="all" />
+    <type fullname="UI.GUI.CommandLine.CommandLine" preserve="all" />
+    <type fullname="UI.MainMenu.MainMenu" preserve="all" />
+    <type fullname="Assets.Common.GeneralOptions" preserve="nothing" serialized="true" />
+    <type fullname="Assets.Entity.AbilityUnit" preserve="nothing" serialized="true" />
+    <type fullname="Assets.Entity.Parts.LifeCycleData" preserve="nothing" serialized="true" />
+    <type fullname="Assets.Entity.StatMods.ModUnit" preserve="nothing" serialized="true" />
+    <type fullname="Assets.Entity.StatMods.StatUnit" preserve="nothing" serialized="true" />
+    <type fullname="Assets.Entity.StatOptions" preserve="nothing" serialized="true" />
+    <type fullname="Assets.Scripts.GameplayActions.Audio.AudioData" preserve="nothing" serialized="true" />
+    <type fullname="Assets.Scripts.GameplayActions.Audio.AudioParameter" preserve="nothing" serialized="true" />
+    <type fullname="GameplayActions.DamageData" preserve="nothing" serialized="true" />
+    <type fullname="GameplayActions.ExplosionData" preserve="nothing" serialized="true" />
+    <type fullname="GameplayActions.VfxData" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="Unity.Addressables, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.AddressableAssets.Addressables" preserve="all" />
+  </assembly>
+  <assembly fullname="Unity.RenderPipelines.Universal.2D.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.Rendering.Universal.Light2D" preserve="all" />
+  </assembly>
+  <assembly fullname="Unity.RenderPipelines.Universal.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.Rendering.Universal.UniversalAdditionalLightData" preserve="all" />
+  </assembly>
+  <assembly fullname="Unity.ResourceManager, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" preserve="all">
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.AssetBundleProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.BundledAssetProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.InstanceProvider" preserve="all" />
+    <type fullname="UnityEngine.ResourceManagement.ResourceProviders.SceneProvider" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.AnimationClip" preserve="all" />
+    <type fullname="UnityEngine.Animator" preserve="all" />
+    <type fullname="UnityEngine.RuntimeAnimatorController" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.GameObject" preserve="all" />
+    <type fullname="UnityEngine.Light" preserve="all" />
+    <type fullname="UnityEngine.Material" preserve="all" />
+    <type fullname="UnityEngine.Object" preserve="all" />
+    <type fullname="UnityEngine.RectTransform" preserve="all" />
+    <type fullname="UnityEngine.Shader" preserve="all" />
+    <type fullname="UnityEngine.Sprite" preserve="all" />
+    <type fullname="UnityEngine.SpriteRenderer" preserve="all" />
+    <type fullname="UnityEngine.Texture2D" preserve="all" />
+    <type fullname="UnityEngine.TrailRenderer" preserve="all" />
+    <type fullname="UnityEngine.Transform" preserve="all" />
+    <type fullname="UnityEngine.U2D.SpriteAtlas" preserve="all" />
+    <type fullname="UnityEngine.RenderingLayerMask" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="UnityEngine.ParticleSystemModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.ParticleSystem" preserve="all" />
+    <type fullname="UnityEngine.ParticleSystemRenderer" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.BoxCollider2D" preserve="all" />
+    <type fullname="UnityEngine.CapsuleCollider2D" preserve="all" />
+    <type fullname="UnityEngine.PolygonCollider2D" preserve="all" />
+    <type fullname="UnityEngine.Rigidbody2D" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.Font" preserve="all" />
+  </assembly>
+  <assembly fullname="UnityEngine.UIElementsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+    <type fullname="UnityEngine.UIElements.PanelSettings" preserve="all" />
+    <type fullname="UnityEngine.UIElements.StyleSheet" preserve="all" />
+    <type fullname="UnityEngine.UIElements.ThemeStyleSheet" preserve="all" />
+    <type fullname="UnityEngine.UIElements.UIDocument" preserve="all" />
+    <type fullname="UnityEngine.UIElements.VisualTreeAsset" preserve="all" />
+    <type fullname="UnityEngine.UIElements.Button/UxmlFactory" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.Button/UxmlSerializedData" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.DynamicAtlasSettings" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.ScrollView/UxmlFactory" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.ScrollView/UxmlSerializedData" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleComplexSelector" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleProperty" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleRule" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSelector" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSelectorPart" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSheet/ImportStruct" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSheets.Dimension" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleSheets.ScalableImage" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.StyleValueHandle" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.TextField/UxmlFactory" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.TextField/UxmlSerializedData" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.UxmlNamespaceDefinition" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.UxmlRootElementFactory" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.VisualElement/UxmlFactory" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.VisualElement/UxmlSerializedData" preserve="nothing" serialized="true" />
+    <type fullname="UnityEngine.UIElements.VisualElementAsset" preserve="nothing" serialized="true" />
+  </assembly>
+  <assembly fullname="FMODUnity">
+    <type fullname="FMOD.GUID" preserve="nothing" serialized="true" />
+    <type fullname="FMODUnity.EventReference" preserve="nothing" serialized="true" />
+  </assembly>
+</linker>
