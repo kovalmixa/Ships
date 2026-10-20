@@ -69,6 +69,7 @@ Material:
     m_Floats:
     - _Aspect: 0
     - _BorderWidth: 0.101
+    - _Delta: 0
     - _DeltaValue: 0
     - _EnableExternalAlpha: 0
     - _QueueControl: 0

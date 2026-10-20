@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 789656231918460130}
   - component: {fileID: 485059636288914513}
   - component: {fileID: 1582040112595669648}
-  - component: {fileID: 8538599773298658903}
+  - component: {fileID: 7486363300056249973}
   m_Layer: 5
   m_Name: ProgressBar
   m_TagString: Untagged
@@ -213,7 +213,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8538599773298658903
+--- !u!114 &7486363300056249973
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -222,7 +222,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6924607060198599357}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85e2474673695b74b9805a10e1d33cb7, type: 3}
+  m_Script: {fileID: 11500000, guid: 3eef660d60bff7c45bd0b340e6d8608a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProgressBar
+  m_EditorClassIdentifier: Assembly-CSharp::ProgressBarGO
   _label: {fileID: 403472578996146564}

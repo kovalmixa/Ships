@@ -236,8 +236,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cade1d59aaed9394782cc26c3b23ac22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI.GUI.CommandLine.EntityNameplate
-  _hpBar: {fileID: 801474962737821230}
-  _energyBar: {fileID: 956732335855666314}
+  _hpBar: {fileID: 1910860755649318412}
+  _energyBar: {fileID: 2079865320719498408}
   _nameLabel: {fileID: 608622095625199588}
   standartSize: 25
   _fadeDelay: 3
@@ -462,17 +462,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87fe1d63b5885ca4e9cc475a3cd2d036, type: 3}
---- !u!114 &956732335855666314 stripped
+--- !u!114 &2079865320719498408 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8538599773298658903, guid: 87fe1d63b5885ca4e9cc475a3cd2d036, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7486363300056249973, guid: 87fe1d63b5885ca4e9cc475a3cd2d036, type: 3}
   m_PrefabInstance: {fileID: 8879354350116014813}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85e2474673695b74b9805a10e1d33cb7, type: 3}
+  m_Script: {fileID: 11500000, guid: 3eef660d60bff7c45bd0b340e6d8608a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProgressBar
+  m_EditorClassIdentifier: Assembly-CSharp::ProgressBarGO
 --- !u!224 &8200106679355856447 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 789656231918460130, guid: 87fe1d63b5885ca4e9cc475a3cd2d036, type: 3}
@@ -595,17 +595,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87fe1d63b5885ca4e9cc475a3cd2d036, type: 3}
---- !u!114 &801474962737821230 stripped
+--- !u!114 &1910860755649318412 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8538599773298658903, guid: 87fe1d63b5885ca4e9cc475a3cd2d036, type: 3}
+  m_CorrespondingSourceObject: {fileID: 7486363300056249973, guid: 87fe1d63b5885ca4e9cc475a3cd2d036, type: 3}
   m_PrefabInstance: {fileID: 9034320334364997753}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85e2474673695b74b9805a10e1d33cb7, type: 3}
+  m_Script: {fileID: 11500000, guid: 3eef660d60bff7c45bd0b340e6d8608a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProgressBar
+  m_EditorClassIdentifier: Assembly-CSharp::ProgressBarGO
 --- !u!224 &8616853191394698395 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 789656231918460130, guid: 87fe1d63b5885ca4e9cc475a3cd2d036, type: 3}

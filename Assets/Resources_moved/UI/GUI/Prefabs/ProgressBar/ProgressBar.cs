@@ -1,89 +1,55 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class ProgressBar : MonoBehaviour
+public abstract class ProgressBar : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _label;
+    protected float lastValue = 0;
+    protected float value = 0;
+    protected Coroutine fillCoroutine;
+    protected Material material = null;
 
-    private float _lastValue = 0;
-    private float _value = 0;
-    private Material _material = null;
-    private Coroutine _fillCoroutine;
-    private RectTransform _rectTransform;
+    protected static readonly int valueProperty = Shader.PropertyToID("_Value");
+    protected static readonly int deltaProperty = Shader.PropertyToID("_Delta");
 
-    private static readonly int _valueProperty = Shader.PropertyToID("_Value");
-    private static readonly int _deltaProperty = Shader.PropertyToID("_Delta");
-
-    public float Value
+    public virtual float Value
     {
-        get => _value;
+        get => value;
         set
         {
-            _value = value;
-            if (_label != null) _label.text = value.ToString();
-            if (_fillCoroutine != null) StopCoroutine(_fillCoroutine);
+            this.value = value;
+            Debug.Log(this.value);
+            Text = value.ToString();
+            if (fillCoroutine != null) StopCoroutine(fillCoroutine);
 
-            _fillCoroutine = StartCoroutine(FillMaterialOverTime(0.5f));
+            fillCoroutine = StartCoroutine(FillMaterialOverTime(0.5f));
         }
     }
 
-    private void Awake()
-    {
-        _rectTransform = GetComponent<RectTransform>();
-        InitMaterial();
-        UpdateAspect();
-    }
+    protected virtual string Text { get; set; }
 
-    private void OnRectTransformDimensionsChange()
-    {
-        UpdateAspect();
-    }
+    protected virtual void Awake() => InitMaterial();
 
-    private void InitMaterial()
-    {
-        if (_material != null) return;
+    protected abstract void InitMaterial();
 
-        var graphic = GetComponent<Graphic>();
-        if (graphic != null)
-        {
-            _material = new Material(graphic.material);
-            graphic.material = _material;
-        }
-        else
-        {
-            var objRenderer = GetComponent<Renderer>();
-            if (objRenderer != null) _material = objRenderer.material;
-        }
-    }
-
-    private void UpdateAspect()
-    {
-        if (_rectTransform == null) return;
-        InitMaterial();
-    }
-
-    private IEnumerator FillMaterialOverTime(float duration)
+    protected IEnumerator FillMaterialOverTime(float duration)
     {
         InitMaterial();
-        UpdateAspect();
 
         float elapsedTime = 0f;
-        float startValue = _lastValue;
-        float targetValue = _value;
+        float startValue = lastValue;
+        float targetValue = value;
 
-        _material.SetFloat(_valueProperty, targetValue);
+        material.SetFloat(valueProperty, targetValue);
         while (elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
             float currentProgress = Mathf.Lerp(startValue, targetValue, elapsedTime / duration);
-            _material.SetFloat(_deltaProperty, currentProgress);
+            material.SetFloat(deltaProperty, currentProgress);
             yield return null;
         }
-        _material.SetFloat(_deltaProperty, targetValue);
+        material.SetFloat(deltaProperty, targetValue);
 
-        _lastValue = targetValue;
-        _fillCoroutine = null;
+        lastValue = targetValue;
+        fillCoroutine = null;
     }
 }
