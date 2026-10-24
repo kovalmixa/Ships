@@ -119,6 +119,8 @@
     flex-grow: 1;
     width: 80px;
     height: 100%;
+    font-size: 10px;
+    margin-top: 0;
 }
 
 .abilities-panel {
@@ -129,9 +131,9 @@
 }
 
 .ability-slot {
-    width: 50px;
-    height: 50px;
-    margin-right: 4px;
+    width: auto;
+    height: auto;
+    margin-right: 0%;
     position: relative;
     background-color: rgba(30, 31, 41, 0.8);
     border-width: 1px;
@@ -140,6 +142,17 @@
     border-right-color: rgb(6, 7, 16);
     border-top-color: rgb(6, 7, 16);
     border-bottom-color: rgb(6, 7, 16);
+    margin-top: 0;
+    min-height: 10px;
+    min-width: 10px;
+    max-width: 50px;
+    max-height: 50px;
+    align-content: auto;
+    padding-top: 10px;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 10px;
+    font-size: 8px;
 }
 
 .ability-dropdown-menu {
@@ -170,4 +183,18 @@
     color: white;
     align: center;
     align-self: center;
+}
+
+.progress-bar {
+    flex-grow: 1;
+    margin-right: initial;
+    margin-left: initial;
+    height: auto;
+    width: auto;
+    min-height: 10px;
+    margin-bottom: initial;
+    min-width: 50px;
+    max-width: 160px;
+    max-height: 50px;
+    background-color: rgb(0, 0, 0);
 }
