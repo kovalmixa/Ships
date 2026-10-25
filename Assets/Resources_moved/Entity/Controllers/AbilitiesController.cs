@@ -109,7 +109,6 @@ namespace Assets.Entity.Controllers
 
         public virtual bool CanActivate(Vector2 targetPos, AbilityUnit abilityUnit)
         {
-            if (EventSystem.current.IsPointerOverGameObject()) return false;
             float time = Time.time;
             float activationRate = (source as IStats)?.GetLifetimeStatValue(StatType.ActivationRate) ?? 1f;
             float delay = abilityUnit.delay / activationRate;

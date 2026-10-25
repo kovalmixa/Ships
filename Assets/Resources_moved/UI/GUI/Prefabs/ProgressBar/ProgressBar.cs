@@ -17,7 +17,6 @@ public abstract class ProgressBar : MonoBehaviour
         set
         {
             this.value = value;
-            Debug.Log(this.value);
             Text = value.ToString();
             if (fillCoroutine != null) StopCoroutine(fillCoroutine);
 

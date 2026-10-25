@@ -23,7 +23,7 @@ namespace Entity.Controllers
         }
     }
 
-    public class CameraController : SingletonMonoBehaviour<CameraController>
+    public class CameraHandler : SingletonMonoBehaviour<CameraHandler>
     {
         [SerializeField] private Camera _camera;
         [SerializeField] private CinemachineVirtualCamera _virtualCamera;

@@ -260,7 +260,7 @@ namespace Assets.Entity.Common
         {
             if (partCollider == null) return;
 
-            var cameraController = CameraController.Instance;
+            var cameraController = CameraHandler.Instance;
             if (cameraController == null || cameraController.Camera == null) return;
 
             Vector2 mouseWorldPos = cameraController.Camera.ScreenToWorldPoint(Input.mousePosition);

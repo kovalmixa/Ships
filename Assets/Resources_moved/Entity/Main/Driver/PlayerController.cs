@@ -2,6 +2,7 @@ using Assets.Handlers.Enums;
 using Assets.Handlers.SceneHandlers;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Entity.Controllers
 {
@@ -28,15 +29,15 @@ namespace Entity.Controllers
     public class PlayerController : MonoBehaviour, IDriver
     {
         private bool _isInputBlocked = false;
-        private CameraController _cameraController;
+        private CameraHandler _cameraController;
         private EntityController _entityController;
 
-        public CameraController CameraController
+        public CameraHandler CameraController
         {
             get
             {
                 if (_cameraController != null) return _cameraController;
-                _cameraController = GameObjectHandler.GetNodesByType<CameraController>()[0];
+                _cameraController = GameObjectHandler.GetNodesByType<CameraHandler>()[0];
                 return _cameraController;
             }
         }
@@ -86,7 +87,7 @@ namespace Entity.Controllers
         private void CameraControl()
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (Mathf.Abs(scroll) > 0.01f) CameraController.Instance.ZoomTo(scroll);
+            if (Mathf.Abs(scroll) > 0.01f) CameraHandler.Instance.ZoomTo(scroll);
             CameraController.ManualMove(Input.GetMouseButtonDown(2), Input.GetMouseButton(2));
         }
 
@@ -112,7 +113,13 @@ namespace Entity.Controllers
                 bool isPressed = entry.Key == KeyCode.Mouse0 ? Input.GetMouseButton(0)
                     : entry.Key == KeyCode.Mouse1 ? Input.GetMouseButton(1)
                     : Input.GetKey(entry.Key);
-                if (isPressed) _entityController.ExecuteAction(entry.Value, targetPos);
+                bool isMousePressed = entry.Key == KeyCode.Mouse0 || entry.Key == KeyCode.Mouse1;
+
+                if (isPressed)
+                {
+                    if (isMousePressed && GUIHandler.Instance.IsOverUI) continue;
+                    _entityController.ExecuteAction(entry.Value, targetPos);
+                }
             }
         }
     }

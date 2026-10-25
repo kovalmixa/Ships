@@ -146,8 +146,8 @@ namespace Entity.Controllers
                 Driver = gameObject.AddComponent<PlayerController>();
                 Assembler.onSetHull += (HullBase newHull) =>
                 {
-                    if (newHull != null && CameraController.Instance != null)
-                        CameraController.Instance.Follow(newHull.transform);
+                    if (newHull != null && CameraHandler.Instance != null)
+                        CameraHandler.Instance.Follow(newHull.transform);
                 };
             }
             else

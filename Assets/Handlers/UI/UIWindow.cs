@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,6 +13,8 @@ public abstract class UIWindow : MonoBehaviour
     private UIDocument _uiDocument;
     private VisualElement _cachedRootVisualElement;
     private CancellationTokenSource _cts;
+
+    private readonly HashSet<VisualElement> _elementsInThisWindow = new();
 
     protected VisualElement RootVisualElement
     {
@@ -31,79 +34,117 @@ public abstract class UIWindow : MonoBehaviour
     protected virtual void Awake()
     {
         _uiDocument = GetComponent<UIDocument>();
-        if (_uiDocument != null) _cachedRootVisualElement = _uiDocument.rootVisualElement;
-    }
-
-    public async UniTask OpenAsync(int delayMs = 0, Action onComplete = null)
-    {
-        ResetCancellationToken();
-        _isOpen = true;
-
-        var token = _cts.Token;
-
-        try
+        if (_uiDocument != null)
         {
-            gameObject.SetActive(true);
-
-            if (RootVisualElement == null) await UniTask.Yield(PlayerLoopTiming.Update, token);
-
-            if (RootVisualElement == null)
-            {
-                Debug.LogError($"[UIWindow] RootVisualElement is still null on {gameObject.name}. Ensure a UIDocument component is attached and configured properly.", this);
-                return;
-            }
-
-            RootVisualElement.style.display = DisplayStyle.Flex;
-            RootVisualElement.pickingMode = PickingMode.Position;
-
-            if (delayMs > 0)
-            {
-                bool isCanceled = await UniTask.Delay(delayMs, cancellationToken: token).SuppressCancellationThrow();
-                if (isCanceled) return;
-            }
-
-            await FadeAsync(0f, 1f, token);
-
-            if (!token.IsCancellationRequested)
-            {
-                OnOpened();
-                onComplete?.Invoke();
-            }
+            _cachedRootVisualElement = _uiDocument.rootVisualElement;
+            RegisterPointerEvents();
         }
-        catch (OperationCanceledException) { }
     }
 
-    public async UniTask CloseAsync(Action onComplete = null)
+    private void RegisterPointerEvents()
     {
-        ResetCancellationToken();
-        _isOpen = false;
+        if (_cachedRootVisualElement == null) return;
+        var elements = _cachedRootVisualElement.Query<VisualElement>().ToList();
 
-        var token = _cts.Token;
-
-        try
+        foreach (var ve in elements)
         {
-            if (RootVisualElement != null)
+            if (ve.pickingMode == PickingMode.Ignore) continue;
+            ve.RegisterCallback<PointerEnterEvent>(evt =>
             {
-                RootVisualElement.pickingMode = PickingMode.Ignore;
-                await FadeAsync(1f, 0f, token);
-            }
+                Color32 bcol = ve.resolvedStyle.backgroundColor;
 
-            if (!token.IsCancellationRequested)
-            {
-                OnClosed();
-                if (RootVisualElement != null)
-                    RootVisualElement.style.display = DisplayStyle.None;
-                gameObject.SetActive(false);
-                onComplete?.Invoke();
-            }
+                if (bcol.a == 0 && ve.GetType() == typeof(VisualElement)) return;
+                if (_elementsInThisWindow.Add(ve)) GUIHandler.Instance.SetOnUI(ve);
+            });
+
+            ve.RegisterCallback<PointerLeaveEvent>(evt => RemoveElement(ve));
         }
-        catch (OperationCanceledException) { }
     }
+
+    private void RemoveElement(VisualElement ve)
+    {
+        if (_elementsInThisWindow.Remove(ve)) GUIHandler.Instance.UnSetOnUI(ve);
+    }
+
+    private void ClearWindowElements()
+    {
+        foreach (var ve in _elementsInThisWindow) GUIHandler.Instance.UnSetOnUI(ve);
+        _elementsInThisWindow.Clear();
+    }
+
+public async UniTask OpenAsync(int delayMs = 0, Action onComplete = null)
+{
+    ResetCancellationToken();
+    _isOpen = true;
+
+    var token = _cts.Token;
+
+    try
+    {
+        gameObject.SetActive(true);
+
+        if (RootVisualElement == null) await UniTask.Yield(PlayerLoopTiming.Update, token);
+
+        if (RootVisualElement == null)
+        {
+            Debug.LogError($"[UIWindow] RootVisualElement is still null on {gameObject.name}.", this);
+            return;
+        }
+
+        RootVisualElement.style.display = DisplayStyle.Flex;
+        RootVisualElement.pickingMode = PickingMode.Position;
+
+        if (delayMs > 0)
+        {
+            bool isCanceled = await UniTask.Delay(delayMs, cancellationToken: token).SuppressCancellationThrow();
+            if (isCanceled) return;
+        }
+
+        await FadeAsync(0f, 1f, token);
+
+        if (!token.IsCancellationRequested)
+        {
+            OnOpened();
+            onComplete?.Invoke();
+        }
+    }
+    catch (OperationCanceledException) { }
+}
+
+public async UniTask CloseAsync(Action onComplete = null)
+{
+    ResetCancellationToken();
+    _isOpen = false;
+
+    var token = _cts.Token;
+
+    try
+    {
+        ClearWindowElements();
+
+        if (RootVisualElement != null)
+        {
+            RootVisualElement.pickingMode = PickingMode.Ignore;
+            await FadeAsync(1f, 0f, token);
+        }
+
+        if (!token.IsCancellationRequested)
+        {
+            OnClosed();
+            if (RootVisualElement != null) RootVisualElement.style.display = DisplayStyle.None;
+            gameObject.SetActive(false);
+            onComplete?.Invoke();
+        }
+    }
+    catch (OperationCanceledException) { }
+}
 
     public void SetStateImmediately(bool isOpen)
     {
         ResetCancellationToken();
         _isOpen = isOpen;
+
+        if (!isOpen) ClearWindowElements();
 
         if (RootVisualElement != null)
         {
@@ -142,6 +183,7 @@ public abstract class UIWindow : MonoBehaviour
 
     private void OnDestroy()
     {
+        ClearWindowElements();
         _cts?.Cancel();
         _cts?.Dispose();
     }

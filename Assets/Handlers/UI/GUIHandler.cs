@@ -1,12 +1,16 @@
-using System;
-using System.Collections.Generic;
 using Assets.Handlers.SceneHandlers;
 using Cysharp.Threading.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 {
     private Dictionary<KeyCode, Action> _keyCommands;
+    private List<VisualElement> SelectedUIElements = new();
+    public bool IsOverUI => SelectedUIElements.Count > 0;
 
     #region InputBlock
 
@@ -20,6 +24,8 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
     }
 
     #endregion
+
+    #region Unity life cycle
 
     protected override void Awake()
     {
@@ -40,4 +46,13 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
             foreach (var kpv in _keyCommands) 
                 if (Input.GetKeyDown(kpv.Key)) kpv.Value?.Invoke();
     }
+
+    #endregion
+
+    #region Public API
+
+    public void SetOnUI(VisualElement ve) => SelectedUIElements.Add(ve);
+    public void UnSetOnUI(VisualElement ve) => SelectedUIElements.Remove(ve);
+
+    #endregion
 }
