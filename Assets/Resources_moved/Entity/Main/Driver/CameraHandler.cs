@@ -1,4 +1,4 @@
-using Cinemachine;
+
 using System;
 using UnityEngine;
 
@@ -26,7 +26,7 @@ namespace Entity.Controllers
     public class CameraHandler : SingletonMonoBehaviour<CameraHandler>
     {
         [SerializeField] private Camera _camera;
-        [SerializeField] private CinemachineVirtualCamera _virtualCamera;
+        [SerializeField] private Unity.Cinemachine.CinemachineVirtualCamera _virtualCamera;
   
         public Vector2 CursorPosition
         {

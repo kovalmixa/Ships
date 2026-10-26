@@ -1,57 +1,57 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/Resources_moved/UI/GUI/GameInterface/Style.uss?fileID=7433441132597879392&amp;guid=d182ea587ed7f4e43b9cb4dbd0bc46a5&amp;type=3#Style" />
+    <Style src="project://database/Assets/Resources_moved/UI/GUI/GameInterface/Style.uss?fileID=7433441132597879392&amp;guid=d182ea587ed7f4e43b9cb4dbd0bc46a5&amp;type=3#Style"/>
     <ui:VisualElement name="VisualElement" style="flex-grow: 1; align-self: auto; align-content: auto; justify-content: flex-start; align-items: stretch;">
         <ui:VisualElement name="Top" style="flex-grow: 1; height: auto; min-height: 300px; min-width: auto; max-height: 600px;">
             <ui:VisualElement name="Top" style="flex-grow: 1; flex-direction: row; width: auto; height: auto; min-height: auto;">
-                <ui:VisualElement name="Minimap" enabled="true" class="minimap-frame" style="flex-grow: 1; background-color: rgb(0, 0, 0); width: auto; height: auto; min-width: auto; min-height: auto; max-width: initial; max-height: initial;" />
+                <ui:VisualElement name="Minimap" enabled="true" class="minimap-frame" style="flex-grow: 1; background-color: rgb(0, 0, 0); width: auto; height: auto; min-width: auto; min-height: auto; max-width: initial; max-height: initial;"/>
                 <ui:VisualElement name="Buttons" class="button-panel" style="flex-grow: 1; flex-direction: row; height: 40px; align-items: flex-start; justify-content: space-between; min-width: auto; min-height: auto; max-height: none;">
-                    <ui:Button text="Options" name="OptionsButton" />
-                    <ui:Button text="Quests" name="QuestsButton" />
-                    <ui:Button text="Inventory" name="InventoryButton" />
-                    <ui:Button text="SkillTree" name="SkillTreeButton" />
+                    <ui:Button text="Options" name="OptionsButton"/>
+                    <ui:Button text="Quests" name="QuestsButton"/>
+                    <ui:Button text="Inventory" name="InventoryButton"/>
+                    <ui:Button text="SkillTree" name="SkillTreeButton"/>
                 </ui:VisualElement>
-                <ui:VisualElement name="Dialogue" style="flex-grow: 1; width: 40%;" />
+                <ui:VisualElement name="Dialogue" style="flex-grow: 1; width: 40%;"/>
             </ui:VisualElement>
             <ui:VisualElement name="Bottom" enabled="true" style="flex-grow: 1; min-height: 100px; max-height: initial; max-width: initial; -unity-slice-left: -1; -unity-slice-top: -1; -unity-slice-right: -1; -unity-slice-bottom: -1;">
-                <ui:VisualElement name="QuestTask" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.2); width: 200px; height: 100px; -unity-text-outline-color: rgba(0, 0, 0, 0); min-width: auto; max-width: initial; padding-bottom: 0; max-height: initial;" />
+                <ui:VisualElement name="QuestTask" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.2); width: 200px; height: 100px; -unity-text-outline-color: rgba(0, 0, 0, 0); min-width: auto; max-width: initial; padding-bottom: 0; max-height: initial;"/>
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="Bottom" style="flex-grow: 1; margin-top: 0%; align-content: auto; align-self: auto; justify-content: flex-end; height: 6%; min-height: 100px;">
             <ui:VisualElement name="Abilities" style="flex-grow: initial; align-items: center; height: 16%; margin-top: 0;">
                 <ui:VisualElement name="AbilitiesPanel" class="abilities-panel" style="flex-grow: 1; flex-direction: row; align-self: center; align-items: auto; background-color: rgba(20, 20, 20, 0.35); padding-top: 0; width: 50%; justify-content: space-evenly; align-content: auto;">
                     <ui:VisualElement name="HealthPanel" class="abilities-panel" style="flex-grow: initial; flex-direction: column; align-items: center; margin-left: 0%; background-color: rgba(17, 1, 30, 0.27); padding-right: 1%; padding-left: 1%;">
-                        <ui:Label text="Health" class="ability-label" style="font-size: 12px;" />
-                        <ui:VisualElement name="HealthBar" class="progress-bar" style="flex-grow: 1; width: 175px; min-width: auto; max-width: none; max-height: none; min-height: auto; margin-bottom: 2px; background-color: rgb(180, 12, 12); -unity-text-outline-color: rgb(0, 0, 0);" />
+                        <ui:Label text="Health" class="ability-label" style="font-size: 12px;"/>
+                        <ui:VisualElement name="HealthBar" class="progress-bar" style="flex-grow: 1; width: 175px; min-width: auto; max-width: none; max-height: none; min-height: auto; margin-bottom: 2px; background-color: rgb(199, 0, 0); -unity-text-outline-color: rgb(0, 0, 0);"/>
                     </ui:VisualElement>
                     <ui:VisualElement name="KeyboardAbilities" class="abilities-panel" style="flex-grow: initial; align-items: center; justify-content: flex-start; margin-right: 0%; margin-left: 1%; flex-direction: column; align-content: flex-start; background-color: rgba(17, 1, 30, 0.27); padding-right: 1%; padding-left: 1%;">
-                        <ui:Label text="Keyboard numbers" class="ability-label" style="font-size: 12px;" />
+                        <ui:Label text="Keyboard numbers" class="ability-label" style="font-size: 12px;"/>
                         <ui:VisualElement name="Buttons" style="flex-grow: 1; flex-direction: row; align-items: auto;">
-                            <ui:Button text="1" name="AbButton1" class="ability-slot ability-label" style="align-items: stretch;" />
-                            <ui:Button text="2" name="AbButton2" class="ability-slot ability-label" />
-                            <ui:Button text="3" name="AbButton3" class="ability-slot ability-label" />
-                            <ui:Button text="4" name="AbButton4" class="ability-slot ability-label" />
-                            <ui:Button text="5" name="AbButton5" class="ability-slot ability-label" />
-                            <ui:Button text="6" name="AbButton6" class="ability-slot ability-label" />
-                            <ui:Button text="7" name="AbButton7" class="ability-slot ability-label" />
-                            <ui:Button text="8" name="AbButton8" class="ability-slot ability-label" />
-                            <ui:Button text="9" name="AbButton9" class="ability-slot ability-label" />
-                            <ui:Button text="10" name="AbButton0" class="ability-slot ability-label" />
+                            <ui:Button text="1" name="AbButton1" class="ability-slot ability-label" style="align-items: stretch;"/>
+                            <ui:Button text="2" name="AbButton2" class="ability-slot ability-label"/>
+                            <ui:Button text="3" name="AbButton3" class="ability-slot ability-label"/>
+                            <ui:Button text="4" name="AbButton4" class="ability-slot ability-label"/>
+                            <ui:Button text="5" name="AbButton5" class="ability-slot ability-label"/>
+                            <ui:Button text="6" name="AbButton6" class="ability-slot ability-label"/>
+                            <ui:Button text="7" name="AbButton7" class="ability-slot ability-label"/>
+                            <ui:Button text="8" name="AbButton8" class="ability-slot ability-label"/>
+                            <ui:Button text="9" name="AbButton9" class="ability-slot ability-label"/>
+                            <ui:Button text="10" name="AbButton0" class="ability-slot ability-label"/>
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement name="MouseAbiblities" class="abilities-panel" style="flex-grow: initial; flex-direction: column; align-items: center; margin-left: 1%; background-color: rgba(17, 1, 30, 0.27); padding-right: 1%; padding-left: 1%; width: auto;">
-                        <ui:Label text="Mouse buttons" class="ability-label" style="font-size: 12px;" />
+                        <ui:Label text="Mouse buttons" class="ability-label" style="font-size: 12px;"/>
                         <ui:VisualElement name="Buttons" style="flex-grow: 1; flex-direction: row; align-items: auto;">
-                            <ui:Button text="LB" name="AbButtonLb" class="ability-slot ability-label" />
-                            <ui:Button text="RB" name="AbButtonRb" class="ability-slot ability-label" />
+                            <ui:Button text="LB" name="AbButtonLb" class="ability-slot ability-label"/>
+                            <ui:Button text="RB" name="AbButtonRb" class="ability-slot ability-label"/>
                         </ui:VisualElement>
                     </ui:VisualElement>
                     <ui:VisualElement name="EnergyPanel" class="abilities-panel" style="flex-grow: initial; flex-direction: column; align-items: center; margin-left: 1%; background-color: rgba(17, 1, 30, 0.27); padding-right: 1%; padding-left: 1%;">
-                        <ui:Label text="Energy" class="ability-label" style="font-size: 12px;" />
-                        <ui:VisualElement name="EnergyBar" class="progress-bar" style="flex-grow: 1; width: 175px; min-width: auto; max-width: none; max-height: none; min-height: auto; margin-bottom: 2px; background-color: rgb(57, 13, 126);" />
+                        <ui:Label text="Energy" class="ability-label" style="font-size: 12px;"/>
+                        <ui:VisualElement name="EnergyBar" class="progress-bar" style="flex-grow: 1; width: 175px; min-width: auto; max-width: none; max-height: none; min-height: auto; margin-bottom: 2px; background-color: rgb(66, 0, 170);"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="ExperienceBar" class="progress-bar" style="flex-grow: 1; height: auto; min-width: auto; min-height: auto; max-width: none; max-height: 25px; background-color: rgb(0, 115, 21);" />
+            <ui:VisualElement name="ExperienceBar" class="progress-bar" style="flex-grow: 1; height: auto; min-width: auto; min-height: auto; max-width: none; max-height: 25px; background-color: rgb(0, 174, 32);"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

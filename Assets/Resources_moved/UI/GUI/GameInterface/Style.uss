@@ -229,4 +229,5 @@
     border-top-color: rgb(0, 0, 0);
     border-bottom-color: rgb(0, 0, 0);
     color: rgb(255, 255, 255);
+    -unity-material: url("project://database/Assets/Resources_moved/UI/GUI/Prefabs/ProgressBar/ProgressBarUI.mat?fileID=2100000&guid=b6be5b2e8984b9444b8c01ee445425ac&type=2#ProgressBarUI");
 }
