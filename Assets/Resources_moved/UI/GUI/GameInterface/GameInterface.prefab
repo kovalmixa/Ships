@@ -69,3 +69,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameInterface
   _fadeDuration: 0
+  _progressBarMaterial: {fileID: 2100000, guid: e91e7926d5388cc42808a60190628ec0, type: 2}

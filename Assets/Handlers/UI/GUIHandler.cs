@@ -2,15 +2,14 @@ using Assets.Handlers.SceneHandlers;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 {
     private Dictionary<KeyCode, Action> _keyCommands;
-    private List<VisualElement> SelectedUIElements = new();
-    public bool IsOverUI => SelectedUIElements.Count > 0;
+    private List<VisualElement> _selectedUIElements = new();
+    public bool IsOverUI => _selectedUIElements.Count > 0;
 
     #region InputBlock
 
@@ -51,8 +50,8 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 
     #region Public API
 
-    public void SetOnUI(VisualElement ve) => SelectedUIElements.Add(ve);
-    public void UnSetOnUI(VisualElement ve) => SelectedUIElements.Remove(ve);
+    public void SetOnUI(VisualElement ve) => _selectedUIElements.Add(ve);
+    public void UnSetOnUI(VisualElement ve) => _selectedUIElements.Remove(ve);
 
     #endregion
 }

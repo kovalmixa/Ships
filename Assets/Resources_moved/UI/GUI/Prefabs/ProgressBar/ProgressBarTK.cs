@@ -3,12 +3,11 @@ using UnityEngine.UIElements;
 
 public class ProgressBarTK : ProgressBar
 {
-    [SerializeField] private UIDocument _uiDocument;
-    [SerializeField] private string _elementName = "ProgressBarElement";
-    [SerializeField] private Material _customMaterial;
-
     private VisualElement _progressElement;
     private Label _labelElement;
+    private VisualElement _rootContainer;
+    private Material _customMaterial;
+    private Texture2D _mainTex;
 
     protected override string Text
     {
@@ -16,32 +15,24 @@ public class ProgressBarTK : ProgressBar
         set { if (_labelElement != null) _labelElement.text = value; }
     }
 
-    protected override void Awake()
+    public void Initialize(VisualElement container, Material customMaterial)
     {
-        base.Awake();
-        InitToolkitElements();
-    }
+        _rootContainer = container;
+        _customMaterial = customMaterial;
 
-    private void InitToolkitElements()
-    {
-        if (_uiDocument == null) _uiDocument = GetComponent<UIDocument>();
-        if (_uiDocument != null)
+        _progressElement = _rootContainer.Q<VisualElement>("ProgressBarElement");
+        _labelElement = _rootContainer.Q<Label>();
+
+        InitMaterial();
+
+        if (_progressElement != null && material != null)
         {
-            var root = _uiDocument.rootVisualElement;
-            if (root != null)
+            if (material.HasProperty("_MainTex") && material.GetTexture("_MainTex") != null)
             {
-                _progressElement = root.Q<VisualElement>(_elementName);
-                _labelElement = root.Q<Label>();
-
-                if (_progressElement != null && _customMaterial != null)
-                {
-                    if (_customMaterial.mainTexture != null)
-                    {
-                        Texture2D tex = _customMaterial.mainTexture as Texture2D;
-                        if (tex != null) _progressElement.style.backgroundImage = new StyleBackground(tex);
-                    }
-                }
+                _mainTex = material.GetTexture("_MainTex") as Texture2D;
+                _progressElement.style.backgroundImage = new StyleBackground(_mainTex);
             }
+            _progressElement.style.unityBackgroundImageTintColor = Color.white;
         }
     }
 
@@ -50,7 +41,6 @@ public class ProgressBarTK : ProgressBar
         if (material != null) return;
 
         if (_customMaterial != null) material = new Material(_customMaterial);
-        else material = new Material(Shader.Find("Standard"));
-        if (_progressElement == null) InitToolkitElements();
+        else Debug.LogWarning("[ProgressBarTK] Не назначен материал шейдера!");
     }
 }

@@ -11,11 +11,10 @@ public class ProgressBarGO : ProgressBar
         get => _label != null ? _label.text : string.Empty;
         set { if (_label != null) _label.text = value; }
     }
+    protected void Awake() => InitMaterial();
 
     protected override void InitMaterial()
     {
-        if (material != null) return;
-
         if (TryGetComponent<Graphic>(out var graphic))
         {
             material = new Material(graphic.material);

@@ -53,7 +53,7 @@ public abstract class UIWindow : MonoBehaviour
             {
                 Color32 bcol = ve.resolvedStyle.backgroundColor;
 
-                if (bcol.a == 0 && ve.GetType() == typeof(VisualElement)) return;
+                if (bcol.a <= 60) return;
                 if (_elementsInThisWindow.Add(ve)) GUIHandler.Instance.SetOnUI(ve);
             });
 
