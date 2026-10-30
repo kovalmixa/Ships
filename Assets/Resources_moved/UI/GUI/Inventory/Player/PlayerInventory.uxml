@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="Inventory" src="project://database/Assets/Resources_moved/UI/GUI/Inventory/Inventory.uxml?fileID=9197481963319205126&amp;guid=184a62b272b90f8428215e04a637c359&amp;type=3#Inventory"/>
+    <Style src="project://database/Assets/Resources_moved/UI/GUI/Inventory/Style.uss?fileID=7433441132597879392&amp;guid=21b8d740ee89dd742a6eeb320012d30a&amp;type=3#Style"/>
+    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.392); max-height: 359px;"/>
+    <ui:Instance template="Inventory" style="margin-top: 0%; margin-right: 0;"/>
+</ui:UXML>

@@ -54,7 +54,7 @@ public abstract class UIWindow : MonoBehaviour
                 Color32 bcol = ve.resolvedStyle.backgroundColor;
 
                 if (bcol.a <= 60) return;
-                if (_elementsInThisWindow.Add(ve)) GUIHandler.Instance.SetOnUI(ve);
+                if (_elementsInThisWindow.Add(ve)) GUIHandler.Instance.SetPointerOnUI(ve);
             });
 
             ve.RegisterCallback<PointerLeaveEvent>(evt => RemoveElement(ve));
@@ -63,12 +63,12 @@ public abstract class UIWindow : MonoBehaviour
 
     private void RemoveElement(VisualElement ve)
     {
-        if (_elementsInThisWindow.Remove(ve)) GUIHandler.Instance.UnSetOnUI(ve);
+        if (_elementsInThisWindow.Remove(ve)) GUIHandler.Instance.UnSetPointerOnUI(ve);
     }
 
     private void ClearWindowElements()
     {
-        foreach (var ve in _elementsInThisWindow) GUIHandler.Instance.UnSetOnUI(ve);
+        foreach (var ve in _elementsInThisWindow) GUIHandler.Instance.UnSetPointerOnUI(ve);
         _elementsInThisWindow.Clear();
     }
 

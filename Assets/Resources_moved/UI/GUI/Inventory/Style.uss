@@ -1,1 +1,14 @@
-VisualElement {}
+.inventory-grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap; /* Ёлементы будут переноситьс€ на новую строку */
+    justify-content: flex-start;
+    gap: 2px; /* –ассто€ние между €чейками */
+}
+.inventory-slot {
+    width: 64px;
+    height: 64px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-color: rgba(0, 0, 0, 0.7);
+    border-width: 2px;
+}

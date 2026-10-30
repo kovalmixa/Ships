@@ -8,7 +8,7 @@ using UnityEngine.UIElements;
 public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 {
     private Dictionary<KeyCode, Action> _keyCommands;
-    private List<VisualElement> _selectedUIElements = new();
+    private readonly List<VisualElement> _selectedUIElements = new();
     public bool IsOverUI => _selectedUIElements.Count > 0;
 
     #region InputBlock
@@ -32,10 +32,12 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
         OnInputBlockedStateChanged += (bool isBlocked) => IsInputBlocked = isBlocked;
 
         async UniTaskVoid ToggleCommandLine() => await WindowHandler.Instance.SwitchWindow("CommandLine", isTab: false);
+        async UniTaskVoid OpenPlayerInventory() => await WindowHandler.Instance.SwitchWindow("PlayerInventory", isTab: false);
 
         _keyCommands = new Dictionary<KeyCode, Action>
         {
-            { KeyCode.Slash, () => { ToggleCommandLine().Forget(); } }
+            { KeyCode.Slash, () => { ToggleCommandLine().Forget(); } },
+            { KeyCode.I, () => { OpenPlayerInventory().Forget(); } }
         };
     }
 
@@ -50,8 +52,8 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 
     #region Public API
 
-    public void SetOnUI(VisualElement ve) => _selectedUIElements.Add(ve);
-    public void UnSetOnUI(VisualElement ve) => _selectedUIElements.Remove(ve);
+    public void SetPointerOnUI(VisualElement ve) => _selectedUIElements.Add(ve);
+    public void UnSetPointerOnUI(VisualElement ve) => _selectedUIElements.Remove(ve);
 
     #endregion
 }

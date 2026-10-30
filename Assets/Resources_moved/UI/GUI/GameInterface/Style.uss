@@ -128,10 +128,13 @@
     flex-grow: 1;
     width: 80px;
     height: auto;
-    font-size: 14px;
+    font-size: 20px;
     margin-top: 2px;
     margin-bottom: 2px;
     align-self: center;
+    -unity-text-outline-color: rgb(0, 0, 0);
+    -unity-text-outline-width: 1px;
+    color: rgb(0, 0, 0);
 }
 
 .abilities-panel {
@@ -202,6 +205,8 @@
     color: white;
     align: center;
     align-self: center;
+    -unity-text-outline-color: rgb(255, 255, 255);
+    -unity-text-outline-width: 1px;
 }
 
 .progress-bar {
