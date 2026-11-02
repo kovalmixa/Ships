@@ -18,7 +18,7 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
         private void OnEnable()
         {
             VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-            _inventoryContainer = root.Q<VisualElement>("InventoryContainer");
+            _inventoryContainer = root.Q<VisualElement>("Inventory");
             if (_inventoryContainer != null) BuildInventory(_gridWidth, _gridHeight);
         }
 

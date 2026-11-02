@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4954538998813021577}
   - component: {fileID: 7306628102881339503}
   - component: {fileID: 508586095787383070}
+  - component: {fileID: -4792471046047870365}
   m_Layer: 0
   m_Name: PlayerInventory
   m_TagString: Untagged
@@ -68,6 +69,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a483aa568fb58cd45bb24c847e985d4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Resources_moved.UI.GUI.Inventory.Player.PlayerInventory
+  _fadeDuration: 0.15
+  _inventory: {fileID: -4792471046047870365}
+--- !u!114 &-4792471046047870365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1059646204151301504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a512124c2b4d9b4581d3c5263f72e76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Resources_moved.UI.GUI.Inventory.Inventory
   _gridWidth: 5
   _gridHeight: 4
   _slotSize: 64

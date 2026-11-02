@@ -68,7 +68,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de9acd5bf7cf4334ebea0fc43ddeb542, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Resources_moved.UI.GUI.Inventory.Storage.StorageInventory
-  _gridWidth: 5
-  _gridHeight: 4
-  _slotSize: 64
-  _slotMargin: 4
+  _fadeDuration: 0.15

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4954538998813021577}
   - component: {fileID: 7306628102881339503}
+  - component: {fileID: 4348332583178247590}
   m_Layer: 0
   m_Name: Inventory
   m_TagString: Untagged
@@ -47,7 +48,7 @@ MonoBehaviour:
   m_PanelSettings: {fileID: 11400000, guid: 7dc547392ce247c408bed50cb5277d71, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 184a62b272b90f8428215e04a637c359, type: 3}
-  m_SortingOrder: 0
+  m_SortingOrder: 0.15
   m_Position: 0
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -55,3 +56,19 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
+--- !u!114 &4348332583178247590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1059646204151301504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a512124c2b4d9b4581d3c5263f72e76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Resources_moved.UI.GUI.Inventory.Inventory
+  _gridWidth: 5
+  _gridHeight: 4
+  _slotSize: 64
+  _slotMargin: 4
