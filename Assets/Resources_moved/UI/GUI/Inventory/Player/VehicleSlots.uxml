@@ -1,25 +1,37 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="InventorySlot" src="project://database/Assets/Resources_moved/UI/GUI/Inventory/InventorySlot.uxml?fileID=9197481963319205126&amp;guid=2663f4dacfb3a974d8eb28255079bcf2&amp;type=3#InventorySlot"/>
+<ui:UXML xmlns:xsi="http://w3.org" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="Slot" src="project://database/Assets/Resources_moved/UI/GUI/Prefabs/Slot/Slot.uxml?fileID=9197481963319205126&amp;guid=3f9efb6ea1cee21448272dfe7d559897"/>
     <Style src="project://database/Assets/Resources_moved/UI/GUI/Inventory/Style.uss?fileID=7433441132597879392&amp;guid=21b8d740ee89dd742a6eeb320012d30a&amp;type=3#Style"/>
+    <Style src="project://database/Assets/Resources_moved/UI/GUI/Prefabs/Slot/SlotStyle.uss?fileID=7433441132597879392&amp;guid=ba5af9e7d5202e442ae5167c70ae2bf7&amp;type=3#SlotStyle"/>
     <ui:VisualElement style="flex-grow: 1; margin-top: 5%; margin-bottom: 5%;">
         <ui:VisualElement name="HullSlots" style="flex-grow: 1; height: 64%; flex-direction: row;">
-            <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot" style="height: 95%; width: 200px;"/>
-            <ui:VisualElement name="Equipments" style="flex-grow: 1;"/>
-        </ui:VisualElement>
-        <ui:VisualElement name="BottomPanel" class="panel" style="flex-grow: 1; flex-direction: row; margin-bottom: 0%;">
-            <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot" style="width: 128px; height: 128px;"/>
-            <ui:VisualElement name="Accessories" class="inventory-grid" style="flex-grow: 1; align-self: auto; align-items: center; height: 100%; flex-wrap: wrap; width: initial; justify-content: space-evenly; background-color: rgba(0, 0, 0, 0);">
-                <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot"/>
-                <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot"/>
-                <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot"/>
-                <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot"/>
-                <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot"/>
-                <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot"/>
+            <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot" style="height: 95%; width: 225px;"/>
+            <ui:VisualElement name="Equipments" style="flex-grow: 1; flex-direction: column; align-items: flex-end;">
+                <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.596); width: 450px; height: auto; max-height: 92px;"/>
             </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-self: center; justify-content: space-around;">
-                <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot"/>
-                <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot"/>
-                <ui:Instance template="InventorySlot" name="TemplateContainer" class="inventory-slot"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="BottomPanel" class="panel" style="flex-grow: 1; flex-direction: row; margin-bottom: 0%; align-content: auto; align-self: auto;">
+            <ui:VisualElement name="ArtifactPanel" class="label" style="flex-grow: 1; justify-content: center; align-content: auto; flex-direction: column; height: 100%; align-items: center; width: 292px;">
+                <ui:Label text="Artifact"/>
+                <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot" style="width: 128px; height: 128px;"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="Accessories" style="flex-grow: 1; align-items: center; align-content: auto; justify-content: center; align-self: center;">
+                <ui:Label text="Accessories" class="label"/>
+                <ui:VisualElement name="Slots" class="inventory-grid" style="flex-grow: 1; align-self: center; align-items: center; flex-wrap: wrap; justify-content: space-evenly; background-color: rgba(0, 0, 0, 0); padding-top: 5px; height: 100%; margin-left: 10px; margin-right: 20px; align-content: stretch; width: 220px;">
+                    <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot" style="margin-bottom: 5px;"/>
+                    <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot"/>
+                    <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot"/>
+                    <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot" style="margin-top: 0;"/>
+                    <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot"/>
+                    <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="MainParts" style="flex-grow: 1; align-items: center; justify-content: flex-end; align-self: center; align-content: auto; width: 352px; margin-right: 10px; margin-left: 10px;">
+                <ui:Label text="Main parts" class="label"/>
+                <ui:VisualElement name="Slots" style="flex-grow: 1; flex-direction: row; align-self: auto; justify-content: space-evenly; height: 100%; align-items: center; margin-right: 0; margin-left: 0; width: 100%;">
+                    <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot" style="width: 96px; height: 96px;"/>
+                    <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot" style="width: 96px; height: 96px;"/>
+                    <ui:Instance template="Slot" name="TemplateContainer" class="inventory-slot" style="width: 96px; height: 96px;"/>
+                </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

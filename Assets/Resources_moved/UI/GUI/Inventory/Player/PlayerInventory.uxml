@@ -1,7 +1,9 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="Inventory" src="project://database/Assets/Resources_moved/UI/GUI/Inventory/Inventory.uxml?fileID=9197481963319205126&amp;guid=184a62b272b90f8428215e04a637c359&amp;type=3#Inventory"/>
+    <ui:Template name="VehicleSlots" src="project://database/Assets/Resources_moved/UI/GUI/Inventory/Player/VehicleSlots.uxml?fileID=9197481963319205126&amp;guid=b3407d115d44a2c4986240500637a459&amp;type=3#VehicleSlots"/>
     <Style src="project://database/Assets/Resources_moved/UI/GUI/Inventory/Style.uss?fileID=7433441132597879392&amp;guid=21b8d740ee89dd742a6eeb320012d30a&amp;type=3#Style"/>
-    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.392); max-height: 359px; padding-top: 0%; margin-top: 10%;">
-        <ui:Instance template="Inventory" name="Inventory" class="inventory-grid" style="margin-top: 0%; margin-right: 0; min-width: 64px; min-height: 64px;"/>
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-self: auto; align-items: center;">
+        <ui:Instance template="VehicleSlots" name="VehicleSlots" style="width: 800px; height: 800px; margin-right: 2%; margin-left: 14%;"/>
+        <ui:Instance template="Inventory" name="Inventory" class="inventory-grid"/>
     </ui:VisualElement>
 </ui:UXML>

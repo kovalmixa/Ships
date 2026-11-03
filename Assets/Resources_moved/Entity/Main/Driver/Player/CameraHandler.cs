@@ -41,7 +41,6 @@ namespace Entity.Controllers
 
         [Header("Zoom Settings")]
         public float minZoom = 2f;
-        public float maxZoom = 15f;
         public float zoomSpeed = 8f;
         [SerializeField] private float _sensitivity = 2f;
 
@@ -95,13 +94,16 @@ namespace Entity.Controllers
 
         #region Zoom
 
-        public void ZoomTo(float direction)
+        public void ZoomTo(float direction, float maxZoom = 0)
         {
             _targetZoom -= direction * _sensitivity;
-            _targetZoom = Mathf.Clamp(_targetZoom, minZoom, maxZoom);
+            _targetZoom = maxZoom == 0 ? Mathf.Max(_targetZoom, minZoom) : Mathf.Clamp(_targetZoom, minZoom, maxZoom);
         }
 
-        public void TargetZoom(float scale) => _targetZoom = Mathf.Clamp(scale, minZoom, maxZoom);
+        public void TargetZoom(float scale, float maxZoom = 0)
+        {
+            _targetZoom = maxZoom == 0 ? Mathf.Max(scale, minZoom) : Mathf.Clamp(scale, minZoom, maxZoom);
+        }
 
         private void ZoomUpdate()
         {

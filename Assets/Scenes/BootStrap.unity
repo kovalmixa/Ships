@@ -1245,8 +1245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _camera: {fileID: 4407277316745440840}
   _virtualCamera: {fileID: 9165511822160864198}
-  minZoom: 0
-  maxZoom: 10
+  minZoom: 2
   zoomSpeed: 5
   _sensitivity: 2
   panSpeed: 0.5

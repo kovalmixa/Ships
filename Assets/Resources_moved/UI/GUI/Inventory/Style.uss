@@ -5,13 +5,6 @@
     justify-content: flex-start;
     gap: 2px; /* Расстояние между ячейками */
 }
-.inventory-slot {
-    width: 64px;
-    height: 64px;
-    background-color: rgba(0, 0, 0, 0.4);
-    border-color: rgba(0, 0, 0, 0.7);
-    border-width: 2px;
-}
 
 .panel {
     flex-direction: row;
@@ -26,4 +19,12 @@
     border-right-color: rgb(32, 22, 41);
     border-top-color: rgb(32, 22, 41);
     border-bottom-color: rgb(32, 22, 41);
+}
+
+.label {
+    color: white;
+    align: center;
+    align-self: center;
+    -unity-text-outline-color: rgb(255, 255, 255);
+    -unity-text-outline-width: 1px;
 }

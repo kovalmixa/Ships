@@ -1,3 +1,4 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/Resources_moved/UI/GUI/Prefabs/Slot/SlotStyle.uss?fileID=7433441132597879392&amp;guid=ba5af9e7d5202e442ae5167c70ae2bf7&amp;type=3#SlotStyle"/>
     <ui:VisualElement name="VisualElement" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0.392); border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; border-left-color: rgba(0, 0, 0, 0.706); border-right-color: rgba(0, 0, 0, 0.706); border-top-color: rgba(0, 0, 0, 0.706); border-bottom-color: rgba(0, 0, 0, 0.706);"/>
 </ui:UXML>

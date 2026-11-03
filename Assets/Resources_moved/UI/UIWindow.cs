@@ -41,25 +41,55 @@ public abstract class UIWindow : MonoBehaviour
         }
     }
 
+    #region PointerEvents
+
     private void RegisterPointerEvents()
     {
         if (_cachedRootVisualElement == null) return;
         var elements = _cachedRootVisualElement.Query<VisualElement>().ToList();
-
         foreach (var ve in elements)
         {
             if (ve.pickingMode == PickingMode.Ignore) continue;
             ve.RegisterCallback<PointerEnterEvent>(evt =>
             {
                 Color32 bcol = ve.resolvedStyle.backgroundColor;
-
                 if (bcol.a <= 60) return;
                 if (_elementsInThisWindow.Add(ve)) GUIHandler.Instance.SetPointerOnUI(ve);
             });
-
             ve.RegisterCallback<PointerLeaveEvent>(evt => RemoveElement(ve));
         }
     }
+
+    protected void RegisterPointerEventForElement(VisualElement ve)
+    {
+        if (ve == null || ve.pickingMode == PickingMode.Ignore) return;
+
+        ve.UnregisterCallback<PointerEnterEvent>(OnPointerEnter);
+        ve.UnregisterCallback<PointerLeaveEvent>(OnPointerLeave);
+
+        ve.RegisterCallback<PointerEnterEvent>(OnPointerEnter);
+        ve.RegisterCallback<PointerLeaveEvent>(OnPointerLeave);
+    }
+
+    private void OnPointerEnter(PointerEnterEvent evt)
+    {
+        var ve = evt.target as VisualElement;
+        if (ve == null) return;
+
+        Color32 bcol = ve.resolvedStyle.backgroundColor;
+        if (bcol.a <= 60) return;
+
+        if (_elementsInThisWindow.Add(ve))
+            GUIHandler.Instance.SetPointerOnUI(ve);
+    }
+
+    private void OnPointerLeave(PointerLeaveEvent evt)
+    {
+        var ve = evt.target as VisualElement;
+        if (ve != null) RemoveElement(ve);
+    }
+
+    #endregion
 
     private void RemoveElement(VisualElement ve)
     {
@@ -72,72 +102,72 @@ public abstract class UIWindow : MonoBehaviour
         _elementsInThisWindow.Clear();
     }
 
-public async UniTask OpenAsync(int delayMs = 0, Action onComplete = null)
-{
-    ResetCancellationToken();
-    _isOpen = true;
-
-    var token = _cts.Token;
-
-    try
+    public async UniTask OpenAsync(int delayMs = 0, Action onComplete = null)
     {
-        gameObject.SetActive(true);
+        ResetCancellationToken();
+        _isOpen = true;
 
-        if (RootVisualElement == null) await UniTask.Yield(PlayerLoopTiming.Update, token);
+        var token = _cts.Token;
 
-        if (RootVisualElement == null)
+        try
         {
-            Debug.LogError($"[UIWindow] RootVisualElement is still null on {gameObject.name}.", this);
-            return;
+            gameObject.SetActive(true);
+
+            if (RootVisualElement == null) await UniTask.Yield(PlayerLoopTiming.Update, token);
+
+            if (RootVisualElement == null)
+            {
+                Debug.LogError($"[UIWindow] RootVisualElement is still null on {gameObject.name}.", this);
+                return;
+            }
+
+            RootVisualElement.style.display = DisplayStyle.Flex;
+            RootVisualElement.pickingMode = PickingMode.Position;
+
+            if (delayMs > 0)
+            {
+                bool isCanceled = await UniTask.Delay(delayMs, cancellationToken: token).SuppressCancellationThrow();
+                if (isCanceled) return;
+            }
+
+            await FadeAsync(0f, 1f, token);
+
+            if (!token.IsCancellationRequested)
+            {
+                OnOpened();
+                onComplete?.Invoke();
+            }
         }
-
-        RootVisualElement.style.display = DisplayStyle.Flex;
-        RootVisualElement.pickingMode = PickingMode.Position;
-
-        if (delayMs > 0)
-        {
-            bool isCanceled = await UniTask.Delay(delayMs, cancellationToken: token).SuppressCancellationThrow();
-            if (isCanceled) return;
-        }
-
-        await FadeAsync(0f, 1f, token);
-
-        if (!token.IsCancellationRequested)
-        {
-            OnOpened();
-            onComplete?.Invoke();
-        }
+        catch (OperationCanceledException) { }
     }
-    catch (OperationCanceledException) { }
-}
 
-public async UniTask CloseAsync(Action onComplete = null)
-{
-    ResetCancellationToken();
-    _isOpen = false;
-
-    var token = _cts.Token;
-
-    try
+    public async UniTask CloseAsync(Action onComplete = null)
     {
-        ClearWindowElements();
+        ResetCancellationToken();
+        _isOpen = false;
 
-        if (RootVisualElement != null)
-        {
-            RootVisualElement.pickingMode = PickingMode.Ignore;
-            await FadeAsync(1f, 0f, token);
-        }
+        var token = _cts.Token;
 
-        if (!token.IsCancellationRequested)
+        try
         {
-            OnClosed();
-            if (RootVisualElement != null) RootVisualElement.style.display = DisplayStyle.None;
-            gameObject.SetActive(false);
-            onComplete?.Invoke();
+            ClearWindowElements();
+
+            if (RootVisualElement != null)
+            {
+                RootVisualElement.pickingMode = PickingMode.Ignore;
+                await FadeAsync(1f, 0f, token);
+            }
+
+            if (!token.IsCancellationRequested)
+            {
+                OnClosed();
+                if (RootVisualElement != null) RootVisualElement.style.display = DisplayStyle.None;
+                gameObject.SetActive(false);
+                onComplete?.Invoke();
+            }
         }
+        catch (OperationCanceledException) { }
     }
-    catch (OperationCanceledException) { }
-}
 
     public void SetStateImmediately(bool isOpen)
     {

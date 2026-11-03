@@ -10,6 +10,20 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
     private Dictionary<KeyCode, Action> _keyCommands;
     private readonly List<VisualElement> _selectedUIElements = new();
     public bool IsOverUI => _selectedUIElements.Count > 0;
+    //public bool IsOverUI 
+    //{
+    //    get {
+    //        string text = string.Empty;
+    //        foreach(var el in _selectedUIElements)
+    //            text += el.name;
+
+    //        bool isBLocked = _selectedUIElements.Count > 0;
+    //        if (isBLocked) Debug.Log($"Input blocked by: {text}");
+
+    //        return isBLocked;
+    //    }
+    //    set { }
+    //}
 
     #region InputBlock
 

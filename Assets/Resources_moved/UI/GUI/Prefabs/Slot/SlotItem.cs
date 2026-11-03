@@ -1,17 +1,18 @@
+using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Assets.Resources_moved.UI.GUI.Inventory
+namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 {
-    public class InventoryItemUI : VisualElement
+    public class SlotItem : VisualElement
     {
         [UxmlAttribute]
         private readonly Image _iconImage;
         private readonly Label _countLabel;
 
-        public InventoryItemData AssociatedItem { get; private set; }
+        public SlotItemData AssociatedItem { get; private set; }
 
-        public InventoryItemUI(InventoryItemData itemData, int count)
+        public SlotItem(SlotItemData itemData, int count)
         {
             var visualTree = Resources.Load<VisualTreeAsset>("InventoryItem");
             visualTree.CloneTree(this);
@@ -22,7 +23,7 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
             UpdateData(itemData, count);
         }
 
-        public void UpdateData(InventoryItemData itemData, int count)
+        public void UpdateData(SlotItemData itemData, int count)
         {
             AssociatedItem = itemData;
             _iconImage.image = itemData.general.icon;

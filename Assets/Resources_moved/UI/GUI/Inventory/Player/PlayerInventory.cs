@@ -11,7 +11,6 @@ namespace Assets.Resources_moved.UI.GUI.Inventory.Player
         protected override void Awake()
         {
             base.Awake();
-            _inventory = GetComponent<Inventory>();
         }
 
         #endregion

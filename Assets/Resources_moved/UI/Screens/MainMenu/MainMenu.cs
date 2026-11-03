@@ -33,6 +33,7 @@ namespace UI.MainMenu
         private void OnEnable()
         {
             if (RootVisualElement == null) return;
+            GUIHandler.Instance.SetInputBlocked(true);
 
             _continueButton = RootVisualElement.Q<Button>("ContinueButton");
             _saveLoadButton = RootVisualElement.Q<Button>("SaveLoadButton");
@@ -54,6 +55,8 @@ namespace UI.MainMenu
             if (_newGameButton != null) _newGameButton.clicked -= OnNewGameClicked;
             if (_optionsButton != null) _optionsButton.clicked -= OnOptionsClicked;
             if (_quitButton != null) _quitButton.clicked -= ExitGame;
+
+            GUIHandler.Instance.SetInputBlocked(false);
         }
 
         #endregion
