@@ -9,6 +9,9 @@ namespace Assets.Common
         public string name;
         public string description;
         public Texture icon;
+
+
+        //This shouldnt be in general options!!!!
         [field: SerializeField] public SizeType SizeType { get; private set; }
         public InterractLayerType Layer;
         [field: SerializeField] public int SlotHeight { get; private set; }

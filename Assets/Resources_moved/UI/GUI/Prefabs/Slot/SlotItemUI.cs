@@ -4,7 +4,7 @@ using UnityEngine.UIElements;
 
 namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 {
-    public class SlotItem : VisualElement
+    public class SlotItemUI : VisualElement
     {
         [UxmlAttribute]
         private readonly Image _iconImage;
@@ -12,7 +12,7 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 
         public SlotItemData AssociatedItem { get; private set; }
 
-        public SlotItem(SlotItemData itemData, int count)
+        public SlotItemUI(SlotItemData itemData, int count)
         {
             var visualTree = Resources.Load<VisualTreeAsset>("InventoryItem");
             visualTree.CloneTree(this);

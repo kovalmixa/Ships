@@ -4,18 +4,12 @@ namespace Assets.Handlers.Math
 {
     public static class ColorHandler
     {
-        public static Color LightUpColor(Color baseColor, float ratio = 0.15f)
+        public static Color fallBackColor = new Color(1f, 0.0f, 1f, 1f);
+        public static Color LightUpColor(Color baseColor, float ratio)
         {
-            float h, s, v;
-            Color.RGBToHSV(baseColor, out h, out s, out v);
-
-            v = Mathf.Clamp01(v + ratio);
-            s = Mathf.Clamp01(s - ratio);
-
-            Color newColor = Color.HSVToRGB(h, s, v);
-            newColor.a = baseColor.a;
-
-            return newColor;
+            Color result = Color.Lerp(baseColor, Color.white, ratio);
+            result.a = baseColor.a;
+            return result;
         }
     }
 }

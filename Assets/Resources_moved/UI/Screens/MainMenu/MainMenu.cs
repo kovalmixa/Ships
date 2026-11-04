@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -55,8 +56,7 @@ namespace UI.MainMenu
             if (_newGameButton != null) _newGameButton.clicked -= OnNewGameClicked;
             if (_optionsButton != null) _optionsButton.clicked -= OnOptionsClicked;
             if (_quitButton != null) _quitButton.clicked -= ExitGame;
-
-            GUIHandler.Instance.SetInputBlocked(false);
+            if (GUIHandler.Instance != null) GUIHandler.Instance.SetInputBlocked(false);
         }
 
         #endregion
