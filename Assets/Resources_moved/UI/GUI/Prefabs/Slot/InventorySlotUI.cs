@@ -14,31 +14,32 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 
         #region API
 
-        public override void SetItem(SlotItemData data)
+        public override void SetItem(SlotItemData slotItemData)
         {
             // logic for multi-slot items
-            base.SetItem(data);
+            base.SetItem(slotItemData);
         }
 
-        public bool TryAddItem(InventoryItemData data)
+        public bool TryAddItem(InventoryItemData slotItemData)
         {
-            var inventoryItemData = slotItemData as InventoryItemData;
-            if (inventoryItemData == null) SetItem(data);
-            else if (inventoryItemData.modName == data.modName) inventoryItemData.quantity += data.quantity;
+            var inventoryItemData = this.slotItemData as InventoryItemData;
+            if (inventoryItemData == null) SetItem(slotItemData);
+            else if (CompareItems(slotItemData)) inventoryItemData.quantity += slotItemData.quantity;
             else return false;
             return true;
         }
 
-        public bool ChangeItem(InventoryItemData data)
+        public bool ChangeItem(InventoryItemData slotItemData)
         {
-            var inventoryItemData = slotItemData as InventoryItemData;
-            if (inventoryItemData == null) SetItem(data);
-            else if (inventoryItemData.modName == data.modName) inventoryItemData.quantity += data.quantity;
+            var inventoryItemData = this.slotItemData as InventoryItemData;
+            if (inventoryItemData == null) SetItem(slotItemData);
+            else if (CompareItems(slotItemData)) inventoryItemData.quantity += slotItemData.quantity;
             else return false;
             return true;
         }
+
+        public override bool CompareItems(SlotItemData slotItemData) => base.CompareItems(slotItemData) && this.slotItemData.stats == slotItemData.stats;
 
         #endregion
-
     }
 }

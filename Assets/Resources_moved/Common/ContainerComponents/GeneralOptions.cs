@@ -1,20 +1,12 @@
-using Assets.Handlers.Enums;
 using UnityEngine;
 
-namespace Assets.Common
+namespace Assets.Resources_moved.Common.ContainerComponents
 {
     [System.Serializable]
     public struct GeneralOptions
     {
-        public string name;
+        public string nameId;
         public string description;
         public Texture icon;
-
-
-        //This shouldnt be in general options!!!!
-        [field: SerializeField] public SizeType SizeType { get; private set; }
-        public InterractLayerType Layer;
-        [field: SerializeField] public int SlotHeight { get; private set; }
-        [field: SerializeField] public int SlotWidth { get; private set; }
     }
 }

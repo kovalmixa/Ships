@@ -1,10 +1,10 @@
-﻿using Assets.Common;
-using Assets.Common.Interfaces;
+﻿using Assets.Common.Interfaces;
+using Assets.Resources_moved.Common.ContainerComponents;
 using UnityEngine;
 
 namespace Assets.Entity.Parts
 {
-    public class EntityPartDataSO : ScriptableObject, IUIData
+    public class EntityPartDataSO : ScriptableObject, IItemDataContainer
     {
         [Header("General Settings")]
         [SerializeField] private GeneralOptions _general;

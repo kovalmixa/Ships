@@ -59,11 +59,12 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot {
 
         #region API
 
-        public virtual void SetItem(SlotItemData data)
+        public virtual void SetItem(SlotItemData slotItemData)
         {
-            slotItemData = data;
+            this.slotItemData = slotItemData;
         }
 
+        public virtual bool CompareItems(SlotItemData slotItemData) => this.slotItemData == slotItemData;
         #endregion
     }
 }

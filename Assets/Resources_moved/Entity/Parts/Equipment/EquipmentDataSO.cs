@@ -10,5 +10,7 @@ namespace Assets.Entity.Equipment
         [Header("Equipment Types")]
         public EquipmentType type;
         public ProjectileType projectileType;
+        [field: SerializeField] public SizeType SizeType { get; private set; }
+
     }
 }

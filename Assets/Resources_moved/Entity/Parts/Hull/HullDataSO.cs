@@ -9,5 +9,10 @@ namespace Assets.DataContainers
     {
         [Header("Vehicle Type")]
         public VehicleSubType vehicleType;
+        
+        //reset comment if there is no way how
+        //to get layer directly from prefab
+
+        //public InterractLayerType layer;
     }
 }

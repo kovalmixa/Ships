@@ -50,7 +50,8 @@ namespace Assets.Handlers.Enums
         None,
         Ship,
         AircraftCarrier,
-        Submarine
+        Submarine,
+        //...
     }
 
     public enum VehicleSubType
@@ -156,8 +157,8 @@ namespace Assets.Handlers
 
             var availableSizes = equipments
                 .Where(IsWeaponEquipment)
-                .Where(e => e.Data.General.SizeType != SizeType.None)
-                .Select(e => e.Data.General.SizeType)
+                .Where(e => (e.Data as EquipmentDataSO).SizeType != SizeType.None)
+                .Select(e => (e.Data as EquipmentDataSO).SizeType)
                 .Distinct()
                 .OrderByDescending(size => (int)size)
                 .ToList();
@@ -193,7 +194,7 @@ namespace Assets.Handlers
             {
                 if (weapon?.Data?.General == null) continue;
 
-                var size = weapon.Data.General.SizeType;
+                var size = (weapon.Data as EquipmentDataSO).SizeType;
 
                 if (tierSizes[WeaponType.Primary]?.Contains(size) == true)
                     result[WeaponType.Primary].Add(weapon);

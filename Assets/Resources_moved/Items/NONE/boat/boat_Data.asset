@@ -13,10 +13,8 @@ MonoBehaviour:
   m_Name: boat_Data
   m_EditorClassIdentifier: Assembly-CSharp::Assets.DataContainers.HullDataSO
   _general:
-    <SizeType>k__BackingField: 0
-    Layer: 4
-    <SlotHeight>k__BackingField: 1
-    <SlotWidth>k__BackingField: 1
+    nameId: none_boat
+    description: 
     icon: {fileID: 0}
   statOptions:
     stats:
@@ -92,6 +90,9 @@ MonoBehaviour:
       vfxData:
         type: 501
         rotationType: 0
+        duration: 0
+        playSpeed: 0
+        isLoop: 0
     corpseSprite: {fileID: 21300000, guid: 4f54a02e6f136a54d841d28713811d25, type: 3}
     leftCorpseOnDeath: 1
     sunkOnDeath: 1

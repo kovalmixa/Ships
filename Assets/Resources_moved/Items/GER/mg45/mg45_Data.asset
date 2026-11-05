@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: mg45_Data
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Entity.Equipment.EquipmentDataSO
   _general:
-    <SizeType>k__BackingField: 1
-    Layer: 0
-    <SlotHeight>k__BackingField: 1
-    <SlotWidth>k__BackingField: 1
-    icon: {fileID: 0}
+    nameId: ger_mg45
+    description: 
+    icon: {fileID: 2800000, guid: d3ebef6ec74b4db46a715edccd3b8647, type: 3}
   statOptions:
     stats:
     - name: 'Damage: 1'
@@ -97,7 +95,13 @@ MonoBehaviour:
       vfxData:
         type: 1022
         rotationType: 0
-    lifeState: 0
+        duration: 0
+        playSpeed: 0
+        isLoop: 0
+    corpseSprite: {fileID: 0}
     leftCorpseOnDeath: 1
+    sunkOnDeath: 0
+    corpseDisappearTime: 0
   type: 1
   projectileType: 1
+  <SizeType>k__BackingField: 1
