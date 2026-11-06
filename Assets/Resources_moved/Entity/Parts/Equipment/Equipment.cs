@@ -149,7 +149,7 @@ namespace Assets.Entity.Equipment
 
         #region Helpers & Overrides
 
-        public override IItemDataContainer GetInitialData() => Data;
+        public override IGeneralDataContainer GetInitialData() => Data;
 
         #endregion
 

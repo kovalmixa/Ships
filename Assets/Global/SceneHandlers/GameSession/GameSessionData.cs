@@ -1,5 +1,4 @@
 ﻿using Assets.Entity;
-using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,10 +6,11 @@ using UnityEngine;
 namespace Assets.Global.SceneHandlers.GameSession
 {
     [Serializable]
-    public struct InventorySlot
+    public struct InventorySlotDataSer
     {
         public Vector2 position;
-        public InventoryItemData itemData;
+        public string itemId;
+        public int quantity;
     }
 
     public class GameSessionData
@@ -19,6 +19,6 @@ namespace Assets.Global.SceneHandlers.GameSession
         public Vector2 respawnPosition;
         public string locationName;
 
-        public List<InventorySlot> inventoryItems = new();
+        public List<InventorySlotDataSer> inventoryItems = new();
     }
 }

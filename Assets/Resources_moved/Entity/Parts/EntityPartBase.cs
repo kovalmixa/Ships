@@ -229,7 +229,7 @@ namespace Assets.Entity.Common
             statModController.SetStatValue(type, layer: StatLayer, value);
         }
 
-        public abstract IItemDataContainer GetInitialData();
+        public abstract IGeneralDataContainer GetInitialData();
 
         #endregion
 

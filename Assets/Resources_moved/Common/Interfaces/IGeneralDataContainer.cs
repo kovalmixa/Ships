@@ -2,7 +2,7 @@
 
 namespace Assets.Common.Interfaces
 {
-    public interface IItemDataContainer
+    public interface IGeneralDataContainer
     {
         public GeneralOptions General { get; }
     }

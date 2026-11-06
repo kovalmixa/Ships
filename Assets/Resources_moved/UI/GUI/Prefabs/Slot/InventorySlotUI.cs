@@ -1,5 +1,6 @@
 ﻿using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 {
@@ -55,8 +56,14 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             return true;
         }
 
-        public override bool CompareItems(SlotItemData slotItemData) =>
-            base.CompareItems(slotItemData) && this.slotItemData.stats == slotItemData.stats;
+        public override bool CompareItems(SlotItemData slotItemData)
+        {
+            var otherInventoryData = slotItemData as IInventorySlotData;
+            var thisInventoryData = this.slotItemData as IInventorySlotData;
+
+            if (otherInventoryData == null || thisInventoryData == null) return base.CompareItems(slotItemData);
+            return base.CompareItems(slotItemData) && thisInventoryData.Mods.SequenceEqual(otherInventoryData.Mods);
+        }
 
         #endregion
     }

@@ -81,16 +81,9 @@ namespace Assets.Global.SceneHandlers.GameSession
 
         private void DistributeDataToServices(GameSessionData sessionData)
         {
-            Dictionary<Vector2, InventoryItemData> inventoryDict = new Dictionary<Vector2, InventoryItemData>();
-
-            if (sessionData.inventoryItems != null)
-            {
-
-            }
-
             if (PlayerInventoryController.Instance != null)
             {
-                PlayerInventoryController.Instance.InitInventoryData(inventoryDict);
+                PlayerInventoryController.Instance.InitInventoryData(sessionData.inventoryItems).Forget();
             }
             else
             {

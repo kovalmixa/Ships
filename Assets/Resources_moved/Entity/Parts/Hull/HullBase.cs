@@ -225,7 +225,7 @@ namespace Assets.Entity.Hull
 
         #region Interface Implementations & Helpers
 
-        public override IItemDataContainer GetInitialData() => Data;
+        public override IGeneralDataContainer GetInitialData() => Data;
         protected void InvokeMovement() => OnMovement?.Invoke();
 
         #endregion
