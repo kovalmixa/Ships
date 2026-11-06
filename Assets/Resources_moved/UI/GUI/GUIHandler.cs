@@ -1,4 +1,4 @@
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.SceneHandlers;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;

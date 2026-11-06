@@ -1,5 +1,5 @@
 using Assets.Common;
-using Assets.Handlers.Enums;
+using Assets.Global.Enums;
 using Assets.Scripts.Actions;
 using Assets.Scripts.Actions.Projectile;
 using UnityEngine;

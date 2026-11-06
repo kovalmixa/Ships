@@ -1,4 +1,4 @@
-﻿using Assets.Handlers.Events;
+﻿using Assets.Global.Events;
 using Assets.Scripts.Actions;
 using GameplayActions;
 

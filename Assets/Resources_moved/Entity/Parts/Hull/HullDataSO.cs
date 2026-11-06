@@ -1,4 +1,4 @@
-﻿using Assets.Handlers.Enums;
+﻿using Assets.Global.Enums;
 using Assets.Entity.Parts;
 using UnityEngine;
 

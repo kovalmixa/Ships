@@ -1,6 +1,6 @@
 {
   "entityDataContainer": {
-	"isPlayer": true,
+    "isPlayer": true,
     "hullId": "none_smallPatrolBoat",
     "equipmentSlots": [
       {
@@ -17,5 +17,27 @@
     "x": 0.0,
     "y": 0.0
   },
-  "locationName": "MainScene"
+  "locationName": "MainScene",
+  "inventoryItems": [
+    {
+      "position": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "itemData": {
+        "itemId": "ger_mg45",
+        "count": 1
+      }
+    },
+    {
+      "position": {
+        "x": 1.0,
+        "y": 0.0
+      },
+      "itemData": {
+        "itemId": "ger_mg45",
+        "count": 2
+      }
+    }
+  ]
 }

@@ -1,4 +1,4 @@
-﻿using Assets.Handlers.Math;
+﻿using Assets.Global.Math;
 
 namespace Assets.UI.SkillTree
 {

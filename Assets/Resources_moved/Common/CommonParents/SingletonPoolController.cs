@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.SceneHandlers;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace Assets.Handlers.CommonParents
+namespace Assets.Global.CommonParents
 {
     public abstract class SingletonPoolController<TSingleton, TPooled> : SingletonMonoBehaviour<TSingleton>
         where TSingleton : MonoBehaviour

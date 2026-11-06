@@ -6,9 +6,9 @@ using Assets.Entity.Controllers;
 using Assets.Entity.Interfaces;
 using Assets.Entity.Parts;
 using Assets.Entity.StatMods;
-using Assets.Handlers;
-using Assets.Handlers.Enums;
-using Assets.Handlers.SceneHandlers;
+using Assets.Global;
+using Assets.Global.Enums;
+using Assets.Global.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
 using GameplayActions;
@@ -260,7 +260,7 @@ namespace Assets.Entity.Common
         {
             if (partCollider == null) return;
 
-            var cameraController = CameraHandler.Instance;
+            var cameraController = CameraController.Instance;
             if (cameraController == null || cameraController.Camera == null) return;
 
             Vector2 mouseWorldPos = cameraController.Camera.ScreenToWorldPoint(Input.mousePosition);

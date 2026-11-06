@@ -1,4 +1,4 @@
-﻿using Assets.Handlers.Enums;
+﻿using Assets.Global.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

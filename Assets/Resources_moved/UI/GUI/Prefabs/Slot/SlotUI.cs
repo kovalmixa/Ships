@@ -1,9 +1,10 @@
-using Assets.Handlers.Math;
+using Assets.Global.Math;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot {
+namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
+{
 
     public class SlotStyle
     {
@@ -19,6 +20,7 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot {
         protected VisualElement visualElement;
         protected SlotItemData slotItemData = new();
         public SlotItemData SlotItemData => slotItemData;
+        protected SlotItemUI slotItemUI;
 
         #region Setup
 
@@ -45,7 +47,6 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot {
 
         protected virtual void SetupPointerDownEvent()
         {
-            
             Color clickColor = ColorHandler.LightUpColor(SlotStyle.slotBackgroundColor, 1f);
             visualElement.RegisterCallback<PointerDownEvent>(evt => visualElement.style.backgroundColor = clickColor);
         }
@@ -59,9 +60,29 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot {
 
         #region API
 
-        public virtual void SetItem(SlotItemData slotItemData)
+        public virtual void SetItem(SlotItemData newItemData, int count = 1)
         {
-            this.slotItemData = slotItemData;
+            this.slotItemData = newItemData;
+
+            if (newItemData == null || newItemData.general.icon == null)
+            {
+                if (slotItemUI != null)
+                {
+                    visualElement.Remove(slotItemUI);
+                    slotItemUI = null;
+                }
+                return;
+            }
+
+            if (slotItemUI == null)
+            {
+                slotItemUI = new SlotItemUI(newItemData, count);
+                visualElement.Add(slotItemUI);
+            }
+            else
+            {
+                slotItemUI.UpdateData(newItemData, count);
+            }
         }
 
         public virtual bool CompareItems(SlotItemData slotItemData) => this.slotItemData == slotItemData;

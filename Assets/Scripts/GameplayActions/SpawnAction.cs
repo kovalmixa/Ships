@@ -1,6 +1,6 @@
 ﻿using Assets.Common;
 using Assets.Entity;
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.SceneHandlers;
 using Assets.Scripts.Actions;
 using Entity.Controllers;
 using GameplayActions;

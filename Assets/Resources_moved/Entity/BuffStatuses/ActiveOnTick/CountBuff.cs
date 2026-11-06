@@ -1,5 +1,5 @@
 ﻿using Assets.Common;
-using Assets.Handlers.Events;
+using Assets.Global.Events;
 using Assets.Scripts.Actions;
 using FMODUnity;
 using GameplayActions;

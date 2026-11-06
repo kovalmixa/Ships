@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Common.Interfaces;
-using Assets.Handlers.CommonParents;
-using Assets.Handlers.Enums;
-using Assets.Handlers.FileHandlers;
+using Assets.Global.CommonParents;
+using Assets.Global.Enums;
+using Assets.Global.FileGlobal;
 using Cysharp.Threading.Tasks;
 using GameplayActions;
 using UnityEngine;

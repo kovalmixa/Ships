@@ -1,5 +1,5 @@
-﻿using Assets.Handlers.CommonParents;
-using Assets.Handlers.Enums;
+﻿using Assets.Global.CommonParents;
+using Assets.Global.Enums;
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;

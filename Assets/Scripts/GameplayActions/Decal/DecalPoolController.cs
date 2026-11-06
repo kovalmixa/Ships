@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Assets.Handlers.CommonParents;
+using Assets.Global.CommonParents;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Pool;

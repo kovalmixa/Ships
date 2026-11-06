@@ -1,4 +1,4 @@
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.SceneHandlers;
 using UnityEngine;
 
 namespace AI

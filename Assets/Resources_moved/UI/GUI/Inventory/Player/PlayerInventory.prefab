@@ -86,5 +86,3 @@ MonoBehaviour:
   _fadeDuration: 0
   _gridWidth: 10
   _gridHeight: 10
-  _slotSize: 64
-  _slotMargin: 2

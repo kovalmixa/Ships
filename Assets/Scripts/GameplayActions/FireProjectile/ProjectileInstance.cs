@@ -1,7 +1,7 @@
 ﻿using Assets.Common;
 using Assets.Common.Interfaces;
-using Assets.Handlers;
-using Assets.Handlers.Enums;
+using Assets.Global;
+using Assets.Global.Enums;
 using Assets.Scripts.Actions.VFX;
 using Cysharp.Threading.Tasks;
 using GameplayActions;

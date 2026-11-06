@@ -1,4 +1,4 @@
-﻿using Assets.Handlers.SceneHandlers;
+﻿using Assets.Global.SceneHandlers.GameSession;
 using Entity.Controllers;
 using FMODUnity;
 using UnityEngine;
@@ -14,17 +14,17 @@ namespace Assets.Scripts.GameplayActions.Audio.Filters
 
         private void OnEnable()
         {
-            GameSessionHandler.OnPlayerSpawned += AttachToPlayer;
-            GameSessionHandler.OnPlayerDespawned += DetachFromPlayer;
+            GameSessionController.OnPlayerSpawned += AttachToPlayer;
+            GameSessionController.OnPlayerDespawned += DetachFromPlayer;
 
-            if (GameSessionHandler.Instance != null && GameSessionHandler.Instance.PlayerController != null)
-                AttachToPlayer(GameSessionHandler.Instance.PlayerController);
+            if (GameSessionController.Instance != null && GameSessionController.Instance.PlayerController != null)
+                AttachToPlayer(GameSessionController.Instance.PlayerController);
         }
 
         private void OnDisable()
         {
-            GameSessionHandler.OnPlayerSpawned -= AttachToPlayer;
-            GameSessionHandler.OnPlayerDespawned -= DetachFromPlayer;
+            GameSessionController.OnPlayerSpawned -= AttachToPlayer;
+            GameSessionController.OnPlayerDespawned -= DetachFromPlayer;
 
             DetachFromPlayer();
         }

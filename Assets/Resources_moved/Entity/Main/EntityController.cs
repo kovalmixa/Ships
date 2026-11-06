@@ -6,8 +6,8 @@ using Assets.Entity.Controllers;
 using Assets.Entity.Hull;
 using Assets.Entity.Interfaces;
 using Assets.Entity.StatMods;
-using Assets.Handlers.Enums;
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.Enums;
+using Assets.Global.SceneHandlers;
 using Cysharp.Threading.Tasks;
 using Scripts;
 using System;
@@ -146,8 +146,8 @@ namespace Entity.Controllers
                 Driver = gameObject.AddComponent<PlayerController>();
                 Assembler.onSetHull += (HullBase newHull) =>
                 {
-                    if (newHull != null && CameraHandler.Instance != null)
-                        CameraHandler.Instance.Follow(newHull.transform);
+                    if (newHull != null && CameraController.Instance != null)
+                        CameraController.Instance.Follow(newHull.transform);
                 };
             }
             else

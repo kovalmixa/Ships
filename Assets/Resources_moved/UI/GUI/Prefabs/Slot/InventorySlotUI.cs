@@ -10,35 +10,53 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 
         #region Setup
 
+        protected override void SetupPointerDownEvent()
+        {
+            base.SetupPointerDownEvent();
+
+            // logic for setting pointer
+        }
+
         #endregion
 
         #region API
 
-        public override void SetItem(SlotItemData slotItemData)
+        public override void SetItem(SlotItemData slotItemData, int count = 1)
         {
-            // logic for multi-slot items
-            base.SetItem(slotItemData);
+            // логика для мульти-слотовых предметов, если требуется
+            base.SetItem(slotItemData, count);
         }
 
-        public bool TryAddItem(InventoryItemData slotItemData)
+        public bool TryAddItem(InventoryItemData incomingItemData)
         {
-            var inventoryItemData = this.slotItemData as InventoryItemData;
-            if (inventoryItemData == null) SetItem(slotItemData);
-            else if (CompareItems(slotItemData)) inventoryItemData.quantity += slotItemData.quantity;
+            var currentInventoryItem = slotItemData as InventoryItemData;
+
+            if (currentInventoryItem == null) SetItem(incomingItemData, incomingItemData.quantity);
+            else if (CompareItems(incomingItemData))
+            {
+                currentInventoryItem.quantity += incomingItemData.quantity;
+                SetItem(currentInventoryItem, currentInventoryItem.quantity);
+            }
             else return false;
             return true;
         }
 
-        public bool ChangeItem(InventoryItemData slotItemData)
+        public bool ChangeItem(InventoryItemData incomingItemData)
         {
-            var inventoryItemData = this.slotItemData as InventoryItemData;
-            if (inventoryItemData == null) SetItem(slotItemData);
-            else if (CompareItems(slotItemData)) inventoryItemData.quantity += slotItemData.quantity;
+            var currentInventoryItem = slotItemData as InventoryItemData;
+
+            if (currentInventoryItem == null) SetItem(incomingItemData, incomingItemData.quantity);
+            else if (CompareItems(incomingItemData))
+            {
+                currentInventoryItem.quantity += incomingItemData.quantity;
+                SetItem(currentInventoryItem, currentInventoryItem.quantity);
+            }
             else return false;
             return true;
         }
 
-        public override bool CompareItems(SlotItemData slotItemData) => base.CompareItems(slotItemData) && this.slotItemData.stats == slotItemData.stats;
+        public override bool CompareItems(SlotItemData slotItemData) =>
+            base.CompareItems(slotItemData) && this.slotItemData.stats == slotItemData.stats;
 
         #endregion
     }

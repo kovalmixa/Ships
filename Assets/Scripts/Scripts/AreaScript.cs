@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.SceneHandlers;
 using Entity.Controllers;
 using UnityEngine;
 

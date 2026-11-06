@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using EntityMarkers.Spawner;
 using System.Collections.Generic;
-using Assets.Handlers.DebugHandlers;
+using Assets.Global.DebugHandlers;
 
 [CustomEditor(typeof(Spawner))]
 public class SpawnerEditor : Editor

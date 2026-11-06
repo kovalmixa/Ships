@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Assets.Handlers.CommonParents;
-using Assets.Handlers.FileHandlers;
-using Assets.Handlers.TextHandlers;
+using Assets.Global.CommonParents;
+using Assets.Global.FileGlobal;
+using Assets.Global.TextHandlers;
 using Cysharp.Threading.Tasks;
 using GameplayActions;
 using UnityEngine;

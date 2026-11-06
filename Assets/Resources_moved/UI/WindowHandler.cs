@@ -1,10 +1,10 @@
-﻿using Assets.Handlers.FileHandlers;
+﻿using Assets.Global.FileGlobal;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Handlers.SceneHandlers
+namespace Assets.Global.SceneHandlers
 {
     public class WindowHandler : SingletonMonoBehaviour<WindowHandler>
     {

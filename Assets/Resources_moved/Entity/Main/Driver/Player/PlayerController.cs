@@ -1,5 +1,5 @@
-using Assets.Handlers.Enums;
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.Enums;
+using Assets.Global.SceneHandlers;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,15 +29,15 @@ namespace Entity.Controllers
     public class PlayerController : MonoBehaviour, IDriver
     {
         private bool _isInputBlocked = false;
-        private CameraHandler _cameraController;
+        private CameraController _cameraController;
         private EntityController _entityController;
 
-        public CameraHandler CameraController
+        public CameraController CameraController
         {
             get
             {
                 if (_cameraController != null) return _cameraController;
-                _cameraController = GameObjectHandler.GetNodesByType<CameraHandler>()[0];
+                _cameraController = GameObjectHandler.GetNodesByType<CameraController>()[0];
                 return _cameraController;
             }
         }
@@ -87,7 +87,7 @@ namespace Entity.Controllers
         private void CameraControl()
         {
             float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (Mathf.Abs(scroll) > 0.01f) CameraHandler.Instance.ZoomTo(scroll);
+            if (Mathf.Abs(scroll) > 0.01f) CameraController.Instance.ZoomTo(scroll);
             CameraController.ManualMove(Input.GetMouseButtonDown(2), Input.GetMouseButton(2));
         }
 

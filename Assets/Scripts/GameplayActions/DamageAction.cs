@@ -1,6 +1,6 @@
 ﻿using Assets.Common;
-using Assets.Handlers;
-using Assets.Handlers.Enums;
+using Assets.Global;
+using Assets.Global.Enums;
 using Assets.Scripts.Actions;
 using System.Collections.Generic;
 using UnityEngine;

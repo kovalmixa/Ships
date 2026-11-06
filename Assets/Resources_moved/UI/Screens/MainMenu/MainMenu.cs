@@ -1,10 +1,5 @@
-using Assets.Handlers.FileHandlers;
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.SceneHandlers.GameSession;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,7 +7,6 @@ namespace UI.MainMenu
 {
     public class MainMenu : UIWindow
     {
-        private readonly List<GameSessionData> _saves = new();
         private bool _isLoadingGame;
 
         private Button _continueButton;
@@ -22,14 +16,6 @@ namespace UI.MainMenu
         private Button _quitButton;
 
         #region Setup
-
-        protected override void Awake()
-        {
-            base.Awake();
-
-            var paths = FilesPathExtractor.GetFilePaths(new string[] { Path.Combine(Application.streamingAssetsPath, "Saves") });
-            foreach (var path in paths) _saves.Add(DataFileHandler.LoadFromJson<GameSessionData>(path));
-        }
 
         private void OnEnable()
         {
@@ -61,16 +47,16 @@ namespace UI.MainMenu
 
         #endregion
 
-        #region Button Handlers
+        #region Button Global
 
-        private void OnContinueClicked() => PlayGameFromUI(0);
+        private void OnContinueClicked() => LaunchGameSession(0);
 
         private void OnSaveLoadClicked()
         {
             Debug.Log("Открыть окно сохранения/загрузки");
         }
 
-        private void OnNewGameClicked() => PlayGameFromUI(0);
+        private void OnNewGameClicked() => LaunchGameSession(0);
 
         private void OnOptionsClicked()
         {
@@ -79,47 +65,28 @@ namespace UI.MainMenu
 
         #endregion
 
-        #region UI API
+        #region UI Services
 
-        public async void PlayGameFromUI(int index) => await PlayGame(index);
+        private void LaunchGameSession(int saveIndex)
+        {
+            if (_isLoadingGame) return;
+            _isLoadingGame = true;
 
-        public async Task LoadGameFromUI(int index) => await LoadGame(index);
+            try
+            {
+                GameSessionController.Instance.StartGameSession(saveIndex);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Ошибка при запуске сессии из UI: {ex.Message}");
+                _isLoadingGame = false;
+            }
+        }
 
         public void ExitGame()
         {
             Debug.Log("Quit");
             Application.Quit();
-        }
-
-        #endregion
-
-        #region UI Services
-
-        private GameSessionData LoadGameData(int index) => _saves[index];
-
-        private async Task PlayGame(int index)
-        {
-            if (_isLoadingGame) return;
-            _isLoadingGame = true;
-            try
-            {
-                var save = LoadGameData(index);
-                GameSessionHandler.Data = save;
-                await SceneController.Instance.NextLocation(save.locationName);
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError($"Ошибка при загрузке игры: {ex.Message}");
-            }
-            finally
-            {
-                _isLoadingGame = false;
-            }
-        }
-
-        private async Task LoadGame(int index)
-        {
-
         }
 
         #endregion

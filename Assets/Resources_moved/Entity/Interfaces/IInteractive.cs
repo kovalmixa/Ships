@@ -1,5 +1,5 @@
 ﻿using Assets.Entity.BuffStatuses;
-using Assets.Handlers.Enums;
+using Assets.Global.Enums;
 using Assets.Scripts.Actions;
 using GameplayActions;
 using UnityEngine;

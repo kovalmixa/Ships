@@ -183,6 +183,7 @@ Transform:
   m_Children:
   - {fileID: 757906624}
   - {fileID: 1047575227}
+  - {fileID: 1072372944}
   m_Father: {fileID: 8319663062589598071}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &551456468
@@ -417,6 +418,54 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9036284500837330724, guid: 9fedf240e63400a4ba514e2f20e0dda6, type: 3}
   m_PrefabInstance: {fileID: 1047575226}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1072372943
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1072372944}
+  - component: {fileID: 1072372945}
+  m_Layer: 0
+  m_Name: CursorController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1072372944
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072372943}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -4.89642, y: -15.249431, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 551456467}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1072372945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1072372943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50b1385e4c22c5e4b96f9292ffc527cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Resources_moved.UI.Cursor.CursorController
+  _CursorTextures:
+  - type: 1
+    texture: {fileID: 0}
+    offset: {x: 0, y: 0}
 --- !u!4 &135654686997890726
 Transform:
   m_ObjectHideFlags: 0
@@ -788,8 +837,9 @@ GameObject:
   - component: {fileID: 6977048487192166433}
   - component: {fileID: 6480957579418787231}
   - component: {fileID: 8640452451569283216}
+  - component: {fileID: 8640452451569283217}
   m_Layer: 0
-  m_Name: GameHandlers
+  m_Name: GameControllers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1186,7 +1236,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3645952117214419065}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41b783444a332d74dbf4cf4dda852afe, type: 3}
+  m_Script: {fileID: 11500000, guid: 69f9262592352314391a1eece6829f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Handlers.SceneHandlers.GameSessionHandler
   _entityPrefab: {fileID: 479629053994360685, guid: fcfaf5eb590f9474c8f9291eafb0adde, type: 3}
@@ -1240,15 +1290,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 8444063741118745846}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34b5d82a619e2a7488cbc4f3ddfabadc, type: 3}
+  m_Script: {fileID: 11500000, guid: ff2c65e8b2bbca34bab947232bb703bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 4407277316745440840}
   _virtualCamera: {fileID: 9165511822160864198}
   minZoom: 2
-  zoomSpeed: 5
+  zoomSpeed: 8
   _sensitivity: 2
-  panSpeed: 0.5
+  panSpeed: 1
   inertiaDamping: 5
   _followTransform: {fileID: 0}
 --- !u!114 &8192108071468027358
@@ -1344,6 +1394,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4565f348fa006844597c40495aaf41ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.GameplayActions.Audio.AudioController
+--- !u!114 &8640452451569283217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3645952117214419065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc890731de669d84f87a88192eecfb59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Resources_moved.UI.GUI.Inventory.Player.PlayerInventoryController
 --- !u!114 &8716243400182154182
 MonoBehaviour:
   m_ObjectHideFlags: 0

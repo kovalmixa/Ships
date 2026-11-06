@@ -1,6 +1,6 @@
 ﻿using Assets.Common;
 using Assets.Entity.BuffStatuses;
-using Assets.Handlers.Events;
+using Assets.Global.Events;
 using Assets.Scripts.Actions;
 using GameplayActions;
 using UnityEngine;

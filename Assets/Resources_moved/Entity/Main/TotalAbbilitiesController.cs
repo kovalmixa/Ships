@@ -1,5 +1,5 @@
-﻿using Assets.Handlers;
-using Assets.Handlers.Enums;
+﻿using Assets.Global;
+using Assets.Global.Enums;
 using Entity.Controllers;
 using System;
 using System.Collections.Generic;

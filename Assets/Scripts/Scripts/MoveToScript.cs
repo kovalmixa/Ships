@@ -1,5 +1,5 @@
 using Assets.AI;
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.SceneHandlers;
 using Entity.Controllers;
 using AI;
 using UnityEngine;

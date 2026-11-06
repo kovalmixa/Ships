@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Entity.StatMods;
 using Assets.Scripts.Actions;
-using Assets.Handlers.Enums;
+using Assets.Global.Enums;
 using GameplayActions;
 
 #if UNITY_EDITOR

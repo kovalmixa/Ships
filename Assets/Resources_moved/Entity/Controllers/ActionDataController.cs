@@ -1,7 +1,7 @@
 ﻿using Assets.Entity.Equipment;
 using Assets.Entity.StatMods;
-using Assets.Handlers;
-using Assets.Handlers.Enums;
+using Assets.Global;
+using Assets.Global.Enums;
 using Assets.Scripts.Actions;
 using Assets.Scripts.GameplayActions;
 using GameplayActions;

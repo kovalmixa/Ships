@@ -39,8 +39,8 @@ namespace UI.GUI.EntityGUI
         public void Setup(EntityController entityController)
         {
             if (entityController == null) return;
-            if (TryGetComponent<Canvas>(out var canvas) && CameraHandler.Instance != null)
-                canvas.worldCamera = CameraHandler.Instance.Camera;
+            if (TryGetComponent<Canvas>(out var canvas) && CameraController.Instance != null)
+                canvas.worldCamera = CameraController.Instance.Camera;
 
             UnsubscribeFromEvents();
 
@@ -53,7 +53,7 @@ namespace UI.GUI.EntityGUI
             InitVisuals();
         }
 
-        #region Event Handlers
+        #region Event Global
 
         private void OnStatsChanged()
         {

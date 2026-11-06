@@ -2,7 +2,7 @@
 using Assets.Entity.Equipment;
 using Assets.Entity.Interfaces;
 using Assets.Entity.StatMods;
-using Assets.Handlers;
+using Assets.Global;
 using Assets.Entity;
 using System;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
-using Assets.Handlers.Enums;
-using Assets.Handlers.SceneHandlers;
+using Assets.Global.Enums;
+using Assets.Global.SceneHandlers;
 using UnityEngine;
 
 namespace Assets.Entity.Equipment
