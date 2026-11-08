@@ -164,7 +164,7 @@ namespace Assets.Global.SceneHandlers
                 return;
             }
 
-            GameObject windowObj = await PrefabLoader.Instance.InstantiatePrefabAsync(windowId, Vector3.zero, Quaternion.identity);
+            GameObject windowObj = await PrefabLoader.Instance.InstantiatePrefabAsync<GameObject>(windowId, Vector3.zero, Quaternion.identity);
 
             if (windowObj == null)
             {

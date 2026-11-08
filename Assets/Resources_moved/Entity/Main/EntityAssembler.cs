@@ -33,7 +33,7 @@ namespace Assets.Entity.Controllers
         {
             if (string.IsNullOrEmpty(hullId)) return false;
             if (_entity.Hull != null) UnityEngine.Object.Destroy(_entity.Hull.gameObject);
-            var hullObj = await PrefabLoader.Instance.InstantiatePrefabAsync(
+            var hullObj = await PrefabLoader.Instance.InstantiatePrefabAsync<GameObject>(
                 hullId,
                 _entity.transform.position,
                 Quaternion.identity,
@@ -69,7 +69,7 @@ namespace Assets.Entity.Controllers
                 var slot = data.equipmentSlots[i];
                 bool isSuccess = false;
 
-                var equipmentObj = await PrefabLoader.Instance.InstantiatePrefabAsync(
+                var equipmentObj = await PrefabLoader.Instance.InstantiatePrefabAsync<GameObject>(
                     slot.equipmentId,
                     Vector3.zero,
                     Quaternion.identity);

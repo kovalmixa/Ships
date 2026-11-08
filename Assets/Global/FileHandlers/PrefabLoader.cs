@@ -1,85 +1,138 @@
 namespace Assets.Global.FileGlobal
 {
     using Cysharp.Threading.Tasks;
-    using System.Collections.Generic;
     using UnityEngine;
     using UnityEngine.AddressableAssets;
     using UnityEngine.ResourceManagement.AsyncOperations;
-    using UnityEngine.ResourceManagement.ResourceLocations;
 
     public class PrefabLoader : SingletonMonoBehaviour<PrefabLoader>
     {
-        private readonly Dictionary<string, AsyncOperationHandle<GameObject>> _loadedPrefabs = new();
-
-        public async UniTask<GameObject> GetPrefabAsync(string id)
+        public async UniTask<T> LoadAssetAsync<T>(string id) where T : UnityEngine.Object
         {
-            if (_loadedPrefabs.TryGetValue(id, out var existingHandle))
+            if (!await CheckAddressableExistsAsync(id))
             {
-                if (existingHandle.IsDone) return existingHandle.Result;
-                await existingHandle.Task;
-                return existingHandle.Result;
-            }
-
-            IList<IResourceLocation> locations;
-            var checkHandle = Addressables.LoadResourceLocationsAsync(id);
-            locations = await checkHandle.Task;
-
-            if (locations == null || locations.Count == 0)
-            {
-                Debug.LogWarning($"[Addressables] Key '{id}' not found in the Addressables Groups system! Check the prefab settings.");
+                Debug.LogWarning($"[Addressables] Ключ '{id}' не найден в Addressables Groups!");
                 return null;
             }
 
-            var handle = Addressables.LoadAssetAsync<GameObject>(id);
-            _loadedPrefabs[id] = handle;
-            GameObject prefab = await handle.Task;
-
-            if (handle.Status != AsyncOperationStatus.Succeeded)
+            try
             {
-                Debug.LogError($"[Addressables] Error loading prefab '{id}'.");
-                _loadedPrefabs.Remove(id);
+                var handle = Addressables.LoadAssetAsync<T>(id);
+                var result = await handle.Task;
+
+                if (handle.Status != AsyncOperationStatus.Succeeded)
+                {
+                    Debug.LogWarning($"[Addressables] Ошибка загрузки ассета '{id}' типа {typeof(T).Name}");
+                    return null;
+                }
+
+                return result;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning($"[Addressables] Исключение при загрузке ассета '{id}': {ex.Message}");
                 return null;
             }
-
-            return prefab;
         }
 
-        public GameObject GetPrefabSync(string id)
+        public T LoadAssetSync<T>(string id) where T : Object
         {
-            if (_loadedPrefabs.TryGetValue(id, out var existingHandle))
+            try
             {
-                return existingHandle.Result;
+                var handle = Addressables.LoadAssetAsync<T>(id);
+                T result = handle.WaitForCompletion();
+
+                if (handle.Status != AsyncOperationStatus.Succeeded)
+                {
+                    Debug.LogWarning($"[Addressables] Ошибка синхронной загрузки ассета '{id}' типа {typeof(T).Name}");
+                    return null;
+                }
+
+                return result;
             }
-
-            var handle = Addressables.LoadAssetAsync<GameObject>(id);
-            GameObject prefab = handle.WaitForCompletion();
-
-            if (handle.Status == AsyncOperationStatus.Succeeded)
+            catch (System.Exception ex)
             {
-                _loadedPrefabs[id] = handle;
-                return prefab;
+                Debug.LogWarning($"[Addressables] Исключение при синхронной загрузке ассета '{id}': {ex.Message}");
+                return null;
             }
-
-            Debug.LogError($"[Addressables] Ошибка синхронной загрузки ID: '{id}'");
-            return null;
         }
 
         public async UniTask<bool> CheckAddressableExistsAsync(string key)
         {
-            var handle = Addressables.LoadResourceLocationsAsync(key);
-            var locations = await handle.Task;
+            if (string.IsNullOrEmpty(key)) return false;
 
-            bool exists = handle.Status == AsyncOperationStatus.Succeeded
-                          && locations != null
-                          && locations.Count > 0;
-            Addressables.Release(handle);
-            return exists;
+            try
+            {
+                var handle = Addressables.LoadResourceLocationsAsync(key);
+                var locations = await handle.Task;
+
+                bool exists = handle.Status == AsyncOperationStatus.Succeeded
+                              && locations != null
+                              && locations.Count > 0;
+                Addressables.Release(handle);
+                return exists;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public async UniTask<GameObject> InstantiatePrefabAsync(string id, Vector3 pos, Quaternion rot, Transform parent = null)
+        public async UniTask<T> InstantiatePrefabAsync<T>(string id, Vector3 pos, Quaternion rot, Transform parent = null) where T : class
         {
-            var instanceHandle = Addressables.InstantiateAsync(id, pos, rot, parent);
-            return await instanceHandle.Task;
+            if (!await CheckAddressableExistsAsync(id))
+            {
+                Debug.LogWarning($"[Addressables] Невозможно инстанцировать префаб '{id}' — ключ не найден.");
+                return default;
+            }
+
+            try
+            {
+                var instanceHandle = Addressables.InstantiateAsync(id, pos, rot, parent);
+                GameObject instance = await instanceHandle.Task;
+
+                if (instanceHandle.Status != AsyncOperationStatus.Succeeded || instance == null)
+                {
+                    Debug.LogWarning($"[Addressables] Ошибка инстанцирования префаба '{id}'.");
+                    return default;
+                }
+
+                var releaser = instance.AddComponent<AddressableInstanceReleaser>();
+                releaser.Initialize(instanceHandle);
+
+                return ConvertResult<T>(instance);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning($"[Addressables] Исключение при инстанцировании '{id}': {ex.Message}");
+                return default;
+            }
+        }
+
+        public T InstantiatePrefabSync<T>(string id, Vector3 pos, Quaternion rot, Transform parent = null) where T : class
+        {
+            var handle = Addressables.InstantiateAsync(id, pos, rot, parent);
+            GameObject instance = handle.WaitForCompletion();
+
+            if (handle.Status != AsyncOperationStatus.Succeeded || instance == null)
+            {
+                Debug.LogWarning($"[Addressables] Ошибка синхронного инстанцирования префаба '{id}'.");
+                return default;
+            }
+
+            var releaser = instance.AddComponent<AddressableInstanceReleaser>();
+            releaser.Initialize(handle);
+
+            return ConvertResult<T>(instance);
+        }
+
+        private T ConvertResult<T>(GameObject instance) where T : class
+        {
+            if (typeof(T) == typeof(GameObject)) return instance as T;
+            if (typeof(T).IsSubclassOf(typeof(Component))) return instance.GetComponent<T>();
+
+            Debug.LogError($"[Addressables] Тип {typeof(T).Name} не поддерживается для возврата из InstantiatePrefab.");
+            return default;
         }
 
         public void ReleaseInstance(GameObject instance)
@@ -87,14 +140,27 @@ namespace Assets.Global.FileGlobal
             if (instance == null) return;
             Addressables.ReleaseInstance(instance);
         }
+    }
 
-        public void UnloadPrefab(string id)
+    public class AddressableInstanceReleaser : MonoBehaviour
+    {
+        private AsyncOperationHandle<GameObject> _handle;
+        private bool _isReleased;
+
+        public void Initialize(AsyncOperationHandle<GameObject> handle)
         {
-            if (_loadedPrefabs.TryGetValue(id, out var handle))
-            {
-                Addressables.Release(handle);
-                _loadedPrefabs.Remove(id);
-            }
+            _handle = handle;
+            _isReleased = false;
+        }
+
+        private void OnDestroy() => Release();
+
+        public void Release()
+        {
+            if (_isReleased) return;
+            _isReleased = true;
+
+            if (_handle.IsValid()) Addressables.ReleaseInstance(_handle);
         }
     }
 }

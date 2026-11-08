@@ -8,20 +8,24 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
 {
     public class Inventory : UIWindow
     {
-        [Header("Size of grid in slot units")]
+        [Header("Slot options")]
         [SerializeField] private int _gridWidth = 5;
         [SerializeField] private int _gridHeight = 4;
+        [SerializeField] protected VisualTreeAsset slotPrefab;
 
         private VisualElement _inventoryContainer;
+        private Label _inventoryLabel;
         protected Dictionary<Vector2, InventorySlotUI> slots = new();
 
         #region Setup
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             VisualElement root = GetComponent<UIDocument>().rootVisualElement;
-            _inventoryContainer = root.Q<VisualElement>("Inventory");
+            _inventoryContainer = root.Q<VisualElement>("Container");
+            _inventoryLabel = root.Q<Label>("Label");
             if (_inventoryContainer != null) BuildInventory(_gridWidth, _gridHeight);
+            RegisterPointerCollisionForRootElement(root);
         }
 
         public void BuildInventory(int columns, int rows)
@@ -31,35 +35,48 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
 
             float paddingLeft = _inventoryContainer.resolvedStyle.paddingLeft;
             float paddingRight = _inventoryContainer.resolvedStyle.paddingRight;
-            float totalSlotWidth = SlotUI.SlotStyle.slotSize + (SlotUI.SlotStyle.slotMargin * 2);
-            float gridWidth = (totalSlotWidth * columns) + (2 * (columns - 1));
+            float paddingTop = _inventoryContainer.resolvedStyle.paddingRight;
+            float paddingBottom = _inventoryContainer.resolvedStyle.paddingRight;
+            float totalSlotWidth = SlotUI.SlotStyle.TotalSlotWidth;
+
+            float gridWidth = (totalSlotWidth * columns) + (SlotUI.SlotStyle.slotMargin * (columns - 1));
+            float gridHeight = (totalSlotWidth * rows) + (SlotUI.SlotStyle.slotMargin * (rows - 1));
+            
             _inventoryContainer.style.width = gridWidth + paddingLeft + paddingRight;
+            _inventoryContainer.style.height = gridHeight + paddingTop + paddingBottom;
 
             int totalSlots = columns * rows;
             for (int i = 0; i < totalSlots; i++)
             {
-                VisualElement slotVe = new VisualElement();
+                var slotVe = slotPrefab.CloneTree();
                 slotVe.AddToClassList("inventory-slot");
                 int x = i % columns;
                 int y = i / columns;
                 slotVe.name = $"Slot_{x}_{y}";
                 _inventoryContainer.Add(slotVe);
-                RegisterPointerEventForElement(slotVe);
 
-                var slot = new InventorySlotUI();
-                slot.Setup(slotVe);
+                var slotElement = slotVe.Q<VisualElement>("SlotRoot") ?? slotVe.Q<VisualElement>();
+                var slot = new InventorySlotUI(slotElement);
+
                 slots.Add(new Vector2(x, y), slot);
             }
-        }
-
-        public void SetupInventoryItems(Dictionary<Vector2, InventoryItemData> itemsDict)
-        {
-            foreach (var kpv in itemsDict) TryAddInventoryItem(kpv.Key, kpv.Value);
         }
 
         #endregion
 
         #region API
+
+        public void SetupInventoryItems(Dictionary<Vector2, InventoryItemData> itemsDict)
+        {
+            RemoveAllItems();
+            foreach (var kpv in itemsDict)
+            {
+                if (!TryAddInventoryItem(kpv.Key, kpv.Value))
+                    Debug.LogWarning($"Unable to add item: {kpv.Value.General.nameId} at Position: {kpv.Key}");
+            }
+        }
+
+        public void SetName(string name) => _inventoryLabel.text = name;
 
         #region Add item object
 

@@ -1,6 +1,7 @@
 ﻿using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UIElements;
 
 namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 {
@@ -9,44 +10,26 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
         public InventorySlotUI hostSlot = null;
         public List<InventorySlotUI> subSlots = null;
 
-        #region Setup
+        public InventorySlotUI(VisualElement root) : base(root) { }
 
         protected override void SetupPointerDownEvent()
         {
             base.SetupPointerDownEvent();
-
-            // logic for setting pointer
+            // логика для специфичного нажатия на слот инвентаря
         }
 
-        #endregion
-
-        #region API
-
-        public override void SetItem(SlotItemData slotItemData, int count = 1)
+        public void SetItem(SlotItemData slotItemData, int number = 1)
         {
-            // логика для мульти-слотовых предметов, если требуется
-            base.SetItem(slotItemData, count);
+            base.SetItem(slotItemData);
+            if (slotItemUI != null) slotItemUI.Number = number;
         }
 
         public bool TryAddItem(InventoryItemData incomingItemData)
         {
             var currentInventoryItem = slotItemData as InventoryItemData;
 
-            if (currentInventoryItem == null) SetItem(incomingItemData, incomingItemData.quantity);
-            else if (CompareItems(incomingItemData))
-            {
-                currentInventoryItem.quantity += incomingItemData.quantity;
-                SetItem(currentInventoryItem, currentInventoryItem.quantity);
-            }
-            else return false;
-            return true;
-        }
-
-        public bool ChangeItem(InventoryItemData incomingItemData)
-        {
-            var currentInventoryItem = slotItemData as InventoryItemData;
-
-            if (currentInventoryItem == null) SetItem(incomingItemData, incomingItemData.quantity);
+            if (currentInventoryItem == null)
+                SetItem(incomingItemData, incomingItemData.quantity);
             else if (CompareItems(incomingItemData))
             {
                 currentInventoryItem.quantity += incomingItemData.quantity;
@@ -61,10 +44,10 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             var otherInventoryData = slotItemData as IInventorySlotData;
             var thisInventoryData = this.slotItemData as IInventorySlotData;
 
-            if (otherInventoryData == null || thisInventoryData == null) return base.CompareItems(slotItemData);
+            if (otherInventoryData == null || thisInventoryData == null)
+                return base.CompareItems(slotItemData);
+
             return base.CompareItems(slotItemData) && thisInventoryData.Mods.SequenceEqual(otherInventoryData.Mods);
         }
-
-        #endregion
     }
 }

@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
@@ -11,7 +13,7 @@ public abstract class UIWindow : MonoBehaviour
     [SerializeField] private float _fadeDuration = 0.25f;
 
     private UIDocument _uiDocument;
-    private VisualElement _cachedRootVisualElement;
+    private VisualElement _cachedRootVe;
     private CancellationTokenSource _cts;
 
     private readonly HashSet<VisualElement> _elementsInThisWindow = new();
@@ -36,31 +38,21 @@ public abstract class UIWindow : MonoBehaviour
         _uiDocument = GetComponent<UIDocument>();
         if (_uiDocument != null)
         {
-            _cachedRootVisualElement = _uiDocument.rootVisualElement;
-            RegisterPointerEvents();
+            _cachedRootVe = _uiDocument.rootVisualElement;
+            if (_cachedRootVe == null) 
+                RegisterPointerCollisionForRootElement(_cachedRootVe);
         }
     }
 
-    #region PointerEvents
+    #region PointerCollisions
 
-    private void RegisterPointerEvents()
+    protected void RegisterPointerCollisionForRootElement(VisualElement rootVe)
     {
-        if (_cachedRootVisualElement == null) return;
-        var elements = _cachedRootVisualElement.Query<VisualElement>().ToList();
-        foreach (var ve in elements)
-        {
-            if (ve.pickingMode == PickingMode.Ignore) continue;
-            ve.RegisterCallback<PointerEnterEvent>(evt =>
-            {
-                Color32 bcol = ve.resolvedStyle.backgroundColor;
-                if (bcol.a <= 60) return;
-                if (_elementsInThisWindow.Add(ve)) GUIHandler.Instance.SetPointerOnUI(ve);
-            });
-            ve.RegisterCallback<PointerLeaveEvent>(evt => RemoveElement(ve));
-        }
+        var elements = rootVe.Query<VisualElement>().ToList();
+        foreach (var ve in elements) RegisterPointerCollisionForSingleElement(ve);
     }
 
-    protected void RegisterPointerEventForElement(VisualElement ve)
+    protected void RegisterPointerCollisionForSingleElement(VisualElement ve)
     {
         if (ve == null || ve.pickingMode == PickingMode.Ignore) return;
 
@@ -77,7 +69,7 @@ public abstract class UIWindow : MonoBehaviour
         if (ve == null) return;
 
         Color32 bcol = ve.resolvedStyle.backgroundColor;
-        if (bcol.a <= 60) return;
+        if (bcol.a <= 30) return;
 
         if (_elementsInThisWindow.Add(ve))
             GUIHandler.Instance.SetPointerOnUI(ve);
@@ -91,6 +83,7 @@ public abstract class UIWindow : MonoBehaviour
 
     #endregion
 
+    #region Remove
     private void RemoveElement(VisualElement ve)
     {
         if (_elementsInThisWindow.Remove(ve)) GUIHandler.Instance.UnSetPointerOnUI(ve);
@@ -101,6 +94,10 @@ public abstract class UIWindow : MonoBehaviour
         foreach (var ve in _elementsInThisWindow) GUIHandler.Instance.UnSetPointerOnUI(ve);
         _elementsInThisWindow.Clear();
     }
+
+    #endregion
+
+    #region Open/Close
 
     public async UniTask OpenAsync(int delayMs = 0, Action onComplete = null)
     {
@@ -210,6 +207,8 @@ public abstract class UIWindow : MonoBehaviour
         _cts?.Dispose();
         _cts = new CancellationTokenSource();
     }
+
+    #endregion
 
     private void OnDestroy()
     {

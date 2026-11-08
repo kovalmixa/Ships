@@ -1,4 +1,8 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/Resources_moved/UI/GUI/Inventory/Style.uss?fileID=7433441132597879392&amp;guid=21b8d740ee89dd742a6eeb320012d30a&amp;type=3#Style"/>
-    <ui:VisualElement style="flex-grow: 1;"/>
+    <ui:Image name="IconImage" style="height: 100%; width: 100%; position: absolute;"/>
+    <ui:Image name="SubImage" style="width: 20%; height: 20%; position: relative; margin-left: 4%; margin-top: 4%;"/>
+    <ui:VisualElement style="flex-grow: 1; flex-direction: column-reverse;">
+        <ui:Label text="" name="NumberLabel" style="align-self: auto; position: relative; top: auto; left: auto; margin-top: 0%; margin-right: 4%; margin-bottom: 4%; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0; -unity-text-align: upper-right; white-space: pre-wrap; text-overflow: clip; flex-direction: column;"/>
+    </ui:VisualElement>
 </ui:UXML>

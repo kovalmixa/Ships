@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 532ecf92f32432143b63f842694b0a57
   m_SerializeEntries:
+  - m_GUID: 027b9d1171eeb834fbf4e1f397cac051
+    m_Address: Slot
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 11a861f5d6a861c42a4b015e8b88d5e2
     m_Address: bulletHitLand
     m_ReadOnly: 0
@@ -72,6 +77,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7ee595f41a217044f8dcd957acffb748
     m_Address: bulletHit
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 903bef1fb37d14c4cb58b3dcd70f4345
+    m_Address: Assets/Resources_moved/UI/GUI/Prefabs/Slot/SlotItem.uxml
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

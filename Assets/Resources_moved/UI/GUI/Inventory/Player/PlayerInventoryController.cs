@@ -19,7 +19,7 @@ namespace Assets.Resources_moved.UI.GUI.Inventory.Player
         {
             foreach(var data in datas)
             {
-                var prefab = await PrefabLoader.Instance.GetPrefabAsync(data.itemId);
+                var prefab = await PrefabLoader.Instance.LoadAssetAsync<GameObject>(data.itemId);
                 if (prefab == null) continue;
                 var isd = prefab.GetComponent<IInventorySlotData>();
                 if (isd == null) continue;

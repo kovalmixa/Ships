@@ -86,3 +86,4 @@ MonoBehaviour:
   _fadeDuration: 0
   _gridWidth: 10
   _gridHeight: 10
+  slotPrefab: {fileID: 9197481963319205126, guid: 027b9d1171eeb834fbf4e1f397cac051, type: 3}

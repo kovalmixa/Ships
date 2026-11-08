@@ -140,7 +140,7 @@ namespace Assets.Scripts.Actions.VFX
         private async UniTask<IObjectPool<VfxInstance>> CreatePoolAsync(VfxType type)
         {
             var id = StringHandler.FirstCharToLower(type.ToString());
-            GameObject prefab = await PrefabLoader.Instance.GetPrefabAsync(id);
+            GameObject prefab = await PrefabLoader.Instance.LoadAssetAsync<GameObject>(id);
             if (prefab == null)
             {
                 Debug.LogWarning($"[VfxController] Failed to load prefab for effect: '{id}' ({type})");

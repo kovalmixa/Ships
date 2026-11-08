@@ -13,17 +13,9 @@ namespace Assets.Resources_moved.UI.GUI.Inventory.Player
         protected override void Awake()
         {
             base.Awake();
-            SetupPlayerInventory(PlayerInventoryController.Instance.InventoryItems);
+            _inventory.SetupInventoryItems(PlayerInventoryController.Instance.InventoryItems);
         }
 
-        public void SetupPlayerInventory(Dictionary<Vector2, InventoryItemData> slotsData)
-        {
-            foreach (var slot in slotsData)
-            {
-                if (!_inventory.TryAddInventoryItem(slot.Key, slot.Value))
-                    Debug.LogWarning($"Unable to add item: {slot.Value.General.nameId} at Position: {slot.Key}");
-            }
-        }
         #endregion
 
         #region API

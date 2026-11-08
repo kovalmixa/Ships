@@ -5,87 +5,74 @@ using UnityEngine.UIElements;
 
 namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 {
-
     public class SlotStyle
     {
         public Color slotBackgroundColor = new(0f, 0f, 0f, 0.4f);
         public float slotSize = 64;
         public float slotMargin = 2f;
+
+        public float TotalSlotWidth => slotSize + slotMargin * 2;
     }
 
     public class SlotUI
     {
-        public static SlotStyle SlotStyle => new SlotStyle();
-
-        protected VisualElement visualElement;
+        protected VisualElement rootElement;
+        protected Image backgroundImage;
         protected SlotItemData slotItemData = new();
         public SlotItemData SlotItemData => slotItemData;
         protected SlotItemUI slotItemUI;
 
-        #region Setup
+        public static SlotStyle SlotStyle => new SlotStyle();
 
-        public virtual void Setup(VisualElement ve)
+        public SlotUI(VisualElement root)
         {
-            visualElement = ve;
+            rootElement = root;
+
+            backgroundImage = rootElement.Q<Image>("BackgroundImage");
+            slotItemUI = rootElement.Q<SlotItemUI>("SlotItem");
 
             SetupEnterEvent();
             SetupLeaveEvent();
             SetupPointerDownEvent();
-            SetupClickPointerUpEventEvent();
+            SetupClickPointerUpEvent();
         }
 
         protected virtual void SetupEnterEvent()
         {
+            if (backgroundImage == null) return;
             Color enterColor = ColorHandler.LightUpColor(SlotStyle.slotBackgroundColor, 0.7f);
-            visualElement.RegisterCallback<PointerEnterEvent>(evt => visualElement.style.backgroundColor = enterColor);
+            backgroundImage.RegisterCallback<PointerEnterEvent>(evt => backgroundImage.style.backgroundColor = enterColor);
         }
 
         protected virtual void SetupLeaveEvent()
         {
-            visualElement.RegisterCallback<PointerLeaveEvent>(evt => visualElement.style.backgroundColor = SlotStyle.slotBackgroundColor);
+            if (backgroundImage == null) return;
+            backgroundImage.RegisterCallback<PointerLeaveEvent>(evt => backgroundImage.style.backgroundColor = SlotStyle.slotBackgroundColor);
         }
 
         protected virtual void SetupPointerDownEvent()
         {
+            if (backgroundImage == null) return;
             Color clickColor = ColorHandler.LightUpColor(SlotStyle.slotBackgroundColor, 1f);
-            visualElement.RegisterCallback<PointerDownEvent>(evt => visualElement.style.backgroundColor = clickColor);
+            backgroundImage.RegisterCallback<PointerDownEvent>(evt => backgroundImage.style.backgroundColor = clickColor);
         }
 
-        protected virtual void SetupClickPointerUpEventEvent()
+        protected virtual void SetupClickPointerUpEvent()
         {
+            if (backgroundImage == null) return;
             Color enterColor = ColorHandler.LightUpColor(SlotStyle.slotBackgroundColor, 0.7f);
-            visualElement.RegisterCallback<PointerUpEvent>(evt => visualElement.style.backgroundColor = enterColor);
+            backgroundImage.RegisterCallback<PointerUpEvent>(evt => backgroundImage.style.backgroundColor = enterColor);
         }
-        #endregion
 
-        #region API
-
-        public virtual void SetItem(SlotItemData newItemData, int count = 1)
+        public virtual void SetItem(SlotItemData newItemData)
         {
             this.slotItemData = newItemData;
-
-            if (newItemData == null || newItemData.general.icon == null)
+            if (slotItemUI != null)
             {
-                if (slotItemUI != null)
-                {
-                    visualElement.Remove(slotItemUI);
-                    slotItemUI = null;
-                }
-                return;
-            }
-
-            if (slotItemUI == null)
-            {
-                slotItemUI = new SlotItemUI(newItemData, count);
-                visualElement.Add(slotItemUI);
-            }
-            else
-            {
-                slotItemUI.UpdateData(newItemData, count);
+                slotItemUI.ItemData = newItemData;
             }
         }
 
-        public virtual bool CompareItems(SlotItemData slotItemData) => this.slotItemData == slotItemData;
-        #endregion
+        public virtual bool CompareItems(SlotItemData otherData) => this.slotItemData == otherData;
     }
 }

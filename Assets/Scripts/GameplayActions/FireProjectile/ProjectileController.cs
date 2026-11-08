@@ -56,7 +56,7 @@ namespace Assets.Scripts.Actions.Projectile
 
                 var typeName = type.ToString();
                 var id = char.ToLower(typeName[0]) + typeName.Substring(1);
-                GameObject prefab = await prefabLoader.GetPrefabAsync(id);
+                GameObject prefab = await prefabLoader.LoadAssetAsync<GameObject>(id);
 
                 if (prefab != null)
                 {
