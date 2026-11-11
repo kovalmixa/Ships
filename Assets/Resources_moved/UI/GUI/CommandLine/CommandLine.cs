@@ -14,37 +14,46 @@ namespace UI.GUI.CommandLine
         private TextField _inputField;
         private ScrollView _messageContainer;
 
-        private readonly List<string> _commandHistory = new();
+        private static readonly List<string> _commandHistory = new();
         private int _historyIndex = -1;
 
-        public event Action<bool> OnToggled;
+        protected override void Awake()
+        {
+            base.Awake();
+            if (RootVisualElement != null)
+            {
+                _inputField = RootVisualElement.Q<TextField>(_inputFieldName);
+                _messageContainer = RootVisualElement.Q<ScrollView>(_containerName);
+                RebuildMessageHistory();
+            }
+        }
 
         protected override void OnOpened()
         {
             base.OnOpened();
 
-            if (RootVisualElement != null)
+            if (GUIHandler.Instance != null)
+                GUIHandler.Instance.SetInputBlocked(true);
+
+            // Подписываемся при каждом открытии окна
+            if (_inputField != null)
             {
-                _inputField = RootVisualElement.Q<TextField>(_inputFieldName);
-                _messageContainer = RootVisualElement.Q<ScrollView>(_containerName);
-
-                _inputField?.RegisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
-
-                RebuildMessageHistory();
+                _inputField.RegisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
             }
 
-            if (GUIHandler.Instance != null) GUIHandler.Instance.SetInputBlocked(true);
             FocusInputFieldAsync().Forget();
-            OnToggled?.Invoke(true);
         }
 
         protected override void OnClosed()
         {
             base.OnClosed();
 
-            if (_inputField != null) _inputField.UnregisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
-            if (GUIHandler.Instance != null) GUIHandler.Instance.SetInputBlocked(false);
-            OnToggled?.Invoke(false);
+            // Отписываемся при закрытии
+            if (_inputField != null)
+                _inputField.UnregisterCallback<KeyDownEvent>(OnKeyDown, TrickleDown.TrickleDown);
+
+            if (GUIHandler.Instance != null)
+                GUIHandler.Instance.SetInputBlocked(false);
         }
 
         private async UniTaskVoid FocusInputFieldAsync()
@@ -61,7 +70,12 @@ namespace UI.GUI.CommandLine
             }
 
             _inputField.value = string.Empty;
-            _inputField.Focus();
+
+            // Дополнительно страхуем через планировщик UI Toolkit для надежного захвата фокуса
+            _inputField.schedule.Execute(() =>
+            {
+                _inputField.Focus();
+            });
         }
 
         private void OnKeyDown(KeyDownEvent evt)
@@ -100,11 +114,6 @@ namespace UI.GUI.CommandLine
             _historyIndex = _commandHistory.Count;
 
             DuplicateMessage(text);
-            /*
-            string commandText = text.ToLower();
-            if (_commandMap.TryGetValue(commandText, out Action command)) command?.Invoke();
-            else WriteMessage($"Unknown command: '{commandText}'", Color.red);
-            */
 
             _inputField.value = string.Empty;
             _inputField.Focus();
@@ -179,10 +188,7 @@ namespace UI.GUI.CommandLine
 
         #region Public API
 
-        public void WriteMessage()
-        {
-
-        }
+        public void WriteMessage() { }
 
         public void Switch()
         {

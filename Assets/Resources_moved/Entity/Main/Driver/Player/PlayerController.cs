@@ -117,7 +117,7 @@ namespace Entity.Controllers
 
                 if (isPressed)
                 {
-                    if (isMousePressed && GUIHandler.Instance.IsOverUI) continue;
+                    if (isMousePressed && WindowHandler.Instance.IsOverUI) continue;
                     _entityController.ExecuteAction(entry.Value, targetPos);
                 }
             }

@@ -3,20 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UIElements;
 
 [RequireComponent(typeof(UIDocument))]
 public abstract class UIWindow : MonoBehaviour
 {
     [SerializeField] private float _fadeDuration = 0.25f;
+    [SerializeField] private bool _isCached = false;
 
     private UIDocument _uiDocument;
     private VisualElement _cachedRootVe;
     private CancellationTokenSource _cts;
 
-    private readonly HashSet<VisualElement> _elementsInThisWindow = new();
+    private readonly HashSet<VisualElement> _pointerColElements = new();
+    public HashSet<VisualElement> PointerColElements => _pointerColElements;
 
     protected VisualElement RootVisualElement
     {
@@ -27,8 +27,8 @@ public abstract class UIWindow : MonoBehaviour
         }
     }
 
-    private bool _isOpen;
-    public bool IsOpen => _isOpen;
+    public bool IsOpen => gameObject.activeSelf;
+    public bool IsCached => _isCached;
 
     protected virtual void OnOpened() { }
     protected virtual void OnClosed() { }
@@ -36,11 +36,10 @@ public abstract class UIWindow : MonoBehaviour
     protected virtual void Awake()
     {
         _uiDocument = GetComponent<UIDocument>();
-        if (_uiDocument != null)
+        if (_uiDocument && _cachedRootVe == null)
         {
             _cachedRootVe = _uiDocument.rootVisualElement;
-            if (_cachedRootVe == null) 
-                RegisterPointerCollisionForRootElement(_cachedRootVe);
+            RegisterPointerCollisionForRootElement(_cachedRootVe);
         }
     }
 
@@ -71,8 +70,7 @@ public abstract class UIWindow : MonoBehaviour
         Color32 bcol = ve.resolvedStyle.backgroundColor;
         if (bcol.a <= 30) return;
 
-        if (_elementsInThisWindow.Add(ve))
-            GUIHandler.Instance.SetPointerOnUI(ve);
+        _pointerColElements.Add(ve);
     }
 
     private void OnPointerLeave(PointerLeaveEvent evt)
@@ -86,13 +84,12 @@ public abstract class UIWindow : MonoBehaviour
     #region Remove
     private void RemoveElement(VisualElement ve)
     {
-        if (_elementsInThisWindow.Remove(ve)) GUIHandler.Instance.UnSetPointerOnUI(ve);
+        _pointerColElements.Remove(ve);
     }
 
     private void ClearWindowElements()
     {
-        foreach (var ve in _elementsInThisWindow) GUIHandler.Instance.UnSetPointerOnUI(ve);
-        _elementsInThisWindow.Clear();
+        _pointerColElements.Clear();
     }
 
     #endregion
@@ -102,7 +99,6 @@ public abstract class UIWindow : MonoBehaviour
     public async UniTask OpenAsync(int delayMs = 0, Action onComplete = null)
     {
         ResetCancellationToken();
-        _isOpen = true;
 
         var token = _cts.Token;
 
@@ -141,7 +137,6 @@ public abstract class UIWindow : MonoBehaviour
     public async UniTask CloseAsync(Action onComplete = null)
     {
         ResetCancellationToken();
-        _isOpen = false;
 
         var token = _cts.Token;
 
@@ -169,7 +164,6 @@ public abstract class UIWindow : MonoBehaviour
     public void SetStateImmediately(bool isOpen)
     {
         ResetCancellationToken();
-        _isOpen = isOpen;
 
         if (!isOpen) ClearWindowElements();
 

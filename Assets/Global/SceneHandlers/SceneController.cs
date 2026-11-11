@@ -72,6 +72,7 @@ namespace Assets.Global.SceneHandlers
             }
             finally
             {
+                await WindowHandler.Instance.OpenWindowIndependent<GameInterface>();
                 await WindowHandler.Instance.CloseTab<LoadingScreen>();
             }
         }

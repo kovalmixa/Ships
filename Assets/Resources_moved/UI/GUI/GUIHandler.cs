@@ -8,22 +8,6 @@ using UnityEngine.UIElements;
 public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 {
     private Dictionary<KeyCode, Action> _keyCommands;
-    private readonly List<VisualElement> _selectedUIElements = new();
-    public bool IsOverUI => _selectedUIElements.Count > 0;
-    //public bool IsOverUI 
-    //{
-    //    get {
-    //        string text = string.Empty;
-    //        foreach(var el in _selectedUIElements)
-    //            text += el.name;
-
-    //        bool isBLocked = _selectedUIElements.Count > 0;
-    //        if (isBLocked) Debug.Log($"Input blocked by: {text}");
-
-    //        return isBLocked;
-    //    }
-    //    set { }
-    //}
 
     #region InputBlock
 
@@ -46,7 +30,7 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
         OnInputBlockedStateChanged += (bool isBlocked) => IsInputBlocked = isBlocked;
 
         async UniTaskVoid ToggleCommandLine() => await WindowHandler.Instance.SwitchWindow("CommandLine", isTab: false);
-        async UniTaskVoid OpenPlayerInventory() => await WindowHandler.Instance.SwitchWindow("PlayerInventory", isTab: false);
+        async UniTaskVoid OpenPlayerInventory() => await WindowHandler.Instance.SwitchWindow("PlayerInventory", isTab: true);
 
         _keyCommands = new Dictionary<KeyCode, Action>
         {
@@ -57,17 +41,10 @@ public class GUIHandler : SingletonMonoBehaviour<GUIHandler>
 
     private void Update()
     {
-        if (!IsInputBlocked) 
-            foreach (var kpv in _keyCommands) 
+        if (!IsInputBlocked)
+            foreach (var kpv in _keyCommands)
                 if (Input.GetKeyDown(kpv.Key)) kpv.Value?.Invoke();
     }
-
-    #endregion
-
-    #region Public API
-
-    public void SetPointerOnUI(VisualElement ve) => _selectedUIElements.Add(ve);
-    public void UnSetPointerOnUI(VisualElement ve) => _selectedUIElements.Remove(ve);
 
     #endregion
 }

@@ -1,0 +1,16 @@
+﻿using System.Collections.Generic;
+using Assets.Entity;
+using UnityEngine;
+
+namespace Assets.Entity.Interfaces
+{
+    public interface IAbility
+    {
+        public GameObject GameObject { get; }
+        public IReadOnlyList<AbilityUnit> RuntimeAbilities { get; }
+        public void AddAbility(AbilityUnit ability);
+        public bool RemoveAbility(AbilityUnit ability);
+        public void Activate(Vector2 targetPos, AbilityUnit abilityUnit);
+        public EntitySnapshot GetSnapshot();
+    }
+}

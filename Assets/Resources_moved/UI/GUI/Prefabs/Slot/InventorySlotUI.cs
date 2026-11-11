@@ -21,7 +21,7 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
         public void SetItem(SlotItemData slotItemData, int number = 1)
         {
             base.SetItem(slotItemData);
-            if (slotItemUI != null) slotItemUI.Number = number;
+            if (slotItemUI != null) slotItemUI.Number = slotItemData == null ? 0 : number;
         }
 
         public bool TryAddItem(InventoryItemData incomingItemData)

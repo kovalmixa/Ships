@@ -8,10 +8,38 @@ namespace Assets.Global.SceneHandlers
 {
     public class WindowHandler : SingletonMonoBehaviour<WindowHandler>
     {
-        [SerializeField] private UIWindow[] _batchSceneWindows;
         private readonly Dictionary<string, UIWindow> _activeWindows = new();
-        private UIWindow _currentActiveTab;
+
+        [Header("Tabs State")]
+        [SerializeField] private UIWindow _currentActiveTab;
         private string _currentActiveTabId;
+
+        public bool IsOverUI
+        {
+            get
+            {
+                foreach (var pair in _activeWindows)
+                {
+                    var window = pair.Value;
+                    string windowName = pair.Key;
+
+                    if (window == null || !window.IsOpen) continue;
+
+                    if (window.PointerColElements == null)
+                    {
+                        Debug.LogWarning($"[IsOverUI] У открытого окна '{windowName}' коллекция PointerColElements равна null!");
+                        continue;
+                    }
+
+                    if (window.PointerColElements.Count > 0)
+                    {
+                        Debug.Log($"[IsOverUI] Курсор НАД UI! Окно: '{windowName}', элементов под курсором: {window.PointerColElements.Count}");
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
 
         #region Setup & Lifecycle
 
@@ -19,12 +47,13 @@ namespace Assets.Global.SceneHandlers
         {
             base.Awake();
 
-            foreach (var bsw in _batchSceneWindows)
+            var allWindows = GetComponentsInChildren<UIWindow>(true);
+            foreach (var uiWindow in allWindows)
             {
-                var uiWindow = bsw.GetComponent<UIWindow>();
-                string windowName = uiWindow != null ? uiWindow.GetType().Name : bsw.name;
+                if (uiWindow == null) continue;
+                string windowName = uiWindow.GetType().Name;
 
-                if (uiWindow != null && !_activeWindows.ContainsKey(windowName))
+                if (!_activeWindows.ContainsKey(windowName))
                     _activeWindows.Add(windowName, uiWindow);
             }
 
@@ -32,7 +61,6 @@ namespace Assets.Global.SceneHandlers
         }
 
         private void OnEnable() => SceneController.OnBeforeSceneLoad += OnBeforeSceneLoadHandler;
-
         private void OnDisable() => SceneController.OnBeforeSceneLoad -= OnBeforeSceneLoadHandler;
 
         private async UniTask OnBeforeSceneLoadHandler() => await CloseAllExcept("LoadingScreen");
@@ -56,6 +84,7 @@ namespace Assets.Global.SceneHandlers
                 else await OpenWindowIndependent(windowId);
                 return;
             }
+
             if (isTab) await CloseTab(windowId);
             else await CloseWindowIndependent(windowId);
         }
@@ -97,13 +126,15 @@ namespace Assets.Global.SceneHandlers
 
         #endregion
 
-        #region Tabs logic
+        #region Tabs Logic (Exclusive Fullscreen/Menu screens)
 
         public async UniTask OpenTab(string windowId, int delayMs = 0, bool freezeTime = false, Action onComplete = null)
         {
-            if (_currentActiveTabId == windowId && _currentActiveTab != null && _currentActiveTab.IsOpen) return;
+            if (_currentActiveTabId == windowId && _currentActiveTab != null && _currentActiveTab.IsOpen)
+                return;
 
-            if (_currentActiveTab != null) await CloseWindowInternal(_currentActiveTabId, unfreezeTime: false);
+            if (_currentActiveTab != null && !string.IsNullOrEmpty(_currentActiveTabId))
+                await CloseTabInternal(_currentActiveTabId, unfreezeTime: false);
 
             SetTimeScale(freezeTime);
             await OpenWindowInternal(windowId, delayMs, onComplete);
@@ -117,13 +148,30 @@ namespace Assets.Global.SceneHandlers
 
         public async UniTask CloseTab(string windowId, bool unfreezeTime = true, Action onComplete = null)
         {
-            if (_currentActiveTabId == windowId || _activeWindows.ContainsKey(windowId))
-                await CloseWindowInternal(windowId, unfreezeTime, onComplete);
+            if (_activeWindows.ContainsKey(windowId)) await CloseTabInternal(windowId, unfreezeTime, onComplete);
+            else Debug.LogWarning($"[WindowHandler] Не удалось закрыть таб '{windowId}', так как он отсутствует в _activeWindows.");
+        }
+
+        private async UniTask CloseTabInternal(string windowId, bool unfreezeTime = true, Action onComplete = null)
+        {
+            if (!_activeWindows.TryGetValue(windowId, out UIWindow window)) return;
+
+            await window.CloseAsync(onComplete);
+
+            if (window == null || window.IsOpen) return;
+            if (unfreezeTime) SetTimeScale(false);
+            if (_currentActiveTabId == windowId)
+            {
+                _currentActiveTab = null;
+                _currentActiveTabId = null;
+            }
+
+            HandleWindowCachingOrDestruction(windowId, window);
         }
 
         #endregion
 
-        #region Independent Windows Logic
+        #region Independent Windows Logic (Inventory, Console, etc.)
 
         public async UniTask OpenWindowIndependent(string windowId, int delayMs = 0, bool freezeTime = false, Action onComplete = null)
         {
@@ -133,8 +181,24 @@ namespace Assets.Global.SceneHandlers
 
         public async UniTask CloseWindowIndependent(string windowId, bool unfreezeTime = true, Action onComplete = null)
         {
-            await CloseWindowInternal(windowId, unfreezeTime, onComplete);
+            if (!_activeWindows.TryGetValue(windowId, out UIWindow window)) return;
+
+            await window.CloseAsync(onComplete);
+
+            if (window == null || window.IsOpen) return;
+            if (unfreezeTime) SetTimeScale(false);
+            if (_currentActiveTabId == windowId)
+            {
+                _currentActiveTab = null;
+                _currentActiveTabId = null;
+            }
+
+            HandleWindowCachingOrDestruction(windowId, window);
         }
+
+        #endregion
+
+        #region Common Window Management & Internal Spawning
 
         public async UniTask CloseAllExcept(params string[] ignoreWindowIds)
         {
@@ -145,22 +209,32 @@ namespace Assets.Global.SceneHandlers
             foreach (var windowId in activeKeys)
             {
                 if (ignoreSet.Contains(windowId)) continue;
-                closeTasks.Add(CloseWindowInternal(windowId, unfreezeTime: false));
+                if (_activeWindows.TryGetValue(windowId, out var win))
+                    closeTasks.Add(CloseWindowGenericInternal(windowId, win, unfreezeTime: false));
             }
 
             await UniTask.WhenAll(closeTasks);
+
+            if (!string.IsNullOrEmpty(_currentActiveTabId) && !ignoreSet.Contains(_currentActiveTabId))
+            {
+                _currentActiveTab = null;
+                _currentActiveTabId = null;
+            }
+
             SetTimeScale(false);
         }
-
-        #endregion
-
-        #region Internal Spawning & Lifecycle
 
         private async UniTask OpenWindowInternal(string windowId, int delayMs, Action onComplete)
         {
             if (_activeWindows.TryGetValue(windowId, out UIWindow existingWindow))
             {
-                await existingWindow.OpenAsync(delayMs, onComplete);
+                if (existingWindow != null)
+                {
+                    if (!existingWindow.gameObject.activeSelf)
+                        existingWindow.gameObject.SetActive(true);
+
+                    await existingWindow.OpenAsync(delayMs, onComplete);
+                }
                 return;
             }
 
@@ -186,20 +260,28 @@ namespace Assets.Global.SceneHandlers
             await window.OpenAsync(delayMs, onComplete);
         }
 
-        private async UniTask CloseWindowInternal(string windowId, bool unfreezeTime, Action onComplete = null)
+        private async UniTask CloseWindowGenericInternal(string windowId, UIWindow window, bool unfreezeTime, Action onComplete = null)
         {
-            if (!_activeWindows.TryGetValue(windowId, out UIWindow window)) return;
             await window.CloseAsync(onComplete);
             if (window == null || window.IsOpen) return;
             if (unfreezeTime) SetTimeScale(false);
-            _activeWindows.Remove(windowId);
 
-            if (_currentActiveTabId == windowId)
+            HandleWindowCachingOrDestruction(windowId, window);
+        }
+
+        private void HandleWindowCachingOrDestruction(string windowId, UIWindow window)
+        {
+            if (window.IsCached)
             {
-                _currentActiveTab = null;
-                _currentActiveTabId = null;
+                if (window.gameObject != null && window.gameObject.activeSelf)
+                    window.gameObject.SetActive(false);
             }
-            if (window != null && window.gameObject != null) Destroy(window.gameObject);
+            else
+            {
+                _activeWindows.Remove(windowId);
+                if (window != null && window.gameObject != null)
+                    Destroy(window.gameObject);
+            }
         }
 
         private void SetTimeScale(bool freeze) => Time.timeScale = freeze ? 0f : 1f;

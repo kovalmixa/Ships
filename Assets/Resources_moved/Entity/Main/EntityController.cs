@@ -20,7 +20,7 @@ using UnityEngine;
 
 namespace Entity.Controllers
 {
-    public class EntityController : MonoBehaviour, IObject, IAbbility, IPoolInstance
+    public class EntityController : MonoBehaviour, IObject, IAbility, IPoolInstance
     {
         #region Fields & Properties
 

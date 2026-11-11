@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef452126ba3ace94f87da4ce0c9e448d, type: 3}
-  m_Name: mg45_Data
+  m_Name: mg45_data
   m_EditorClassIdentifier: Assembly-CSharp::Assets.Entity.Equipment.EquipmentDataSO
   _general:
     nameId: ger_mg45

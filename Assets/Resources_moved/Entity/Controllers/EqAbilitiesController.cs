@@ -18,7 +18,7 @@ namespace Assets.Entity.Controllers
         private readonly float _basicAngle;
 
         public EqAbilitiesController(IEnumerable<AbilityUnit> abilities, TotalAbbilitiesController totalAbbilities,
-            ActionDataController actionDataController, IAbbility source, float basicAngle, EquipmentAnchor equipmentAnchor)
+            ActionDataController actionDataController, IAbility source, float basicAngle, EquipmentAnchor equipmentAnchor)
             : base(abilities, totalAbbilities, actionDataController, source)
         {
             _equipmentTransform = (source as IInteractive).GameObject.transform;

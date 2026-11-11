@@ -80,11 +80,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 903bef1fb37d14c4cb58b3dcd70f4345
-    m_Address: Assets/Resources_moved/UI/GUI/Prefabs/Slot/SlotItem.uxml
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9dbbf89edadbe8848be3f5b726ba64d8
     m_Address: none_boat
     m_ReadOnly: 0
@@ -100,6 +95,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c287be5b7d10d474c9f88660e781cf90
+    m_Address: none_boat_data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: d049cb84d3b973244843b3c4b0ca9755
     m_Address: bullet
     m_ReadOnly: 0
@@ -110,6 +110,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e8b664e50f5b175479f8bc595e569665
+    m_Address: none_smallPatrolBoat_data
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e9e54baf979c69145a36acbf1b0305ea
     m_Address: smallSmoke
     m_ReadOnly: 0
@@ -117,6 +122,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f086269fd8c1d0445a660b15ab330d04
     m_Address: ger_mg45
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f980784a27dfca24197bb0ac34cef720
+    m_Address: ger_mg45_data
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

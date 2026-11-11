@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07e78b9639657324c94bc14e6a6453a4, type: 3}
-  m_Name: boat_Data
+  m_Name: boat_data
   m_EditorClassIdentifier: Assembly-CSharp::Assets.DataContainers.HullDataSO
   _general:
     nameId: none_boat
     description: 
-    icon: {fileID: 0}
+    icon: {fileID: 2800000, guid: f45397a44b98eb94c84ae9f085d2fd2f, type: 3}
   statOptions:
     stats:
     - name: 'MaxHp: 5'

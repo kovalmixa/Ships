@@ -7,39 +7,38 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
     public class SlotItemUI : VisualElement
     {
         #region Fields
+
         [UxmlAttribute]
-        private readonly Image _iconImage;
-        private readonly Image _subImage;
-        private readonly Label _numberLabel;
+        protected Image iconImage;
+        protected Image subImage;
+        protected Label numberLabel;
 
-        private bool _showZero;
-
-        private SlotItemData _itemData;
-        public SlotItemData ItemData 
+        protected bool showZero;
+        protected Vector2 initialSize;
+        protected SlotItemData itemData;
+        public virtual SlotItemData ItemData 
         { 
-            get => _itemData;
+            get => itemData;
             set
             {
-                _itemData = value;
-                //if (_iconImage != null) _iconImage.image = _itemData.general.icon;
-                if (_iconImage != null)
-                {
-                    Debug.Log("Image node was found");
-                    _iconImage.image = _itemData.general.icon;
-                }
-                else Debug.Log("No image node");
+                itemData = value;
+                if (itemData != null)
+                Debug.Log(itemData.general.nameId);
+                if (iconImage != null)
+                    iconImage.image = itemData == null ? null : itemData.general.icon;
+                else Debug.LogWarning("No image node in slot item ui");
             }
         }
 
-        private int _number;
+        protected int number;
         public int Number
         {
-            get => _number;
+            get => number;
             set
             {
-                _number = value;
-                if (_numberLabel != null)
-                    _numberLabel.text = _number == 0 && !_showZero ? string.Empty : _number.ToString();
+                number = value;
+                if (numberLabel != null)
+                    numberLabel.text = number == 0 && !showZero ? string.Empty : number.ToString();
             }
         }
 
@@ -47,36 +46,27 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
         {
             get
             {
-                if (_subImage == null) return null;
-                return (Texture2D)_subImage.image;
+                if (subImage == null) return null;
+                return (Texture2D)subImage.image;
             }
             set
             {
-                if (_subImage != null) _subImage.image = value;
+                if (subImage != null) subImage.image = value;
             }
         }
 
         #endregion
 
-        #region
-
-        public SlotItemUI(bool showZero = false)
+        public SlotItemUI(VisualElement root, bool showZero = false)
         {
-            _showZero = showZero;
+            this.showZero = showZero;
 
-            var visualTree = Resources.Load<VisualTreeAsset>("SlotItem");
-            if (visualTree == null)
-            {
-                Debug.LogWarning("No slot item uxml prefab was found!");
-                return;
-            }
-            visualTree.CloneTree(this);
-
-            _iconImage = this.Q<Image>("IconImage");
-            _subImage = this.Q<Image>("SubImage");
-            _numberLabel = this.Q<Label>("NumberLabel");
+            iconImage = root.Q<Image>("IconImage");
+            subImage = root.Q<Image>("SubImage");
+            numberLabel = root.Q<Label>("NumberLabel");
+            //initialSize = new Vector2(root.resolvedStyle.width, root.resolvedStyle.height);
+            //Debug.Log(initialSize);
+            if (iconImage == null) Debug.LogWarning("IconImage не найден в SlotItem!");
         }
-
-        #endregion
     }
 }

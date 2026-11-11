@@ -19,7 +19,7 @@ using UnityEngine;
 namespace Assets.Entity.Common
 {
     public abstract class EntityPartBase : MonoBehaviour,
-        IInteractive, IStats, IAbbility, IBuffable
+        IInteractive, IStats, IAbility, IBuffable
     {
         #region Fields & Properties
         [Header("Data & Configuration")]
@@ -99,22 +99,25 @@ namespace Assets.Entity.Common
 
         public virtual void Setup(EntityController entityController)
         {
-            if (this.entityController != null) this.entityController.OnHighlightStateChanged -= HandleHighlight;
+            {
+                if (this.entityController != null) this.entityController.OnHighlightStateChanged -= HandleHighlight;
 
-            this.entityController = entityController;
+                this.entityController = entityController;
 
-            if (this.entityController != null) this.entityController.OnHighlightStateChanged += HandleHighlight;
+                if (this.entityController != null) this.entityController.OnHighlightStateChanged += HandleHighlight;
 
-            sprites = GameObjectHandler.GetNodesByType<SpriteRenderer>(transform).ToArray();
-            Buffs = new BuffStatusesController(gameObject, statModController);
+                sprites = GameObjectHandler.GetNodesByType<SpriteRenderer>(transform).ToArray();
 
-            var statOptions = StatOptions;
+                var statOptions = StatOptions;
 
-            statModController = new StatModController(Id, statOptions);
-            statModController.OnChange += OnStatModChanged;
+                statModController = new StatModController(Id, statOptions);
+                statModController.OnChange += OnStatModChanged;
 
-            SetupInitialBuffs(statOptions.buffs);
-            SetupStatValues();
+                Buffs = new BuffStatusesController(gameObject, statModController);
+
+                SetupInitialBuffs(statOptions.buffs);
+                SetupStatValues();
+            }
         }
 
         private void SetupStatValues()

@@ -22,10 +22,10 @@ namespace Assets.Entity.Controllers
         protected readonly Dictionary<AbilityUnit, float> abilityCooldowns = new();
         protected readonly TotalAbbilitiesController totalAbbilitiesCtr;
         protected readonly ActionDataController actionDataController;
-        protected readonly IAbbility source;
+        protected readonly IAbility source;
 
         public AbilitiesController(IEnumerable<AbilityUnit> setupAbilities, TotalAbbilitiesController totalAbbilities,
-            ActionDataController actionDataController, IAbbility source)
+            ActionDataController actionDataController, IAbility source)
         {
             _setupAbilities = (List<AbilityUnit>)setupAbilities;
             totalAbbilitiesCtr = totalAbbilities;

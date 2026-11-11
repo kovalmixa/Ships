@@ -13,22 +13,34 @@ namespace Assets.Resources_moved.UI.GUI.Inventory.Player
 
         public Dictionary<Vector2, InventoryItemData> InventoryItems => _inventoryItems;
 
-        public event System.Action<Dictionary<Vector2, InventoryItemData>> OnInventoryUpdated;
+        private PlayerInventoryUI _playerInventoryUI;
+
+        #region Setup
+
+        public void SetPlayerInventoryUI(PlayerInventoryUI playerInventoryUI) => _playerInventoryUI = playerInventoryUI;
 
         public async UniTask InitInventoryData(List<InventorySlotDataSer> datas)
         {
-            foreach(var data in datas)
+            foreach (var data in datas)
             {
-                var prefab = await PrefabLoader.Instance.LoadAssetAsync<GameObject>(data.itemId);
-                if (prefab == null) continue;
-                var isd = prefab.GetComponent<IInventorySlotData>();
-                if (isd == null) continue;
+                string assetKey = data.itemId + "_data";
+                ScriptableObject rawAsset = await PrefabLoader.Instance.LoadAssetAsync<ScriptableObject>(assetKey);
 
-                var slotItem = BuildInventorySlot(isd, data.quantity);
+                if (rawAsset == null)
+                {
+                    Debug.LogWarning($"[InitInventory] Не удалось загрузить ассет по ключу: {assetKey}");
+                    continue;
+                }
+
+                if (rawAsset is not IInventorySlotData slotData)
+                {
+                    Debug.LogWarning($"[InitInventory] Ассет '{assetKey}' (тип: {rawAsset.GetType().Name}) не реализует IInventorySlotData!");
+                    continue;
+                }
+
+                var slotItem = BuildInventorySlot(slotData, data.quantity);
                 _inventoryItems[data.position] = slotItem;
             }
-
-            OnInventoryUpdated?.Invoke(_inventoryItems);
         }
 
         private InventoryItemData BuildInventorySlot(IInventorySlotData isd, int quantity)
@@ -41,8 +53,31 @@ namespace Assets.Resources_moved.UI.GUI.Inventory.Player
             return inventorySlot;
         }
 
+        #endregion
+
         #region API
 
+        public bool TryAddItem(InventoryItemData itemData)
+        {
+            if (_playerInventoryUI.TryAddItem(itemData))
+            {
+                _inventoryItems.Clear();
+                _inventoryItems = _playerInventoryUI.GetInventoryItems();
+                return true;
+            }
+            return false;
+        }
+
+        public bool TryRemoveItem(InventoryItemData itemData)
+        {
+            if (_playerInventoryUI.TryRemoveItem(itemData))
+            {
+                _inventoryItems.Clear();
+                _inventoryItems = _playerInventoryUI.GetInventoryItems();
+                return true;
+            }
+            return false;
+        }
 
         #endregion
     }

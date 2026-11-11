@@ -49,7 +49,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 391b3ff39227f4c42b1ac79b3eff6431, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CommandLine
-  _uiDocument: {fileID: 8202738390461214508}
+  _fadeDuration: 0.25
+  _isCached: 1
   _inputFieldName: CommandLineInput
   _containerName: MessageContainer
 --- !u!114 &8202738390461214508

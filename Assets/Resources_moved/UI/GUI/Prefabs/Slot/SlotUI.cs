@@ -27,9 +27,10 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
         public SlotUI(VisualElement root)
         {
             rootElement = root;
-
             backgroundImage = rootElement.Q<Image>("BackgroundImage");
-            slotItemUI = rootElement.Q<SlotItemUI>("SlotItem");
+            var slotItemVe = rootElement.Q<VisualElement>("SlotItem");
+            if (slotItemVe != null) slotItemUI = new SlotItemUI(slotItemVe);
+            else Debug.LogWarning("SlotItem не найден в корне слота!");
 
             SetupEnterEvent();
             SetupLeaveEvent();
@@ -70,6 +71,8 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             if (slotItemUI != null)
             {
                 slotItemUI.ItemData = newItemData;
+                if (slotItemUI.ItemData == null) Debug.Log("Data is null");
+                //else Debug.Log(slotItemUI.ItemData.general.nameId);
             }
         }
 
