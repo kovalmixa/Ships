@@ -24,18 +24,8 @@ namespace Assets.Global.SceneHandlers
                     string windowName = pair.Key;
 
                     if (window == null || !window.IsOpen) continue;
-
-                    if (window.PointerColElements == null)
-                    {
-                        Debug.LogWarning($"[IsOverUI] У открытого окна '{windowName}' коллекция PointerColElements равна null!");
-                        continue;
-                    }
-
-                    if (window.PointerColElements.Count > 0)
-                    {
-                        Debug.Log($"[IsOverUI] Курсор НАД UI! Окно: '{windowName}', элементов под курсором: {window.PointerColElements.Count}");
-                        return true;
-                    }
+                    if (window.PointerColElements == null) continue;
+                    if (window.PointerColElements.Count > 0) return true;
                 }
                 return false;
             }
@@ -200,6 +190,8 @@ namespace Assets.Global.SceneHandlers
 
         #region Common Window Management & Internal Spawning
 
+
+
         public async UniTask CloseAllExcept(params string[] ignoreWindowIds)
         {
             var ignoreSet = new HashSet<string>(ignoreWindowIds ?? Array.Empty<string>());
@@ -228,35 +220,32 @@ namespace Assets.Global.SceneHandlers
         {
             if (_activeWindows.TryGetValue(windowId, out UIWindow existingWindow))
             {
-                if (existingWindow != null)
-                {
-                    if (!existingWindow.gameObject.activeSelf)
-                        existingWindow.gameObject.SetActive(true);
-
-                    await existingWindow.OpenAsync(delayMs, onComplete);
-                }
+                if (existingWindow != null) await existingWindow.OpenAsync(delayMs, onComplete);
                 return;
             }
 
-            GameObject windowObj = await PrefabLoader.Instance.InstantiatePrefabAsync<GameObject>(windowId, Vector3.zero, Quaternion.identity);
+            GameObject windowObj =
+                await PrefabLoader.Instance.InstantiatePrefabAsync<GameObject>(
+                    windowId, Vector3.zero, Quaternion.identity, gameObject.transform);
 
             if (windowObj == null)
             {
-                Debug.LogError($"[WindowManager] Не удалось загрузить или заспавнить окно: '{windowId}'");
+                Debug.LogError($"[WindowManager] Не удалось загрузить окно: '{windowId}'");
                 return;
             }
 
             DontDestroyOnLoad(windowObj);
-
             if (!windowObj.TryGetComponent<UIWindow>(out var window))
             {
-                Debug.LogError($"[WindowManager] На префабе '{windowId}' отсутствует компонент UIWindow!");
+                Debug.LogError($"[WindowManager] На префабе '{windowId}' отсутствует UIWindow!");
                 Destroy(windowObj);
                 return;
             }
 
             _activeWindows[windowId] = window;
+
             ConfigureUnscaledTime(windowObj);
+
             await window.OpenAsync(delayMs, onComplete);
         }
 
@@ -271,17 +260,11 @@ namespace Assets.Global.SceneHandlers
 
         private void HandleWindowCachingOrDestruction(string windowId, UIWindow window)
         {
-            if (window.IsCached)
-            {
-                if (window.gameObject != null && window.gameObject.activeSelf)
-                    window.gameObject.SetActive(false);
-            }
-            else
-            {
-                _activeWindows.Remove(windowId);
-                if (window != null && window.gameObject != null)
-                    Destroy(window.gameObject);
-            }
+            if (window.IsCached) return;
+            _activeWindows.Remove(windowId);
+
+            if (window != null && window.gameObject != null)
+                Destroy(window.gameObject);
         }
 
         private void SetTimeScale(bool freeze) => Time.timeScale = freeze ? 0f : 1f;

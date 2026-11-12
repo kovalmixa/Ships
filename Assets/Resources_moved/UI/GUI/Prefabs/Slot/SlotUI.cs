@@ -16,7 +16,8 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 
     public class SlotUI
     {
-        protected VisualElement rootElement;
+        //protected VisualElement rootElement;
+        public VisualElement rootElement;
         protected Image backgroundImage;
         protected SlotItemData slotItemData = new();
         public SlotItemData SlotItemData => slotItemData;

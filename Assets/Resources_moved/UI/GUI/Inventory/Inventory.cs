@@ -2,8 +2,10 @@ using Assets.Resources_moved.UI.GUI.Prefabs.Slot;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEngine.Rendering.DebugUI.MessageBox;
 
 namespace Assets.Resources_moved.UI.GUI.Inventory
 {
@@ -40,6 +42,12 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
             float paddingRight = _inventoryVe.resolvedStyle.paddingRight;
             float paddingTop = _inventoryVe.resolvedStyle.paddingRight;
             float paddingBottom = _inventoryVe.resolvedStyle.paddingRight;
+
+            //float paddingLeft = _inventoryVe.resolvedStyle.paddingLeft;
+            //float paddingRight = _inventoryVe.resolvedStyle.paddingRight;
+            //float paddingTop = _inventoryVe.resolvedStyle.paddingTop;
+            //float paddingBottom = _inventoryVe.resolvedStyle.paddingBottom;
+
             float totalSlotWidth = SlotUI.SlotStyle.TotalSlotWidth;
 
             float gridWidth = (totalSlotWidth * columns) + (SlotUI.SlotStyle.slotMargin * (columns - 1));

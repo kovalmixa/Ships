@@ -15,6 +15,8 @@ namespace Assets.Resources_moved.UI.GUI.Inventory.Player
 
         protected override void Awake()
         {
+            base.Awake();
+
             _inventoryController = PlayerInventoryController.Instance;
             var root = RootVisualElement;
             var inventoryVe = root.Q<VisualElement>("Inventory");

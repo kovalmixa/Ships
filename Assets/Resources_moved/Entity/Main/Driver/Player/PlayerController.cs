@@ -2,7 +2,6 @@ using Assets.Global.Enums;
 using Assets.Global.SceneHandlers;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Entity.Controllers
 {

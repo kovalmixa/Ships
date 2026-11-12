@@ -27,11 +27,15 @@ public abstract class UIWindow : MonoBehaviour
         }
     }
 
-    public bool IsOpen => gameObject.activeSelf;
+    public bool IsOpen => RootVisualElement != null && RootVisualElement.style.display != DisplayStyle.None;
     public bool IsCached => _isCached;
 
     protected virtual void OnOpened() { }
-    protected virtual void OnClosed() { }
+
+    protected virtual void OnClosed()
+    {
+        PointerColElements.Clear(); 
+    }
 
     protected virtual void Awake()
     {
@@ -99,27 +103,25 @@ public abstract class UIWindow : MonoBehaviour
     public async UniTask OpenAsync(int delayMs = 0, Action onComplete = null)
     {
         ResetCancellationToken();
-
         var token = _cts.Token;
 
         try
         {
-            gameObject.SetActive(true);
-
-            if (RootVisualElement == null) await UniTask.Yield(PlayerLoopTiming.Update, token);
-
             if (RootVisualElement == null)
             {
-                Debug.LogError($"[UIWindow] RootVisualElement is still null on {gameObject.name}.", this);
+                Debug.LogError($"[UIWindow] RootVisualElement is null on {gameObject.name}.");
                 return;
             }
 
             RootVisualElement.style.display = DisplayStyle.Flex;
-            RootVisualElement.pickingMode = PickingMode.Position;
+            RootVisualElement.pickingMode = PickingMode.Ignore;
 
             if (delayMs > 0)
             {
-                bool isCanceled = await UniTask.Delay(delayMs, cancellationToken: token).SuppressCancellationThrow();
+                bool isCanceled = await UniTask
+                    .Delay(delayMs, cancellationToken: token)
+                    .SuppressCancellationThrow();
+
                 if (isCanceled) return;
             }
 
@@ -153,8 +155,13 @@ public abstract class UIWindow : MonoBehaviour
             if (!token.IsCancellationRequested)
             {
                 OnClosed();
-                if (RootVisualElement != null) RootVisualElement.style.display = DisplayStyle.None;
-                gameObject.SetActive(false);
+
+                if (RootVisualElement != null)
+                {
+                    RootVisualElement.style.display = DisplayStyle.None;
+                    RootVisualElement.style.opacity = 1f;
+                }
+
                 onComplete?.Invoke();
             }
         }
@@ -165,15 +172,18 @@ public abstract class UIWindow : MonoBehaviour
     {
         ResetCancellationToken();
 
-        if (!isOpen) ClearWindowElements();
+        if (!isOpen)
+            ClearWindowElements();
 
         if (RootVisualElement != null)
         {
             RootVisualElement.style.opacity = isOpen ? 1f : 0f;
             RootVisualElement.style.display = isOpen ? DisplayStyle.Flex : DisplayStyle.None;
-            RootVisualElement.pickingMode = isOpen ? PickingMode.Position : PickingMode.Ignore;
+
+            //RootVisualElement.pickingMode =
+            //    isOpen ? PickingMode.Position : PickingMode.Ignore;
+            RootVisualElement.pickingMode = PickingMode.Ignore;
         }
-        gameObject.SetActive(isOpen);
     }
 
     private async UniTask FadeAsync(float startAlpha, float endAlpha, CancellationToken token)
