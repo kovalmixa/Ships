@@ -16,12 +16,11 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 
     public class SlotUI
     {
-        //protected VisualElement rootElement;
         public VisualElement rootElement;
         protected Image backgroundImage;
-        protected SlotItemData slotItemData = new();
+        protected SlotItemData slotItemData = null;
         public SlotItemData SlotItemData => slotItemData;
-        protected SlotItemUI slotItemUI;
+        public SlotItemUI slotItemUI;
 
         public static SlotStyle SlotStyle => new SlotStyle();
 
@@ -29,15 +28,13 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
         {
             rootElement = root;
             backgroundImage = rootElement.Q<Image>("BackgroundImage");
-            var slotItemVe = rootElement.Q<VisualElement>("SlotItem");
-            if (slotItemVe != null) slotItemUI = new SlotItemUI(slotItemVe);
-            else Debug.LogWarning("SlotItem не найден в корне слота!");
 
             SetupEnterEvent();
             SetupLeaveEvent();
             SetupPointerDownEvent();
             SetupClickPointerUpEvent();
         }
+
 
         protected virtual void SetupEnterEvent()
         {

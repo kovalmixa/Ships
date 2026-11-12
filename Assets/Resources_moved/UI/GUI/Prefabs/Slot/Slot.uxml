@@ -1,7 +1,4 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Template name="SlotItem" src="project://database/Assets/Resources_moved/UI/GUI/Prefabs/Slot/SlotItem.uxml?fileID=9197481963319205126&amp;guid=360e629a9c6715a4a9a20bc1fb9abd02&amp;type=3#SlotItem"/>
     <Style src="project://database/Assets/Resources_moved/UI/GUI/Prefabs/Slot/SlotStyle.uss?fileID=7433441132597879392&amp;guid=ba5af9e7d5202e442ae5167c70ae2bf7&amp;type=3#SlotStyle"/>
-    <ui:Image name="BackgroundImage" class="inventory-slot-background-image" style="width: 100%; height: 100%;">
-        <ui:Instance template="SlotItem" name="SlotItem" style="position: absolute; width: 100%; height: 100%;"/>
-    </ui:Image>
+    <ui:Image name="BackgroundImage" class="inventory-slot-background-image" style="width: 100%; height: 100%;"/>
 </ui:UXML>

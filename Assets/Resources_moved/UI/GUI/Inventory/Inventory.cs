@@ -2,10 +2,8 @@ using Assets.Resources_moved.UI.GUI.Prefabs.Slot;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEngine.Rendering.DebugUI.MessageBox;
 
 namespace Assets.Resources_moved.UI.GUI.Inventory
 {
@@ -16,10 +14,15 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
         [SerializeField] private int _gridWidth = 5;
         [SerializeField] private int _gridHeight = 4;
         [SerializeField] protected VisualTreeAsset slotPrefab;
+        [SerializeField] protected VisualTreeAsset slotItemPrefab;
 
         private VisualElement _inventoryVe;
+        private VisualElement _slotsContainer;
+        private VisualElement _itemsContainer;
         private Label _inventoryLabel;
+
         protected Dictionary<Vector2, InventorySlotUI> slots = new();
+        private List<SlotItemUI> spawnedItems = new();
 
         #region Setup
 
@@ -30,28 +33,47 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
                 _inventoryVe = root.Q<VisualElement>("Container");
                 _inventoryLabel = root.Q<Label>("Label");
             }
-            if (_inventoryVe != null) BuildInventory(_gridWidth, _gridHeight);
+
+            if (_inventoryVe != null)
+            {
+                _slotsContainer = _inventoryVe.Q<VisualElement>("SlotsContainer") ?? _inventoryVe;
+                _itemsContainer = _inventoryVe.Q<VisualElement>("ItemsContainer");
+
+                if (_itemsContainer == null)
+                {
+                    _itemsContainer = new VisualElement();
+                    _itemsContainer.name = "ItemsContainer";
+                    _itemsContainer.style.position = Position.Absolute;
+                    _itemsContainer.style.left = 0;
+                    _itemsContainer.style.top = 0;
+                    _itemsContainer.style.right = 0;
+                    _itemsContainer.style.bottom = 0;
+                    _inventoryVe.Add(_itemsContainer);
+                }
+
+                BuildInventory(_gridWidth, _gridHeight);
+            }
         }
 
         public void BuildInventory(int columns, int rows)
         {
             slots.Clear();
-            _inventoryVe.Clear();
+            _slotsContainer.Clear();
+            _itemsContainer.Clear();
+            spawnedItems.Clear();
+
+            SlotStyle style = new SlotStyle();
+            float cellSize = style.slotSize;
+            float margin = style.slotMargin;
+            float totalSlotWidth = style.TotalSlotWidth;
 
             float paddingLeft = _inventoryVe.resolvedStyle.paddingLeft;
             float paddingRight = _inventoryVe.resolvedStyle.paddingRight;
-            float paddingTop = _inventoryVe.resolvedStyle.paddingRight;
-            float paddingBottom = _inventoryVe.resolvedStyle.paddingRight;
+            float paddingTop = _inventoryVe.resolvedStyle.paddingTop;
+            float paddingBottom = _inventoryVe.resolvedStyle.paddingBottom;
 
-            //float paddingLeft = _inventoryVe.resolvedStyle.paddingLeft;
-            //float paddingRight = _inventoryVe.resolvedStyle.paddingRight;
-            //float paddingTop = _inventoryVe.resolvedStyle.paddingTop;
-            //float paddingBottom = _inventoryVe.resolvedStyle.paddingBottom;
-
-            float totalSlotWidth = SlotUI.SlotStyle.TotalSlotWidth;
-
-            float gridWidth = (totalSlotWidth * columns) + (SlotUI.SlotStyle.slotMargin * (columns - 1));
-            float gridHeight = (totalSlotWidth * rows) + (SlotUI.SlotStyle.slotMargin * (rows - 1));
+            float gridWidth = (totalSlotWidth * columns) + (margin * (columns - 1));
+            float gridHeight = (totalSlotWidth * rows) + (margin * (rows - 1));
 
             _inventoryVe.style.width = gridWidth + paddingLeft + paddingRight;
             _inventoryVe.style.height = gridHeight + paddingTop + paddingBottom;
@@ -64,13 +86,63 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
                 int x = i % columns;
                 int y = i / columns;
                 slotVe.name = $"Slot_{x}_{y}";
-                _inventoryVe.Add(slotVe);
+                _slotsContainer.Add(slotVe);
 
                 var slotElement = slotVe.Q<VisualElement>("SlotRoot") ?? slotVe.Q<VisualElement>();
                 var slot = new InventorySlotUI(slotElement);
 
                 slots.Add(new Vector2(x, y), slot);
             }
+        }
+
+        public bool TrySpawnItemUI(Vector2 startPosition, InventoryItemData itemData)
+        {
+            if (slotItemPrefab == null)
+            {
+                Debug.LogError("slotItemPrefab не назначен в инвентаре!");
+                return false;
+            }
+
+            SlotStyle style = new SlotStyle();
+            float cellSize = style.slotSize;
+            float margin = style.slotMargin;
+            float totalSlotWidth = style.TotalSlotWidth;
+
+            var itemVe = slotItemPrefab.CloneTree();
+            var itemRoot = itemVe.Q<VisualElement>("ItemRoot") ?? itemVe.Q<VisualElement>();
+
+            var slotItemUI = new SlotItemUI(itemRoot);
+            slotItemUI.ItemData = itemData;
+
+            float posX = startPosition.x * totalSlotWidth;
+            float posY = startPosition.y * totalSlotWidth;
+            slotItemUI.SetPosition(posX, posY);
+
+            var spanCols = itemData.inventoryOptions.SlotSize.x;
+            var spanRows = itemData.inventoryOptions.SlotSize.y;
+            float itemWidth = (spanCols * totalSlotWidth) - (margin * 2);
+            itemWidth = spanCols * cellSize + (spanCols - 1) * (margin * 2);
+            float itemHeight = spanRows * cellSize + (spanRows - 1) * (margin * 2);
+
+            slotItemUI.SetSize(itemWidth, itemHeight);
+
+            _itemsContainer.Add(itemRoot);
+            spawnedItems.Add(slotItemUI);
+
+            for (int x = 0; x < spanCols; x++)
+            {
+                for (int y = 0; y < spanRows; y++)
+                {
+                    Vector2 pos = new Vector2(startPosition.x + x, startPosition.y + y);
+                    if (slots.TryGetValue(pos, out var slot))
+                    {
+                        slot.SetItem(itemData);
+                        if (x == 0 && y == 0) slot.slotItemUI = slotItemUI;
+                    }
+                }
+            }
+
+            return true;
         }
 
         public void SetupInventoryItems(Dictionary<Vector2, InventoryItemData> itemsDict)
@@ -144,7 +216,8 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
 
         public void RemoveAllItems()
         {
-            foreach (var slot in slots) {
+            foreach (var slot in slots)
+            {
                 //logic with processing dimentions of items and sparce movements
                 TryRemoveInventoryItemWithPosition(slot.Key);
             }

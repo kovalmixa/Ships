@@ -74,3 +74,4 @@ MonoBehaviour:
     _gridWidth: 10
     _gridHeight: 10
     slotPrefab: {fileID: 9197481963319205126, guid: 027b9d1171eeb834fbf4e1f397cac051, type: 3}
+    slotItemPrefab: {fileID: 9197481963319205126, guid: 360e629a9c6715a4a9a20bc1fb9abd02, type: 3}
