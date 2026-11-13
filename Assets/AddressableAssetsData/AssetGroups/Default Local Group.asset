@@ -40,6 +40,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 360e629a9c6715a4a9a20bc1fb9abd02
+    m_Address: SlotItem
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3d27cf2cc22ee604bb28eb974f21930f
     m_Address: ripple
     m_ReadOnly: 0

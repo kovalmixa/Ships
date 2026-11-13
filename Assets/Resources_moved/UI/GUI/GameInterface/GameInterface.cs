@@ -53,19 +53,19 @@ public class GameInterface : UIWindow
 
         if (_healthBarVE != null)
         {
-            _healthBarTK = new ProgressBarTK();
+            _healthBarTK = gameObject.AddComponent<ProgressBarTK>();
             _healthBarTK.Initialize(_healthBarVE, _progressBarMaterial);
         }
 
         if (_energyBarVE != null)
         {
-            _energyBarTK = new ProgressBarTK();
+            _energyBarTK = gameObject.AddComponent<ProgressBarTK>();
             _energyBarTK.Initialize(_energyBarVE, _progressBarMaterial);
         }
 
         if (_experienceBarVE != null)
         {
-            _experienceBarTK = new ProgressBarTK();
+            _experienceBarTK = gameObject.AddComponent<ProgressBarTK>();
             _experienceBarTK.Initialize(_experienceBarVE, _progressBarMaterial);
         }
 

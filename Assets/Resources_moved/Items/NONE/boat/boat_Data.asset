@@ -97,4 +97,6 @@ MonoBehaviour:
     leftCorpseOnDeath: 1
     sunkOnDeath: 1
     corpseDisappearTime: 300
+  _inventoryOptions:
+    <SlotSize>k__BackingField: {x: 1, y: 1}
   vehicleType: 1

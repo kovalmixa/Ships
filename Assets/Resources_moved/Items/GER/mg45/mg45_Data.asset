@@ -102,6 +102,8 @@ MonoBehaviour:
     leftCorpseOnDeath: 1
     sunkOnDeath: 0
     corpseDisappearTime: 0
+  _inventoryOptions:
+    <SlotSize>k__BackingField: {x: 1, y: 1}
   type: 1
   projectileType: 1
   <SizeType>k__BackingField: 1

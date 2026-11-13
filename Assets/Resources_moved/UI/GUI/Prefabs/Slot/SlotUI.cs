@@ -1,3 +1,4 @@
+using Assets.Global.FileGlobal;
 using Assets.Global.Math;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using UnityEngine;
@@ -16,25 +17,29 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 
     public class SlotUI
     {
-        public VisualElement rootElement;
         protected Image backgroundImage;
         protected SlotItemData slotItemData = null;
+        protected VisualTreeAsset slotItemPrefab;
+
         public SlotItemData SlotItemData => slotItemData;
         public SlotItemUI slotItemUI;
+        public VisualElement rootElement;
 
         public static SlotStyle SlotStyle => new SlotStyle();
+
+        #region Setup
 
         public SlotUI(VisualElement root)
         {
             rootElement = root;
             backgroundImage = rootElement.Q<Image>("BackgroundImage");
+            var slotItemPrefab = PrefabLoader.Instance.LoadAssetSync<VisualTreeAsset>("SlotItem");
 
             SetupEnterEvent();
             SetupLeaveEvent();
             SetupPointerDownEvent();
             SetupClickPointerUpEvent();
         }
-
 
         protected virtual void SetupEnterEvent()
         {
@@ -63,17 +68,39 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             backgroundImage.RegisterCallback<PointerUpEvent>(evt => backgroundImage.style.backgroundColor = enterColor);
         }
 
+        #endregion
+
+        #region API
+
         public virtual void SetItem(SlotItemData newItemData)
         {
-            this.slotItemData = newItemData;
+            slotItemData = newItemData;
+            if (slotItemUI == null && newItemData != null) SpawnSlotItemUI();
             if (slotItemUI != null)
             {
-                slotItemUI.ItemData = newItemData;
-                if (slotItemUI.ItemData == null) Debug.Log("Data is null");
-                //else Debug.Log(slotItemUI.ItemData.general.nameId);
+                if (newItemData == null) ClearSlot();
+                else slotItemUI.ItemData = newItemData;
             }
         }
 
-        public virtual bool CompareItems(SlotItemData otherData) => this.slotItemData == otherData;
+        protected virtual void SpawnSlotItemUI()
+        {
+            if (slotItemPrefab != null)
+            {
+                var itemRoot = slotItemPrefab.CloneTree();
+                slotItemUI = new SlotItemUI(itemRoot);
+            }
+            else Debug.LogWarning("Unable to find slot item prefab");
+        }
+
+        public virtual void ClearSlot()
+        {
+            if (slotItemUI == null) return;
+            slotItemUI = null;
+        }
+
+        public virtual bool CompareItems(SlotItemData otherData) => slotItemData == otherData;
+
+        #endregion
     }
 }

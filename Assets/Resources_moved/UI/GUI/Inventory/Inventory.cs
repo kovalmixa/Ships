@@ -22,7 +22,6 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
         private Label _inventoryLabel;
 
         protected Dictionary<Vector2, InventorySlotUI> slots = new();
-        private List<SlotItemUI> spawnedItems = new();
 
         #region Setup
 
@@ -60,11 +59,8 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
             slots.Clear();
             _slotsContainer.Clear();
             _itemsContainer.Clear();
-            spawnedItems.Clear();
 
-            SlotStyle style = new SlotStyle();
-            float cellSize = style.slotSize;
-            float margin = style.slotMargin;
+            var style = InventorySlotUI.SlotStyle;
             float totalSlotWidth = style.TotalSlotWidth;
 
             float paddingLeft = _inventoryVe.resolvedStyle.paddingLeft;
@@ -72,8 +68,8 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
             float paddingTop = _inventoryVe.resolvedStyle.paddingTop;
             float paddingBottom = _inventoryVe.resolvedStyle.paddingBottom;
 
-            float gridWidth = (totalSlotWidth * columns) + (margin * (columns - 1));
-            float gridHeight = (totalSlotWidth * rows) + (margin * (rows - 1));
+            float gridWidth = (totalSlotWidth * columns) + (style.slotMargin * (columns - 1));
+            float gridHeight = (totalSlotWidth * rows) + (style.slotMargin * (rows - 1));
 
             _inventoryVe.style.width = gridWidth + paddingLeft + paddingRight;
             _inventoryVe.style.height = gridHeight + paddingTop + paddingBottom;
@@ -89,59 +85,74 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
                 _slotsContainer.Add(slotVe);
 
                 var slotElement = slotVe.Q<VisualElement>("SlotRoot") ?? slotVe.Q<VisualElement>();
-                var slot = new InventorySlotUI(slotElement);
+                var slot = new InventorySlotUI(slotElement, new Vector2(x, y), TrySpawnItemUIWithSubInit);
 
-                slots.Add(new Vector2(x, y), slot);
+                slots.Add(slot.GridPosition, slot);
             }
         }
 
-        public bool TrySpawnItemUI(Vector2 startPosition, InventoryItemData itemData)
+        public bool TrySpawnItemUIWithSubInit(Vector2 startPosition, InventoryItemData itemData)
         {
+            if (itemData == null) return false;
             if (slotItemPrefab == null)
             {
                 Debug.LogError("slotItemPrefab не назначен в инвентаре!");
                 return false;
             }
 
-            SlotStyle style = new SlotStyle();
-            float cellSize = style.slotSize;
-            float margin = style.slotMargin;
-            float totalSlotWidth = style.TotalSlotWidth;
-
-            var itemVe = slotItemPrefab.CloneTree();
-            var itemRoot = itemVe.Q<VisualElement>("ItemRoot") ?? itemVe.Q<VisualElement>();
-
-            var slotItemUI = new SlotItemUI(itemRoot);
-            slotItemUI.ItemData = itemData;
-
-            float posX = startPosition.x * totalSlotWidth;
-            float posY = startPosition.y * totalSlotWidth;
-            slotItemUI.SetPosition(posX, posY);
-
             var spanCols = itemData.inventoryOptions.SlotSize.x;
             var spanRows = itemData.inventoryOptions.SlotSize.y;
-            float itemWidth = (spanCols * totalSlotWidth) - (margin * 2);
-            itemWidth = spanCols * cellSize + (spanCols - 1) * (margin * 2);
-            float itemHeight = spanRows * cellSize + (spanRows - 1) * (margin * 2);
-
-            slotItemUI.SetSize(itemWidth, itemHeight);
-
-            _itemsContainer.Add(itemRoot);
-            spawnedItems.Add(slotItemUI);
+            if (spanCols == 0 || spanRows == 0)
+            {
+                Debug.LogError($"Slot size is 0,0! for {itemData.general.nameId}");
+                return false;
+            }
 
             for (int x = 0; x < spanCols; x++)
             {
                 for (int y = 0; y < spanRows; y++)
                 {
                     Vector2 pos = new Vector2(startPosition.x + x, startPosition.y + y);
-                    if (slots.TryGetValue(pos, out var slot))
-                    {
-                        slot.SetItem(itemData);
-                        if (x == 0 && y == 0) slot.slotItemUI = slotItemUI;
-                    }
+                    if (!slots.TryGetValue(pos, out var targetSlot) 
+                        || targetSlot.SlotItemData != null || targetSlot.hostSlot != null)
+                        return false;
                 }
             }
 
+            var style = InventorySlotUI.SlotStyle;
+            float cellSize = style.slotSize;
+            float margin = style.slotMargin;
+            float totalSlotWidth = style.TotalSlotWidth;
+
+            float itemWidth = (spanCols * totalSlotWidth) - (margin * 2);
+            float itemHeight = (spanRows * totalSlotWidth) - (margin * 2);
+
+            float posX = startPosition.x * totalSlotWidth;
+            float posY = startPosition.y * totalSlotWidth;
+
+            var itemRoot = slotItemPrefab.CloneTree();
+            var slotItemUI = new SlotItemUI(itemRoot);
+
+            slotItemUI.SetPosition(posX, posY);
+            slotItemUI.SetSize(itemWidth, itemHeight);
+
+            _itemsContainer.Add(itemRoot);
+
+            if (!slots.TryGetValue(startPosition, out var hostSlot)) return false;
+            for (int x = 0; x < spanCols; x++)
+            {
+                for (int y = 0; y < spanRows; y++)
+                {
+                    if (x == 0 && y == 0) continue;
+                    Vector2 pos = new Vector2(startPosition.x + x, startPosition.y + y);
+                    if (slots.TryGetValue(pos, out var subSlot))
+                    {
+                        subSlot.SetItem(itemData, itemData.quantity);
+                        subSlot.hostSlot = hostSlot;
+                        hostSlot.subSlots.Add(subSlot);
+                    }
+                }
+            }
             return true;
         }
 
@@ -164,11 +175,11 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
         public Dictionary<Vector2, InventoryItemData> GetInventoryItemsData()
         {
             Dictionary<Vector2, InventoryItemData> items = new();
-            InventoryItemData tmpData = null;
             foreach (var slot in slots)
             {
-                tmpData = slot.Value.SlotItemData as InventoryItemData;
-                if (tmpData != null) items[slot.Key] = tmpData;
+                var slotUI = slot.Value;
+                if (slotUI.SlotItemData != null && slotUI.hostSlot == null)
+                    items[slot.Key] = slotUI.SlotItemData as InventoryItemData;
             }
             return items;
         }

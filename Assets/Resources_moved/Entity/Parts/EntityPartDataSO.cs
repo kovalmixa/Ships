@@ -16,7 +16,7 @@ namespace Assets.Entity.Parts
 
         public LifeCycleData lifeTimeData;
 
-        private InventoryOptions _inventoryOptions;
+        [SerializeField] private InventoryOptions _inventoryOptions;
         InventoryOptions IInventorySlotData.InventoryOptions => _inventoryOptions;
 
         public List<ModUnit> Mods => statOptions.mods;
