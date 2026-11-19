@@ -18,12 +18,12 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
     public class SlotUI
     {
         protected Image backgroundImage;
-        protected SlotItemData slotItemData = null;
         protected VisualTreeAsset slotItemPrefab;
-
-        public SlotItemData SlotItemData => slotItemData;
         public SlotItemUI slotItemUI;
         public VisualElement rootElement;
+        protected SlotItemData slotItemData = null;
+
+        public SlotItemData SlotItemData => slotItemData;
 
         public static SlotStyle SlotStyle => new SlotStyle();
 
@@ -83,7 +83,7 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             }
         }
 
-        protected virtual void SpawnSlotItemUI()
+        private void SpawnSlotItemUI()
         {
             if (slotItemPrefab != null)
             {

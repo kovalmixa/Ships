@@ -1,4 +1,5 @@
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -21,7 +22,12 @@ namespace Assets.Resources_moved.UI.GUI.Inventory.Player
             var root = RootVisualElement;
             var inventoryVe = root.Q<VisualElement>("Inventory");
 
-            _inventory.Setup(inventoryVe);
+            InitInventoryAsync(inventoryVe).Forget();
+        }
+
+        private async UniTaskVoid InitInventoryAsync(VisualElement inventoryVe)
+        {
+            await _inventory.SetupAsync(inventoryVe);
             RegisterPointerCollisionForSingleElement(inventoryVe);
             _inventory.SetupInventoryItems(_inventoryController.InventoryItems);
             _inventoryController.SetPlayerInventoryUI(this);

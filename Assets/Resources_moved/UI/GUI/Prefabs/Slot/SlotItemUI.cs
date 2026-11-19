@@ -1,4 +1,5 @@
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
+using Assets.Resources_moved.UI.UIToolkit;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -18,6 +19,7 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
         protected SlotItemData itemData;
 
         protected VisualElement rootElement;
+        public VisualElement Root => rootElement;
 
         public virtual SlotItemData ItemData
         {
@@ -25,13 +27,9 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             set
             {
                 itemData = value;
-                if (itemData != null)
-                    Debug.Log(itemData.general.nameId);
-
-                if (iconImage != null)
-                    iconImage.image = itemData == null ? null : itemData.general.icon;
-                else
-                    Debug.LogWarning("No image node in slot item ui");
+                if (itemData != null) Debug.Log(itemData.general.nameId);
+                if (iconImage != null) iconImage.image = itemData == null ? null : itemData.general.icon;
+                else Debug.LogWarning("No image node in slot item ui");
             }
         }
 
@@ -59,7 +57,31 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
                 if (subImage != null) subImage.image = value;
             }
         }
+    
+        public Vector2 Size
+        {
+            get
+            {
+                if (rootElement == null) return Vector2.zero;
 
+                float width = float.IsNaN(rootElement.resolvedStyle.width) ? 0f : rootElement.resolvedStyle.width;
+                float height = float.IsNaN(rootElement.resolvedStyle.height) ? 0f : rootElement.resolvedStyle.height;
+
+                if (width == 0f && rootElement.style.width.value.unit == LengthUnit.Pixel)
+                    width = rootElement.style.width.value.value;
+
+                if (height == 0f && rootElement.style.height.value.unit == LengthUnit.Pixel)
+                    height = rootElement.style.height.value.value;
+
+                return new Vector2(width, height);
+            }
+            set
+            {
+                if (rootElement == null) return;
+                rootElement.style.width = value.x;
+                rootElement.style.height = value.y;
+            }
+        }
         #endregion
 
         public SlotItemUI(VisualElement root, bool showZero = false)
@@ -67,6 +89,7 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             this.showZero = showZero;
             rootElement = root;
 
+            VisualElementHandler.SetPickingModeRecursive(rootElement, PickingMode.Ignore);
             if (rootElement != null) rootElement.style.position = Position.Absolute;
 
             iconImage = root.Q<Image>("IconImage");
@@ -84,25 +107,6 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             rootElement.style.left = x;
             rootElement.style.top = y;
         }
-
-        public void SetSize(float width, float height)
-        {
-            if (rootElement == null) return;
-            rootElement.style.width = width;
-            rootElement.style.height = height;
-        }
-
-        public void CalculateAndSetDimensions(int spanCols, int spanRows, SlotStyle style)
-        {
-            float cellSize = style.slotSize;
-            float margin = style.slotMargin;
-
-            float totalWidth = (spanCols * cellSize) + ((spanCols - 1) * (margin * 2));
-            float totalHeight = (spanRows * cellSize) + ((spanRows - 1) * (margin * 2));
-
-            SetSize(totalWidth, totalHeight);
-        }
-
         #endregion
     }
 }

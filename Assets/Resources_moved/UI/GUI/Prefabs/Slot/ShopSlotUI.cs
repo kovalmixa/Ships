@@ -7,9 +7,7 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 {
     public class ShopSlotUI : InventorySlotUI
     {
-        public ShopSlotUI(VisualElement root, Vector2 gridPosition,
-            Func<Vector2, InventoryItemData, bool> itemObjectSpawningFunc) 
-            : base(root, gridPosition, itemObjectSpawningFunc) 
+        public ShopSlotUI(VisualElement root, Vector2 gridPosition) : base(root, gridPosition) 
         {
         
         }
