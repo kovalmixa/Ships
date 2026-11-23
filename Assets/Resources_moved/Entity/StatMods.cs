@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace Assets.Entity.StatMods
 {
@@ -199,6 +200,13 @@ namespace Assets.Entity.StatMods
             _value = value;
         }
 
+        public StatUnit(StatUnit other)
+        {
+            _type = other.Type;
+            _statLayer = other.StatLayer;
+            _value = other.Value;
+        }
+
         public StatUnit WithValue(float newValue) => new(Type, StatLayer, newValue);
         public void UpdateInspectorName() => name = $"{_type}: {_value}";
     }
@@ -219,6 +227,12 @@ namespace Assets.Entity.StatMods
         {
             _calcType = calcType;
             _applyType = applyType;
+        }
+
+        public ModUnit(ModUnit other) : base(other.Type, other.StatLayer, other.Value)
+        {
+            _calcType = other.CalcType;
+            _applyType = other.ApplyType;
         }
 
         public new ModUnit WithValue(float newValue) => new(Type, StatLayer, CalcType, ApplyType, newValue);

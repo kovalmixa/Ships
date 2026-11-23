@@ -1,3 +1,4 @@
+using Assets.Resources_moved.UI.Cursor;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using Assets.Resources_moved.UI.UIToolkit;
@@ -87,14 +88,12 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
                 _slotsContainer.Add(slotVe);
 
                 var slotElement = slotVe.Q<VisualElement>("SlotRoot") ?? slotVe.Q<VisualElement>();
-                var slot = new InventorySlotUI(slotElement, new Vector2(x, y));
+                var slot = new InventorySlotUI(slotElement, OnClick, new Vector2(x, y));
 
                 slots.Add(slot.GridPosition, slot);
             }
 
             await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
-            // Или если нужно дождаться именно Layout Pass интерфейса:
-            // await _slotsContainer.AwaitForNextPass().ToUniTask(cancellationToken: cancellationToken);
 
             var slotPaddingX = slotContainerWidth / columns - totalSlotWidth;
             var slotPaddingY = slotContainerHeight / rows - totalSlotWidth;
@@ -104,6 +103,43 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
 
             Debug.Log($"Styles applied via UniTask! SlotPadding: {_slotPadding.Left}, {_slotPadding.Top}");
         }
+
+        protected virtual void OnClick(SlotUI slot)
+        {
+            var cursorItem = CursorController.Instance.CarriedInvItem;
+            var cursorItemSize = cursorItem.inventoryOptions.SlotSize;
+            var inventorySlot = slot as InventorySlotUI;
+            var targetSlotPosition = inventorySlot.GridPosition;
+            //var cursorSlotPosition = new Vector2() targetSlotIndex - cursorItemSize.x - _gridWidth * cursorItemSize.y;
+            //if (cursorSlotIndex < 0) return;
+
+            //List<InventoryItemData> itemsInSector = new();
+            //for (int i = 0; i < cursorItemSize.y; i++)
+            //{
+            //    for(int j = 0; j < cursorItemSize.x; j++)
+            //    {
+            //        itemsInSector = slots[i * _gridWidth + j].ItemData;
+            //    }
+            //}
+
+
+            //var slotItem = inventorySlot.ItemData;
+            //var hostSlot = inventorySlot.HostSlot ?? inventorySlot;
+
+
+            //if (slot.CompareItem(cursorItem))
+            //{
+            //    cursorItem.quantity += ItemData.quantity;
+            //    slotItemData = null;
+            //}
+            //else
+            //{
+            //    var tmpData = new InventoryItemData(cursorItem);
+            //    cursorItem = ItemData;
+            //    slotItemData = null;
+            //}
+        }
+
         public void SetupInventoryItems(Dictionary<Vector2, InventoryItemData> itemsDict)
         {
             RemoveAllItems();
@@ -201,7 +237,7 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
             float total = style.TotalSlotWidth;
             float margin = style.slotMargin;
             var view = new SlotItemUI(slotItemPrefab.CloneTree());
-            Vector2 localPos = _slotsContainer.WorldToLocal(slots[start].rootElement.localBound.position);
+            Vector2 localPos = _slotsContainer.WorldToLocal(slots[start].Root.localBound.position);
 
             float posX = (start.x * total) + _slotPadding.Left;
             float posY = (start.y * total) + _slotPadding.Top;

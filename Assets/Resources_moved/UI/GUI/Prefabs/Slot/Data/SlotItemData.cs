@@ -10,6 +10,8 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data
         public GeneralOptions general;
         public GeneralOptions General => general;
 
+        public SlotItemData() { }
+
         public SlotItemData(GeneralOptions general)
         {
             this.general = general;

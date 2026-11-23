@@ -2,6 +2,7 @@ using Assets.Entity.StatMods;
 using Assets.Resources_moved.Common.ContainerComponents;
 using System;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 
 namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data
 {
@@ -15,11 +16,14 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data
         InventoryOptions IInventorySlotData.InventoryOptions => inventoryOptions;
         List<ModUnit> IInventorySlotData.Mods => mods;
 
+        public InventoryItemData() { }
+
         public InventoryItemData(InventoryItemData other) : base(other.general)
         {
             inventoryOptions = other.inventoryOptions;
-            mods = other.mods;
             quantity = other.quantity;
+            foreach(var mod in other.mods)
+                mods.Add(new ModUnit(mod));
         }
     }
 }

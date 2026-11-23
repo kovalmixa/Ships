@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Assets.Global.FileGlobal;
 using Assets.Global.Math;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEditor.Searcher.Searcher.AnalyticsEvent;
 
 namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 {
@@ -25,20 +25,22 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
         protected VisualTreeAsset slotItemPrefab;
         protected SlotItemData slotItemData = null;
         protected Dictionary<EventType, Color> pointerEventColors = new();
+        protected SlotItemUI slotItemUI;
+        protected Action<SlotUI> onClick;
 
-        public SlotItemUI slotItemUI;
-        public VisualElement rootElement;
-
+        public readonly VisualElement Root;
         public SlotItemData SlotItemData => slotItemData;
 
         public static SlotStyle SlotStyle => new SlotStyle();
 
         #region Setup
 
-        public SlotUI(VisualElement root)
+        public SlotUI(VisualElement root, Action<SlotUI> onClick)
         {
-            rootElement = root;
-            backgroundImage = rootElement.Q<Image>("BackgroundImage");
+            Root = root;
+            this.onClick = onClick;
+            
+            backgroundImage = Root.Q<Image>("BackgroundImage");
             var slotItemPrefab = PrefabLoader.Instance.LoadAssetSync<VisualTreeAsset>("SlotItem");
             
             if (backgroundImage == null) return;
@@ -78,8 +80,11 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 
         protected virtual void OnLeaveEvent() => SetBackgroundColor(pointerEventColors[EventType.Leave]);
 
-        protected virtual void OnDownEvent() => SetBackgroundColor(pointerEventColors[EventType.Down]);
-
+        protected virtual void OnDownEvent()
+        {
+            SetBackgroundColor(pointerEventColors[EventType.Down]);
+            onClick?.Invoke(this);
+        }
         protected virtual void OnPointerUpEvent() => SetBackgroundColor(pointerEventColors[EventType.Up]);
 
         #endregion

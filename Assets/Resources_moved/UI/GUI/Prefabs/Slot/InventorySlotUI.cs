@@ -1,6 +1,7 @@
 ﻿using Assets.Resources_moved.UI.Cursor;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -19,7 +20,7 @@ public class InventorySlotUI : SlotUI
 
     #region Setup
 
-    public InventorySlotUI(VisualElement root, Vector2 gridPosition) : base(root) 
+    public InventorySlotUI(VisualElement root, Action<SlotUI> onClick, Vector2 gridPosition) : base(root, onClick) 
     {
         GridPosition = gridPosition;
     }
@@ -47,17 +48,7 @@ public class InventorySlotUI : SlotUI
     protected override void OnDownEvent()
     {
         SetColorWithSubs(pointerEventColors[EventType.Down]);
-        var cursorItem = CursorController.Instance.CarriedInvItem;
-        if (CompareItem(cursorItem))
-        {
-            cursorItem.quantity += ItemData.quantity;
-            slotItemData = null;
-        }
-        else
-        {
-            cursorItem = ItemData;
-            slotItemData = null;
-        }
+        onClick?.Invoke(this);
     }
 
     protected override void OnPointerUpEvent()
