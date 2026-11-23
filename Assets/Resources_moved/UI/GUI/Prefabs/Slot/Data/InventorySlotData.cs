@@ -14,5 +14,12 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data
 
         InventoryOptions IInventorySlotData.InventoryOptions => inventoryOptions;
         List<ModUnit> IInventorySlotData.Mods => mods;
+
+        public InventoryItemData(InventoryItemData other) : base(other.general)
+        {
+            inventoryOptions = other.inventoryOptions;
+            mods = other.mods;
+            quantity = other.quantity;
+        }
     }
 }

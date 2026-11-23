@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using UnityEngine;
 
 namespace Assets.Resources_moved.UI.Cursor
@@ -13,6 +14,13 @@ namespace Assets.Resources_moved.UI.Cursor
         public CursorType type;
         public Texture2D texture;
         public Vector2 offset;
+
+        public CursorTypeTexture(Texture2D texture, Vector2 offset, CursorType type = CursorType.None)
+        {
+            this.type = type;
+            this.texture = texture;
+            this.offset = offset;
+        }
     }
 
     public class CursorFollowingObject
@@ -25,8 +33,6 @@ namespace Assets.Resources_moved.UI.Cursor
     public class CursorController : SingletonMonoBehaviour<CursorController>
     {
         [SerializeField] private List<CursorTypeTexture> _CursorTextures;
-
-        private Texture2D _CursorTexture;
         private List<CursorFollowingObject> _followingObjects = new List<CursorFollowingObject>();
         private Dictionary<float, Vector2> _followingObjectsPositions = new Dictionary<float, Vector2>();
 
@@ -38,6 +44,26 @@ namespace Assets.Resources_moved.UI.Cursor
 
         private Queue<CursorSnapshot> _cursorHistory = new Queue<CursorSnapshot>();
         private const float MaxHistoryDuration = 5f;
+
+
+        private InventoryItemData _carriedInvItemData;
+
+        public InventoryItemData CarriedInvItem
+        {
+            get => _carriedInvItemData;
+            set
+            {
+                _carriedInvItemData = value;
+                if (_carriedInvItemData == null)
+                {
+                    var texture = (Texture2D)_carriedInvItemData.General.icon;
+                    var offset = new Vector2(texture.width / 2, texture.height / 2);
+                    SetCursorTexture(new CursorTypeTexture(texture, offset));
+                }
+                else SetCursorTexture(null);
+                
+            }
+        }
 
         #region Unity lifecycle
 
@@ -85,10 +111,13 @@ namespace Assets.Resources_moved.UI.Cursor
 
         #region API
 
-        public void SetCursorByType(CursorType type)
+        public void SwitchCursorVisibility(bool isShowing) => UnityEngine.Cursor.visible = isShowing;
+
+        public void SetCursorByType(CursorType type) => SetCursorTexture(_CursorTextures?.FirstOrDefault(x => x.type == type));
+
+        protected void SetCursorTexture(CursorTypeTexture typeTexture) 
         {
-            var cursorData = _CursorTextures?.FirstOrDefault(x => x.type == type);
-            if (cursorData != null) UnityEngine.Cursor.SetCursor(cursorData.texture, cursorData.offset, CursorMode.Auto);
+            if (typeTexture != null) UnityEngine.Cursor.SetCursor(typeTexture.texture, typeTexture.offset, CursorMode.Auto);
             else UnityEngine.Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         }
 

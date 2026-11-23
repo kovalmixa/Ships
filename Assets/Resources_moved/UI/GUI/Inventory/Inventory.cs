@@ -156,7 +156,7 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
 
         private bool TryStack(InventorySlotUI host, InventoryItemData data)
         {
-            if (!host.CompareItems(data)) return false;
+            if (!host.CompareItem(data)) return false;
             host.AddQuantity(data.quantity);
             return true;
         }
@@ -205,7 +205,6 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
 
             float posX = (start.x * total) + _slotPadding.Left;
             float posY = (start.y * total) + _slotPadding.Top;
-            Debug.Log($"{posX},{posY}");
             view.SetPosition(posX, posY);
             view.Size = new Vector2(cols * total - margin * 2, rows * total - margin * 2);
             return view;
@@ -221,7 +220,7 @@ namespace Assets.Resources_moved.UI.GUI.Inventory
         {
             foreach (var slot in slots)
             {
-                if (slot.Value.CompareItems(data))
+                if (slot.Value.CompareItem(data))
                 {
                     slot.Value.SetItem(null);
                     return true;

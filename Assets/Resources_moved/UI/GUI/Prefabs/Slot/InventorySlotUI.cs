@@ -1,8 +1,10 @@
-﻿using Assets.Resources_moved.UI.GUI.Prefabs.Slot;
+﻿using Assets.Resources_moved.UI.Cursor;
+using Assets.Resources_moved.UI.GUI.Prefabs.Slot;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using EventType = Assets.Resources_moved.UI.GUI.Prefabs.Slot.EventType;
 
 public class InventorySlotUI : SlotUI
 {
@@ -15,8 +17,57 @@ public class InventorySlotUI : SlotUI
     public bool IsFree => slotItemData == null && HostSlot == null;
     public InventoryItemData ItemData => slotItemData as InventoryItemData;
 
-    public InventorySlotUI(VisualElement root, Vector2 gridPosition) : base(root)
-        => GridPosition = gridPosition;
+    #region Setup
+
+    public InventorySlotUI(VisualElement root, Vector2 gridPosition) : base(root) 
+    {
+        GridPosition = gridPosition;
+    }
+
+    protected virtual void SetColorWithSubs(Color color)
+    {
+        if (IsSubSlot && HostSlot == null) SetBackgroundColor(color);
+        else if (IsSubSlot) HostSlot.SetColorWithSubs(color);
+        else {
+            SetBackgroundColor(color);
+            foreach (var sub in SubSlots) sub.SetBackgroundColor(color);
+        }
+    }
+
+    protected override void OnEnterEvent()
+    {
+        SetColorWithSubs(pointerEventColors[EventType.Enter]);
+    }
+
+    protected override void OnLeaveEvent()
+    {
+        SetColorWithSubs(pointerEventColors[EventType.Leave]);
+    }
+
+    protected override void OnDownEvent()
+    {
+        SetColorWithSubs(pointerEventColors[EventType.Down]);
+        var cursorItem = CursorController.Instance.CarriedInvItem;
+        if (CompareItem(cursorItem))
+        {
+            cursorItem.quantity += ItemData.quantity;
+            slotItemData = null;
+        }
+        else
+        {
+            cursorItem = ItemData;
+            slotItemData = null;
+        }
+    }
+
+    protected override void OnPointerUpEvent()
+    {
+        SetColorWithSubs(pointerEventColors[EventType.Up]);
+    }
+
+    #endregion
+
+    #region API
 
     public void Occupy(InventoryItemData data, SlotItemUI view, IEnumerable<InventorySlotUI> subs)
     {
@@ -68,4 +119,11 @@ public class InventorySlotUI : SlotUI
         if (data == null) ClearSlot();
         else Debug.LogWarning("Inventory slots are filled via Inventory.TryAddInventoryItem");
     }
+
+    public override bool CompareItem(IInventorySlotData other)
+    {
+        return base.CompareItem(other) && ItemData.mods == other.Mods;
+    }
+
+    #endregion
 }

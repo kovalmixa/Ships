@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using Assets.Global.FileGlobal;
 using Assets.Global.Math;
 using Assets.Resources_moved.UI.GUI.Prefabs.Slot.Data;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.Searcher.Searcher.AnalyticsEvent;
 
 namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
 {
@@ -15,13 +17,17 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
         public float TotalSlotWidth => slotSize + slotMargin * 2;
     }
 
+    public enum EventType { Enter, Leave, Down, Up }
+
     public class SlotUI
     {
         protected Image backgroundImage;
         protected VisualTreeAsset slotItemPrefab;
+        protected SlotItemData slotItemData = null;
+        protected Dictionary<EventType, Color> pointerEventColors = new();
+
         public SlotItemUI slotItemUI;
         public VisualElement rootElement;
-        protected SlotItemData slotItemData = null;
 
         public SlotItemData SlotItemData => slotItemData;
 
@@ -34,39 +40,47 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             rootElement = root;
             backgroundImage = rootElement.Q<Image>("BackgroundImage");
             var slotItemPrefab = PrefabLoader.Instance.LoadAssetSync<VisualTreeAsset>("SlotItem");
-
-            SetupEnterEvent();
-            SetupLeaveEvent();
-            SetupPointerDownEvent();
-            SetupClickPointerUpEvent();
+            
+            if (backgroundImage == null) return;
+            SetupFillColors();
+            backgroundImage.RegisterCallback<PointerEnterEvent>(evt => OnEnterEvent());
+            backgroundImage.RegisterCallback<PointerLeaveEvent>(evt => OnLeaveEvent());
+            backgroundImage.RegisterCallback<PointerDownEvent>(evt => OnDownEvent());
+            backgroundImage.RegisterCallback<PointerUpEvent>(evt => OnPointerUpEvent());
         }
 
-        protected virtual void SetupEnterEvent()
+        protected virtual void SetupFillColors()
+        {
+            var enterColor = ColorHandler.LightUpColor(SlotStyle.slotBackgroundColor, 0.7f);
+            var downColor = ColorHandler.LightUpColor(SlotStyle.slotBackgroundColor, 1f);
+            var leaveColor = SlotStyle.slotBackgroundColor;
+            var upColor = enterColor;
+
+            SetupEventCollorFill(EventType.Enter, enterColor);
+            SetupEventCollorFill(EventType.Leave, leaveColor);
+            SetupEventCollorFill(EventType.Down, downColor);
+            SetupEventCollorFill(EventType.Up, upColor);
+        }
+
+        private void SetupEventCollorFill(EventType type, Color color)
+        {
+            if (pointerEventColors.ContainsKey(type)) pointerEventColors[type] = color;
+            else pointerEventColors.Add(type, color);
+        }
+
+        protected virtual void SetBackgroundColor(Color newColor)
         {
             if (backgroundImage == null) return;
-            Color enterColor = ColorHandler.LightUpColor(SlotStyle.slotBackgroundColor, 0.7f);
-            backgroundImage.RegisterCallback<PointerEnterEvent>(evt => backgroundImage.style.backgroundColor = enterColor);
+            backgroundImage.style.backgroundColor = newColor;
         }
 
-        protected virtual void SetupLeaveEvent()
-        {
-            if (backgroundImage == null) return;
-            backgroundImage.RegisterCallback<PointerLeaveEvent>(evt => backgroundImage.style.backgroundColor = SlotStyle.slotBackgroundColor);
-        }
+        protected virtual void OnEnterEvent() => SetBackgroundColor(pointerEventColors[EventType.Enter]);
 
-        protected virtual void SetupPointerDownEvent()
-        {
-            if (backgroundImage == null) return;
-            Color clickColor = ColorHandler.LightUpColor(SlotStyle.slotBackgroundColor, 1f);
-            backgroundImage.RegisterCallback<PointerDownEvent>(evt => backgroundImage.style.backgroundColor = clickColor);
-        }
+        protected virtual void OnLeaveEvent() => SetBackgroundColor(pointerEventColors[EventType.Leave]);
 
-        protected virtual void SetupClickPointerUpEvent()
-        {
-            if (backgroundImage == null) return;
-            Color enterColor = ColorHandler.LightUpColor(SlotStyle.slotBackgroundColor, 0.7f);
-            backgroundImage.RegisterCallback<PointerUpEvent>(evt => backgroundImage.style.backgroundColor = enterColor);
-        }
+        protected virtual void OnDownEvent() => SetBackgroundColor(pointerEventColors[EventType.Down]);
+
+        protected virtual void OnPointerUpEvent() => SetBackgroundColor(pointerEventColors[EventType.Up]);
 
         #endregion
 
@@ -99,7 +113,10 @@ namespace Assets.Resources_moved.UI.GUI.Prefabs.Slot
             slotItemUI = null;
         }
 
-        public virtual bool CompareItems(SlotItemData otherData) => slotItemData == otherData;
+        public virtual bool CompareItem(IInventorySlotData other)
+        {
+            return slotItemData.general.nameId == other.General.nameId;
+        }
 
         #endregion
     }
